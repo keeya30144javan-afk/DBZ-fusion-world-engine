@@ -47,7 +47,7 @@ test('setup: 6 cards in hand, 8 life, second player gets an energy marker', () =
   const s = fresh();
   assert.equal(s.p[0].life.length, 8);
   assert.equal(s.p[1].life.length, 8);
-  assert.equal(s.p[0].hand.length, 6); // first player does not draw on turn 1
+  assert.equal(s.p[0].hand.length, 7); // 6 + the turn-1 draw (manual p.7)
   assert.equal(s.p[1].markers, 1);
   assert.equal(s.p[0].markers, 0);
   assert.equal(s.turn, 1);

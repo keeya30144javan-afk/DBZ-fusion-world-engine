@@ -5,6 +5,7 @@ export type Timing =
   | 'whenAttacking'
   | 'whenAttacked'
   | 'whenKOd'
+  | 'whenBlocking'
   | 'activateMain'
   | 'activateBattle'
   | 'counter'
@@ -68,7 +69,9 @@ export type Effect =
   | { t: 'costReduce'; n: number }
   | { t: 'cantBlock' }
   | { t: 'damageLeader'; n: number }
-  | { t: 'flipLeader' };
+  | { t: 'flipLeader' }
+  /** Place N energy markers from outside the game under the target as Ki (manual p.12). */
+  | { t: 'ki'; target: Target; n: number };
 
 export type Cost =
   | { t: 'discard'; n: number }
@@ -76,7 +79,9 @@ export type Cost =
   | { t: 'restSelf' }
   | { t: 'restEnergy'; n: number }
   | { t: 'selfToDrop' }
-  | { t: 'lifeToHand'; n: number };
+  | { t: 'lifeToHand'; n: number }
+  /** Remove N Ki. 'your' = leader and Battle Cards, 'battle' = Battle Cards only (manual p.12). */
+  | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle' };
 
 export type Cond =
   | { t: 'handLE'; n: number }
@@ -89,9 +94,11 @@ export type Cond =
   | { t: 'dropGE'; n: number }
   | { t: 'battleCount'; op: 'none' | 'ge'; n: number; filter: Filter; side: 'self' | 'opp' }
   | { t: 'leaderIs'; names: string[] }
-  | { t: 'leaderAwakened' };
+  | { t: 'leaderAwakened' }
+  | { t: 'kiLeaderGE'; n: number }
+  | { t: 'kiTotalGE'; n: number; scope: 'your' | 'battle' };
 
-export type Keyword = 'blocker' | 'critical' | 'doubleStrike' | 'tripleStrike' | 'superCombo' | 'barrier' | 'indestructible';
+export type Keyword = 'blocker' | 'critical' | 'doubleStrike' | 'tripleStrike' | 'superCombo' | 'barrier' | 'indestructible' | 'field' | 'dragonBall';
 
 export interface Ability {
   timing: Timing;
@@ -101,6 +108,8 @@ export interface Ability {
   cond: Cond[];
   effects: Effect[];
   text: string;
+  /** Further timing tags sharing this body, e.g. [On Play/When Attacking]. */
+  alsoTimings?: Timing[];
   /** Sentences of this ability we could not translate. */
   unparsed: string[];
 }

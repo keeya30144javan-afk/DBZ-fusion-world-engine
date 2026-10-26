@@ -22,9 +22,11 @@ export interface Inst {
   grants: { kw: Keyword; until: 'battle' | number }[];
   comboBonus: number;
   playedTurn: number;
+  /** Ki under this card (manual p.12). Lost when a Battle Card leaves the Battle Area; kept on a Leader. */
+  ki: number;
 }
 
-export type Zone = 'deck' | 'hand' | 'battle' | 'energy' | 'drop' | 'life' | 'combo' | 'leader' | 'removed';
+export type Zone = 'deck' | 'hand' | 'battle' | 'field' | 'energy' | 'drop' | 'life' | 'combo' | 'leader' | 'removed';
 
 export interface PlayerState {
   leader: number;
@@ -37,6 +39,8 @@ export interface PlayerState {
   drop: number[];
   life: number[];
   combo: number[];
+  /** The [Field] Extra in this player's Battle Area (manual p.13), if any. */
+  field: number | null;
   markers: number;
   usedOnce: string[];
   mulliganed: boolean;
@@ -118,6 +122,7 @@ export function cloneState(s: GameState): GameState {
     drop: p.drop.slice(),
     life: p.life.slice(),
     combo: p.combo.slice(),
+    field: p.field,
     markers: p.markers,
     usedOnce: p.usedOnce.slice(),
     mulliganed: p.mulliganed,
@@ -160,6 +165,7 @@ export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
 export function zoneOf(s: GameState, uid: number): Zone {
   const p = s.p[s.inst[uid].owner];
   if (p.leader === uid) return 'leader';
+  if (p.field === uid) return 'field';
   for (const z of ['battle', 'hand', 'energy', 'drop', 'life', 'combo', 'deck'] as const) if (p[z].includes(uid)) return z;
   return 'removed';
 }
@@ -191,6 +197,8 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond): bool
     case 'oppLifeLE': return s.p[other(owner)].life.length <= c.n;
     case 'dropGE': return me.drop.length >= c.n;
     case 'leaderAwakened': return me.awakened;
+    case 'kiLeaderGE': return s.inst[me.leader].ki >= c.n;
+    case 'kiTotalGE': return kiTotal(s, owner, c.scope) >= c.n;
     case 'leaderIs': {
       const lc = cardOf(s, me.leader);
       return c.names.some((n) => lc.name.includes(n) || lc.characters.some((ch) => ch.includes(n)));
@@ -201,6 +209,14 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond): bool
       return c.op === 'none' ? k === 0 : k >= c.n;
     }
   }
+}
+
+/** "Your Ki" counts the Leader and Battle Cards; "Ki in your Battle Area" only Battle Cards (manual p.12). */
+export function kiTotal(s: GameState, owner: Side, scope: 'your' | 'battle'): number {
+  const me = s.p[owner];
+  let k = scope === 'your' ? s.inst[me.leader].ki : 0;
+  for (const u of me.battle) k += s.inst[u].ki;
+  return k;
 }
 
 export function condsHold(s: GameState, owner: Side, src: number, conds: Cond[] | undefined): boolean {
@@ -349,6 +365,7 @@ function scaleSpec(spec: Partial<Record<Color, number>>, total: number) {
 export function removeFrom(s: GameState, uid: number): Zone {
   const owner = s.inst[uid].owner;
   const p = s.p[owner];
+  if (p.field === uid) { p.field = null; return 'field'; }
   for (const z of ['battle', 'hand', 'energy', 'drop', 'life', 'combo', 'deck'] as const) {
     const i = p[z].indexOf(uid);
     if (i >= 0) { p[z].splice(i, 1); return z; }
@@ -362,9 +379,10 @@ export function resetInst(i: Inst) {
   i.grants = [];
   i.comboBonus = 0;
   i.lockedUntil = 0;
+  i.ki = 0;
 }
 
-export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
+export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
   removeFrom(s, uid);
   const inst = s.inst[uid];
   resetInst(inst);

@@ -5,7 +5,7 @@ import {
   GameState, Inst, PlayerState, Side, abilitiesOf, activeEnergy, cardOf, compiledOf, comboPowerOf, condsHold, costInHand,
   emit, hasKeyword, isLeader, log, moveTo, nameOf, other, payPlan, planPayment, powerOf, shuffle, specFor,
 } from './core';
-import { Choosers, isFreeRepeatable, canPayCosts, checkZeroPower, drawCards, fireTriggers, koCard, onceKey, playCard, resolveAbility, setWinner, takeLife } from './effects';
+import { Choosers, isFreeRepeatable, canPayCosts, checkZeroPower, drawCards, placeField, fireTriggers, koCard, onceKey, playCard, resolveAbility, setWinner, takeLife } from './effects';
 
 export type Action =
   | { k: 'keep' }
@@ -39,7 +39,7 @@ export function newGame(cards: Record<string, Card>, decks: [Decklist, Decklist]
   const inst: Inst[] = [];
   const mk = (id: string, owner: Side): number => {
     const uid = inst.length;
-    inst.push({ uid, id, owner, rested: false, lockedUntil: 0, mods: [], grants: [], comboBonus: 0, playedTurn: 0 });
+    inst.push({ uid, id, owner, rested: false, lockedUntil: 0, mods: [], grants: [], comboBonus: 0, playedTurn: 0, ki: 0 });
     return uid;
   };
   const players = ([0, 1] as Side[]).map((side): PlayerState => {
@@ -48,7 +48,7 @@ export function newGame(cards: Record<string, Card>, decks: [Decklist, Decklist]
     return {
       leader, awakened: false,
       deck: expandDeck(d).map((id) => mk(id, side)),
-      hand: [], battle: [], energy: [], drop: [], life: [], combo: [],
+      hand: [], battle: [], energy: [], drop: [], life: [], combo: [], field: null,
       markers: 0, usedOnce: [], mulliganed: false,
     };
   }) as [PlayerState, PlayerState];
@@ -108,11 +108,11 @@ function startTurn(s: GameState) {
   s.charged = false;
   emit(s, { t: 'turn', turn: s.turn, active: s.active });
   log(s, `--- Turn ${s.turn}: P${s.active} (${nameOf(s, p.leader)})`);
-  for (const u of [p.leader, ...p.battle, ...p.energy]) {
+  for (const u of [p.leader, ...p.battle, ...p.energy, ...(p.field !== null ? [p.field] : [])]) {
     if (s.inst[u].lockedUntil >= s.turn) continue;
     s.inst[u].rested = false;
   }
-  if (s.turn !== 1) drawCards(s, s.active, 1);
+  if (s.turn !== 1 || s.rules.firstPlayerDraws) drawCards(s, s.active, 1);
   if (s.stage === 'over') return;
   s.stage = 'charge';
   s.toAct = s.active;
@@ -121,7 +121,7 @@ function startTurn(s: GameState) {
 function endTurn(s: GameState, ctl: Choosers) {
   const p = s.p[s.active];
   emit(s, { t: 'end', p: s.active, unspent: activeEnergy(s, s.active).length, handSize: p.hand.length });
-  for (const u of [p.leader, ...p.battle]) {
+  for (const u of skillSources(p)) {
     if (s.stage === 'over') return;
     fireTriggers(s, u, 'endOfYourTurn', ctl);
   }
@@ -142,6 +142,23 @@ export function playCostPlan(s: GameState, uid: number) {
   return planPayment(s, s.inst[uid].owner, total, specFor(s, uid, total));
 }
 
+const isField = (s: GameState, uid: number) => compiledOf(s, uid).keywords.has('field');
+
+/** [Your Turn] / [Opponent's Turn] restrict when a skill may be used (manual p.13). */
+const turnOk = (s: GameState, side: Side, turn: 'your' | 'opp' | undefined) =>
+  !turn || (turn === 'your') === (s.active === side);
+
+/** Cards on the field whose skills can be activated: Leader, Battle Cards and a [Field]. */
+const skillSources = (me: PlayerState) => [me.leader, ...me.battle, ...(me.field !== null ? [me.field] : [])];
+
+/** Awaken can be used at Activate: Main and Activate: Battle timings (manual p.9, p.12). */
+function awakenOption(s: GameState, side: Side): Action[] {
+  const me = s.p[side];
+  if (me.awakened) return [];
+  const aw = abilitiesOf(s, me.leader).find((a) => a.timing === 'awaken');
+  return aw && condsHold(s, side, me.leader, aw.cond) ? [{ k: 'awaken' }] : [];
+}
+
 function canAttack(s: GameState, uid: number): boolean {
   if (s.turn === 1) return false;
   const inst = s.inst[uid];
@@ -153,9 +170,9 @@ function canAttack(s: GameState, uid: number): boolean {
 function battleSkillOptions(s: GameState, side: Side): Action[] {
   const out: Action[] = [];
   const me = s.p[side];
-  for (const u of [me.leader, ...me.battle]) {
+  for (const u of skillSources(me)) {
     abilitiesOf(s, u).forEach((ab, i) => {
-      if (ab.timing !== 'activateBattle') return;
+      if (ab.timing !== 'activateBattle' || !turnOk(s, side, ab.turn)) return;
       if ((ab.once || isFreeRepeatable(ab)) && me.usedOnce.includes(onceKey(s, u, i))) return;
       if (!condsHold(s, side, u, ab.cond) || !canPayCosts(s, u, ab.cost)) return;
       out.push({ k: 'battleSkill', uid: u, ab: i });
@@ -164,9 +181,9 @@ function battleSkillOptions(s: GameState, side: Side): Action[] {
   const seen = new Set<string>();
   for (const u of me.hand) {
     const card = cardOf(s, u);
-    if (card.type !== 'EXTRA' || seen.has(card.id)) continue;
+    if (card.type !== 'EXTRA' || seen.has(card.id) || isField(s, u)) continue;
     compiledOf(s, u).abilities.forEach((ab, i) => {
-      if (ab.timing !== 'activateBattle') return;
+      if (ab.timing !== 'activateBattle' || !turnOk(s, side, ab.turn)) return;
       if (!condsHold(s, side, u, ab.cond) || !playCostPlan(s, u) || !canPayCosts(s, u, ab.cost, u)) return;
       seen.add(card.id);
       out.push({ k: 'battleSkill', uid: u, ab: i });
@@ -249,25 +266,23 @@ export function legalActions(s: GameState): Action[] {
         if (seen.has(card.id)) continue;
         seen.add(card.id);
         if (card.type === 'BATTLE' && playCostPlan(s, u)) out.push({ k: 'play', uid: u });
-        if (card.type === 'EXTRA') {
+        if (card.type === 'EXTRA' && isField(s, u)) { if (playCostPlan(s, u)) out.push({ k: 'play', uid: u }); }
+        else if (card.type === 'EXTRA') {
           compiledOf(s, u).abilities.forEach((ab, i) => {
-            if (ab.timing !== 'activateMain') return;
+            if (ab.timing !== 'activateMain' || !turnOk(s, side, ab.turn)) return;
             if (condsHold(s, side, u, ab.cond) && playCostPlan(s, u) && canPayCosts(s, u, ab.cost, u)) out.push({ k: 'activate', uid: u, ab: i });
           });
         }
       }
-      for (const u of [me.leader, ...me.battle]) {
+      for (const u of skillSources(me)) {
         abilitiesOf(s, u).forEach((ab, i) => {
-          if (ab.timing !== 'activateMain') return;
+          if (ab.timing !== 'activateMain' || !turnOk(s, side, ab.turn)) return;
           if ((ab.once || isFreeRepeatable(ab)) && me.usedOnce.includes(onceKey(s, u, i))) return;
           if (ab.effects.length === 0) return;
           if (condsHold(s, side, u, ab.cond) && canPayCosts(s, u, ab.cost)) out.push({ k: 'activate', uid: u, ab: i });
         });
       }
-      if (!me.awakened) {
-        const aw = abilitiesOf(s, me.leader).find((a) => a.timing === 'awaken');
-        if (aw && condsHold(s, side, me.leader, aw.cond)) out.push({ k: 'awaken' });
-      }
+      out.push(...awakenOption(s, side));
       const opp = s.p[other(side)];
       const targets = [opp.leader, ...opp.battle.filter((u) => s.inst[u].rested)];
       for (const a of [me.leader, ...me.battle]) {
@@ -281,7 +296,7 @@ export function legalActions(s: GameState): Action[] {
     case 'block': return [{ k: 'noBlock' }, ...blockerOptions(s, side)];
     case 'offCombo':
     case 'defCombo':
-      return [{ k: 'comboDone' }, ...comboOptions(s, side), ...battleSkillOptions(s, side)];
+      return [{ k: 'comboDone' }, ...comboOptions(s, side), ...battleSkillOptions(s, side), ...awakenOption(s, side)];
   }
 }
 
@@ -420,7 +435,8 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       const plan = playCostPlan(s, a.uid);
       if (!plan) return;
       payPlan(s, side, plan);
-      playCard(s, a.uid, ctl);
+      if (cardOf(s, a.uid).type === 'EXTRA') placeField(s, a.uid, ctl);
+      else playCard(s, a.uid, ctl);
       return;
     }
     case 'activate': {
@@ -452,6 +468,9 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       b.target = a.uid;
       b.blocked = true;
       log(s, `P${side} blocks with ${nameOf(s, a.uid)}`);
+      fireTriggers(s, a.uid, 'whenBlocking', ctl);
+      if ((s.stage as string) === 'over') return;
+      if (!battleStillValid(s)) return endBattle(s, ctl);
       return advanceBattle(s, 'offCombo', ctl);
     }
     case 'noBlock': {

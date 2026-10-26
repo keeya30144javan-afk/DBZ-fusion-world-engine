@@ -33,16 +33,34 @@ export function setWinner(s: GameState, winner: Side | -1, reason: string) {
   emit(s, { t: 'over', winner, reason });
 }
 
+/** Sorbet / Golden Frieza: "You will not lose the game even if you have 0 cards in your deck." */
+function ignoresDeckOut(s: GameState, p: Side): boolean {
+  const lc = cardOf(s, s.p[p].leader);
+  const text = s.p[p].awakened && lc.back ? lc.back.text : lc.text;
+  return /will not lose the game even if you have 0 cards in your deck/i.test(text);
+}
+
+/** Manual p.6: a player whose deck is reduced to zero cards loses at once. */
+export function checkDeckOut(s: GameState) {
+  if (!s.rules.deckOutAtZero || s.stage === 'over' || s.stage === 'mulligan') return;
+  for (const p of [s.active, other(s.active)] as Side[]) {
+    if (s.p[p].deck.length === 0 && !ignoresDeckOut(s, p)) { setWinner(s, other(p), 'deck out'); return; }
+  }
+}
+
 export function drawCards(s: GameState, p: Side, n: number) {
+  let drawn = 0;
   for (let i = 0; i < n; i++) {
     const top = s.p[p].deck.pop();
     if (top === undefined) {
-      if (s.rules.loseOnEmptyDraw) setWinner(s, other(p), 'deck out');
-      return;
+      if (!ignoresDeckOut(s, p) && s.stage !== 'mulligan') setWinner(s, other(p), 'deck out');
+      break;
     }
     s.p[p].hand.push(top);
+    drawn++;
   }
-  if (n > 0) emit(s, { t: 'draw', p, n });
+  if (drawn > 0) emit(s, { t: 'draw', p, n: drawn });
+  checkDeckOut(s);
 }
 
 /** Take n life. toDrop for [Critical]. */
@@ -86,6 +104,22 @@ export function koCard(s: GameState, uid: number, ctl: Choosers) {
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
   emit(s, { t: 'toDrop', p: owner, id: s.inst[uid].id, uid });
   fireTriggers(s, uid, 'whenKOd', ctl);
+}
+
+/** Manual p.13: a [Field] stays in the Battle Area until another of your [Field]s replaces it. */
+export function placeField(s: GameState, uid: number, ctl: Choosers) {
+  const owner = s.inst[uid].owner;
+  const me = s.p[owner];
+  if (me.field !== null) moveTo(s, me.field, 'drop');
+  removeFrom(s, uid);
+  s.inst[uid].rested = false;
+  s.inst[uid].mods = [];
+  s.inst[uid].grants = [];
+  s.inst[uid].playedTurn = s.turn;
+  me.field = uid;
+  log(s, `P${owner} places Field ${nameOf(s, uid)}`);
+  emit(s, { t: 'play', p: owner, id: s.inst[uid].id, uid });
+  fireTriggers(s, uid, 'onPlay', ctl);
 }
 
 export function playCard(s: GameState, uid: number, ctl: Choosers) {
@@ -132,6 +166,7 @@ export function canPayCosts(s: GameState, uid: number, costs: Cost[], excludeFro
       case 'restEnergy': energyNeeded += c.n; break;
       case 'lifeToHand': if (me.life.length < c.n) return false; break;
       case 'selfToDrop': break;
+      case 'reduceKi': if (kiPool(s, uid, c.scope).reduce((a, u) => a + s.inst[u].ki, 0) < c.n) return false; break;
     }
   }
   if (energyNeeded && !planPayment(s, owner, energyNeeded, {})) return false;
@@ -157,8 +192,23 @@ function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers) {
       case 'restEnergy': { const plan = planPayment(s, owner, c.n, {}); if (plan) payPlan(s, owner, plan); break; }
       case 'lifeToHand': takeLife(s, owner, c.n, false); break;
       case 'selfToDrop': moveTo(s, uid, 'drop'); break;
+      case 'reduceKi': {
+        // Spend Ki from Battle Cards before the Leader: Leader Ki usually gates other skills.
+        let left = c.n;
+        const pool = kiPool(s, uid, c.scope).sort((a, b) => (isLeader(s, a) ? 1 : 0) - (isLeader(s, b) ? 1 : 0));
+        for (const u of pool) { const k = Math.min(left, s.inst[u].ki); s.inst[u].ki -= k; left -= k; if (!left) break; }
+        break;
+      }
     }
   }
+}
+
+/** Cards whose Ki a "reduce Ki" cost may take from. */
+function kiPool(s: GameState, uid: number, scope: 'this' | 'leader' | 'your' | 'battle'): number[] {
+  const me = s.p[s.inst[uid].owner];
+  if (scope === 'this') return [uid];
+  if (scope === 'leader') return [me.leader];
+  return scope === 'your' ? [me.leader, ...me.battle] : me.battle.slice();
 }
 
 // ------------------------------------------------------------------ resolving
@@ -180,11 +230,12 @@ export function resolveAbility(s: GameState, uid: number, ab: Ability, idx: numb
     runEffect(s, uid, owner, e, ctx, ctl);
   }
   checkZeroPower(s, ctl);
+  checkDeckOut(s);
   return true;
 }
 
 export function targetCandidates(s: GameState, src: number, owner: Side, t: Target, ctx: { prev: number[] }): number[] {
-  if (t.ref === 'this') return isLeader(s, src) || s.p[s.inst[src].owner].battle.includes(src) ? [src] : [];
+  if (t.ref === 'this') { const p = s.p[s.inst[src].owner]; return isLeader(s, src) || p.battle.includes(src) || p.field === src ? [src] : []; }
   if (t.ref === 'prev') return ctx.prev.filter((u) => isLeader(s, u) || s.p[s.inst[u].owner].battle.includes(u));
   if (t.ref === 'leader') return [s.p[owner].leader];
   const sides: Side[] = t.side === 'self' ? [owner] : t.side === 'opp' ? [other(owner)] : [owner, other(owner)];
@@ -204,7 +255,7 @@ export function targetCandidates(s: GameState, src: number, owner: Side, t: Targ
 
 const INTENT: Partial<Record<Effect['t'], ChoiceReq['intent']>> = {
   ko: 'harm', bounce: 'harm', bottom: 'harm', rest: 'harm', lockActive: 'harm',
-  activate: 'buff', grant: 'buff', comboPower: 'buff',
+  activate: 'buff', grant: 'buff', comboPower: 'buff', ki: 'buff',
 };
 
 function chooseTargets(s: GameState, src: number, owner: Side, e: Effect & { target: Target }, ctx: Ctx, ctl: Choosers): number[] {
@@ -353,6 +404,13 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     }
     case 'mill': {
       for (let i = 0; i < e.n; i++) { const u = me.deck.pop(); if (u === undefined) break; me.drop.push(u); emit(s, { t: 'toDrop', p: owner, id: s.inst[u].id, uid: u }); }
+      checkDeckOut(s);
+      return;
+    }
+    case 'ki': {
+      const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
+      for (const u of ts) s.inst[u].ki += e.n;
+      if (ts.length) log(s, `${ts.map((u) => nameOf(s, u)).join(', ')} +${e.n} Ki`);
       return;
     }
     case 'costReduce': return; // read by costInHand

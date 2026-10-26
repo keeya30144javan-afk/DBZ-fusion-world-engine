@@ -63,16 +63,19 @@ export function validateDeck(deck: Decklist, cards: Record<string, Card>, rules:
   const size = deckSize(deck);
   if (size < rules.deckMin || size > rules.deckMax) errs.push(`Deck has ${size} cards (needs ${rules.deckMin}-${rules.deckMax})`);
   let superCombo = 0;
+  let dragonBalls = 0;
   for (const [id, n] of Object.entries(deck.main)) {
     const c = cards[id];
     if (!c) { errs.push(`Unknown card ${id}`); continue; }
     if (c.type === 'LEADER') errs.push(`${id} is a Leader in the main deck`);
-    if (n > rules.maxCopies) errs.push(`${n} copies of ${id} (max ${rules.maxCopies})`);
+    // Manual p.12: [Dragon Ball] cards ignore the 4-copy limit but total at most 7.
+    const isDragonBall = /\[Dragon Ball\]/i.test(c.text);
+    if (isDragonBall) dragonBalls += n;
+    else if (n > rules.maxCopies) errs.push(`${n} copies of ${id} (max ${rules.maxCopies})`);
     if (leader && !cardFitsLeader(c, leader, rules)) errs.push(`${id} (${c.colors.join('/')}) is off-colour for ${leader.name}`);
     if (hasKeyword(c, 'Super Combo')) superCombo += n;
-    const dragonBall = c.text.match(/\[Dragon Ball\]/i);
-    if (dragonBall && n > 1) errs.push(`${id} is a [Dragon Ball] card; check its deck limit`);
   }
+  if (dragonBalls > 7) errs.push(`${dragonBalls} [Dragon Ball] cards (max 7)`);
   if (superCombo > rules.superComboMax) errs.push(`${superCombo} [Super Combo] cards (max ${rules.superComboMax})`);
   return errs;
 }

@@ -18,6 +18,8 @@ const KEYWORD_TAGS: Record<string, Keyword> = {
   'super combo': 'superCombo',
   barrier: 'barrier',
   indestructible: 'indestructible',
+  field: 'field',
+  'dragon ball': 'dragonBall',
 };
 
 const TIMING_TAGS: Record<string, Timing> = {
@@ -25,6 +27,7 @@ const TIMING_TAGS: Record<string, Timing> = {
   'when attacking': 'whenAttacking',
   'when attacked': 'whenAttacked',
   "when ko'd": 'whenKOd',
+  'when blocking': 'whenBlocking',
   'activate:main': 'activateMain',
   'activate: main': 'activateMain',
   'activate:battle': 'activateBattle',
@@ -80,8 +83,11 @@ function parseChoice(s: string): Target | null {
     const zones: Target['zones'] = /leader/i.test(rest) && !/battle card/i.test(rest) ? ['leader'] : /leader or/i.test(rest) ? ['leader', 'battle'] : ['battle'];
     return { side, zones, count: n(m[2]), upTo: !!m[1], filter: parseFilter(rest) };
   }
-  if ((m = s.match(/^(?:choose )?(up to )?(\w+) battle cards? (.*)$/i))) {
-    return { side: 'any', zones: ['battle'], count: n(m[2]), upTo: !!m[1], filter: parseFilter(m[3]) };
+  if ((m = s.match(/^(?:choose )?(up to )?(\w+) (?:battle )?cards? (.*)$/i))) {
+    const where = m[3];
+    const side = /in your opponent's battle area/i.test(where) ? 'opp' : /in your battle area/i.test(where) ? 'self' : 'any';
+    const f = parseFilter(where.replace(/in (?:your opponent's|your) battle area/i, ''));
+    return { side, zones: ['battle'], count: n(m[2]), upTo: !!m[1], filter: f };
   }
   if (/^(?:choose )?your leader$/i.test(s)) return { side: 'self', ref: 'leader', zones: ['leader'], count: 1, upTo: false, filter: {} };
   if (/^(?:choose )?your opponent's leader$/i.test(s)) return { side: 'opp', zones: ['leader'], count: 1, upTo: false, filter: {} };
@@ -104,6 +110,7 @@ function parseAction(action: string, target: Target, staticDefault: Duration): E
   const a = action.trim().replace(/\.$/, '');
   let m: RegExpMatchArray | null;
   if ((m = a.match(/^(?:it|they|each|that card|this card)? ?gets? ([+\-−]\d+) combo power/i))) return { t: 'comboPower', target, amount: +m[1].replace('−', '-') };
+  if ((m = a.match(/^(?:it|they|each|that card|this card|them)? ?gets? \+(\d+) ki$/i))) return { t: 'ki', target, n: +m[1] };
   if ((m = a.match(/^(?:it|they|each|that card|this card|them)? ?gets? ([+\-−]\d+) power(?: (for the battle|for the turn|during your opponent's next turn|until the end of the turn))?/i)))
     return { t: 'power', target, amount: +m[1].replace('−', '-'), dur: parseDur(m[2], staticDefault) };
   if (/^ko (?:it|them)$/i.test(a)) return { t: 'ko', target };
@@ -148,14 +155,14 @@ function parseSentence(s: string, ctx: { staticDur: Duration }): Effect[] | null
   if (/^your opponent can't activate \[blocker\](?: for the turn| during this battle)?$/i.test(t)) return [{ t: 'cantBlock' }];
 
   // "This card gets +5000 power (for the turn)."  /  "that card gets ..."
-  if ((m = t.match(/^(this card|that card|your leader|it) (gets? .*|gains? .*|can't .*)$/i))) {
+  if ((m = t.match(/^(this card|that card|your leaders?|it) (gets? .*|gains? .*|can't .*)$/i))) {
     const target = /this/i.test(m[1]) ? THIS : /leader/i.test(m[1]) ? { ...THIS, ref: 'leader' as const, zones: ['leader' as const] } : PREV;
     const e = parseAction(m[2], target, ctx.staticDur);
     if (e) return [e];
   }
 
   // "Choose X and <action>", "KO up to 1 of your opponent's ..."
-  if ((m = t.match(/^(choose .*?) and (it gets.*|they get.*|each gets.*|ko (?:it|them)|return (?:it|them).*|place (?:it|them).*|switch (?:it|them).*|(?:it|they) can't.*|(?:it|they) gains?.*)$/i))) {
+  if ((m = t.match(/^(choose .*?) and (it gets.*|they get.*|those cards get.*|each gets.*|ko (?:it|them)|return (?:it|them).*|place (?:it|them).*|switch (?:it|them).*|(?:it|they) can't.*|(?:it|they) gains?.*)$/i))) {
     const target = parseChoice(m[1]);
     if (target) {
       const e = parseAction(m[2], target, ctx.staticDur);
@@ -210,11 +217,16 @@ function parseCond(s: string): Cond[] | null {
     else if (/^you have no battle cards$/i.test(p)) out.push({ t: 'battleCount', op: 'none', n: 0, filter: {}, side: 'self' });
     else if ((m = p.match(/^you have no (.*?) battle cards?$/i))) out.push({ t: 'battleCount', op: 'none', n: 0, filter: parseFilter(m[1]), side: 'self' });
     else if ((m = p.match(/^you have (\d+) or more (.*?)battle cards?$/i))) out.push({ t: 'battleCount', op: 'ge', n: +m[1], filter: parseFilter(m[2]), side: 'self' });
-    else if ((m = p.match(/^your leader is (.*)$/i))) {
+    else if (!/awakened$/i.test(p) && (m = p.match(/^your leader is (.*)$/i))) {
       const names = [...m[1].matchAll(/<([^>]+)>/g)].map((x) => x[1]);
       if (!names.length) return null;
       out.push({ t: 'leaderIs', names });
     } else if (/^your leader is awakened$/i.test(p)) out.push({ t: 'leaderAwakened' });
+    else if ((m = p.match(/^your (?:(<[^>]+>) )?leader(?: with (<[^>]+>) in its card name)? has (\d+) or more ki$/i))) {
+      const nm = (m[1] ?? m[2])?.replace(/[<>]/g, '');
+      if (nm) out.push({ t: 'leaderIs', names: [nm] });
+      out.push({ t: 'kiLeaderGE', n: +m[3] });
+    } else if ((m = p.match(/^you have a total of (\d+) or more ki( in your battle area)?$/i))) out.push({ t: 'kiTotalGE', n: +m[1], scope: m[2] ? 'battle' : 'your' });
     else return null;
   }
   return out;
@@ -232,6 +244,10 @@ function parseCost(s: string): Cost[] | null {
     else if (/^place this card in(?:to)? your drop$/i.test(p)) out.push({ t: 'selfToDrop' });
     else if ((m = p.match(/^(?:pay|rest) (\w+) energy$/i))) out.push({ t: 'restEnergy', n: n(m[1]) });
     else if ((m = p.match(/^add (\w+) cards? from your life to your hand$/i))) out.push({ t: 'lifeToHand', n: n(m[1]) });
+    else if ((m = p.match(/^reduce your ki by (\d+)$/i))) out.push({ t: 'reduceKi', n: +m[1], scope: 'your' });
+    else if ((m = p.match(/^reduce the ki of your battle area by (\d+)$/i))) out.push({ t: 'reduceKi', n: +m[1], scope: 'battle' });
+    else if ((m = p.match(/^reduce the ki of your (?:<[^>]+> )?leader(?: with .*?)? by (\d+)$/i))) out.push({ t: 'reduceKi', n: +m[1], scope: 'leader' });
+    else if ((m = p.match(/^(?:reduce the ki of this card by (\d+)|remove (\d+) ki from this card)$/i))) out.push({ t: 'reduceKi', n: +(m[1] ?? m[2]), scope: 'this' });
     else return null;
   }
   return out;
@@ -252,23 +268,27 @@ function splitLines(text: string): string[] {
 
 function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
   let rest = line.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim(); // drop reminder text
+  // "this card in a Battle Area" / "from a Battle Area" only says where the card is; the engine knows that.
+  rest = rest.replace(/this card (?:in|from) (?:a|your) battle area/gi, 'this card').replace(/\bKI\b/g, 'Ki');
   const tags: string[] = [];
   let m: RegExpMatchArray | null;
-  while ((m = rest.match(/^\[([^\]]+)\]\s*/))) {
-    tags.push(m[1].trim());
+  // Tags may be joined: "[When Attacking]/[When Blocking]" or "[On Play/When Attacking]".
+  while ((m = rest.match(/^\/?\s*\[([^\]]+)\]\s*/))) {
+    for (const t of m[1].split('/')) tags.push(t.trim());
     rest = rest.slice(m[0].length);
   }
   let timing: Timing | undefined;
   let turn: 'your' | 'opp' | undefined;
   let once = false;
   let unknownTag: string | undefined;
+  const alsoTimings: Timing[] = [];
   for (const tag of tags) {
     const k = tag.toLowerCase();
     if (KEYWORD_TAGS[k]) { keywords.add(KEYWORD_TAGS[k]); continue; }
     if (k === 'your turn') { turn = 'your'; continue; }
     if (k === "opponent's turn") { turn = 'opp'; continue; }
     if (k === 'once per turn') { once = true; continue; }
-    if (TIMING_TAGS[k] && !timing) { timing = TIMING_TAGS[k]; continue; }
+    if (TIMING_TAGS[k]) { if (!timing) timing = TIMING_TAGS[k]; else alsoTimings.push(TIMING_TAGS[k]); continue; }
     if (/^counter/.test(k)) { timing = 'counter'; continue; }
     unknownTag = tag;
   }
@@ -276,12 +296,14 @@ function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
   if (!timing) timing = tags.length ? 'auto' : 'permanent';
 
   const ab: Ability = { timing, turn, once, cost: [], cond: [], effects: [], text: line, unparsed: [] };
+  if (alsoTimings.length) ab.alsoTimings = alsoTimings;
   // A skill type the engine has no trigger for (Evolve, Field, When Blocking...) is not playable yet.
   if (unknownTag) { ab.unparsed.push(line); return ab; }
 
   // Auto triggers whose condition is the event itself.
   if (timing === 'auto') {
     if ((m = rest.match(/^when you use this card in a combo from your hand, (.*)$/i))) { ab.timing = 'comboFromHand'; rest = m[1]; }
+    else if ((m = rest.match(/^when this card blocks, (.*)$/i))) { ab.timing = 'whenBlocking'; rest = m[1]; }
     else if ((m = rest.match(/^when this card is ko'd, (.*)$/i))) { ab.timing = 'whenKOd'; rest = m[1]; }
     else if ((m = rest.match(/^when this card attacks, (.*)$/i))) { ab.timing = 'whenAttacking'; rest = m[1]; }
     else if ((m = rest.match(/^when this card is played, (.*)$/i))) { ab.timing = 'onPlay'; rest = m[1]; }
@@ -340,6 +362,8 @@ function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability
     total += sentenceCount;
     bad.push(...ab.unparsed);
     abilities.push(ab);
+    // The same skill under each extra timing tag, sharing its parsed body.
+    for (const t of ab.alsoTimings ?? []) abilities.push({ ...ab, timing: t, alsoTimings: undefined });
   }
   return { keywords, abilities, total, bad };
 }

@@ -36,6 +36,7 @@ function effectValue(e: Effect): number {
     case 'cantBlock': return 0.3;
     case 'discard': return -0.8 * e.n;
     case 'mill': return 0;
+    case 'ki': return 0.4 * e.n;
     default: return 0.2;
   }
 }
