@@ -1,7 +1,7 @@
 {
  "version": "2026-10-26",
- "source": "Starter decks + DeckPlanet pages 1-4",
- "updated": "2026-10-26T22:18:20.931Z",
+ "source": "Starter decks + DeckPlanet pages 1-5 (complete)",
+ "updated": "2026-10-26T22:19:50.275Z",
  "cards": {
   "FS01-01": {
    "id": "FS01-01",
@@ -41084,6 +41084,2316 @@
    "text": "[When Attacking][Once Per Turn] If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, switch up to 1 of your energy to Active Mode.",
    "set": "FB06",
    "rarity": "R"
+  },
+  "FB10-033": {
+   "id": "FB10-033",
+   "name": "Trunks: Future",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Trunks: Future"
+   ],
+   "text": "[On Play] Look at 2 cards from the top of your deck and place them at the top or bottom of their owner's deck in any order. Then, draw 1 card.",
+   "set": "FB10",
+   "rarity": "C"
+  },
+  "FB10-051": {
+   "id": "FB10-051",
+   "name": "Kami",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 1,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Kami"
+   ],
+   "text": "[Activate:Battle] Place this card into your Drop: Your <Piccolo> that's in a battle gets +20000 power or the battle.",
+   "set": "FB10",
+   "rarity": "C"
+  },
+  "SB01-039": {
+   "id": "SB01-039",
+   "name": "Majin Buu: Kid",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 4,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Majin Buu: Kid"
+   ],
+   "text": "[Permanent] This card can't be KO'd by your opponent's skills.\n[On Play] If your Leader has ≪Majin≫ in its special traits, draw 1 card. Then, choose all cards with costs of 5 or less in your opponent's energy and Battle Area and switch them to Rest Mode.\n[When KO'd] If your Leader has ≪Majin≫ in its special traits, draw 1 card. Then, choose all cards with costs of 5 or less in your opponent's energy and Battle Area and switch them to Rest Mode.",
+   "set": "SB01",
+   "rarity": "SR"
+  },
+  "FB08-054": {
+   "id": "FB08-054",
+   "name": "Cell",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Cell"
+   ],
+   "text": "[Activate:Main][Once Per Turn] If your Leader is <Cell>, choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it. Then, add this card to your energy in Rest Mode.",
+   "set": "FB08",
+   "rarity": "R"
+  },
+  "FP-011": {
+   "id": "FP-011",
+   "name": "Cell",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Cell"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card with ≪Earthling≫ in its special traits and a cost of 4 or less and add it to its owner's energy in Rest Mode.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FB09-108": {
+   "id": "FB09-108",
+   "name": "Trunks: GT",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Trunks: GT"
+   ],
+   "text": "[Activate:Main][Once Per Turn] If you have a total of 3 or more Ki in your Battle Area, choose up to 1 Battle Card ni your Battle Area and it gets +5000 power for the turn.",
+   "set": "FB09",
+   "rarity": "C"
+  },
+  "FS08-06": {
+   "id": "FS08-06",
+   "name": "Tamagami Number Two: DA",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Tamagami Number Two: DA"
+   ],
+   "text": "[On Play] Add up to 1 card from your life to your hand.\n[End of Your Turn] If you have 2 or more Rest Mode Battle Cards with costs of 2 or more in your Battle Area, switch this card to Active Mode.",
+   "set": "FS08",
+   "rarity": "SR"
+  },
+  "FB10-085": {
+   "id": "FB10-085",
+   "name": "Bido",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Bido"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
+   "set": "FB10",
+   "rarity": "C"
+  },
+  "FP-035": {
+   "id": "FP-035",
+   "name": "Majin Kuu: DA/Majin Duu: DA",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Majin Kuu: DA/Majin Duu: DA"
+   ],
+   "text": "[On Play] If your opponent has 6 or more cards in their hand, your opponent discards 1 card from their hand.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FB10-086": {
+   "id": "FB10-086",
+   "name": "Bido",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Bido"
+   ],
+   "text": "[On Play] Play up to 1 Battle Card with a cost of 1 from your hand.",
+   "set": "FB10",
+   "rarity": "UC"
+  },
+  "FB04-032": {
+   "id": "FB04-032",
+   "name": "Gotenks",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 3,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Gotenks"
+   ],
+   "text": "[Activate:Main] Plce this card into its owner's Drop: If you have 10 or more cards in your Drop, play up to 1 <Son Goten> with a cost of 2 or less and up to 1 <Trunks: Youth> with a cost of 2 or less from your Drop in Rest Mode.",
+   "set": "FB04",
+   "rarity": "R"
+  },
+  "FB09-085": {
+   "id": "FB09-085",
+   "name": "Grand Kai",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Grand Kai"
+   ],
+   "text": "[Permanent] This card can't attack.\n[Activate:Main][Once Per Turn] If this card is in Rest Mode, draw 1 card. Then, discard 1 card from your hand.",
+   "set": "FB09",
+   "rarity": "UC"
+  },
+  "FB10-069": {
+   "id": "FB10-069",
+   "name": "Piccolo",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Piccolo"
+   ],
+   "text": "[Permanent] If you have a card in your Battle Area with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name, this card gets +10000 power.",
+   "set": "FB10",
+   "rarity": "UC"
+  },
+  "FB06-090": {
+   "id": "FB06-090",
+   "name": "Mite of Mega: DA",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Mite of Mega: DA"
+   ],
+   "text": "[On Play] Choose up to 1 Rest Mode Battle Card in your opponent's Battle Area and it can't switch to Active Mode during your opponent's next turn.",
+   "set": "FB06",
+   "rarity": "R"
+  },
+  "FB08-089": {
+   "id": "FB08-089",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[Activate:Main][Once Per Turn] KO 1 Battle Card in your Battle Area: If your Leader is <Broly>, switch 1 of your energy to Active Mode, then choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
+   "set": "FB08",
+   "rarity": "R"
+  },
+  "FP-032": {
+   "id": "FP-032",
+   "name": "Janemba",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Janemba"
+   ],
+   "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] pay 1 energy: Choose up to 1 Rest Mode Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FP-019": {
+   "id": "FP-019",
+   "name": "Majin Buu",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Majin Buu"
+   ],
+   "text": "[When KO'd] Discard 1 card from your hand: Play this card from your Drop in Rest Mode.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FB07-071": {
+   "id": "FB07-071",
+   "name": "Explosive Rage",
+   "type": "EXTRA",
+   "colors": [
+    "Green"
+   ],
+   "cost": 5,
+   "specified": {
+    "Green": 2
+   },
+   "specifiedKnown": false,
+   "power": 0,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Explosive Rage"
+   ],
+   "text": "[Activate:Main] If your Leader has <SH> in its card name, choose up to 1 <Son Gohan: SH> in your Battle Area and it gains [Double Strike] and +10000 power for the turn.",
+   "set": "FB07",
+   "rarity": "R"
+  },
+  "FB06-064": {
+   "id": "FB06-064",
+   "name": "Broly: Childhood BR",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Broly: Childhood BR"
+   ],
+   "text": "[On Play] Add up to 1 card from your life to your hand.\n[Activate:Main] pay 2 energy, place this card into your Drop: Play up to 1 <Broly : BR> with a cost of 4 from your hand.",
+   "set": "FB06",
+   "rarity": "R"
+  },
+  "FB01-102": {
+   "id": "FB01-102",
+   "name": "Dr. Gero's Lab",
+   "type": "EXTRA",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 0,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Dr. Gero's Lab"
+   ],
+   "text": "[Field]\n[Activate:Main], switch this card to Rest Mode: If your Leader is <Android 17>, add up to 1 card with ≪Android≫ in its special traits from your Drop to your energy.",
+   "set": "FB01",
+   "rarity": "R"
+  },
+  "FB07-068": {
+   "id": "FB07-068",
+   "name": "Broly",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 7,
+   "specified": {
+    "Green": 2
+   },
+   "specifiedKnown": false,
+   "power": 40000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Broly"
+   ],
+   "text": "[Permanent][Your Turn] If your Leader is <Broly> and you have <Paragus> in your Battle Area, reduce the cost of this card in your hand by 4.\n[On Play] Choose each <Paragus> in the Battle Areas and KO them. Then, add the top 2 cards of your deck to your energy in Rest Mode.",
+   "set": "FB07",
+   "rarity": "R"
+  },
+  "FB01-114": {
+   "id": "FB01-114",
+   "name": "Guldo",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Guldo"
+   ],
+   "text": "[Activate:Main] Switch this card to Rest Mode: Choose up to 1 of your opponent's Rest Mode Battle Cards and it can't switch to Active Mode during your opponent's next turn.",
+   "set": "FB01",
+   "rarity": "R"
+  },
+  "FS08-01": {
+   "id": "FS08-01",
+   "name": "Vegeta (Mini): DA",
+   "type": "LEADER",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Vegeta (Mini): DA"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 4 or less, draw 1 card. Then, flip this card over.",
+   "set": "FS08",
+   "rarity": "L",
+   "back": {
+    "name": "Vegeta (Mini): DA",
+    "power": 20000,
+    "text": "[When Attacking][Once Per Turn] Draw 1 card. Then, if you have a Rest Mode Battle Card with a cost of 2 or more and <DA> in its card name in your Battle Area, switch this card to Active Mode."
+   }
+  },
+  "FB03-128": {
+   "id": "FB03-128",
+   "name": "Bulma: GT",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Bulma: GT"
+   ],
+   "text": "[Activate:Main][Once Per Turn] pay 3 energy: Draw 1 card. Then, if you don't have an energy marker, you place 1 energy marker.",
+   "set": "FB03",
+   "rarity": "R"
+  },
+  "FB02-098": {
+   "id": "FB02-098",
+   "name": "Hercule",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Hercule"
+   ],
+   "text": "[On Play] If you have 6 or more energy, add up to 2 cards with costs of 1 or less and ≪Earthling≫ in their special traits from your Drop to your hand.",
+   "set": "FB02",
+   "rarity": "R"
+  },
+  "FB10-087": {
+   "id": "FB10-087",
+   "name": "Bujin",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Bujin"
+   ],
+   "text": "[On Play] Draw 1 card.",
+   "set": "FB10",
+   "rarity": "C"
+  },
+  "FB01-059": {
+   "id": "FB01-059",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 4,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[When Attacking][Once Per Turn] Choose up to 1 of your opponent's Battle Cards with a cost of 1 or less and place it at the bottom of its owner's deck. Then, switch this card to Active Mode.",
+   "set": "FB01",
+   "rarity": "R"
+  },
+  "FB12-001": {
+   "id": "FB12-001",
+   "name": "Vegeta",
+   "type": "LEADER",
+   "colors": [
+    "Red"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 6 or less and you have a <Vegeta> with [Evolve] in your Battle Area, flip this card over.",
+   "set": "FB12",
+   "rarity": "L",
+   "back": {
+    "name": "Vegeta",
+    "power": 20000,
+    "text": "[When Attacking] Draw 1 card.\n[Activate:Battle] [Your Turn] [Once Per Turn] If your Battle Card that's in a battle is a <Son Goku> or <Vegeta> with a cost of 1, choose up to 1 <Son Goku> or up to 1 <Vegeta> in your Battle Area—both with [Evolve], an original power of 30000 or less, and a card name different from the card that's in a battle—and change your card that's in a battle to the chosen card."
+   }
+  },
+  "FB12-021": {
+   "id": "FB12-021",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] If your Leader is <Vegeta>, look at 3 cards from the top of your deck, reveal up to 1 card with a cost of 5 or less and ≪Saiyan≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.\n[Activate:Main] [Once Per Turn] If your Leader is awakened, this card gets +5000 power for the turn.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-025": {
+   "id": "FB12-025",
+   "name": "Son Goku",
+   "type": "LEADER",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 4 or less or you have a total of 2 or more Ki in your Battle Area, flip this card over.",
+   "set": "FB12",
+   "rarity": "L",
+   "back": {
+    "name": "Son Goku",
+    "power": 20000,
+    "text": "[When Attacking] Draw 1 card. Then, if you have a total of 3 or more Ki, this card gets +5000 power for the battle.\n[Activate:Main] [Once Per Turn] Place 5 cards with ≪Saiyan≫ or ≪Earthling≫ in their special traits from your Drop at the bottom of their owner's deck in a random order: Play up to 1 <Son Goku> with a cost of 1 from your Drop."
+   }
+  },
+  "FB12-041": {
+   "id": "FB12-041",
+   "name": "Videl",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Videl"
+   ],
+   "text": "[On Play] If your Leader is <Son Goku>, look at 4 cards from the top of your deck, reveal up to 1 <Son Goku> or up to 1 card with a cost of 2 or less and ≪Saiyan≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.\n[Activate:Main] Place this card into your Drop: Choose up to 1 <Son Goku> with a cost of 1 in your Battle Area and it gets +1 Ki.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-049": {
+   "id": "FB12-049",
+   "name": "Beerus",
+   "type": "LEADER",
+   "colors": [
+    "Green"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Beerus"
+   ],
+   "text": "[Auto] When this card is placed in your Leader Area, you can't play a card with a cost of 6 or more and without ≪God of Destruction≫ in its special traits for the game.\n[When Attacking] Draw 1 card.\n[Awaken] When your life is at 3 or less or you have 7 or more energy, draw 1 card. Then, flip this card over.",
+   "set": "FB12",
+   "rarity": "L",
+   "back": {
+    "name": "Beerus",
+    "power": 20000,
+    "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] If your card with ≪God of Destruction≫ in its special traits has KO'd one of your opponent's Battle Cards during this turn, add up to 2 Battle Cards with ≪God of Destruction≫ or ≪Angel≫ in their special traits from your Drop to your energy in Rest Mode."
+   }
+  },
+  "FB12-053": {
+   "id": "FB12-053",
+   "name": "Whis",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Whis"
+   ],
+   "text": "[Permanent] This card can't attack.\n[Activate:Main] Switch this card to Rest Mode: If your Leader has ≪God of Destruction≫ in its special traits, add up to 1 card from your hand to your energy in Rest Mode.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-073": {
+   "id": "FB12-073",
+   "name": "Whis",
+   "type": "LEADER",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Whis"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 5 or less, flip this card over.",
+   "set": "FB12",
+   "rarity": "L",
+   "back": {
+    "name": "Whis",
+    "power": 20000,
+    "text": "[Activate:Main] Switch this card to Rest Mode: Draw 1 card. Then, during this turn, the next time you use an Extra with ≪Angel≫ in its special traits, you don't have to pay the cost.\n[Activate:Battle] [Opponent's Turn] Discard 1 Extra from your hand: This card gets +10000 power for the battle."
+   }
+  },
+  "FB12-096": {
+   "id": "FB12-096",
+   "name": "God of Destruction's Mentor",
+   "type": "EXTRA",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 0,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "God of Destruction's Mentor"
+   ],
+   "text": "[Activate:Main] Choose up to 1 Rest Mode Battle Card with a cost of 6 or less in your opponent's Battle Area and KO it. Then, if the card chosen by this skill has a cost of 2 or less, switch 1 of your energy to Active Mode.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-097": {
+   "id": "FB12-097",
+   "name": "Sorbet",
+   "type": "LEADER",
+   "colors": [
+    "Black"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Sorbet"
+   ],
+   "text": "[Permanent] You will not lose the game even if you have 0 cards in your deck.\n[When Attacking] Draw 1 card. Then, place the top 3 cards of your deck into your Drop.\n[Awaken] When you have 7 cards with ≪Dragon Ball≫ in their special traits in your Drop, flip this card over.",
+   "set": "FB12",
+   "rarity": "L",
+   "back": {
+    "name": "Golden Frieza",
+    "power": 20000,
+    "text": "[Permanent] You will not lose the game even if you have 0 cards in your deck.\n[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Discard 1 card from your hand: If you have 0 cards in your deck, play up to 1 <Frieza> with a cost of 5 from your Drop. Then, return all cards from your Drop to their owner's deck in a random order."
+   }
+  },
+  "FB12-104": {
+   "id": "FB12-104",
+   "name": "Sorbet",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Sorbet"
+   ],
+   "text": "[On Play] Add the top 2 cards of your deck to your life. Then, look through your life and place 2 cards on top of their owner's deck in any order. Shuffle your life.\n[When KO'd] If your Leader has ≪Frieza's Army≫ in its special traits, draw 2 cards.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FS13-01": {
+   "id": "FS13-01",
+   "name": "Son Goku",
+   "type": "LEADER",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 4 or less or you have a total of 2 or more Ki in your Battle Area, flip this card over.",
+   "set": "FS13",
+   "rarity": "L",
+   "back": {
+    "name": "Son Goku",
+    "power": 20000,
+    "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Discard 1 card from your hand and reduce the Ki of your Battle Area by 1: Reveal the top card of your deck, and if the revealed card is a Battle Card with a cost of 2 or less and ≪Universe 7≫ in its special traits, play it. Then, that card gets +10000 power for the turn."
+   }
+  },
+  "FS13-02": {
+   "id": "FS13-02",
+   "name": "Golden Frieza",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 3,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Golden Frieza"
+   ],
+   "text": "[On Play] This card gets +2 Ki. Then, draw 1 card and place 1 card from your hand on top of its owner's deck.\n[When Attacking] If you have 2 or more Battle Cards with costs of 2 or more in your Battle Area, this card gets +15000 power for the battle.",
+   "set": "FS13",
+   "rarity": "SR"
+  },
+  "FS13-05": {
+   "id": "FS13-05",
+   "name": "Android 17",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 2,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Android 17"
+   ],
+   "text": "[On Play] Look at 3 cards from the top of your deck, reveal up to 1 card with ≪Universe 7≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.\n[Activate:Battle] Place this card into your Drop: Your <Son Goku> with a cost of 5 that's in a battle gets +20000 power for the battle.",
+   "set": "FS13",
+   "rarity": "SR"
+  },
+  "FS13-13": {
+   "id": "FS13-13",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 2,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[On Play] This card gets +1 Ki.\n[When Attacking] Reduce the Ki of your Battle Area by 1: Choose up to 1 Battle Card in your opponent's Battle Area with a cost less than or equal to the total cost of the Battle Cards in your Battle Area and return it to its owner's hand.",
+   "set": "FS13",
+   "rarity": "SR"
+  },
+  "FS13-15": {
+   "id": "FS13-15",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 5,
+   "specified": {
+    "Blue": 2
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Double Strike]\n[On Play] Discard 1 card from your hand or place 1 card from your hand on top of its owner's deck: This card gets +1 Ki. Then, add up to 2 cards with costs of 3 or less and ≪Universe 7≫ in their special traits from your Drop to your hand.",
+   "set": "FS13",
+   "rarity": "SR"
+  },
+  "FS14-01": {
+   "id": "FS14-01",
+   "name": "Vegeta",
+   "type": "LEADER",
+   "colors": [
+    "Red"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": true,
+   "power": 15000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[When Attacking] Draw 1 card.\n[Awaken] When your life is at 6 or less and you have a card with [Evolve] and with <Vegeta> in its card name in your Battle Area, flip this card over.",
+   "set": "FS14",
+   "rarity": "L",
+   "back": {
+    "name": "Vegeta",
+    "power": 20000,
+    "text": "[When Attacking] Draw 2 cards. Then, place 1 card from your hand at the bottom of its owner's deck.\n[Activate:Main] [Once Per Turn] pay 1 energy: If you have a card with [Evolve] and with <Vegeta> in its card name in your Battle Area, during this turn, the next time you use an Extra with a cost of 3 and ≪Saiyan≫ in its special traits, you don't have to pay the cost."
+   }
+  },
+  "FS14-03": {
+   "id": "FS14-03",
+   "name": "Trunks: Future",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Trunks: Future"
+   ],
+   "text": "[On Play] Reveal 1 card with [Evolve] from your hand: Draw 1 card.\n[When Attacking] If your <Vegeta> Leader is awakened, this card gets +15000 power for the battle.",
+   "set": "FS14",
+   "rarity": "SR"
+  },
+  "FS14-07": {
+   "id": "FS14-07",
+   "name": "Bulma",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Bulma"
+   ],
+   "text": "[On Play] If your Leader is <Vegeta>, look at 2 cards from the top of your deck and add 1 card to your hand. Place the rest at the bottom of your deck.\n[Activate:Main] Place this card into your Drop: Play up to 1 Battle Card with a cost of 1 and <Vegeta> or <Trunks> in its card name from your hand.",
+   "set": "FS14",
+   "rarity": "SR"
+  },
+  "FS14-14": {
+   "id": "FS14-14",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 5,
+   "specified": {
+    "Red": 2
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[Evolve] pay 2 energy: <Vegeta>\n[When Attacking] This card gets +5000 power for the turn. Then, if this card was played this turn, choose up to 1 Battle Card in your opponent's Battle Area and it gets -15000 power for the turn.",
+   "set": "FS14",
+   "rarity": "SR"
+  },
+  "FS14-15": {
+   "id": "FS14-15",
+   "name": "Vegeta: BR",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegeta: BR"
+   ],
+   "text": "[Permanent] [Your Turn] If your Leader is awakened, this card gets +10000 power.\n[On Play] If your Leader is <Vegeta>, add up to 1 card from your life to your hand.",
+   "set": "FS14",
+   "rarity": "SR"
+  },
+  "FB12-006": {
+   "id": "FB12-006",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[On Play] If your Leader is <Vegeta>, add up to 1 card from your life to your hand.\n[When KO'd] If your Leader is awakened, draw 1 card and discard 1 card from your hand. Then, choose up to 1 Battle Card with 20000 power or more in your opponent's Battle Area and it gets -5000 power for the turn.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-020": {
+   "id": "FB12-020",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] If your Leader is awakened, add up to 1 <Son Goku> with a cost of 1 or less or up to 1 Extra with a cost of 3 from your Drop to your hand.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-028": {
+   "id": "FB12-028",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Auto] When your Battle Card with a cost of 2 and ≪Saiyan≫ in its special traits is played, if your Leader is <Son Goku> and this card has 4 or less Ki, this card gets +1 Ki.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-044": {
+   "id": "FB12-044",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 2,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] If you have a total of 3 or more Ki in your Battle Area, choose up to 1 Battle Card with a cost of 4 or less in your opponent's Battle Area and return it to its owner's hand.\n[When Attacking] Place the top 3 cards of your deck into your Drop. Then, this card gets +5000 power for the battle.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-051": {
+   "id": "FB12-051",
+   "name": "Iwne",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Iwne"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it. Then, your Leader gets +5000 power for the turn.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-074": {
+   "id": "FB12-074",
+   "name": "Awamo",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Awamo"
+   ],
+   "text": "[On Play] Reveal the top card of your opponent's deck and place it at the top or bottom of its owner's deck.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-065": {
+   "id": "FB12-065",
+   "name": "Heles",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Heles"
+   ],
+   "text": "[Blocker] ( After an opponent's attack, you may switch this card to Rest Mode and change the target of the attack to this card )\n[On Play] Choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-083": {
+   "id": "FB12-083",
+   "name": "Sawar",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Sawar"
+   ],
+   "text": "[On Play] If you have 5 or more Extras with ≪Angel≫ in their special traits in your Drop, draw 2 cards. Then, discard 1 card from your hand.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-111": {
+   "id": "FB12-111",
+   "name": "Frieza",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Frieza"
+   ],
+   "text": "[On Play] Look at 2 cards from the top of your deck, reveal up to 1 <Sorbet> or up to 1 card with a cost of 1 or less and add it to your hand. Place the rest into their owner's Drop.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-119": {
+   "id": "FB12-119",
+   "name": "Dragon Ball",
+   "type": "EXTRA",
+   "colors": [
+    "Black"
+   ],
+   "cost": 0,
+   "specified": {},
+   "specifiedKnown": false,
+   "power": 0,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Dragon Ball"
+   ],
+   "text": "[dragon ball].\n[Activate:Battle] Place the top card of your deck into your Drop. Then, your Leader that's in a battle gets +10000 power for the battle.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-003": {
+   "id": "FB12-003",
+   "name": "Krillin",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 2,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Krillin"
+   ],
+   "text": "[Permanent] If you have 2 or more ≪Earthling≫-only Battle Cards in your Battle Area, this card gets +10000 power.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-005": {
+   "id": "FB12-005",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Permanent] This card can't be KO'd by your opponent's skills.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-016": {
+   "id": "FB12-016",
+   "name": "Bulma",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Bulma"
+   ],
+   "text": "[On Play] Look at 5 cards from the top of your deck, reveal up to 1 <Son Goku> or up to 1 <Vegeta> and add it to your hand. Place the rest at the bottom of your deck in a random order.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-039": {
+   "id": "FB12-039",
+   "name": "Chi-Chi",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Chi-Chi"
+   ],
+   "text": "[Blocker] ( After an opponent's attack, you may switch this card to Rest Mode and change the target of the attack to this card )",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-042": {
+   "id": "FB12-042",
+   "name": "Bulma",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Bulma"
+   ],
+   "text": "[When Attacking] If attacking a <Beerus>, this card gets +20000 power for the battle.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-069": {
+   "id": "FB12-069",
+   "name": "Mosco",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Mosco"
+   ],
+   "text": "[On Play] Add up to 1 card with ≪God of Destruction≫ in its special traits from your hand to your energy.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-078": {
+   "id": "FB12-078",
+   "name": "Kampari",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Kampari"
+   ],
+   "text": "",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-010": {
+   "id": "FB12-010",
+   "name": "Son Goten",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 2,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Goten"
+   ],
+   "text": "[On Play] If you have a <Fate Transcending Generations> in your Battle Area, your Leader gets +1 Ki.\n[When Attacking] Discard 1 card from your hand: Add up to 1 Extra with <Kamehameha> in its card name from your Drop to your hand.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-011": {
+   "id": "FB12-011",
+   "name": "Son Gohan: Adolescence",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 2,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Gohan: Adolescence"
+   ],
+   "text": "[Activate:Main] pay 1 energy, place this card into your Drop: If your <Son Goten> Leader has 3 or more Ki, draw 1 card. Then, play up to 1 <Son Gohan: Adolescence> with a cost of 3 from your hand.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-014": {
+   "id": "FB12-014",
+   "name": "Trunks: Youth",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Trunks: Youth"
+   ],
+   "text": "[On Play] Switch 1 of your Battle Cards with 5000 power in your Battle Area to Rest Mode: If you have a <Fate Transcending Generations> in your Battle Area, your Leader gets +1 Ki.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-018": {
+   "id": "FB12-018",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 2,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 15000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[When Attacking] Choose up to 1 Battle Card with 10000 power or less in your opponent's Battle Area and KO it.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-029": {
+   "id": "FB12-029",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[On Play] Place the top card of your deck into your Drop: If your Leader is <Son Goku>, draw 1 card.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-030": {
+   "id": "FB12-030",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 4,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Evolve] pay 1 energy: <Son Goku>\n[When Attacking] Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-050": {
+   "id": "FB12-050",
+   "name": "Arack",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Arack"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-058": {
+   "id": "FB12-058",
+   "name": "Champa",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Champa"
+   ],
+   "text": "[Activate:Main] Place this card into your Drop: If your Leader has ≪God of Destruction≫ in its special traits and your card with ≪God of Destruction≫ in its special traits has KO'd one of your opponent's Battle Cards during this turn, draw 2 cards.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-075": {
+   "id": "FB12-075",
+   "name": "Vados",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vados"
+   ],
+   "text": "[On Play] Discard 1 Extra from your hand: If your Leader is <Whis>, draw 2 cards.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-079": {
+   "id": "FB12-079",
+   "name": "Cucatail",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Cucatail"
+   ],
+   "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] Draw 1 card. Then, discard 1 card from your hand.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-113": {
+   "id": "FB12-113",
+   "name": "Frieza",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Frieza"
+   ],
+   "text": "[On Play] Draw 1 card. Then, discard 1 card from your hand.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-034": {
+   "id": "FB12-034",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[On Play] If your Leader is <Son Goku/Vegeta> or <Vegito>, choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.\n[Activate:Main] [Once Per Turn] pay 1 energy: If there are no cards under this card, and you have <Vegeta> and <Potara> in your Drop, place 1 <Vegeta> and 1 <Potara> from your Drop under this card.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-046": {
+   "id": "FB12-046",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] If your Leader is <Son Goku/Vegeta> or <Vegito>, draw 1 card.\n[Activate:Main] [Once Per Turn] pay 1 energy, discard 1 card from your hand: If there are no cards under this card, and you have <Son Goku> and <Potara> in your Drop, place 1 <Son Goku> and 1 <Potara> from your Drop under this card.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-047": {
+   "id": "FB12-047",
+   "name": "Vegito",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 5,
+   "specified": {
+    "Blue": 2
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegito"
+   ],
+   "text": "[Evolve] pay 0 energy: <Son Goku> or <Vegeta> with a <Potara> under them.\n[When Attacking] Place 3 cards from under this card into their owner's Drop: Add up to 1 <Son Goku>, or up to 1 <Vegeta>, or up to 1 Extra—all with a cost of 1—from your Drop to your hand.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-019": {
+   "id": "FB12-019",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 2,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] If your Leader is <Vegeta>, choose up to 1 Battle Card with ≪Saiyan≫ in its special traits in your Battle Area and it can attack Active Mode Battle Cards in your opponent's Battle Area during this turn.\n[When Attacking] Add up to 1 card from your life to your hand.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-027": {
+   "id": "FB12-027",
+   "name": "Gotenks",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 4,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Gotenks"
+   ],
+   "text": "[On Play] If your Leader has ≪Saiyan≫ in its special traits, add up to 1 card with a cost of 3 or less and both ≪Saiyan≫ and ≪Earthling≫ in its special traits from your Drop to your hand.\n[When Attacking] Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-035": {
+   "id": "FB12-035",
+   "name": "Son Goten/Trunks: Youth",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 1,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goten/Trunks: Youth"
+   ],
+   "text": "[On Play] Draw 2 cards. Then, discard 2 cards from your hand.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-066": {
+   "id": "FB12-066",
+   "name": "Majin Buu: Evil",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 2,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Majin Buu: Evil"
+   ],
+   "text": "[Activate:Main] [Once Per Turn] Place 1 Battle Card with ≪Majin≫ in its special traits from your hand under <Demonic Maze> in your Battle Area: Draw 1 card.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-067": {
+   "id": "FB12-067",
+   "name": "Majin Buu: Evil",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 4,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Majin Buu: Evil"
+   ],
+   "text": "[Evolve] pay 1 energy: <Majin Buu: Evil> with a cost of 2 or 3.\n[On Play] Place a total of 2 cards from under your cards with ≪Majin≫ in their special traits in your Battle Area into their owner's Drop: Add up to 1 Battle Card with a cost of 2 and ≪Majin≫ in its special traits from your Drop to your hand.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-068": {
+   "id": "FB12-068",
+   "name": "Majin Buu: Kid",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 6,
+   "specified": {
+    "Green": 2
+   },
+   "specifiedKnown": false,
+   "power": 35000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Majin Buu: Kid"
+   ],
+   "text": "[Evolve] pay 1 energy: <Majin Buu: Evil> with a cost of 3 or 4.\n[Activate:Main] Place this card into your Drop: If your Leader has ≪Majin≫ in its special traits, choose up to 1 Battle Card with a cost of 7 or less in your opponent's Battle Area and KO it.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-084": {
+   "id": "FB12-084",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Activate:Main] pay 2 energy, place this card into your Drop: If your Leader is <Gogeta>, choose up to 1 card with [Evolve] and ≪Another World≫ in its special traits in your Battle Area and switch it to Active Mode. Then, you can't activate the [Activate:Main] of <Son Goku> for the turn.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-085": {
+   "id": "FB12-085",
+   "name": "Son Goku/Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 4,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku/Vegeta"
+   ],
+   "text": "[Permanent] If your Leader is <Gogeta> or <Son Goku/Vegeta>, reduce the cost of this card in your hand by 2.\n[On Play] Reveal 1 <Veku> from your hand: Draw 1 card.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-087": {
+   "id": "FB12-087",
+   "name": "Paikuhan",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 3,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Paikuhan"
+   ],
+   "text": "[Permanent] If <Son Goku/Vegeta> in your Battle Area is removed from the Battle Area by your opponent, you may KO this card instead.\n[On Play] If your Leader is <Son Goku/Vegeta> and you have 1 <Paikuhan> in your Battle Area, switch 2 of your energy to Active Mode.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-108": {
+   "id": "FB12-108",
+   "name": "Trunks: Youth",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Trunks: Youth"
+   ],
+   "text": "[On Play] If your Leader has 3 or more Ki, add up to 1 <Vegeta> with a cost of 4 or less from your Drop to your hand.",
+   "set": "FB12",
+   "rarity": "UC"
+  },
+  "FB12-109": {
+   "id": "FB12-109",
+   "name": "Babidi",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Babidi"
+   ],
+   "text": "[On Play] Switch 1 <Wicked Soul Discovered> in your Battle Area to Active Mode: Look at 4 cards from the top of your deck, reveal up to 1 card with ≪Wicked Soul≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-118": {
+   "id": "FB12-118",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 2,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[When Attacking] If your Leader has 3 or more Ki, this card gets +20000 power for the battle.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-017": {
+   "id": "FB12-017",
+   "name": "Bulma",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 1,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 5000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Bulma"
+   ],
+   "text": "[Activate:Main] Place this card into your Drop: If your <Vegeta> Leader is awakened, play up to 1 <Son Goku> and up to 1 <Vegeta>—both with a cost of 1—from your hand. Then, you can't activate the [Activate:Main] of <Bulma> for the turn.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-056": {
+   "id": "FB12-056",
+   "name": "Shenron",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 5,
+   "specified": {
+    "Green": 2
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Shenron"
+   ],
+   "text": "[Permanent] This card can't attack.\n[Activate:Main] Switch this card to Rest Mode: Add up to 2 cards from your hand to your energy. Then, draw 2 cards.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-062": {
+   "id": "FB12-062",
+   "name": "Beerus",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Beerus"
+   ],
+   "text": "[On Play] Your opponent KO's 1 Battle Card with a cost of 2 or less in their Battle Area. Then, if a Battle Card with a cost of 1 or less was KO'd by this skill, add the top card of your deck to your energy in Rest Mode.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-076": {
+   "id": "FB12-076",
+   "name": "Whis",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 5,
+   "specified": {
+    "Yellow": 2
+   },
+   "specifiedKnown": false,
+   "power": 35000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Whis"
+   ],
+   "text": "[Permanent] If you have 5 or more Extras with ≪Angel≫ in their special traits in your Drop, reduce the cost of this card in your hand by 2.\n[End of Your Turn] If your Leader is <Whis>, switch this card to Active Mode.",
+   "set": "FB12",
+   "rarity": "R"
+  },
+  "FB12-045": {
+   "id": "FB12-045",
+   "name": "Vegeta",
+   "type": "BATTLE",
+   "colors": [
+    "Blue"
+   ],
+   "cost": 2,
+   "specified": {
+    "Blue": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Vegeta"
+   ],
+   "text": "[On Play] Place the top 2 cards of your deck into your Drop.\n[When Attacking] Choose up to 1 <Son Goku> with a cost of 1 in your Battle Area and it gets +1 Ki. Then, if you have a total of 5 or more Ki in your Battle Area, your <Son Goku> Leader's original power becomes 25000 until the end of your opponent's next turn.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-077": {
+   "id": "FB12-077",
+   "name": "Whis",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 2,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Whis"
+   ],
+   "text": "[barrier]\n[When Attacking] Discard 1 card with ≪Angel≫ in its special traits from your hand: Draw 1 card. Then, if your Leader is <Whis>, at the end of the turn, switch this card to Active Mode.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FB12-117": {
+   "id": "FB12-117",
+   "name": "Frieza",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 5,
+   "specified": {
+    "Black": 2
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Frieza"
+   ],
+   "text": "[Evolve] pay 1 energy: <Frieza> with a cost of 4.\n[On Play] Place the top 3 cards of your deck into your Drop and draw 1 card. Then, if this card was played by your Leader's skill, choose all Battle Cards with original costs of 5 or less in the Battle Areas other than this card and KO them.",
+   "set": "FB12",
+   "rarity": "SR"
+  },
+  "FP-104": {
+   "id": "FP-104",
+   "name": "Son Goku",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 5,
+   "specified": {
+    "Red": 2
+   },
+   "specifiedKnown": false,
+   "power": 25000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Goku"
+   ],
+   "text": "[Evolve] pay 2 energy: <Son Goku>\n[Activate:Main] pay 1 energy, place this card into your Drop: If your Leader is a ≪Saiyan≫-only <Son Goku>, play up to 1 ≪Saiyan≫-only <Son Goku> with 35000 power from your hand.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FP-105": {
+   "id": "FP-105",
+   "name": "Goku Black",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 3,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Goku Black"
+   ],
+   "text": "[On Play] This card gets +1 Ki.\n[When Attacking] If this card was played from your energy this turn, add the top card of your deck to your energy in Rest Mode.",
+   "set": "PR",
+   "rarity": "PR"
+  },
+  "FB12-012": {
+   "id": "FB12-012",
+   "name": "Son Gohan: Adolescence",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 3,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Son Gohan: Adolescence"
+   ],
+   "text": "[On Play] Choose all Battle Cards with ≪Earthling≫ in their special traits in your Battle Area and they get +5000 power for the turn.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-015": {
+   "id": "FB12-015",
+   "name": "Piccolo",
+   "type": "BATTLE",
+   "colors": [
+    "Red"
+   ],
+   "cost": 3,
+   "specified": {
+    "Red": 1
+   },
+   "specifiedKnown": false,
+   "power": 20000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Piccolo"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -5000 power for the turn.\n[When Attacking] [Once Per Turn] If you have a <Son Gohan: Adolescence> with a cost of 2 or more in your Battle Area, switch this card to Active Mode.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-071": {
+   "id": "FB12-071",
+   "name": "Liquiir",
+   "type": "BATTLE",
+   "colors": [
+    "Green"
+   ],
+   "cost": 4,
+   "specified": {
+    "Green": 1
+   },
+   "specifiedKnown": false,
+   "power": 30000,
+   "comboPower": 5000,
+   "traits": [],
+   "characters": [
+    "Liquiir"
+   ],
+   "text": "[On Play] If your Leader has ≪God of Destruction≫ in its special traits, choose up to 1 Battle Card with a cost of 3 or less in your opponent's Battle Area and KO it.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-082": {
+   "id": "FB12-082",
+   "name": "Korun",
+   "type": "BATTLE",
+   "colors": [
+    "Yellow"
+   ],
+   "cost": 1,
+   "specified": {
+    "Yellow": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 10000,
+   "traits": [],
+   "characters": [
+    "Korun"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
+   "set": "FB12",
+   "rarity": "C"
+  },
+  "FB12-114": {
+   "id": "FB12-114",
+   "name": "Frieza",
+   "type": "BATTLE",
+   "colors": [
+    "Black"
+   ],
+   "cost": 1,
+   "specified": {
+    "Black": 1
+   },
+   "specifiedKnown": false,
+   "power": 10000,
+   "comboPower": 0,
+   "traits": [],
+   "characters": [
+    "Frieza"
+   ],
+   "text": "[On Play] Choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
+   "set": "FB12",
+   "rarity": "UC"
   }
  }
 }
