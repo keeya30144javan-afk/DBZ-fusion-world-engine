@@ -261,6 +261,7 @@ function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
   let timing: Timing | undefined;
   let turn: 'your' | 'opp' | undefined;
   let once = false;
+  let unknownTag: string | undefined;
   for (const tag of tags) {
     const k = tag.toLowerCase();
     if (KEYWORD_TAGS[k]) { keywords.add(KEYWORD_TAGS[k]); continue; }
@@ -269,11 +270,14 @@ function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
     if (k === 'once per turn') { once = true; continue; }
     if (TIMING_TAGS[k] && !timing) { timing = TIMING_TAGS[k]; continue; }
     if (/^counter/.test(k)) { timing = 'counter'; continue; }
+    unknownTag = tag;
   }
   if (!rest) return null; // keyword-only line
   if (!timing) timing = tags.length ? 'auto' : 'permanent';
 
   const ab: Ability = { timing, turn, once, cost: [], cond: [], effects: [], text: line, unparsed: [] };
+  // A skill type the engine has no trigger for (Evolve, Field, When Blocking...) is not playable yet.
+  if (unknownTag) { ab.unparsed.push(line); return ab; }
 
   // Auto triggers whose condition is the event itself.
   if (timing === 'auto') {
@@ -292,8 +296,8 @@ function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
   // Cost "X : effect"
   // Card names like <Trunks : Youth> contain " : ", so look for the separator outside brackets.
   const masked = rest.replace(/<[^>]*>|≪[^≫]*≫/g, (s) => s.replace(/:/g, '\u0001'));
-  const colonAt = masked.search(/\s+:\s+/);
-  const colon = colonAt > 0 ? [rest, rest.slice(0, colonAt), rest.slice(colonAt).replace(/^\s+:\s+/, '')] : null;
+  const colonAt = masked.search(/\s*:\s+/);
+  const colon = colonAt > 0 ? [rest, rest.slice(0, colonAt), rest.slice(colonAt).replace(/^\s*:\s+/, '')] : null;
   if (colon) {
     const cost = parseCost(colon[1]);
     if (cost) { ab.cost = cost; rest = colon[2]; }
