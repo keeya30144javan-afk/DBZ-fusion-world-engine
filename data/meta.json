@@ -1,0 +1,98 @@
+{
+ "updated": "2026-10-26",
+ "source": "Starter decks (assumed lists: 4 of each Common, 2 of each SR, trimmed to 50)",
+ "decks": [
+  {
+   "name": "Starter: Son Goku (Red)",
+   "leader": "FS01-01",
+   "main": {
+    "FS01-02": 4,
+    "FS01-03": 4,
+    "FS01-04": 4,
+    "FS01-05": 4,
+    "FS01-06": 4,
+    "FS01-07": 4,
+    "FS01-08": 2,
+    "FS01-09": 2,
+    "FS01-10": 4,
+    "FS01-11": 3,
+    "FS01-12": 3,
+    "FS01-13": 3,
+    "FS01-14": 3,
+    "FS01-15": 3,
+    "FS01-16": 3
+   },
+   "share": 0.25,
+   "notes": "Assumed list"
+  },
+  {
+   "name": "Starter: Vegeta (Blue)",
+   "leader": "FS02-01",
+   "main": {
+    "FS02-02": 4,
+    "FS02-03": 2,
+    "FS02-04": 4,
+    "FS02-05": 4,
+    "FS02-06": 4,
+    "FS02-07": 4,
+    "FS02-08": 4,
+    "FS02-09": 4,
+    "FS02-10": 3,
+    "FS02-11": 3,
+    "FS02-12": 3,
+    "FS02-13": 2,
+    "FS02-14": 3,
+    "FS02-15": 3,
+    "FS02-16": 3
+   },
+   "share": 0.25,
+   "notes": "Assumed list"
+  },
+  {
+   "name": "Starter: Broly (Green)",
+   "leader": "FS03-01",
+   "main": {
+    "FS03-02": 4,
+    "FS03-03": 4,
+    "FS03-04": 2,
+    "FS03-05": 4,
+    "FS03-06": 4,
+    "FS03-07": 4,
+    "FS03-08": 4,
+    "FS03-09": 4,
+    "FS03-10": 2,
+    "FS03-11": 3,
+    "FS03-12": 3,
+    "FS03-13": 3,
+    "FS03-14": 3,
+    "FS03-15": 3,
+    "FS03-16": 3
+   },
+   "share": 0.25,
+   "notes": "Assumed list"
+  },
+  {
+   "name": "Starter: Frieza (Yellow)",
+   "leader": "FS04-01",
+   "main": {
+    "FS04-02": 4,
+    "FS04-03": 2,
+    "FS04-04": 2,
+    "FS04-05": 4,
+    "FS04-06": 4,
+    "FS04-07": 4,
+    "FS04-08": 4,
+    "FS04-09": 4,
+    "FS04-10": 4,
+    "FS04-11": 3,
+    "FS04-12": 3,
+    "FS04-13": 3,
+    "FS04-14": 3,
+    "FS04-15": 3,
+    "FS04-16": 3
+   },
+   "share": 0.25,
+   "notes": "Assumed list"
+  }
+ ]
+}

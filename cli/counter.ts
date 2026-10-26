@@ -1,0 +1,56 @@
+/**
+ * Find a counter to a deck from the command line.
+ *   npx tsx cli/counter.ts --target "Starter: Vegeta (Blue)" [--effort quick|standard|thorough]
+ *        [--threshold 0.55] [--confidence 0.95] [--level fast|quick|strong] [--deck file.txt]
+ */
+import { readFileSync } from 'node:fs';
+import { CardDB, Meta } from '../src/data/types';
+import { deckToText, parseDecklist } from '../src/data/decks';
+import { findCounter, localRunner } from '../src/builder/counter';
+import { runMatch } from '../src/builder/evaluate';
+
+const arg = (k: string, d?: string) => {
+  const i = process.argv.indexOf(`--${k}`);
+  return i >= 0 ? process.argv[i + 1] : d;
+};
+
+const db: CardDB = JSON.parse(readFileSync(arg('cards', 'data/cards.json')!, 'utf8'));
+const meta: Meta = JSON.parse(readFileSync(arg('meta', 'data/meta.json')!, 'utf8'));
+
+let target = meta.decks.find((d) => d.name === arg('target'));
+if (arg('deck')) {
+  const { deck, errors } = parseDecklist(readFileSync(arg('deck')!, 'utf8'), db.cards, arg('deck')!);
+  if (errors.length) console.warn(errors.join('\n'));
+  target = deck;
+}
+if (!target) {
+  console.error(`Pick a target with --target <name> or --deck <file>. Meta decks:\n${meta.decks.map((d) => '  ' + d.name).join('\n')}`);
+  process.exit(1);
+}
+
+const report = await findCounter(
+  db.cards,
+  {
+    targets: [{ deck: target, weight: 1 }],
+    known: meta.decks,
+    threshold: +arg('threshold', '0.55')!,
+    confidence: +arg('confidence', '0.95')!,
+    effort: (arg('effort', 'quick') as any),
+    validateLevel: (arg('level', 'quick') as any),
+    seed: +arg('seed', '1')!,
+  },
+  localRunner(db.cards, runMatch),
+  (p) => console.log(`[${p.phase}] ${p.message} (${p.gamesPlayed} games)`),
+);
+
+console.log('\n' + report.headline);
+for (const r of report.reasons) console.log(' - ' + r);
+if (report.best) {
+  console.log(`\nBest deck (${report.best.origin}):\n${deckToText(report.best.deck, db.cards)}`);
+  for (const t of report.best.perTarget) console.log(`  vs ${t.name}: ${(t.rate * 100).toFixed(1)}% [${(t.lo * 100).toFixed(1)}-${(t.hi * 100).toFixed(1)}] over ${t.games}`);
+  console.log('How games ended:', report.best.result.reasons);
+  console.log('Key cards:', report.keyCards.slice(0, 6).map((k) => `${k.name} (+${(k.lift * 100).toFixed(0)}%)`).join(', '));
+}
+if (report.baseline) console.log(`Baseline "${report.baseline.deck.name}": ${(report.baseline.rate * 100).toFixed(1)}% [${(report.baseline.lo * 100).toFixed(1)}-${(report.baseline.hi * 100).toFixed(1)}]`);
+for (const a of report.alternatives) console.log(`Alternative ${a.deck.name}: ${(a.rate * 100).toFixed(1)}% [${(a.lo * 100).toFixed(1)}-${(a.hi * 100).toFixed(1)}]`);
+console.log(`\n${report.gamesPlayed} games in ${(report.ms / 1000).toFixed(1)}s`);
