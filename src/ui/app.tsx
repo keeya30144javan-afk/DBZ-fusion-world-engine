@@ -36,6 +36,10 @@ function App() {
     setTab(t);
     try { history.replaceState(null, '', `#${t}`); } catch { /* not allowed in this frame */ }
   };
+  useEffect(() => {
+    const t = TABS.find(([k]) => k === st.tabRequest)?.[0];
+    if (t) { go(t); store.clearTabRequest(); scrollTo(0, 0); }
+  }, [st.tabRequest]);
   const nCards = Object.keys(st.cards).length;
   const nLeaders = Object.values(st.cards).filter((c) => c.type === 'LEADER').length;
 

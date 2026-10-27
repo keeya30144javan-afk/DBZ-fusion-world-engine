@@ -3,6 +3,7 @@ import { Decklist } from '../../data/types';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
 import { CounterReport, Effort, Progress, findCounter } from '../../builder/counter';
 import { Level } from '../../builder/evaluate';
+import { store } from '../store';
 import { CIBar, ColorTag, CopyButton, DeckSelect, Meter, Seg, getPool, pct, safeStorage, useStore } from '../components';
 
 const [loadLast, saveLast] = safeStorage<{ report: CounterReport; target: string; at: string; threshold: number } | null>('shenron.lastCounter', null);
@@ -155,6 +156,9 @@ export function CounterLab() {
   );
 }
 
+/** Card ids of unreviewed translations used by any deck in the result (entries are "ID Name"). */
+const unreviewedIds = (r: CounterReport) => [...new Set(r.coverage.flatMap((c) => (c.unreviewed ?? []).map((x) => x.split(' ')[0])))];
+
 const PHASE_LABEL: Record<Progress['phase'], string> = { seed: 'Testing starting decks', evolve: 'Evolving decks', validate: 'Validating finalists', done: 'Done' };
 
 function fmtEta(sec: number): string {
@@ -193,6 +197,9 @@ function Report({ rec }: { rec: { report: CounterReport; target: string; at: str
         <span class="pill">{VERDICT_LABEL[r.verdict]}</span>
         <p class="head">{r.headline}</p>
         {r.reasons.length > 0 && <ul>{r.reasons.map((x) => <li key={x}>{x}</li>)}</ul>}
+        {unreviewedIds(r).length > 0 && (
+          <div class="row"><button class="btn small" onClick={() => store.focusAudit(unreviewedIds(r))}>Review these {unreviewedIds(r).length} cards</button></div>
+        )}
         <div class="note">Target: {rec.target} · {r.gamesPlayed.toLocaleString()} games in {(r.ms / 1000).toFixed(0)}s · {rec.at}</div>
       </div>
 

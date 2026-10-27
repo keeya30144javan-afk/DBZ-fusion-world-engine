@@ -48,6 +48,10 @@ export interface State {
   error: string | null;
   /** Reviews and in-app translations, by card id (only those matching the current text). */
   reviews: Record<string, ScriptDoc>;
+  /** Cards the Audit tab should show on its own (set from a counter result). */
+  auditFocus: string[] | null;
+  /** A tab another view asked to open. */
+  tabRequest: string | null;
 }
 
 type Listener = () => void;
@@ -76,6 +80,8 @@ export class Store {
     canReview: null,
     error: null,
     reviews: {},
+    auditFocus: null,
+    tabRequest: null,
   };
   private listeners = new Set<Listener>();
   private db: any = null;
@@ -160,6 +166,15 @@ export class Store {
     clearCompileCache();
     clearValueCache();
     this.set({ cards, reviews, sets: [...merged.values()].map((m) => m.info).sort((a, b) => a.set.localeCompare(b.set)) });
+  }
+
+  /** Open the Audit tab showing just these cards (null shows everything again). */
+  focusAudit(ids: string[] | null) {
+    this.set({ auditFocus: ids, tabRequest: ids ? 'audit' : null });
+  }
+
+  clearTabRequest() {
+    if (this.state.tabRequest) this.set({ tabRequest: null });
   }
 
   // ---- writes

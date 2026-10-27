@@ -55,8 +55,10 @@ export function AuditView() {
   }, [st.cards, st.reviews]);
 
   const todo = useMemo(() => untranslated(st.cards, st.reviews), [st.cards, st.reviews]);
-  const count = (f: Filter) => rows.filter((r) => match(r, f)).length;
-  const shown = rows.filter((r) => match(r, filter)).sort((a, b) => Number(a.doc?.check?.ok ?? true) - Number(b.doc?.check?.ok ?? true));
+  const focus = st.auditFocus ? new Set(st.auditFocus) : null;
+  const inFocus = (r: Row) => !focus || focus.has(r.c.id);
+  const count = (f: Filter) => rows.filter((r) => inFocus(r) && match(r, f)).length;
+  const shown = rows.filter((r) => inFocus(r) && match(r, filter)).sort((a, b) => Number(a.doc?.check?.ok ?? true) - Number(b.doc?.check?.ok ?? true));
   const pageRows = shown.slice(page * PAGE, page * PAGE + PAGE);
   const canWrite = st.db !== 'connected' || st.canReview !== false;
 
@@ -133,6 +135,12 @@ export function AuditView() {
       </div>
 
       <div class="panel stack">
+        {focus && (
+          <div class="row" style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+            <p class="note" style={{ margin: 0 }}>Showing the {focus.size} card{focus.size === 1 ? '' : 's'} from your counter result. Mark each one correct or wrong; verified cards stop triggering warnings.</p>
+            <button class="btn small" onClick={() => store.focusAudit(null)}>Show all cards</button>
+          </div>
+        )}
         <nav class="row" role="tablist" aria-label="Review filter" style={{ flexWrap: 'wrap', gap: '6px' }}>
           {tabs.map(([k, label]) => <button key={k} role="tab" aria-selected={filter === k} class={`btn small${filter === k ? ' primary-lite' : ''}`} onClick={() => { setFilter(k); setPage(0); }}>{label} ({count(k)})</button>)}
         </nav>
