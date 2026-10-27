@@ -3,6 +3,7 @@ import { Card } from '../data/types';
 import { MatchJob, runMatch } from '../builder/evaluate';
 import { clearCompileCache } from '../effects/parse';
 import { clearValueCache } from '../ai/heuristics';
+import { findReplay } from '../builder/replay';
 
 let cards: Record<string, Card> = {};
 
@@ -12,6 +13,14 @@ self.onmessage = (ev: MessageEvent) => {
     cards = msg.cards;
     clearCompileCache();
     clearValueCache();
+    return;
+  }
+  if (msg.type === 'replay') {
+    try {
+      (self as any).postMessage({ type: 'replay', replay: findReplay(cards, msg.opts) });
+    } catch (e: any) {
+      (self as any).postMessage({ type: 'error', error: String(e?.stack ?? e) });
+    }
     return;
   }
   if (msg.type === 'job') {

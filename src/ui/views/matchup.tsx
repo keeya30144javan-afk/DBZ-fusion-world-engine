@@ -2,8 +2,7 @@ import { useState } from 'preact/hooks';
 import { validateDeck } from '../../data/decks';
 import { Level, MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
 import { wilson } from '../../builder/stats';
-import { newGame } from '../../engine/game';
-import { FastPolicy, playout } from '../../ai/heuristics';
+import { WatchGame } from './replay';
 import { CIBar, DeckSelect, Meter, Seg, getPool, pct, useStore } from '../components';
 
 export function MatchupView() {
@@ -14,7 +13,6 @@ export function MatchupView() {
   const [level, setLevel] = useState<Level>('fast');
   const [res, setRes] = useState<{ r: MatchResult; a: string; b: string } | null>(null);
   const [running, setRunning] = useState(false);
-  const [sample, setSample] = useState<string[] | null>(null);
   const da = st.meta.find((d) => d.id === a);
   const db = st.meta.find((d) => d.id === b);
   const errs = [...(da ? validateDeck(da, st.cards, st.rules) : ['Pick deck A']), ...(db ? validateDeck(db, st.cards, st.rules) : ['Pick deck B'])];
@@ -32,14 +30,6 @@ export function MatchupView() {
     setRunning(false);
   }
 
-  function sampleGame() {
-    if (!da || !db) return;
-    const s = newGame(st.cards, [da, db], { seed: Date.now() % 100000, log: true, rules: st.rules });
-    const p = new FastPolicy(0.1);
-    playout(s, [p, p]);
-    setSample(s.log!.map((l) => l.replace(/P0/g, 'A').replace(/P1/g, 'B')));
-  }
-
   const ci = res ? wilson(score(res.r), res.r.games) : null;
   return (
     <div class="split">
@@ -53,7 +43,6 @@ export function MatchupView() {
           {errs.length > 0 && <div class="err">{errs.slice(0, 3).map((e) => <div key={e}>{e}</div>)}</div>}
           <div class="row">
             <button class="btn primary" onClick={run} disabled={running || errs.length > 0}>{running ? 'Playing…' : 'Play matchup'}</button>
-            <button class="btn" onClick={sampleGame} disabled={errs.length > 0}>Show one game</button>
           </div>
           {level !== 'fast' && <p class="note">Search AI takes about a second per move decision. 100 games can take a few minutes.</p>}
         </div>
@@ -72,12 +61,7 @@ export function MatchupView() {
             </tbody></table>
           </div>
         ) : <div class="empty">Pick two decks and press <b>Play matchup</b>.</div>}
-        {sample && (
-          <div class="panel">
-            <h3>One game, move by move</h3>
-            <div class="gamelog">{sample.join('\n')}</div>
-          </div>
-        )}
+        {da && db && errs.length === 0 && <WatchGame key={`${a}|${b}`} a={da} b={db} cards={st.cards} rules={st.rules} level={level} />}
       </div>
     </div>
   );

@@ -577,6 +577,13 @@ function millCards(s: GameState, p: Side, n: number, ctl: Choosers) {
 
 type Ctx = EvalCtx;
 
+/** Printed names of skill timings, for the game log. */
+const TIMING_LABEL: Partial<Record<Ability['timing'], string>> = {
+  onPlay: '[On Play]', whenAttacking: '[When Attacking]', whenAttacked: '[When Attacked]', whenKOd: "[When KO'd]", whenBlocking: '[Blocker]',
+  activateMain: '[Activate:Main]', activateBattle: '[Activate:Battle]', counter: '[Counter]', endOfYourTurn: '[End of Your Turn]',
+  startOfYourTurn: '[Start of Your Turn]', awaken: '[Awaken]', comboFromHand: '[Combo]', auto: '[Auto]',
+};
+
 export function resolveAbility(s: GameState, uid: number, ab: Ability, idx: number, ctl: Choosers, opts: { costsPaid?: boolean } = {}): boolean {
   const owner = s.inst[uid].owner;
   if (!condsHold(s, owner, uid, ab.cond)) return false;
@@ -592,6 +599,7 @@ export function resolveAbility(s: GameState, uid: number, ab: Ability, idx: numb
       ({ kiRemoved, paid } = payCosts(s, uid, ab.cost, ctl));
     }
     if (ab.once || isFreeRepeatable(ab)) s.p[owner].usedOnce.push(onceKey(s, uid, idx));
+    log(s, () => `${nameOf(s, uid)}: ${idx < 0 ? 'delayed effect' : `${TIMING_LABEL[ab.timing] ?? `[${ab.timing}]`} skill`} resolves`);
     const ctx: Ctx = { prev: [], kiRemoved, paid };
     runEffects(s, uid, owner, ab.effects, ctx, ctl);
   } finally {

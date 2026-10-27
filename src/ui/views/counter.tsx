@@ -1,3 +1,4 @@
+import { WatchGame } from './replay';
 import { useMemo, useRef, useState } from 'preact/hooks';
 import { Decklist } from '../../data/types';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
@@ -6,7 +7,8 @@ import { Level } from '../../builder/evaluate';
 import { store } from '../store';
 import { CIBar, ColorTag, CopyButton, DeckSelect, Meter, leaderLabel, Seg, getPool, pct, safeStorage, useStore } from '../components';
 
-const [loadLast, saveLast] = safeStorage<{ report: CounterReport; target: string; at: string; threshold: number } | null>('shenron.lastCounter', null);
+type RunRecord = { report: CounterReport; target: string; targetDeck?: Decklist; at: string; threshold: number };
+const [loadLast, saveLast] = safeStorage<RunRecord | null>('shenron.lastCounter', null);
 
 const VERDICT_LABEL = { recommend: 'Counter found', inconclusive: 'Promising, not proven', none: 'No reliable counter' };
 
@@ -62,7 +64,7 @@ export function CounterLab() {
         (p) => { setProgress(p); setLog((l) => (l[l.length - 1] === p.message ? l : [...l.slice(-60), p.message])); },
         () => cancel.current,
       );
-      const rec = { report, target: target.deck.name, at: new Date().toLocaleString(), threshold: threshold / 100 };
+      const rec = { report, target: target.deck.name, targetDeck: target.deck, at: new Date().toLocaleString(), threshold: threshold / 100 };
       setLast(rec);
       saveLast(rec);
     } catch (e: any) {
@@ -188,7 +190,7 @@ function BestSoFar({ best }: { best: NonNullable<Progress['best']> }) {
   );
 }
 
-function Report({ rec }: { rec: { report: CounterReport; target: string; at: string; threshold: number } }) {
+function Report({ rec }: { rec: RunRecord }) {
   const st = useStore();
   const r = rec.report;
   const best = r.best;
@@ -222,6 +224,10 @@ function Report({ rec }: { rec: { report: CounterReport; target: string; at: str
           </div>
           <div class="decklist">{deckToText(best.deck, st.cards)}</div>
         </div>
+      )}
+
+      {best && rec.targetDeck && (
+        <WatchGame key={deckToText(best.deck, st.cards)} a={best.deck} b={rec.targetDeck} cards={st.cards} rules={st.rules} labels={['Counter wins', 'Target wins']} />
       )}
 
       {best && (

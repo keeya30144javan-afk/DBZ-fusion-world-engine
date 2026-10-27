@@ -1,7 +1,12 @@
 import { Card } from '../data/types';
 import { MatchJob, MatchResult, runMatch } from '../builder/evaluate';
+import { Replay, RecordOpts, findReplay } from '../builder/replay';
 
 declare const __WORKER_SOURCE__: string;
+
+/** One blob URL for the worker script (the build inlines the source at each use, so use it once). */
+let workerUrl: string | null = null;
+const getWorkerUrl = () => (workerUrl ??= URL.createObjectURL(new Blob([__WORKER_SOURCE__], { type: 'text/javascript' })));
 
 /**
  * Runs match jobs on a pool of Web Workers (one per spare CPU core).
@@ -21,7 +26,7 @@ export class WorkerPool {
     const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
     this.size = Math.max(1, Math.min(size ?? cores - 1, 12));
     try {
-      const url = URL.createObjectURL(new Blob([__WORKER_SOURCE__], { type: 'text/javascript' }));
+      const url = getWorkerUrl();
       for (let i = 0; i < this.size; i++) {
         const w = new Worker(url);
         w.onmessage = (ev) => this.onMessage(w, ev.data);
@@ -87,4 +92,34 @@ export class WorkerPool {
     if (!this.idle.includes(w)) this.idle.push(w);
     this.pump();
   }
+}
+
+/**
+ * Record one game for the viewer on a worker of its own, so it neither waits
+ * behind a running search nor freezes the page. Falls back to the main thread.
+ */
+export function recordReplay(cards: Record<string, Card>, opts: RecordOpts & { want: 'any' | 'win' | 'loss'; tries?: number }): { done: Promise<Replay>; cancel: () => void } {
+  let w: Worker | null = null;
+  try {
+    w = new Worker(getWorkerUrl());
+  } catch {
+    w = null;
+  }
+  if (!w) {
+    return { done: new Promise((r) => setTimeout(() => r(findReplay(cards, opts)), 0)), cancel: () => {} };
+  }
+  const worker = w;
+  let reject: (e: any) => void = () => {};
+  const done = new Promise<Replay>((resolve, rej) => {
+    reject = rej;
+    worker.onmessage = (ev) => {
+      worker.terminate();
+      if (ev.data.type === 'replay') resolve(ev.data.replay);
+      else rej(new Error(ev.data.error));
+    };
+    worker.onerror = (ev) => { worker.terminate(); rej(new Error(ev.message)); };
+  });
+  worker.postMessage({ type: 'init', cards });
+  worker.postMessage({ type: 'replay', opts });
+  return { done, cancel: () => { worker.terminate(); reject(new Error('cancelled')); } };
 }
