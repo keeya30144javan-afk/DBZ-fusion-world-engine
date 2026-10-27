@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { newGame, legalActions, step, Action } from '../src/engine/game';
-import { GameState, Side, powerOf, costInHand } from '../src/engine/core';
+import { GameState, Side, powerOf, costInHand, cloneState } from '../src/engine/core';
 import { koCard } from '../src/engine/effects';
 import { defaultChooser } from '../src/ai/heuristics';
 import { clearCompileCache, compileCard } from '../src/effects/parse';
@@ -267,4 +267,17 @@ test('negate: "play it with its [On Play] skills negated"', () => {
   assert.ok(s.p[0].battle.includes(target));
   assert.equal(s.p[0].hand.length, hand - 1, 'no cards drawn');
   unscript('FS01-07', 'FS04-06');
+});
+
+test('cloneState: imagined games copy per-turn tracking and never share queues with the real game', () => {
+  const s = fresh();
+  s.p[0].kiRemovedTurn = s.turn;
+  (s.p[0].usedExtras ??= []).push({ turn: s.turn, uid: 1 });
+  s.battleEnd = [];
+  const c = cloneState(s);
+  assert.equal(c.p[0].kiRemovedTurn, s.turn);
+  c.p[0].usedExtras!.push({ turn: s.turn, uid: 2 });
+  c.battleEnd!.push({ src: 1, owner: 0, effects: [] });
+  assert.equal(s.p[0].usedExtras!.length, 1);
+  assert.equal(s.battleEnd.length, 0);
 });

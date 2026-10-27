@@ -6,14 +6,18 @@ import { cloneDeck, crossover, mulberry, mutate, seedDeck } from './deckgen';
 import { Level, MatchJob, MatchResult, emptyResult, mergeResults, score } from './evaluate';
 import { Z, diffZ, wilson } from './stats';
 
-export type Runner = (jobs: MatchJob[]) => Promise<MatchResult[]>;
+/** Runs match jobs; `onEach` is called as each job finishes (for progress). */
+export type Runner = (jobs: MatchJob[], onEach?: (r: MatchResult) => void) => Promise<MatchResult[]>;
+
+/** Rough relative cost of one game per AI level, for progress and time estimates. */
+const GAME_COST: Record<Level, number> = { fast: 1, quick: 800, strong: 2500, deep: 8000 };
 
 export interface CounterTarget {
   deck: Decklist;
   weight: number;
 }
 
-export type Effort = 'quick' | 'standard' | 'thorough';
+export type Effort = 'test' | 'quick' | 'standard' | 'thorough';
 
 export interface CounterOptions {
   targets: CounterTarget[];
@@ -33,6 +37,8 @@ export interface CounterOptions {
 }
 
 const EFFORT = {
+  /** For trying things out: at most 100 validation games per deck, whatever the AI level. */
+  test: { gens: 3, pop: 10, screen: 16, validate: 100, finalists: 2, chunk: 8 },
   quick: { gens: 4, pop: 12, screen: 24, validate: 120, finalists: 2, chunk: 8 },
   standard: { gens: 8, pop: 16, screen: 40, validate: 240, finalists: 3, chunk: 8 },
   thorough: { gens: 14, pop: 24, screen: 64, validate: 480, finalists: 4, chunk: 8 },
@@ -87,6 +93,14 @@ export interface Progress {
   bestName?: string;
   gamesPlayed: number;
   message: string;
+  /** Share of the whole search done, 0..1 (weighted by how long each kind of game takes). */
+  overall?: number;
+  /** Estimated seconds left, once there is enough to go on. */
+  eta?: number;
+  /** The current step, e.g. games of one finalist's validation. */
+  step?: { label: string; done: number; total: number };
+  /** The best deck found so far, so the user can see what is being built. */
+  best?: { deck: Decklist; rate: number; games: number; validated: boolean };
 }
 
 // ------------------------------------------------------------------ helpers
@@ -145,6 +159,38 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
 
   const freshSeeds = (n: number) => Array.from({ length: n }, () => (seedCounter = (seedCounter * 48271 + 11) % 2147483647));
 
+  const screenScore = (c: Scored) => aggregate(c.res, targets, 1).mean;
+  const newScored = (deck: Decklist, origin: string): Scored => ({ deck, key: deckKey(deck), origin, res: targets.map(() => emptyResult()) });
+
+  // ---- progress: cost-weighted share of the planned work, an ETA, and the best deck so far
+  const level: Level = opts.validateLevel ?? 'quick';
+  const validateGames = level === 'fast' && opts.effort !== 'test' ? E.validate * 2 : E.validate;
+  const nT = targets.length;
+  const seedPlan = (2 * leaders.length + (opts.known?.length ?? 0)) * E.chunk * 2.5 * nT; // successive halving, see below
+  const evolvePlan = E.gens * E.pop * E.screen * nT;
+  const validatePlan = (E.finalists + 1) * validateGames * nT * GAME_COST[level];
+  const plan = seedPlan + evolvePlan + validatePlan;
+  let costDone = 0;
+  let lastReport = 0;
+  let current: Omit<Progress, 'gamesPlayed' | 'overall' | 'eta'> = { phase: 'seed', message: '' };
+  let bestSoFar: Progress['best'];
+  const report = (force = false) => {
+    const now = Date.now();
+    if (!force && now - lastReport < 250) return;
+    lastReport = now;
+    const overall = Math.min(0.999, costDone / plan);
+    const elapsed = (now - t0) / 1000;
+    const eta = overall > 0.03 && elapsed > 5 ? Math.round((elapsed / overall) * (1 - overall)) : undefined;
+    onProgress({ ...current, gamesPlayed, overall, eta, best: bestSoFar });
+  };
+  const setStep = (p: Omit<Progress, 'gamesPlayed' | 'overall' | 'eta'>) => { current = p; report(true); };
+  const offerBest = (c: Scored) => {
+    const g = c.res.reduce((a, r) => a + r.games, 0);
+    const rate = screenScore(c);
+    if (!bestSoFar?.validated && (!bestSoFar || rate > bestSoFar.rate || deckKey(bestSoFar.deck) === c.key)) bestSoFar = { deck: c.deck, rate, games: g, validated: false };
+  };
+
+  /** Play `games` fast games of each candidate against each target. */
   async function screen(cands: Scored[], games: number) {
     const jobs: MatchJob[] = [];
     const map: [number, number][] = [];
@@ -154,15 +200,20 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
         map.push([ci, ti]);
       }
     }));
-    const results = await run(jobs);
-    results.forEach((r, i) => { const [ci, ti] = map[i]; mergeResults(cands[ci].res[ti], r); gamesPlayed += r.games; });
+    const total = jobs.length;
+    let done = 0;
+    const label = current.step?.label ?? 'Screening';
+    const results = await run(jobs, (r) => {
+      done++; gamesPlayed += r.games; costDone += r.games;
+      current = { ...current, step: { label, done, total } };
+      report();
+    });
+    results.forEach((r, i) => { const [ci, ti] = map[i]; mergeResults(cands[ci].res[ti], r); });
+    for (const c of cands) offerBest(c);
   }
 
-  const screenScore = (c: Scored) => aggregate(c.res, targets, 1).mean;
-  const newScored = (deck: Decklist, origin: string): Scored => ({ deck, key: deckKey(deck), origin, res: targets.map(() => emptyResult()) });
-
   // ---- seed population
-  onProgress({ phase: 'seed', gamesPlayed, message: `Building starting decks for ${leaders.length} leader(s)` });
+  setStep({ phase: 'seed', message: `Building starting decks for ${leaders.length} leader(s)` });
   const seen = new Map<string, Scored>();
   const pop: Scored[] = [];
   const push = (d: Decklist, origin: string) => {
@@ -179,10 +230,30 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     push(seedDeck(cards, id, rng, rules, 1.5), 'generated (variant)');
   }
   if (!pop.length) throw new Error('No legal candidate decks could be built from this card pool.');
-  await screen(pop, E.screen);
+
+  // Successive halving: every starting deck gets a short test, the better half gets more
+  // games, and so on, so clearly weak leaders don't cost a full screening each.
+  // No deck plays more than the usual screening budget (E.screen) in total.
+  let survivors = pop.slice();
+  let played = 0;
+  for (let round = 1; ; round++) {
+    if (isCancelled()) break;
+    const first = Math.max(E.chunk, Math.ceil(E.screen / 4 / E.chunk) * E.chunk);
+    const games = Math.min(first * 2 ** (round - 1), E.screen - played);
+    if (games > 0) {
+      setStep({ phase: 'seed', message: `Testing ${survivors.length} starting deck${survivors.length === 1 ? '' : 's'} (round ${round}, ${games} games each)`, step: { label: `Starting decks, round ${round}`, done: 0, total: 1 } });
+      await screen(survivors, games);
+      played += games;
+    }
+    if (survivors.length <= E.pop && played >= E.screen) break;
+    if (survivors.length > E.pop) {
+      survivors.sort((a, b) => screenScore(b) - screenScore(a));
+      survivors = survivors.slice(0, Math.max(E.pop, Math.ceil(survivors.length / 2)));
+    } else if (played >= E.screen) break;
+  }
 
   // ---- evolve
-  let population = pop.slice();
+  let population = survivors.slice();
   for (let g = 1; g <= E.gens; g++) {
     if (isCancelled()) break;
     population.sort((a, b) => screenScore(b) - screenScore(a));
@@ -197,6 +268,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       elites.push(c);
       if (elites.length >= Math.ceil(E.pop / 3)) break;
     }
+    setStep({ phase: 'evolve', generation: g, generations: E.gens, message: `Generation ${g}/${E.gens}: breeding and testing new decks`, step: { label: `Generation ${g} of ${E.gens}`, done: 0, total: 1 } });
     const children: Scored[] = [];
     let tries = 0;
     while (children.length < E.pop - elites.length && tries++ < E.pop * 10) {
@@ -226,7 +298,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     await screen(elites, Math.ceil(E.screen / 2));
     population = [...elites, ...children];
     const top = population.slice().sort((a, b) => screenScore(b) - screenScore(a))[0];
-    onProgress({ phase: 'evolve', generation: g, generations: E.gens, bestScreen: screenScore(top), bestName: top.deck.name, gamesPlayed, message: `Generation ${g}/${E.gens}: best screening win rate ${(screenScore(top) * 100).toFixed(0)}% (${cards[top.deck.leader].name})` });
+    setStep({ phase: 'evolve', generation: g, generations: E.gens, bestScreen: screenScore(top), bestName: top.deck.name, message: `Generation ${g}/${E.gens}: best screening win rate ${(screenScore(top) * 100).toFixed(0)}% (${cards[top.deck.leader].name})` });
   }
 
   // ---- validate finalists with fresh games and stronger play on both sides
@@ -244,20 +316,44 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   baselines.sort((a, b) => screenScore(b) - screenScore(a));
   const baselineScored = baselines[0];
 
-  const level: Level = opts.validateLevel ?? 'quick';
-  const validateGames = level === 'fast' ? E.validate * 2 : E.validate;
-  async function validate(c: Scored): Promise<Validated> {
-    const jobs: MatchJob[] = [];
-    const map: number[] = [];
-    targets.forEach((t, ti) => {
-      for (let g = 0; g < validateGames; g += 4) {
-        jobs.push({ a: c.deck, b: t.deck, seeds: freshSeeds(Math.min(4, validateGames - g)).map((x) => x + 1_000_000), level, track: true, rules });
-        map.push(ti);
-      }
-    });
+  /**
+   * Fresh games with the stronger AI, played in rounds. Between rounds a deck stops early
+   * when it can no longer reach the bar (its upper bound is below it), or when it has
+   * cleared the bar by a wide margin (a stricter z than the final one, so looking early
+   * cannot turn a lucky streak into a recommendation).
+   */
+  async function validate(c: Scored, label: string, opts2: { early: boolean }): Promise<Validated> {
     const res = targets.map(() => emptyResult());
-    const results = await run(jobs);
-    results.forEach((r, i) => { mergeResults(res[map[i]], r); gamesPlayed += r.games; });
+    const roundSize = Math.max(16, Math.ceil(validateGames / 4 / 4) * 4);
+    const planned = validateGames * nT;
+    let played = 0;
+    for (let start = 0; start < validateGames; start += roundSize) {
+      if (isCancelled()) break;
+      const n = Math.min(roundSize, validateGames - start);
+      const jobs: MatchJob[] = [];
+      const map: number[] = [];
+      targets.forEach((t, ti) => {
+        for (let g = 0; g < n; g += 4) {
+          jobs.push({ a: c.deck, b: t.deck, seeds: freshSeeds(Math.min(4, n - g)).map((x) => x + 1_000_000), level, track: true, rules });
+          map.push(ti);
+        }
+      });
+      const results = await run(jobs, (r) => {
+        played += r.games; gamesPlayed += r.games; costDone += r.games * GAME_COST[level];
+        current = { ...current, step: { label, done: played, total: planned } };
+        report();
+      });
+      results.forEach((r, i) => mergeResults(res[map[i]], r));
+      if (!opts2.early || start + n >= validateGames) continue;
+      const agg = aggregate(res, targets, z);
+      const strict = aggregate(res, targets, z + 0.75);
+      const hopeless = agg.hi < opts.threshold;
+      const clear = strict.lo >= opts.threshold;
+      if (hopeless || clear) {
+        costDone += (planned - played) * GAME_COST[level]; // the skipped games count as done for the estimate
+        break;
+      }
+    }
     const agg = aggregate(res, targets, z);
     return {
       deck: c.deck, origin: c.origin, rate: agg.mean, lo: agg.lo, hi: agg.hi, games: agg.games,
@@ -269,15 +365,20 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const validated: Validated[] = [];
   for (let i = 0; i < finalists.length; i++) {
     if (isCancelled()) break;
-    onProgress({ phase: 'validate', gamesPlayed, message: `Validating finalist ${i + 1}/${finalists.length} with ${validateGames} fresh games (${level} AI on both sides)` });
-    validated.push(await validate(finalists[i]));
+    setStep({ phase: 'validate', message: `Validating finalist ${i + 1}/${finalists.length}: ${finalists[i].deck.name} (up to ${validateGames} fresh games, ${level} AI on both sides)`, step: { label: `Finalist ${i + 1} of ${finalists.length}`, done: 0, total: validateGames * nT } });
+    const v = await validate(finalists[i], `Finalist ${i + 1} of ${finalists.length}`, { early: true });
+    validated.push(v);
+    const top = validated.slice().sort((a, b) => b.lo - a.lo || b.rate - a.rate)[0];
+    bestSoFar = { deck: top.deck, rate: top.rate, games: top.games, validated: true };
+    report(true);
   }
   let baseline: Validated | null = null;
   const baselineIsFinalist = validated.find((v) => deckKey(v.deck) === baselineScored.key);
   if (baselineIsFinalist) baseline = baselineIsFinalist;
-  else if (!isCancelled()) {
-    onProgress({ phase: 'validate', gamesPlayed, message: `Validating baseline "${baselineScored.deck.name}"` });
-    baseline = await validate(baselineScored);
+  else if (!isCancelled() && validated.some((v) => v.hi >= opts.threshold)) {
+    // Only needed when a finalist could still be recommended: is it better than just playing a known deck?
+    setStep({ phase: 'validate', message: `Validating baseline "${baselineScored.deck.name}"`, step: { label: 'Baseline', done: 0, total: validateGames * nT } });
+    baseline = await validate(baselineScored, 'Baseline', { early: false });
   }
 
   validated.sort((a, b) => b.lo - a.lo || b.rate - a.rate);
@@ -324,7 +425,8 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     keyCards.sort((a, b) => b.lift - a.lift);
   }
 
-  onProgress({ phase: 'done', gamesPlayed, message: headline });
+  costDone = plan;
+  setStep({ phase: 'done', message: headline });
   return {
     verdict, headline, reasons, best,
     alternatives: validated.slice(1),
@@ -336,5 +438,5 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
 
 /** Synchronous runner for Node and tests. */
 export function localRunner(cards: Record<string, Card>, runMatch: (c: Record<string, Card>, j: MatchJob) => MatchResult): Runner {
-  return async (jobs) => jobs.map((j) => runMatch(cards, j));
+  return async (jobs, onEach) => jobs.map((j) => { const r = runMatch(cards, j); onEach?.(r); return r; });
 }

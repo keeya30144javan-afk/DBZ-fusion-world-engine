@@ -110,7 +110,7 @@ function startTurn(s: GameState) {
   s.p[1].usedOnce = [];
   s.charged = false;
   emit(s, { t: 'turn', turn: s.turn, active: s.active });
-  log(s, `--- Turn ${s.turn}: P${s.active} (${nameOf(s, p.leader)})`);
+  log(s, () => `--- Turn ${s.turn}: P${s.active} (${nameOf(s, p.leader)})`);
   for (const u of [p.leader, ...p.battle, ...p.energy, ...(p.field !== null ? [p.field] : [])]) {
     if (s.inst[u].lockedUntil >= s.turn) continue;
     s.inst[u].rested = false;
@@ -232,7 +232,8 @@ function doEvolve(s: GameState, uid: number, bases: number[], ctl: Choosers) {
   s.inst[uid].playedTurn = s.turn;
   s.inst[uid].playedByEvolve = true;
   me.battle.splice(Math.min(at, me.battle.length), 0, uid);
-  log(s, `P${side} evolves ${bases.map((b) => nameOf(s, b)).join(' + ')} into ${nameOf(s, uid)}`);
+  s.zoneRev = (s.zoneRev ?? 0) + 1;
+  log(s, () => `P${side} evolves ${bases.map((b) => nameOf(s, b)).join(' + ')} into ${nameOf(s, uid)}`);
   emit(s, { t: 'play', p: side, id: s.inst[uid].id, uid });
   afterPlayed(s, uid, ctl);
 }
@@ -390,7 +391,7 @@ function declareAttack(s: GameState, attacker: number, target: number, ctl: Choo
   s.inst[attacker].rested = true;
   s.inst[attacker].attackedTurn = s.turn;
   s.battle = { attacker, atkSide: side, target, blocked: false, cantBlock: false, comboCount: [0, 0] };
-  log(s, `P${side} attacks with ${nameOf(s, attacker)} (${powerOf(s, attacker)}) -> ${nameOf(s, target)} (${powerOf(s, target)})`);
+  log(s, () => `P${side} attacks with ${nameOf(s, attacker)} (${powerOf(s, attacker)}) -> ${nameOf(s, target)} (${powerOf(s, target)})`);
   emit(s, { t: 'attack', p: side, attacker, target });
   fireTriggers(s, attacker, 'whenAttacking', ctl);
   if (s.stage === 'over') return;
@@ -452,15 +453,15 @@ function resolveDamage(s: GameState, ctl: Choosers) {
     if (isLeader(s, b.target)) {
       const n = hasKeyword(s, b.attacker, 'tripleStrike') ? 3 : hasKeyword(s, b.attacker, 'doubleStrike') ? 2 : 1;
       const crit = hasKeyword(s, b.attacker, 'critical');
-      log(s, `hit: ${atk} vs ${def}, P${defSide} takes ${n}${crit ? ' (critical)' : ''}`);
+      log(s, () => `hit: ${atk} vs ${def}, P${defSide} takes ${n}${crit ? ' (critical)' : ''}`);
       emit(s, { t: 'damage', p: defSide, n });
       takeLife(s, defSide, n, crit, ctl);
       if (s.stage !== 'over') fireTriggers(s, b.attacker, 'whenDealsDamage', ctl);
     } else {
-      log(s, `hit: ${atk} vs ${def}`);
+      log(s, () => `hit: ${atk} vs ${def}`);
       if (koCard(s, b.target, ctl, { src: b.attacker, battle: true }) && s.stage !== 'over' && s.p[b.atkSide].battle.includes(b.attacker)) fireTriggers(s, b.attacker, 'whenKOsInBattle', ctl);
     }
-  } else log(s, `blocked out: ${atk} vs ${def}`);
+  } else log(s, () => `blocked out: ${atk} vs ${def}`);
   // "When this card wins a battle": the attacker on a hit, the defender otherwise.
   const winner = atk >= def ? b.attacker : b.target;
   const stillThere = isLeader(s, winner) || s.p[s.inst[winner].owner].battle.includes(winner);
@@ -495,7 +496,7 @@ function addCombo(s: GameState, uid: number, side: Side, ctl: Choosers) {
   moveTo(s, uid, 'combo');
   s.battle!.comboCount[side]++;
   emit(s, { t: 'combo', p: side, id: s.inst[uid].id, uid, fromHand });
-  log(s, `P${side} combos ${nameOf(s, uid)}${fromHand ? '' : ' from the field'}`);
+  log(s, () => `P${side} combos ${nameOf(s, uid)}${fromHand ? '' : ' from the field'}`);
   fireTriggers(s, uid, fromHand ? 'comboFromHand' : 'comboFromField', ctl);
   fireComboWatchers(s, side, ctl);
 }
@@ -519,7 +520,7 @@ function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers) {
   const ab = compiledOf(s, uid).abilities[abIdx];
   moveTo(s, uid, 'drop');
   emit(s, { t: 'activate', p: side, id: s.inst[uid].id, uid, fromHand: true });
-  log(s, `P${side} uses ${nameOf(s, uid)}`);
+  log(s, () => `P${side} uses ${nameOf(s, uid)}`);
   resolveAbility(s, uid, ab, abIdx, ctl);
 }
 
@@ -545,7 +546,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
     case 'charge':
       moveTo(s, a.uid, 'energy');
       emit(s, { t: 'charge', p: side, id: s.inst[a.uid].id, uid: a.uid });
-      log(s, `P${side} charges ${nameOf(s, a.uid)}`);
+      log(s, () => `P${side} charges ${nameOf(s, a.uid)}`);
     // fallthrough
     case 'noCharge':
       s.charged = true;
@@ -590,7 +591,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       s.inst[a.uid].rested = true;
       b.target = a.uid;
       b.blocked = true;
-      log(s, `P${side} blocks with ${nameOf(s, a.uid)}`);
+      log(s, () => `P${side} blocks with ${nameOf(s, a.uid)}`);
       fireTriggers(s, a.uid, 'whenBlocking', ctl);
       if ((s.stage as string) === 'over') return;
       if (!battleStillValid(s)) return endBattle(s, ctl);

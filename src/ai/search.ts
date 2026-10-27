@@ -21,6 +21,9 @@ export const SEARCH_LEVELS: Record<string, SearchOpts> = {
 
 const ctl: [Chooser, Chooser] = [defaultChooser, defaultChooser];
 
+/** Simulations run vs. budgeted, for benchmarking (cli). */
+export const searchStats = { decisions: 0, sims: 0, budget: 0 };
+
 /** Run a world forward with the fast policy until `untilTurn` or the end. */
 function rollout(w: GameState, pol: Policy, untilTurn: number) {
   let n = 0;
@@ -51,7 +54,9 @@ export class SearchPolicy implements Policy {
     const visits = new Array(n).fill(0);
     const total = new Array(n).fill(0);
     const iters = Math.max(this.opts.iterations, n * 4);
+    searchStats.decisions++; searchStats.budget += iters;
     for (let it = 0; it < iters; it++) {
+      searchStats.sims++;
       let pick = -1;
       if (it < n) pick = it;
       else {
@@ -67,6 +72,16 @@ export class SearchPolicy implements Policy {
       rollout(w, this.roll, s.turn + this.opts.horizon);
       visits[pick]++;
       total[pick] += winProb(w, me);
+      // Stop early once one option is clearly ahead: every option has been tried a few
+      // times and the leader beats the runner-up by a wide margin on both mean and visits.
+      if (it >= n * 6 && it % 8 === 7) {
+        let a = -1, b = -1;
+        for (let i = 0; i < n; i++) {
+          const m = total[i] / visits[i];
+          if (a < 0 || m > total[a] / visits[a]) { b = a; a = i; } else if (b < 0 || m > total[b] / visits[b]) b = i;
+        }
+        if (b >= 0 && visits[a] >= 12 && total[a] / visits[a] - total[b] / visits[b] > 0.12 && visits[a] >= 2 * visits[b]) break;
+      }
     }
     let bestI = 0;
     for (let i = 1; i < n; i++) if (total[i] / visits[i] > total[bestI] / visits[bestI]) bestI = i;

@@ -1,6 +1,6 @@
 import { Card, Color } from '../data/types';
 import { RulesConfig } from '../data/rules';
-import { compileCard } from '../effects/parse';
+import { compileCard, compileGeneration } from '../effects/parse';
 import { Ability, CompiledCard, Cond, Count, Effect, Filter, Keyword } from '../effects/types';
 
 export type Side = 0 | 1;
@@ -151,6 +151,8 @@ export interface GameState {
   skillBy?: Side;
   /** Effects to run when the current battle ends ("At the end of the battle, KO this card"). */
   battleEnd?: { src: number; owner: Side; effects: Effect[] }[];
+  /** Bumped whenever cards in play or their active abilities change (cache key for auras). */
+  zoneRev?: number;
   /** Battle Cards that left a Battle Area during the current skill, for removal triggers. */
   removals?: { uid: number; owner: Side; by: Side }[];
 }
@@ -175,9 +177,10 @@ export function shuffle<T>(s: GameState, a: T[]): T[] {
 // ------------------------------------------------------------------ cloning
 
 export function cloneState(s: GameState): GameState {
+  // Spread first so every scalar field (including per-turn tracking added later) is copied;
+  // then give every array its own copy so imagined games can't write into the real one.
   const clonePlayer = (p: PlayerState): PlayerState => ({
-    leader: p.leader,
-    awakened: p.awakened,
+    ...p,
     deck: p.deck.slice(),
     hand: p.hand.slice(),
     battle: p.battle.slice(),
@@ -191,7 +194,7 @@ export function cloneState(s: GameState): GameState {
     mods: p.mods ? p.mods.slice() : undefined,
     koBy: p.koBy ? p.koBy.slice() : undefined,
     atEnd: p.atEnd ? p.atEnd.slice() : undefined,
-    mulliganed: p.mulliganed,
+    usedExtras: p.usedExtras ? p.usedExtras.slice() : undefined,
   });
   return {
     ...s,
@@ -204,6 +207,8 @@ export function cloneState(s: GameState): GameState {
     })),
     p: [clonePlayer(s.p[0]), clonePlayer(s.p[1])],
     battle: s.battle ? { ...s.battle, comboCount: [s.battle.comboCount[0], s.battle.comboCount[1]] } : null,
+    battleEnd: s.battleEnd ? s.battleEnd.slice() : undefined,
+    removals: s.removals ? s.removals.slice() : undefined,
     log: null,
     events: null,
   };
@@ -237,20 +242,60 @@ const negatedAll = (s: GameState, uid: number) => {
 // [Permanent] effects a card gives to other cards ("your Battle Cards with a cost of 3 can't be
 // removed...", "all your <X> get +5000 power"): a permanent grant/power with target.all.
 
-const auraCache = new WeakMap<object, boolean>();
-const hasAura = (abs: Ability[]) => {
-  let v = auraCache.get(abs);
-  if (v === undefined) {
-    v = abs.some((a) => a.timing === 'permanent' && a.effects.some((e) => (e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && (e.target.all || e.target.ref === 'leader')));
-    auraCache.set(abs, v);
+/**
+ * What an ability list can do continuously, worked out once per list. Power, cost and
+ * keyword lookups run thousands of times per AI decision, so they skip cards whose
+ * abilities can't affect the answer without looking at them.
+ */
+interface StaticSummary {
+  /** Gives power, keywords or cost changes to other cards (or to your Leader from a Battle Card). */
+  aura: boolean;
+  /** Keywords it can grant to itself through a [Permanent]. */
+  selfGrants: Set<Keyword>;
+  selfPower: boolean;
+}
+const summaries = new WeakMap<Ability[], StaticSummary>();
+function summaryOf(abs: Ability[]): StaticSummary {
+  let v = summaries.get(abs);
+  if (!v) {
+    v = { aura: false, selfGrants: new Set(), selfPower: false };
+    for (const a of abs) {
+      if (a.timing !== 'permanent') continue;
+      for (const e of a.effects) {
+        if ((e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && (e.target.all || e.target.ref === 'leader')) v.aura = true;
+        if (e.t === 'grant' && e.target.ref === 'this') v.selfGrants.add(e.kw);
+        if (e.t === 'power') v.selfPower = true;
+      }
+    }
+    summaries.set(abs, v);
   }
   return v;
-};
+}
+const NO_EFFECTS: Effect[] = [];
+
+/** Is any card in play an aura source? Cached until cards in play (or the turn) change. */
+const auraMemo = new WeakMap<GameState, number[]>();
+function anyAura(s: GameState): boolean {
+  const p0 = s.p[0], p1 = s.p[1];
+  const m = auraMemo.get(s);
+  if (m && m[0] === (s.zoneRev ?? 0) && m[1] === s.turn && m[2] === compileGeneration && m[3] === +p0.awakened + 2 * +p1.awakened
+    && m[4] === p0.battle.length && m[5] === p1.battle.length && m[6] === (p0.field ?? -1) && m[7] === (p1.field ?? -1)) return m[8] === 1;
+  let any = false;
+  for (let side = 0; side < 2 && !any; side++) {
+    const p = s.p[side];
+    if (summaryOf(abilitiesOf(s, p.leader)).aura) any = true;
+    for (let i = 0; i < p.battle.length && !any; i++) if (summaryOf(abilitiesOf(s, p.battle[i])).aura) any = true;
+    if (!any && p.field !== null && summaryOf(abilitiesOf(s, p.field)).aura) any = true;
+  }
+  auraMemo.set(s, [s.zoneRev ?? 0, s.turn, compileGeneration, +p0.awakened + 2 * +p1.awakened, p0.battle.length, p1.battle.length, p0.field ?? -1, p1.field ?? -1, any ? 1 : 0]);
+  return any;
+}
 let auraDepth = 0;
 
 /** Permanent grant/power effects other cards give to `uid`. */
 export function auraEffects(s: GameState, uid: number): Effect[] {
-  if (auraDepth > 0) return []; // an aura's own condition doesn't see auras: no loops
+  if (auraDepth > 0) return NO_EFFECTS; // an aura's own condition doesn't see auras: no loops
+  if (!anyAura(s)) return NO_EFFECTS; // most boards have none
   const out: Effect[] = [];
   const where = isLeader(s, uid) ? 'leader' : 'battle';
   auraDepth++;
@@ -260,7 +305,7 @@ export function auraEffects(s: GameState, uid: number): Effect[] {
       const srcs = p.field !== null ? [p.leader, ...p.battle, p.field] : [p.leader, ...p.battle];
       for (const src of srcs) {
         const abs = abilitiesOf(s, src);
-        if (!hasAura(abs)) continue;
+        if (!summaryOf(abs).aura) continue;
         for (const ab of abs) {
           if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) continue;
           for (const e of ab.effects) {
@@ -294,8 +339,10 @@ export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
   if (base.has(kw) && !negatedAll(s, uid)) return true;
   if (auraEffects(s, uid).some((e) => e.t === 'grant' && e.kw === kw)) return true;
   if (staticDepth >= MAX_STATIC_DEPTH) return false;
+  const abs = abilitiesOf(s, uid);
+  if (!summaryOf(abs).selfGrants.has(kw)) return false;
   // [Permanent] "this card gains [X]" / "this card can't attack" with conditions.
-  for (const ab of abilitiesOf(s, uid)) {
+  for (const ab of abs) {
     if (ab.timing !== 'permanent') continue;
     if (!ab.effects.some((e) => e.t === 'grant' && e.kw === kw && e.target.ref === 'this')) continue;
     if (!turnMatches(s, inst.owner, ab.turn)) continue;
@@ -349,8 +396,9 @@ export function zoneOf(s: GameState, uid: number): Zone {
   return 'removed';
 }
 
-export function log(s: GameState, msg: string) {
-  if (s.log) s.log.push(`T${s.turn} ${msg}`);
+/** Game log line. Pass a function so the text is only built when a log is kept (not in AI rollouts). */
+export function log(s: GameState, msg: string | (() => string)) {
+  if (s.log) s.log.push(`T${s.turn} ${typeof msg === 'function' ? msg() : msg}`);
 }
 
 export function emit(s: GameState, e: GameEvent) {
@@ -543,9 +591,11 @@ export function staticPower(s: GameState, uid: number): number {
   let add = 0;
   const yourTurn = s.active === owner;
   if (staticDepth >= MAX_STATIC_DEPTH) return 0;
+  const abs = abilitiesOf(s, uid);
+  if (!summaryOf(abs).selfPower) { const au = auraEffects(s, uid); for (const e of au) if (e.t === 'power') add += e.amount; return add; }
   staticDepth++;
   try {
-  for (const ab of abilitiesOf(s, uid)) {
+  for (const ab of abs) {
     if (ab.timing !== 'permanent') continue;
     if (ab.turn === 'your' && !yourTurn) continue;
     if (ab.turn === 'opp' && yourTurn) continue;
@@ -622,6 +672,7 @@ export const activeEnergy = (s: GameState, p: Side) => s.p[p].energy.filter((u) 
 export function planPayment(s: GameState, p: Side, total: number, spec: Partial<Record<Color, number>>): { rest: number[]; markers: number } | null {
   if (total <= 0) return { rest: [], markers: 0 };
   const avail = activeEnergy(s, p);
+  if (total > avail.length + s.p[p].markers) return null; // can't afford it whatever the colors
   const used = new Set<number>();
   let markers = s.p[p].markers;
   let usedMarkers = 0;
@@ -675,6 +726,7 @@ function scaleSpec(spec: Partial<Record<Color, number>>, total: number) {
 // ------------------------------------------------------------------ moving cards
 
 export function removeFrom(s: GameState, uid: number): Zone {
+  s.zoneRev = (s.zoneRev ?? 0) + 1;
   const owner = s.inst[uid].owner;
   const p = s.p[owner];
   if (p.field === uid) { p.field = null; return 'field'; }

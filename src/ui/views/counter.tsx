@@ -14,7 +14,7 @@ export function CounterLab() {
   const [mode, setMode] = useState<'meta' | 'paste'>('meta');
   const [targetId, setTargetId] = useState(st.meta[0]?.id ?? '');
   const [paste, setPaste] = useState('');
-  const [effort, setEffort] = useState<Effort>('quick');
+  const [effort, setEffort] = useState<Effort>('test');
   const [threshold, setThreshold] = useState(55);
   const [confidence, setConfidence] = useState('0.95');
   const [level, setLevel] = useState<Level>('quick');
@@ -57,8 +57,8 @@ export function CounterLab() {
           seed: Date.now() % 100000,
           rules: st.rules,
         },
-        (jobs) => pool.run(jobs),
-        (p) => { setProgress(p); setLog((l) => [...l.slice(-60), p.message]); },
+        (jobs, onEach) => pool.run(jobs, onEach),
+        (p) => { setProgress(p); setLog((l) => (l[l.length - 1] === p.message ? l : [...l.slice(-60), p.message])); },
         () => cancel.current,
       );
       const rec = { report, target: target.deck.name, at: new Date().toLocaleString(), threshold: threshold / 100 };
@@ -71,7 +71,7 @@ export function CounterLab() {
     }
   }
 
-  const evolvePct = progress?.phase === 'evolve' ? (progress.generation ?? 0) / (progress.generations ?? 1) : progress?.phase === 'validate' || progress?.phase === 'done' ? 1 : 0;
+  const overall = progress?.phase === 'done' ? 1 : progress?.overall ?? 0;
 
   return (
     <div class="split">
@@ -101,8 +101,8 @@ export function CounterLab() {
           <label class="field">Confidence
             <Seg label="Confidence" options={[['0.8', '80%'], ['0.9', '90%'], ['0.95', '95%'], ['0.99', '99%']]} value={confidence} onChange={setConfidence} />
           </label>
-          <label class="field">Effort <span class="hint">More effort means more decks tried and more games played.</span>
-            <Seg label="Effort" options={[['quick', 'Quick'], ['standard', 'Standard'], ['thorough', 'Thorough']]} value={effort} onChange={setEffort} />
+          <label class="field">Effort <span class="hint">More effort means more decks tried and more games played. "Test" caps validation at 100 games per deck: fast, but the win-rate range is wider.</span>
+            <Seg label="Effort" options={[['test', 'Test'], ['quick', 'Quick'], ['standard', 'Standard'], ['thorough', 'Thorough']]} value={effort} onChange={setEffort} />
           </label>
           <label class="field">Test-game AI <span class="hint">"Search" thinks ahead on every move. "Fast" is quicker but easier to exploit.</span>
             <Seg label="AI level" options={[['fast', 'Fast'], ['quick', 'Search'], ['strong', 'Strong search']]} value={level} onChange={setLevel} />
@@ -133,16 +133,52 @@ export function CounterLab() {
       <div class="stack">
         {(running || (progress && progress.phase !== 'done')) && (
           <div class="panel raised progress" aria-live="polite">
-            <div class="eyebrow">{progress?.phase === 'validate' ? 'Validating' : progress?.phase === 'evolve' ? 'Evolving decks' : 'Starting'} · {progress?.gamesPlayed ?? 0} games played</div>
-            <Meter value={evolvePct} accent />
+            <div class="eyebrow">{PHASE_LABEL[progress?.phase ?? 'seed']} · {(progress?.gamesPlayed ?? 0).toLocaleString()} games played · {pct(overall, 0)} done{progress?.eta !== undefined ? ` · about ${fmtEta(progress.eta)} left` : ''}</div>
+            <Meter value={overall} accent />
+            {progress?.step && progress.step.total > 1 && (
+              <div class="row" style={{ gap: '10px', fontSize: '12px' }}>
+                <span style={{ minWidth: '9em' }}>{progress.step.label}</span>
+                <span style={{ flex: 1 }}><Meter value={progress.step.done / progress.step.total} /></span>
+                <span class="mono">{progress.step.done.toLocaleString()} / {progress.step.total.toLocaleString()}</span>
+              </div>
+            )}
             <div class="log">{log.map((l, i) => <div key={i}>{l}</div>)}</div>
           </div>
         )}
+        {running && progress?.best && <BestSoFar best={progress.best} />}
         {error && <div class="panel err">The search stopped: {error}</div>}
         {last ? <Report rec={last} /> : !running && (
           <div class="empty">No search yet. Choose a target deck and press <b>Find a counter</b>. Results show here with the evidence behind them.</div>
         )}
       </div>
+    </div>
+  );
+}
+
+const PHASE_LABEL: Record<Progress['phase'], string> = { seed: 'Testing starting decks', evolve: 'Evolving decks', validate: 'Validating finalists', done: 'Done' };
+
+function fmtEta(sec: number): string {
+  if (sec < 90) return `${Math.max(5, Math.round(sec / 5) * 5)} s`;
+  if (sec < 5400) return `${Math.round(sec / 60)} min`;
+  return `${(sec / 3600).toFixed(1)} h`;
+}
+
+/** The deck the search currently likes best, shown while it runs. */
+function BestSoFar({ best }: { best: NonNullable<Progress['best']> }) {
+  const st = useStore();
+  const text = deckToText(best.deck, st.cards);
+  return (
+    <div class="panel stack">
+      <div class="row" style={{ justifyContent: 'space-between' }}>
+        <div>
+          <div class="eyebrow">{best.validated ? 'Best validated so far' : 'Best so far (screening, not yet validated)'}</div>
+          <h2 style={{ margin: 0 }}>{best.deck.name}</h2>
+          <div class="note">{st.cards[best.deck.leader]?.name} <ColorTag card={st.cards[best.deck.leader]} /> · {pct(best.rate, 0)} over {best.games.toLocaleString()} {best.validated ? 'validation' : 'quick screening'} games</div>
+        </div>
+        <CopyButton text={text} label="Copy list" />
+      </div>
+      <div class="decklist">{text}</div>
+      {!best.validated && <p class="note">Screening uses the fast AI, so this number runs high. The final verdict comes from fresh games with the stronger AI.</p>}
     </div>
   );
 }

@@ -479,6 +479,10 @@ export function fromScript(sc: CardScript): CompiledCard {
   return out;
 }
 
+/** Bumped whenever compiled cards may have changed, so caches built on them can tell. */
+export let compileGeneration = 0;
+
 export function clearCompileCache() {
   cache.clear();
+  compileGeneration++;
 }

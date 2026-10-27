@@ -30,7 +30,7 @@ export function setWinner(s: GameState, winner: Side | -1, reason: string) {
   s.winner = winner;
   s.reason = reason;
   s.battle = null;
-  log(s, `GAME OVER: ${winner === -1 ? 'draw' : `P${winner} wins`} (${reason})`);
+  log(s, () => `GAME OVER: ${winner === -1 ? 'draw' : `P${winner} wins`} (${reason})`);
   emit(s, { t: 'over', winner, reason });
 }
 
@@ -99,7 +99,7 @@ export function checkZeroPower(s: GameState, ctl: Choosers) {
       if (powerOf(s, u) <= 0) {
         // Not a KO: "When KO'd" does not trigger (FW manual p. 11).
         moveTo(s, u, 'drop');
-        log(s, `${nameOf(s, u)} drops at 0 power`);
+        log(s, () => `${nameOf(s, u)} drops at 0 power`);
         emit(s, { t: 'toDrop', p: side, id: s.inst[u].id, uid: u });
       }
     }
@@ -119,12 +119,12 @@ export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}
   if (oppSkill && (hasKeyword(s, uid, 'koImmuneSkills') || hasKeyword(s, uid, 'removeImmune'))) return false;
   if (hasKeyword(s, uid, 'koImmuneOnce') && s.inst[uid].koShieldTurn !== s.turn) {
     s.inst[uid].koShieldTurn = s.turn;
-    log(s, `${nameOf(s, uid)} survives (can't be KO'd once per turn)`);
+    log(s, () => `${nameOf(s, uid)} survives (can't be KO'd once per turn)`);
     return false;
   }
   if (by.src !== undefined && s.inst[by.src].owner !== owner) (s.p[s.inst[by.src].owner].koBy ??= []).push({ turn: s.turn, uid: by.src });
   moveTo(s, uid, 'drop');
-  log(s, `${nameOf(s, uid)} is KO'd`);
+  log(s, () => `${nameOf(s, uid)} is KO'd`);
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
   emit(s, { t: 'toDrop', p: owner, id: s.inst[uid].id, uid });
   fireTriggers(s, uid, 'whenKOd', ctl);
@@ -151,7 +151,7 @@ export function placeField(s: GameState, uid: number, ctl: Choosers) {
   resetInst(s.inst[uid]);
   s.inst[uid].playedTurn = s.turn;
   me.field = uid;
-  log(s, `P${owner} places Field ${nameOf(s, uid)}`);
+  log(s, () => `P${owner} places Field ${nameOf(s, uid)}`);
   emit(s, { t: 'play', p: owner, id: s.inst[uid].id, uid });
   fireTriggers(s, uid, 'onPlay', ctl);
 }
@@ -165,8 +165,8 @@ export function playCard(s: GameState, uid: number, ctl: Choosers, opts: { reste
   s.inst[uid].playedBySkill = s.skillBy !== undefined;
   s.inst[uid].playedByEvolve = false;
   if (s.skillBy !== undefined) s.inst[uid].markerPaid = false;
-  if (opts.negate) { s.inst[uid].negatedUntil = s.turn; s.inst[uid].negateScope = opts.negate; }
-  log(s, `P${owner} plays ${nameOf(s, uid)}`);
+  if (opts.negate) { s.inst[uid].negatedUntil = s.turn; s.inst[uid].negateScope = opts.negate; s.zoneRev = (s.zoneRev ?? 0) + 1; }
+  log(s, () => `P${owner} plays ${nameOf(s, uid)}`);
   emit(s, { t: 'play', p: owner, id: s.inst[uid].id, uid });
   afterPlayed(s, uid, ctl);
 }
@@ -653,17 +653,17 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'cantBlock': if (s.battle) s.battle.cantBlock = true; return;
     case 'damageLeader': takeLife(s, other(owner), e.n, false, ctl); return;
     case 'flipLeader': {
-      if (!me.awakened) { me.awakened = true; log(s, `P${owner} awakens ${nameOf(s, me.leader)}`); }
+      if (!me.awakened) { me.awakened = true; log(s, () => `P${owner} awakens ${nameOf(s, me.leader)}`); }
       return;
     }
     case 'ki': {
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
       const n = e.per ? e.n * countOf(s, owner, src, e.per, ctx) : e.n;
       for (const u of ts) s.inst[u].ki += n;
-      if (ts.length) log(s, `${ts.map((u) => nameOf(s, u)).join(', ')} +${e.n} Ki`);
+      if (ts.length) log(s, () => `${ts.map((u) => nameOf(s, u)).join(', ')} +${e.n} Ki`);
       return;
     }
-    case 'placeMarker': me.markers += e.n; log(s, `P${owner} places ${e.n} energy marker`); return;
+    case 'placeMarker': me.markers += e.n; log(s, () => `P${owner} places ${e.n} energy marker`); return;
     case 'lifeFromDeck': {
       for (let i = 0; i < e.n; i++) { const u = me.deck.pop(); if (u === undefined) break; me.life.push(u); }
       checkDeckOut(s);
@@ -746,6 +746,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
       const until = e.dur === 'oppNextTurn' ? s.turn + 1 : e.dur === 'game' ? 1e9 : s.turn;
       for (const u of ts) { s.inst[u].negatedUntil = until; s.inst[u].negateScope = e.scope ?? 'all'; }
+      s.zoneRev = (s.zoneRev ?? 0) + 1;
       return;
     }
     case 'atEndOfBattle': if (s.battle) (s.battleEnd ??= []).push({ src, owner, effects: e.effects }); return;
@@ -760,7 +761,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'redirect': {
       if (!s.battle) return;
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
-      if (ts.length) { s.battle.target = ts[0]; log(s, `attack redirected to ${nameOf(s, ts[0])}`); }
+      if (ts.length) { s.battle.target = ts[0]; log(s, () => `attack redirected to ${nameOf(s, ts[0])}`); }
       return;
     }
     case 'noop': return;

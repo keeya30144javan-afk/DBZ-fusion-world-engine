@@ -43,15 +43,18 @@ export class WorkerPool {
     for (const w of this.workers) w.postMessage({ type: 'init', cards });
   }
 
-  run(jobs: MatchJob[]): Promise<MatchResult[]> {
+  run(jobs: MatchJob[], onEach?: (r: MatchResult) => void): Promise<MatchResult[]> {
     if (this.fallback) {
       // Yield between jobs so the page stays responsive.
       return jobs.reduce<Promise<MatchResult[]>>(
-        (acc, job) => acc.then(async (out) => { await new Promise((r) => setTimeout(r, 0)); out.push(runMatch(this.cards, job)); return out; }),
+        (acc, job) => acc.then(async (out) => { await new Promise((r) => setTimeout(r, 0)); const r = runMatch(this.cards, job); onEach?.(r); out.push(r); return out; }),
         Promise.resolve([]),
       );
     }
-    return Promise.all(jobs.map((job) => new Promise<MatchResult>((resolve, reject) => { this.queue.push({ job, resolve, reject }); this.pump(); })));
+    return Promise.all(jobs.map((job) => new Promise<MatchResult>((resolve, reject) => {
+      this.queue.push({ job, resolve: (r) => { onEach?.(r); resolve(r); }, reject });
+      this.pump();
+    })));
   }
 
   cancelQueued() {
