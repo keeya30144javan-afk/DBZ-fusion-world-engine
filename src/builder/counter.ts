@@ -36,20 +36,27 @@ export interface CounterOptions {
   rules?: RulesConfig;
 }
 
+/**
+ * gens/pop/screen: evolution with fast-AI games. rerank/rerankGames: each generation the
+ * top `rerank` decks also play `rerankGames` games with the searching AI on both sides,
+ * so selection follows decks that beat good play, not the fast AI's mistakes.
+ */
 const EFFORT = {
   /** For trying things out: at most 100 validation games per deck, whatever the AI level. */
-  test: { gens: 3, pop: 10, screen: 16, validate: 100, finalists: 2, chunk: 8 },
-  quick: { gens: 4, pop: 12, screen: 24, validate: 120, finalists: 2, chunk: 8 },
-  standard: { gens: 8, pop: 16, screen: 40, validate: 240, finalists: 3, chunk: 8 },
-  thorough: { gens: 14, pop: 24, screen: 64, validate: 480, finalists: 4, chunk: 8 },
+  test: { gens: 3, pop: 10, screen: 16, validate: 100, finalists: 2, chunk: 8, rerank: 3, rerankGames: 8 },
+  quick: { gens: 4, pop: 12, screen: 24, validate: 120, finalists: 2, chunk: 8, rerank: 4, rerankGames: 8 },
+  standard: { gens: 8, pop: 16, screen: 40, validate: 240, finalists: 3, chunk: 8, rerank: 4, rerankGames: 12 },
+  thorough: { gens: 14, pop: 24, screen: 64, validate: 480, finalists: 4, chunk: 8, rerank: 6, rerankGames: 16 },
 };
 
 export interface Scored {
   deck: Decklist;
   key: string;
   origin: string;
-  /** Per-target results. */
+  /** Per-target results with the fast AI (screening). */
   res: MatchResult[];
+  /** Per-target results with the searching AI on both sides (re-ranking). */
+  sres: MatchResult[];
 }
 
 export interface Validated {
@@ -100,7 +107,7 @@ export interface Progress {
   /** The current step, e.g. games of one finalist's validation. */
   step?: { label: string; done: number; total: number };
   /** The best deck found so far, so the user can see what is being built. */
-  best?: { deck: Decklist; rate: number; games: number; validated: boolean };
+  best?: { deck: Decklist; rate: number; games: number; validated: boolean; searched?: boolean };
 }
 
 // ------------------------------------------------------------------ helpers
@@ -160,7 +167,28 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const freshSeeds = (n: number) => Array.from({ length: n }, () => (seedCounter = (seedCounter * 48271 + 11) % 2147483647));
 
   const screenScore = (c: Scored) => aggregate(c.res, targets, 1).mean;
-  const newScored = (deck: Decklist, origin: string): Scored => ({ deck, key: deckKey(deck), origin, res: targets.map(() => emptyResult()) });
+  const newScored = (deck: Decklist, origin: string): Scored => ({ deck, key: deckKey(deck), origin, res: targets.map(() => emptyResult()), sres: targets.map(() => emptyResult()) });
+
+  // ---- ranking: fast-AI screening overrates decks that exploit careless play, so decks
+  // checked with the searching AI are ranked on those games, and the rest on their fast
+  // win rate scaled by how much fast games have overrated the checked decks in this run.
+  const searchGames = (c: Scored) => c.sres.reduce((a, r) => a + r.games, 0);
+  const searchRate = (c: Scored) => aggregate(c.sres, targets, 1).mean;
+  let calibration = 1;
+  const recalibrate = () => {
+    let fast = 0, slow = 0;
+    for (const c of seen.values()) if (searchGames(c) > 0) { fast += screenScore(c); slow += searchRate(c); }
+    calibration = fast > 0 ? Math.min(1, Math.max(0.2, slow / fast)) : 1;
+  };
+  /** Best estimate of the win rate against good play. A few search games are shrunk toward the scaled fast estimate. */
+  const rankScore = (c: Scored) => {
+    const prior = screenScore(c) * calibration;
+    const n = searchGames(c);
+    if (!n) return prior;
+    const k = 4;
+    return (searchRate(c) * n + prior * k) / (n + k);
+  };
+  const byRank = (a: Scored, b: Scored) => rankScore(b) - rankScore(a);
 
   // ---- progress: cost-weighted share of the planned work, an ETA, and the best deck so far
   const level: Level = opts.validateLevel ?? 'quick';
@@ -168,8 +196,10 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const nT = targets.length;
   const seedPlan = (2 * leaders.length + (opts.known?.length ?? 0)) * E.chunk * 2.5 * nT; // successive halving, see below
   const evolvePlan = E.gens * E.pop * E.screen * nT;
+  const rerankLevel: Level | null = level === 'fast' ? null : 'quick';
+  const rerankPlan = rerankLevel ? (E.gens + 1) * E.rerank * E.rerankGames * nT * GAME_COST[rerankLevel] : 0;
   const validatePlan = (E.finalists + 1) * validateGames * nT * GAME_COST[level];
-  const plan = seedPlan + evolvePlan + validatePlan;
+  const plan = seedPlan + evolvePlan + rerankPlan + validatePlan;
   let costDone = 0;
   let lastReport = 0;
   let current: Omit<Progress, 'gamesPlayed' | 'overall' | 'eta'> = { phase: 'seed', message: '' };
@@ -184,10 +214,10 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     onProgress({ ...current, gamesPlayed, overall, eta, best: bestSoFar });
   };
   const setStep = (p: Omit<Progress, 'gamesPlayed' | 'overall' | 'eta'>) => { current = p; report(true); };
-  const offerBest = (c: Scored) => {
-    const g = c.res.reduce((a, r) => a + r.games, 0);
-    const rate = screenScore(c);
-    if (!bestSoFar?.validated && (!bestSoFar || rate > bestSoFar.rate || deckKey(bestSoFar.deck) === c.key)) bestSoFar = { deck: c.deck, rate, games: g, validated: false };
+  const offerBest = (pool: Scored[]) => {
+    if (bestSoFar?.validated || !pool.length) return;
+    const top = pool.slice().sort(byRank)[0];
+    bestSoFar = { deck: top.deck, rate: rankScore(top), games: searchGames(top) || top.res.reduce((a, r) => a + r.games, 0), validated: false, searched: searchGames(top) > 0 };
   };
 
   /** Play `games` fast games of each candidate against each target. */
@@ -209,7 +239,32 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       report();
     });
     results.forEach((r, i) => { const [ci, ti] = map[i]; mergeResults(cands[ci].res[ti], r); });
-    for (const c of cands) offerBest(c);
+  }
+
+  /** A short series with the searching AI on both sides for the top candidates. */
+  async function rerank(pool: Scored[], label: string) {
+    if (!rerankLevel || isCancelled()) return;
+    const picks = pool.slice().sort(byRank).filter((c) => searchGames(c) < E.rerankGames * nT * 2).slice(0, E.rerank);
+    const jobs: MatchJob[] = [];
+    const map: [number, number][] = [];
+    picks.forEach((c, ci) => targets.forEach((t, ti) => {
+      for (let g = 0; g < E.rerankGames; g += 4) {
+        jobs.push({ a: c.deck, b: t.deck, seeds: freshSeeds(Math.min(4, E.rerankGames - g)).map((x) => x + 2_000_000), level: rerankLevel, track: true, rules });
+        map.push([ci, ti]);
+      }
+    }));
+    const total = jobs.length * 4;
+    let done = 0;
+    current = { ...current, message: `${label}: checking the top ${picks.length} with the searching AI`, step: { label: `${label}: search check`, done: 0, total } };
+    report(true);
+    const results = await run(jobs, (r) => {
+      done += r.games; gamesPlayed += r.games; costDone += r.games * GAME_COST[rerankLevel];
+      current = { ...current, step: { label: `${label}: search check`, done, total } };
+      report();
+    });
+    results.forEach((r, i) => { const [ci, ti] = map[i]; mergeResults(picks[ci].sres[ti], r); });
+    recalibrate();
+    offerBest(pool);
   }
 
   // ---- seed population
@@ -252,11 +307,14 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     } else if (played >= E.screen) break;
   }
 
+  offerBest(survivors);
+  await rerank(survivors, 'Starting decks');
+
   // ---- evolve
   let population = survivors.slice();
   for (let g = 1; g <= E.gens; g++) {
     if (isCancelled()) break;
-    population.sort((a, b) => screenScore(b) - screenScore(a));
+    population.sort(byRank);
     // Keep the best per leader in early generations so one leader cannot take over on noise.
     const elites: Scored[] = [];
     const perLeader = new Map<string, number>();
@@ -277,8 +335,9 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       const sameLeader = elites.filter((e) => e !== parent && e.deck.leader === parent.deck.leader);
       if (sameLeader.length && rng() < 0.3) child = crossover(parent.deck, sameLeader[Math.floor(rng() * sameLeader.length)].deck, cards, rng, rules);
       else {
-        const stats = parent.res.reduce((acc, r) => mergeResults(acc, r), emptyResult()).cards ?? {};
-        const base = parent.res.reduce((a, r) => a + score(r), 0) / Math.max(1, parent.res.reduce((a, r) => a + r.games, 0));
+        const all = [...parent.res, ...parent.sres];
+        const stats = all.reduce((acc, r) => mergeResults(acc, r), emptyResult()).cards ?? {};
+        const base = all.reduce((a, r) => a + score(r), 0) / Math.max(1, all.reduce((a, r) => a + r.games, 0));
         const weak = (id: string) => {
           const t = stats[id];
           if (!t || t.played < 4) return 0;
@@ -297,13 +356,16 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     // Elites get more games each generation, which shrinks the noise on the leaders.
     await screen(elites, Math.ceil(E.screen / 2));
     population = [...elites, ...children];
-    const top = population.slice().sort((a, b) => screenScore(b) - screenScore(a))[0];
-    setStep({ phase: 'evolve', generation: g, generations: E.gens, bestScreen: screenScore(top), bestName: top.deck.name, message: `Generation ${g}/${E.gens}: best screening win rate ${(screenScore(top) * 100).toFixed(0)}% (${cards[top.deck.leader].name})` });
+    offerBest(population);
+    await rerank(population, `Generation ${g}`);
+    const top = population.slice().sort(byRank)[0];
+    const checked = searchGames(top) > 0;
+    setStep({ phase: 'evolve', generation: g, generations: E.gens, bestScreen: rankScore(top), bestName: top.deck.name, message: `Generation ${g}/${E.gens}: best ${checked ? 'estimated' : 'screening'} win rate ${(rankScore(top) * 100).toFixed(0)}% (${cards[top.deck.leader].name})${rerankLevel ? `; fast games overrate decks by ×${(1 / calibration).toFixed(1)}` : ''}` });
   }
 
   // ---- validate finalists with fresh games and stronger play on both sides
   const all = [...seen.values()].filter((s) => s.res.some((r) => r.games > 0));
-  all.sort((a, b) => screenScore(b) - screenScore(a));
+  all.sort(byRank);
   const finalists: Scored[] = [];
   for (const c of all) {
     if (finalists.length >= E.finalists) break;
@@ -313,7 +375,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   // Baseline: the best known deck that is not just one of the finalists. If the
   // user gave no meta decks, the target itself (the mirror) is the baseline.
   const baselines = (opts.known?.length ? opts.known : targets.map((t) => t.deck)).map((d) => seen.get(deckKey(d)) ?? newScored(cloneDeck(d), `known: ${d.name}`));
-  baselines.sort((a, b) => screenScore(b) - screenScore(a));
+  baselines.sort(byRank);
   const baselineScored = baselines[0];
 
   /**

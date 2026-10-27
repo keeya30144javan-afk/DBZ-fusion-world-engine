@@ -171,14 +171,14 @@ function BestSoFar({ best }: { best: NonNullable<Progress['best']> }) {
     <div class="panel stack">
       <div class="row" style={{ justifyContent: 'space-between' }}>
         <div>
-          <div class="eyebrow">{best.validated ? 'Best validated so far' : 'Best so far (screening, not yet validated)'}</div>
+          <div class="eyebrow">{best.validated ? 'Best validated so far' : best.searched ? 'Best so far (checked with the searching AI, not yet validated)' : 'Best so far (screening, not yet validated)'}</div>
           <h2 style={{ margin: 0 }}>{best.deck.name}</h2>
-          <div class="note">{st.cards[best.deck.leader]?.name} <ColorTag card={st.cards[best.deck.leader]} /> · {pct(best.rate, 0)} over {best.games.toLocaleString()} {best.validated ? 'validation' : 'quick screening'} games</div>
+          <div class="note">{st.cards[best.deck.leader]?.name} <ColorTag card={st.cards[best.deck.leader]} /> · {best.validated ? `${pct(best.rate, 0)} over ${best.games.toLocaleString()} validation games` : best.searched ? `estimated ${pct(best.rate, 0)} (${best.games.toLocaleString()} searching-AI games)` : `estimated ${pct(best.rate, 0)} from fast-AI screening`}</div>
         </div>
         <CopyButton text={text} label="Copy list" />
       </div>
       <div class="decklist">{text}</div>
-      {!best.validated && <p class="note">Screening uses the fast AI, so this number runs high. The final verdict comes from fresh games with the stronger AI.</p>}
+      {!best.validated && <p class="note">An estimate while the search runs. The final verdict comes from fresh games with the stronger AI on both sides.</p>}
     </div>
   );
 }
