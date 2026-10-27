@@ -1,0 +1,1832 @@
+{
+ "FB05-006": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "oppLeader"
+      },
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-009": {
+  "keywords": [
+   "blocker",
+   "koImmuneOnce"
+  ]
+ },
+ "FB05-015": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-020": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "powerGE": 25000
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "opp",
+        "filter": {
+         "type": "BATTLE",
+         "powerGE": 25000
+        }
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-022": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "names": [
+         ": DA"
+        ]
+       }
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-024": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         ": DA"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-026": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-029": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Zamasu: Fused"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-030": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "mill",
+         "n": 5
+        }
+       ],
+       [
+        {
+         "t": "nextDiscount",
+         "filter": {
+          "type": "EXTRA",
+          "costLE": 3
+         },
+         "amount": "free",
+         "cond": [
+          {
+           "t": "dropGE",
+           "n": 20
+          }
+         ]
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-038": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "colors": [
+         "Blue"
+        ],
+        "costEQ": 3
+       }
+      ],
+      "each": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 20
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ],
+        "costEQ": 3
+       }
+      },
+      "amount": 30000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-040": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 20
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "your opponent can't attack using Battle Cards with costs of 3 or less during your opponent's next turn."
+    ]
+   }
+  ],
+  "needs": [
+   "attack restrictions on the opponent"
+  ]
+ },
+ "FB05-041": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDeckBottom"
+     }
+    ],
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 20
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Son Goku"
+        ],
+        "costLE": 3
+       },
+       {
+        "names": [
+         "Vegeta"
+        ],
+        "costLE": 3
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-044": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     },
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 10
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-046": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 20
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-047": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Vegito"
+        ],
+        "costGE": 4
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "prev"
+      },
+      "amount": 10000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 20
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-048": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 20
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ],
+        "costEQ": 3
+       }
+      },
+      "kw": "doubleStrike",
+      "dur": "turn"
+     },
+     {
+      "t": "bottom",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-049": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 2
+     },
+     {
+      "t": "energyLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-052": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cost": [
+     {
+      "t": "lifeToDrop",
+      "n": 1
+     }
+    ],
+    "effects": []
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "costEQ": 5,
+       "traits": [
+        "Namekian"
+       ]
+      },
+      "amount": "free"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-054": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "ko",
+         "target": {},
+         "cond": [
+          {
+           "t": "lifeLE",
+           "n": 2
+          }
+         ]
+        }
+       ],
+       [
+        {
+         "t": "lifeToHand",
+         "n": 1,
+         "upTo": false
+        },
+        {
+         "t": "ko",
+         "target": {
+          "filter": {
+           "costLE": 3
+          }
+         }
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-056": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-057": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-058": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 1
+     },
+     {
+      "t": "lifeGE",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-059": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         "Guru"
+        ]
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-060": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "traits": [
+        "Namekian"
+       ]
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-067": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "battler"
+      },
+      "kw": "critical",
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 2
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-068": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self"
+      },
+      "amount": 15000,
+      "dur": "turn"
+     },
+     {
+      "t": "lifeFromDeck",
+      "n": 2,
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 1
+       },
+       {
+        "t": "lifeGE",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-069": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costLE": 3
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 2
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-073": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Frieza Clan"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 3
+       },
+       {
+        "t": "and",
+        "all": [
+         {
+          "t": "leaderTrait",
+          "traits": [
+           "Frieza Clan"
+          ]
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "BATTLE",
+            "traits": [
+             "Frieza Clan"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 4,
+       "traits": [
+        "Frieza Clan"
+       ],
+       "notNames": [
+        "King Cold"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-080": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "activateEnergy",
+      "n": 1
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-082": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "koSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-083": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "active": true
+       }
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-086": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-089": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Ginyu Force"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 3
+       },
+       {
+        "t": "and",
+        "all": [
+         {
+          "t": "leaderTrait",
+          "traits": [
+           "Ginyu Force"
+          ]
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "BATTLE",
+            "traits": [
+             "Ginyu Force"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-090": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 25000,
+      "dur": "battle"
+     },
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-091": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 25000,
+      "dur": "battle"
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-092": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 1,
+       "traits": [
+        "Jaguar's Island"
+       ]
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-093": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Saike Demon"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         "Janemba"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Janemba"
+       ],
+       "costEQ": 2
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-094": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-095": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-096": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ]
+       }
+      },
+      "amount": 20000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-097": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-098": {
+  "abilities": [
+   {
+    "timing": "auto",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "When a card is used in a combo from your Battle Area while this card is in a battle, draw 2 cards. Then, discard 1 card from your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "trigger on combo from the Battle Area"
+  ]
+ },
+ "FB05-099": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-100": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-104": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "costEQ": 2,
+       "noSkill": true
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-105": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-107": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 2,
+      "options": [
+       {
+        "traits": [
+         "Another World"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-111": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-112": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "traits": [
+         "Another World"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-113": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-115": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "grant",
+      "target": {},
+      "kw": "cantAttack",
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "markerPaid"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-116": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "ko",
+         "target": {}
+        }
+       ],
+       [
+        {
+         "t": "ko",
+         "target": {
+          "count": 2
+         },
+         "cond": [
+          {
+           "t": "markerPaid"
+          }
+         ]
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-117": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-118": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn",
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-119": {
+  "keywords": [
+   "doubleStrike"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 2
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costEQ": 7
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 4
+     }
+    ]
+   }
+  ]
+ },
+ "FB05-120": {
+  "keywords": [
+   "barrier"
+  ],
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

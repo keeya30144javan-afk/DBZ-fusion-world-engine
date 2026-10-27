@@ -290,6 +290,8 @@ export type Cond =
   | { t: 'extraUsedThisTurn' }
   /** The card with this skill matches the filter ("if this card has 30000 power or more"). */
   | { t: 'thisMatches'; filter: Filter }
+  /** "If you removed an energy marker to use this card". */
+  | { t: 'markerPaid' }
   /** This card was played by a skill this turn. */
   | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */
@@ -299,7 +301,8 @@ export type Cond =
   /** This card is in a battle with an opponent's card matching the filter. */
   | { t: 'inBattleWith'; filter: Filter }
   | { t: 'not'; c: Cond }
-  | { t: 'or'; any: Cond[] };
+  | { t: 'or'; any: Cond[] }
+  | { t: 'and'; all: Cond[] };
 
 export type Keyword =
   | 'blocker' | 'critical' | 'doubleStrike' | 'tripleStrike' | 'superCombo' | 'barrier' | 'indestructible' | 'field' | 'dragonBall'

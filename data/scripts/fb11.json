@@ -21,31 +21,22 @@
         "n": 4
        },
        {
-        "t": "not",
-        "c": {
-         "t": "or",
-         "any": [
-          {
-           "t": "not",
-           "c": {
-            "t": "energyGE",
-            "n": 2
-           }
-          },
-          {
-           "t": "not",
-           "c": {
-            "t": "battleCount",
-            "op": "ge",
-            "n": 1,
-            "side": "self",
-            "filter": {
-             "keyword": "evolve"
-            }
-           }
+        "t": "and",
+        "all": [
+         {
+          "t": "energyGE",
+          "n": 2
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "keyword": "evolve"
           }
-         ]
-        }
+         }
+        ]
        }
       ]
      }

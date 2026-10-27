@@ -69,10 +69,10 @@ Cond: {"t":"handLE"|"handGE"|"energyGE"|"energyLE"|"lifeLE"|"lifeGE"|"oppLifeLE"
  {"t":"leaderIs","names"} {"t":"leaderTrait","traits","only"?} {"t":"leaderAwakened"} {"t":"kiLeaderGE","n"} {"t":"kiTotalGE","n","scope":"your"|"battle"} {"t":"thisKiGE","n"}
  {"t":"battleCount","op":"ge"|"none","n","filter","side":"self"|"opp"} {"t":"count","what":Count,"op":"ge"|"le"|"eq"|"none","n"}
  {"t":"hasMarker","yes"} {"t":"thisRested","yes"} {"t":"thisInBattle"} {"t":"playedThisTurn"} {"t":"comboAreaHasCard"} {"t":"energyLessThanOpp"}
- {"t":"attackingBattleCard","filter"?} {"t":"prevMatches","filter"} ("if that card has ...") {"t":"yourTurn","yes"} {"t":"not","c"} {"t":"or","any":[Cond...]}
+ {"t":"attackingBattleCard","filter"?} {"t":"prevMatches","filter"} ("if that card has ...") {"t":"yourTurn","yes"} {"t":"not","c"} {"t":"or","any":[Cond...]} {"t":"and","all":[Cond...]}
  {"t":"thisHasUnder","yes"} {"t":"attacking","filter"} (this card is attacking a card matching filter) {"t":"koedThisTurn","filter"} (your matching card KO'd an opponent's card this turn)
  {"t":"playedByLeaderSkill"} {"t":"leaderInBattle"} {"t":"removedOwnThisTurn"} ("if your Battle Card was removed from a Battle Area by one of your skills during this turn")
- {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"bouncedThisTurn"} {"t":"energyLeftThisTurn"} {"t":"extraUsedThisTurn"} {"t":"thisMatches","filter"} ("if this card has 30000 power or more") {"t":"playedBySkill"}
+ {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"bouncedThisTurn"} {"t":"energyLeftThisTurn"} {"t":"extraUsedThisTurn"} {"t":"markerPaid"} ("if you removed an energy marker to use this card") {"t":"thisMatches","filter"} ("if this card has 30000 power or more") {"t":"playedBySkill"}
  {"t":"battleTotalCost","n","only"?: Filter} ("If you only have cards with ≪X≫ in your Battle Area and their total cost is 10 or more") {"t":"attackedThisTurn","yes"} {"t":"inBattleWith","filter"} ("while this card is in a battle with an opponent's card with ...")
 
 EXAMPLES

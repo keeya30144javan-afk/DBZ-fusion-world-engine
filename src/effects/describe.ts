@@ -182,6 +182,7 @@ export function describeCond(c: Cond): string {
     case 'yourTurn': return c.yes ? "it's your turn" : "it's your opponent's turn";
     case 'not': return `not (${describeCond(c.c)})`;
     case 'or': return c.any.map(describeCond).join(' or ');
+    case 'and': return `(${c.all.map(describeCond).join(' and ')})`;
     case 'thisHasUnder': return c.yes ? 'there are cards under this card' : 'there are no cards under this card';
     case 'attacking': return `attacking ${describeFilter(c.filter)}`;
     case 'koedThisTurn': return `your ${c.filter ? describeFilter(c.filter) : 'card'} has KO'd one of your opponent's Battle Cards during this turn`;
@@ -189,6 +190,7 @@ export function describeCond(c: Cond): string {
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
     case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
+    case 'markerPaid': return 'you removed an energy marker to use this card';
     case 'thisMatches': return `this card is a ${describeFilter(c.filter, 'card')}`;
     case 'extraUsedThisTurn': return 'you used an Extra with an original cost of 1 or more during this turn';
     case 'playedBySkill': return 'this card was played by a skill';

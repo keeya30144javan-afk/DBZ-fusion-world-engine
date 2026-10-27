@@ -34,6 +34,8 @@ export interface Inst {
   playedByLeader?: boolean;
   /** Its skills are negated through this turn number ('onPlay': only its [On Play]). */
   negatedUntil?: number;
+  /** An energy marker was removed to pay for this card when it was last used. */
+  markerPaid?: boolean;
   /** Played by a skill (not from hand by paying its cost). */
   playedBySkill?: boolean;
   /** Last turn this card attacked. */
@@ -373,6 +375,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'yourTurn': return (s.active === owner) === c.yes;
     case 'not': return !condHolds(s, owner, src, c.c, prev, x);
     case 'or': return c.any.some((y) => condHolds(s, owner, src, y, prev, x));
+    case 'and': return c.all.every((y) => condHolds(s, owner, src, y, prev, x));
     case 'thisHasUnder': return ((s.inst[src].under?.length ?? 0) > 0) === c.yes;
     case 'attacking': return !!s.battle && s.battle.attacker === src && matchesFilter(s, s.battle.target, c.filter, src);
     case 'koedThisTurn': return (me.koBy ?? []).some((k) => k.turn === s.turn && (!c.filter || matchesFilter(s, k.uid, c.filter, src)));
@@ -385,6 +388,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'energyLeftThisTurn': return me.energyLeftTurn === s.turn;
     case 'extraUsedThisTurn': return me.extraUsedTurn === s.turn;
     case 'thisMatches': return matchesFilter(s, src, c.filter, src);
+    case 'markerPaid': return !!s.inst[src].markerPaid;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;

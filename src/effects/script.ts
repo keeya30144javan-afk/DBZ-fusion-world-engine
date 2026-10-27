@@ -142,12 +142,14 @@ const CONDS: Record<Cond['t'], Spec> = {
   energyLeftThisTurn: {},
   extraUsedThisTurn: {},
   thisMatches: { filter: 'F' },
+  markerPaid: {},
   playedBySkill: {},
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },
   inBattleWith: { filter: 'F' },
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
+  and: { all: 'Cond[]' },
 };
 const FILTER: Spec = {
   costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', originalPower: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
