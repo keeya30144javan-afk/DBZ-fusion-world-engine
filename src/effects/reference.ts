@@ -20,7 +20,7 @@ Ability = { "timing": Timing, "turn"?: "your"|"opp", "once"?: true ([Once per tu
 Timing: "onPlay" | "whenAttacking" | "whenBlocking" | "whenKOd" | "activateMain" | "activateBattle" | "permanent" | "endOfYourTurn" | "awaken" (Leader; the effects end with {"t":"flipLeader"})
  | "comboFromHand" ("When you use this card in a combo from your hand") | "comboFromField" ("...from the Battle Area") | "whenDamaged" ("When you take damage")
  | "whenAllyPlayed" ("When your <X> is played", filter in "trigger") | "whenMilled" ("When this card is placed from your deck into your Drop") | "gameStart" ("When this card is placed in your Leader Area")
- | "whenWinsBattle" ("When this card wins a battle") | "whenDealsDamage" ("When this card inflicts damage with an attack") | "whenKOsInBattle" ("When this card KO's an opponent's Battle Card in battle") | "whenOppAttacks" ("When an opponent's Battle Card attacks")
+ | "whenWinsBattle" ("When this card wins a battle") | "whenDealsDamage" ("When this card inflicts damage with an attack") | "whenKOsInBattle" ("When this card KO's an opponent's Battle Card in battle") | "whenAllyKOd" ("When your <X> is KO'd", filter in "trigger") | "whenOppAttacks" ("When an opponent's Battle Card attacks")
  | "whenAllyRemovedBySelf" / "whenAllyRemovedByOpp" ("When your <X> is removed from the Battle Area by one of your skills / by your opponent", filter in "trigger")
  | "startOfYourTurn" | "whenAttacked" | "counter" ([Counter] skills)
 A skill with two tags like [On Play/When Attacking] is two abilities with the same body.
@@ -54,7 +54,7 @@ Effect (each may carry "cond": Cond[] for a mid-skill "Then, if ...,"):
  {"t":"choose","options":[[Effect...],[Effect...]]} ("Choose one —")  {"t":"noop","note"} (look/rearrange/shuffle with no game effect)
  {"t":"negate","target","dur","scope"?: "all"|"onPlay"} ("negate its skills for the turn")  {"t":"redirect","target":{"side":"self",...}} ("switch the attack target to the chosen card")
  playFrom also takes "negate": "onPlay"|"all" ("play it with its [On Play] skills negated for the turn")
- {"t":"winGame"}
+ {"t":"atEndOfBattle","effects":[Effect...]} {"t":"oppMarker","n"} {"t":"winGame"} {"t":"selfDamage","n"} ("you take 1 damage") {"t":"energyToDrop","n"} (an effect, not a cost)
  {"t":"atEndOfTurn","effects":[Effect...]} ("At the end of the turn, ...")  {"t":"lockSkill","names","timing","dur"} ("you can't activate the [Activate:Main] of <X> for the turn")
  {"t":"dropToDeck"} (return all cards from your Drop to your deck, shuffled)  {"t":"lifeToDeck","n"} (n life cards to the bottom of your deck)
 Count = {"side":"self"|"opp","zone":"battle"|"drop"|"hand"|"energy"|"life"|"deck"|"combo"|"under"|"thisKi"|"kiTotal"|"kiRemoved"|"prev","filter"?}
@@ -72,7 +72,7 @@ Cond: {"t":"handLE"|"handGE"|"energyGE"|"energyLE"|"lifeLE"|"lifeGE"|"oppLifeLE"
  {"t":"attackingBattleCard","filter"?} {"t":"prevMatches","filter"} ("if that card has ...") {"t":"yourTurn","yes"} {"t":"not","c"} {"t":"or","any":[Cond...]} {"t":"and","all":[Cond...]}
  {"t":"thisHasUnder","yes"} {"t":"attacking","filter"} (this card is attacking a card matching filter) {"t":"koedThisTurn","filter"} (your matching card KO'd an opponent's card this turn)
  {"t":"playedByLeaderSkill"} {"t":"leaderInBattle"} {"t":"removedOwnThisTurn"} ("if your Battle Card was removed from a Battle Area by one of your skills during this turn")
- {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"bouncedThisTurn"} {"t":"energyLeftThisTurn"} {"t":"extraUsedThisTurn"} {"t":"markerPaid"} ("if you removed an energy marker to use this card") {"t":"thisMatches","filter"} ("if this card has 30000 power or more") {"t":"playedBySkill"}
+ {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"bouncedThisTurn"} {"t":"energyLeftThisTurn"} {"t":"extraUsedThisTurn"} {"t":"markerPaid"} {"t":"oppHasMarker","yes"} ("if you removed an energy marker to use this card") {"t":"thisMatches","filter"} ("if this card has 30000 power or more") {"t":"playedBySkill"}
  {"t":"battleTotalCost","n","only"?: Filter} ("If you only have cards with ≪X≫ in your Battle Area and their total cost is 10 or more") {"t":"attackedThisTurn","yes"} {"t":"inBattleWith","filter"} ("while this card is in a battle with an opponent's card with ...")
 
 EXAMPLES

@@ -33,6 +33,8 @@ export type Timing =
   | 'gameStart'
   /** [Auto] "When this card inflicts damage with an attack". */
   | 'whenDealsDamage'
+  /** [Auto] "When your <X> is KO'd" (filter in `trigger`). */
+  | 'whenAllyKOd'
   /** [Auto] "When this card KO's an opponent's Battle Card in battle". */
   | 'whenKOsInBattle'
   /** [Auto] "When this card wins a battle". */
@@ -197,6 +199,14 @@ export type Effect = E<
   | { t: 'negate'; target: Target; dur: Duration; scope?: 'all' | 'onPlay' }
   /** "Switch the attack target to the chosen card" (choose among your own cards). */
   | { t: 'redirect'; target: Target }
+  /** "At the end of the battle, ..." */
+  | { t: 'atEndOfBattle'; effects: Effect[] }
+  /** "Your opponent places N energy markers." */
+  | { t: 'oppMarker'; n: number }
+  /** "You take N damage." */
+  | { t: 'selfDamage'; n: number }
+  /** Place N of your energy into your Drop (as an effect, not a cost). */
+  | { t: 'energyToDrop'; n: number }
   /** "You win the game." */
   | { t: 'winGame' }
   /** Reveal/rearrange deck or shuffle: no effect the simulator models. */
@@ -292,6 +302,7 @@ export type Cond =
   | { t: 'thisMatches'; filter: Filter }
   /** "If you removed an energy marker to use this card". */
   | { t: 'markerPaid' }
+  | { t: 'oppHasMarker'; yes: boolean }
   /** This card was played by a skill this turn. */
   | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */

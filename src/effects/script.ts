@@ -20,7 +20,7 @@ export function textHash(card: Pick<Card, 'text' | 'back'>): string {
 export const TIMINGS: Timing[] = [
   'onPlay', 'whenAttacking', 'whenAttacked', 'whenKOd', 'whenBlocking', 'activateMain', 'activateBattle', 'counter', 'permanent',
   'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart',
-  'whenWinsBattle', 'whenDealsDamage', 'whenKOsInBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
+  'whenWinsBattle', 'whenDealsDamage', 'whenKOsInBattle', 'whenAllyKOd', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
@@ -84,6 +84,10 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   negate: { target: 'T', dur: 'D', scope: 'Z:all|onPlay?' },
   redirect: { target: 'T' },
   winGame: {},
+  selfDamage: { n: 'n' },
+  atEndOfBattle: { effects: 'E[]' },
+  oppMarker: { n: 'n' },
+  energyToDrop: { n: 'n' },
   noop: { note: 's' },
 };
 const COSTS: Record<Cost['t'], Spec> = {
@@ -143,6 +147,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   extraUsedThisTurn: {},
   thisMatches: { filter: 'F' },
   markerPaid: {},
+  oppHasMarker: { yes: 'b' },
   playedBySkill: {},
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },

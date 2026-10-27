@@ -2413,7 +2413,43 @@
    ],
    "text": "[Field]\n[End of Your Turn] If you have 4 or less energy and you placed a card from your energy into your Drop during this turn, add up to 1 card with a cost of 3 or more from your Drop to your energy in Rest Mode.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "energyLE",
+        "n": 4
+       },
+       {
+        "t": "energyLeftThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "energyFromDrop",
+        "filter": {
+         "costGE": 3
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5a834710"
+   }
   },
   "SB02-057": {
    "id": "SB02-057",
@@ -3023,7 +3059,51 @@
    ],
    "text": "[Activate:Main] Play up to 1 <Gotenks> or <Son Gohan: Adolescence>―both with a cost of 4 or less―from your Drop. Then, choose up to 1 of your opponent's Battle Cards and reduce its cost by 1 for the turn.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Gotenks",
+          "Son Gohan: Adolescence"
+         ],
+         "costLE": 4
+        },
+        "n": 1
+       },
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d0a7f0e7"
+   }
   },
   "FB07-104": {
    "id": "FB07-104",
@@ -3229,7 +3309,48 @@
    ],
    "text": "[Activate:Main] Place this card into its owner's Drop: If your Leader is <Cell>, place up to 1 <Cell Games Arena> into the Battle Area from your hand in Rest Mode.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Cell"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Cell Games Arena"
+         ]
+        },
+        "n": 1,
+        "rested": true,
+        "extraType": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "86afb591"
+   }
   },
   "FS11-01": {
    "id": "FS11-01",
@@ -3373,7 +3494,44 @@
    ],
    "text": "[Activate:Main] Draw 1 card. Then, choose up to 1 card with a cost of 4 or less in your opponent's Battle Area and add it to its owner's energy in Rest Mode.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "toEnergy",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        },
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "19192c3d"
+   }
   },
   "FB01-116": {
    "id": "FB01-116",
@@ -6689,7 +6847,48 @@
    ],
    "text": "[Activate:Main][Once Per Turn] KO 1 of your Battle Cards: This card gets +15000 power for the turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0d22fa78"
+   }
   },
   "FB03-023": {
    "id": "FB03-023",
@@ -9092,7 +9291,65 @@
    ],
    "text": "[Activate:Main] If you have 3 or more Battle Cards with ≪Brainwashed≫ or ≪Machine Mutant≫ in their special traits in your Drop, your Leader with ≪Machine Mutant≫ in its special traits gets +5000 power until the end of your opponent's next turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Brainwashed",
+           "Machine Mutant"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 3
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 5000,
+        "dur": "oppNextTurn",
+        "cond": [
+         {
+          "t": "leaderTrait",
+          "traits": [
+           "Machine Mutant"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "34998951"
+   }
   },
   "FB09-021": {
    "id": "FB09-021",
@@ -10127,7 +10384,43 @@
    ],
    "text": "[When Attacking] At the end of the battle, KO this card.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "atEndOfBattle",
+        "effects": [
+         {
+          "t": "ko",
+          "target": {
+           "side": "self",
+           "zones": [
+            "battle"
+           ],
+           "count": 1,
+           "upTo": false,
+           "filter": {},
+           "ref": "this"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7d8d5e92"
+   }
   },
   "FB11-066": {
    "id": "FB11-066",
@@ -10504,7 +10797,45 @@
    ],
    "text": "[On Play] Discard 1 card from your hand: Look at 10 cards from the top of your deck and place up to 1 <Artificial Full Moon> into the Battle Area. Place the rest at the bottom of your deck in a random order.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 10,
+        "options": [
+         {
+          "names": [
+           "Artificial Full Moon"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": false,
+        "dest": "play",
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6837be3c"
+   }
   },
   "FB11-071": {
    "id": "FB11-071",
@@ -11847,7 +12178,43 @@
    ],
    "text": "[On Play] If you placed a card from your energy into your Drop during this turn, choose up to 1 [Field] with a cost of 2 or less in your opponent's Battle Area and place it into its owner's Drop.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "energyLeftThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "toDrop",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "field"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 2
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a2fa223b"
+   }
   },
   "FB11-081": {
    "id": "FB11-081",
@@ -12089,7 +12456,63 @@
    ],
    "text": "[On Play] If your Leader has ≪Majin≫ in its special traits, play up to 1 Battle Card with a cost of 3 or less and ≪Majin≫ in its special traits from your hand.\n[When KO'd] If your opponent has 6 or more cards in their hand, your opponent discards 1 card from their hand.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 3,
+         "traits": [
+          "Majin"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "oppHandGE",
+        "n": 6
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "oppDiscard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0d71b4df"
+   }
   },
   "FB04-026": {
    "id": "FB04-026",
@@ -12114,6 +12537,92 @@
     "name": "Son Gohan: Adolescence",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main][Once Per Turn] Discard 1 card from your hand: During this turn, the next time you use an Extra with both ≪Saiyan≫ and ≪Earthling≫ in its special traits from your hand, reduce the cost by 2."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "traitsAll": [
+          "Saiyan",
+          "Earthling"
+         ]
+        },
+        "amount": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ef5348ae"
    }
   },
   "FB02-105": {
@@ -12954,7 +13463,54 @@
    ],
    "text": "[On Play] Until the end of the your opponent's next turn, negate the next damage you take.\n[When Attacking] Choose all of your opponent's Battle Cards and they get -20000 power for the turn.",
    "set": "FB04",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Until the end of the your opponent's next turn, negate the next damage you take."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "all": true
+        },
+        "amount": -20000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "prevent damage"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7747e97f"
+   }
   },
   "FB08-023": {
    "id": "FB08-023",
@@ -15858,7 +16414,52 @@
    ],
    "text": "[On Play] Play up to 1 Battle Card with a cost of 2 or less and ≪Brainwashed≫ or ≪Machine Mutant≫ in its special traits from your hand.\n[Auto][Once Per Turn] When a card is used in a combo from your Battle Area while this card is in a battle, draw 1 card.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2,
+         "traits": [
+          "Brainwashed",
+          "Machine Mutant"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "When a card is used in a combo from your Battle Area while this card is in a battle, draw 1 card."
+      ],
+      "timing": "auto",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "trigger on combo from the Battle Area"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "744307fb"
+   }
   },
   "FB04-097": {
    "id": "FB04-097",
@@ -15968,7 +16569,105 @@
    ],
    "text": "[Permanent] You don't lose the game even if you have 0 cards in your deck, and if you have 0 cards in your deck, this card gets +10000 power.\n[Activate:Main][Once Per Turn] Switch this card to Active Mode, then choose up to 1 card in your opponent's Battle Area and return it to its owner's hand. Then, place the top 5 cards of your deck into your Drop.",
    "set": "FB04",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "you don't lose the game even if you have 0 cards in your deck"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "deck",
+         "filter": {}
+        },
+        "op": "eq",
+        "n": 0
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "bounce",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       },
+       {
+        "t": "mill",
+        "n": 5
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3feb0da1"
+   }
   },
   "FB10-018": {
    "id": "FB10-018",
@@ -16608,7 +17307,67 @@
    ],
    "text": "[Permanent] This card can't be switched to Active Mode during your Charge Phase.\n[Activate:Main][Once Per Turn] KO 1 of your Battle Cards: If your Leader has ≪Majin≫ in its special traits switch this card to Active Mode.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "This card can't be switched to Active Mode during your Charge Phase."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE"
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "stays rested in the Charge Phase"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f4f0b924"
+   }
   },
   "FB06-016": {
    "id": "FB06-016",
@@ -18123,7 +18882,46 @@
    ],
    "text": "[Activate:Main] Place the top 3 cards of your deck into your Drop: Draw 1 card. Then, play up to 1 Battle Card with a cost of 4 or less and ≪Saiyan≫ in its special traits from your Drop.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "mill",
+        "n": 3
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 4,
+         "traits": [
+          "Saiyan"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "695e510f"
+   }
   },
   "FB09-082": {
    "id": "FB09-082",
@@ -18500,7 +19298,40 @@
    ],
    "text": "[Auto][Your Turn] When this card is used in a combo from the Battle Area, choose up to 1 of your opponent's Battle Cards with a cost of 4 or less and return it to its owner's hand.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "bounce",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        }
+       }
+      ],
+      "turn": "your"
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7163f9e3"
+   }
   },
   "FB11-093": {
    "id": "FB11-093",
@@ -19905,7 +20736,72 @@
    ],
    "text": "[Activate:Battle][Opponent's Turn] Your cards that are in a battle get +20000 power for the battle.\n[Activate:Battle] pay 1 energy: Draw 1 card. Then, choose up to 1 of your opponent's Battle Cards and switch it to Rest Mode.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "opp",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e7912d6d"
+   }
   },
   "FB08-114": {
    "id": "FB08-114",
@@ -20401,7 +21297,45 @@
    ],
    "text": "[On Play] Play up to 1 <Obuni> with 20000 power or less from your hand. Then, you can't play <Obuni> for the turn.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Obuni"
+         ],
+         "powerLE": 20000
+        },
+        "n": 1
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "names": [
+          "Obuni"
+         ]
+        },
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "1770f098"
+   }
   },
   "FB02-036": {
    "id": "FB02-036",
@@ -20796,7 +21730,39 @@
    ],
    "text": "[Blocker]\n[When KO'd] If your Leader is <Piccolo>, add the top card of your deck to your energy.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Piccolo"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "energyFromDeck",
+        "n": 1,
+        "rested": false
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "82ced1a0"
+   }
   },
   "SB01-021": {
    "id": "SB01-021",
@@ -21560,7 +22526,44 @@
    ],
    "text": "[On Play] Place 1 card from your energy into your Drop: Choose up to 1 of your opponent's Battle Cards with a cost of 3 or less and KO it.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "energyToDrop",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 3
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "983359f7"
+   }
   },
   "FB07-076": {
    "id": "FB07-076",
@@ -22477,7 +23480,55 @@
    ],
    "text": "[Permanent][Your Turn] If you have a Battle Card with a cost of 3 or more in your Drop, this card gets +5000 power.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "BATTLE",
+          "costGE": 3
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "64575b01"
+   }
   },
   "FB06-097": {
    "id": "FB06-097",
@@ -22867,7 +23918,48 @@
    ],
    "text": "[Activate:Main][Once Per Turn] If your opponent doesn't have an energy marker, choose up to 1 of your opponent's Battle Cards with a cost of 5 or less and KO it. Then, your opponent places 1 energy marker.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "oppHasMarker",
+        "yes": false
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5
+         }
+        }
+       },
+       {
+        "t": "oppMarker",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fcc2e66c"
+   }
   },
   "FB02-002": {
    "id": "FB02-002",
@@ -22911,7 +24003,71 @@
    ],
    "text": "[Permanent] If you have a [Field] with <Full Moon> in its card name in your Battle Area, this card gets +5000 power.\n[On Play] Add up to 1 card from your life to your hand.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "keyword": "field",
+          "names": [
+           "Full Moon"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3de5995a"
+   }
   },
   "FB05-068": {
    "id": "FB05-068",
@@ -23153,7 +24309,44 @@
    ],
    "text": "[On Play] If you placed a card from your energy into your Drop during this turn, add up to 1 ≪Saiyan≫-only non-<Raditz> card with a cost of 3 or less from your Drop to your hand.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "energyLeftThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "onlyTraits": [
+           "Saiyan"
+          ],
+          "costLE": 3,
+          "notNames": [
+           "Raditz"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e20fc071"
+   }
   },
   "SB01-034": {
    "id": "SB01-034",
@@ -24863,7 +26056,46 @@
    ],
    "text": "[Field]\n[Activate:Main] Discard 1 card from your hand and switch this card to Rest Mode: If your Leader has ≪Machine Mutant≫ in its special traits, draw 1 card.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Machine Mutant"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "443bc427"
+   }
   },
   "FB02-061": {
    "id": "FB02-061",
@@ -25840,7 +27072,39 @@
    ],
    "text": "[Blocker]\n[When KO'd] Switch 1 [Field] in your Battle Area to Rest Mode: Play this card from its owner's Drop.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {
+         "keyword": "field"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "self",
+        "to": "play"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7156f9b4"
+   }
   },
   "ST01-029": {
    "id": "ST01-029",
@@ -26354,7 +27618,45 @@
    ],
    "text": "[Activate:Main] Place this card into its owner's Drop: If you have 10 or more cards in your Drop, play up to 1 <Vegeta> with a cost of 2 or less from your Drop.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 10
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Vegeta"
+         ],
+         "costLE": 2
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5137531b"
+   }
   },
   "SB01-006": {
    "id": "SB01-006",
@@ -26581,7 +27883,50 @@
    ],
    "text": "[Permanent][Your Turn] If you have 6 or more energy, your <Broly> Leader gets +10000 power.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "energyGE",
+        "n": 6
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Broly"
+          ]
+         },
+         "all": true
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "80c16cc7"
+   }
   },
   "FB03-008": {
    "id": "FB03-008",
@@ -27200,7 +28545,46 @@
    ],
    "text": "[Permanent] This card can't be removed from the Battle Area by your opponent's skills.\n[On Play] If your Leader has ≪Pride Troopers≫ in its special traits and your opponent's life is at 2 or more, you take 1 damage. Then, deal 1 damage to your opponent.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "removeImmune"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Pride Troopers"
+        ]
+       },
+       {
+        "t": "oppLifeGE",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "selfDamage",
+        "n": 1
+       },
+       {
+        "t": "damageLeader",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8afa62ea"
+   }
   },
   "FB01-005": {
    "id": "FB01-005",
@@ -28893,7 +30277,43 @@
    ],
    "text": "[Activate:Main] Draw 2 card. Then, choose up to 1 of your opponent's Battle Cards and it can't attack during your opponent's next turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "kw": "cantAttack",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6b45d644"
+   }
   },
   "FB08-065": {
    "id": "FB08-065",
@@ -29898,7 +31318,60 @@
    ],
    "text": "[Permanent][Your Turn] If you have 10 or more cards in your Drop, this card gets +15000 power.\n[On Play] Place the top card of your deck into your Drop.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 10
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "mill",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "933b7ea2"
+   }
   },
   "FB05-004": {
    "id": "FB05-004",
@@ -30506,7 +31979,53 @@
    ],
    "text": "[Activate:Main] If you have a <Jiren> with 30000 power or more, choose all of your opponent's Battle Cards and they get -25000 power for the turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Jiren"
+         ],
+         "powerGE": 30000
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "all": true
+        },
+        "amount": -25000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8474f901"
+   }
   },
   "SB01-047": {
    "id": "SB01-047",
@@ -31457,7 +32976,38 @@
    ],
    "text": "[On Play] You take 1 damage: If your Leader is awakened, add the top card of your deck to your life.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "lifeToHand",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderAwakened"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeFromDeck",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "55a49dab"
+   }
   },
   "FB10-031": {
    "id": "FB10-031",
@@ -33900,7 +35450,73 @@
    ],
    "text": "[Blocker]\n[When KO'd] If there is a <Majin Buu> in a Leader Area or Battle Area, choose up to 1 of your opponent's Battle Cards and switch it to Rest Mode.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "leaderIs",
+          "names": [
+           "Majin Buu"
+          ]
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "names": [
+            "Majin Buu"
+           ]
+          }
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "opp",
+          "filter": {
+           "names": [
+            "Majin Buu"
+           ]
+          }
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "dab8b477"
+   }
   },
   "FB08-047": {
    "id": "FB08-047",
@@ -35589,7 +37205,16 @@
    ],
    "text": "[Permanent] This card can't be KO'd by your opponent's skills.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "koImmuneSkills"
+    ],
+    "abilities": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2d8ca3cf"
+   }
   },
   "FB06-092": {
    "id": "FB06-092",
@@ -35709,7 +37334,48 @@
    ],
    "text": "[On Play] Play up to 1 Battle Card with a cost of 2 or less from your hand.\n[When Attacking] Choose up to 1 Battle Card with a cost of 3 or less and place it into its owner's Combo Area.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Choose up to 1 Battle Card with a cost of 3 or less and place it into its owner's Combo Area."
+      ],
+      "timing": "whenAttacking",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "move a card to the Combo Area"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e3284bf5"
+   }
   },
   "FB02-088": {
    "id": "FB02-088",
@@ -36384,7 +38050,51 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Auto] When this card is used in a combo from the Battle Area, play up to 1 <Hyper Meta-Rilldo> with a cost of 3 from your hand.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Hyper Meta-Rilldo"
+         ],
+         "costEQ": 3
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "51eaba0d"
+   }
   },
   "FB04-105": {
    "id": "FB04-105",
@@ -36406,7 +38116,62 @@
    ],
    "text": "[Permanent] If you or your opponent has an energy marker, reduce the cost of this card in your hand by 2.\n[On Play] If your opponent has an energy marker, draw 1 card.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "hasMarker",
+          "yes": true
+         },
+         {
+          "t": "oppHasMarker",
+          "yes": true
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "oppHasMarker",
+        "yes": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0bde044c"
+   }
   },
   "FB03-078": {
    "id": "FB03-078",
@@ -37952,7 +39717,37 @@
    ],
    "text": "[Activate:Main] Play up to 2 ≪Saiyan≫-only Battle Cards with energy costs of 3 or less from your energy.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "energy",
+        "filter": {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Saiyan"
+         ],
+         "costLE": 3
+        },
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8495868e"
+   }
   },
   "FB02-042": {
    "id": "FB02-042",
@@ -39685,7 +41480,51 @@
    ],
    "text": "[Field]\n[Activate:Main] Switch this card to Rest Mode: If your Leader has ≪Frieza's Army≫ in its special traits, play up to 1 Battle Card with a cost of 2 or less and ≪Frieza's Army≫ in its special traits from your hand in Rest Mode.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Frieza's Army"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2,
+         "traits": [
+          "Frieza's Army"
+         ]
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3f3c979f"
+   }
   },
   "FB08-070": {
    "id": "FB08-070",
@@ -40184,7 +42023,59 @@
    ],
    "text": "[Activate:Battle] Your cards that are in a battle get +25000 power for the battle. Then, if you have a card in your Combo Area, choose up to 1 Battle Card with a cost of 3 or less and return it to its owner's hand.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       },
+       {
+        "t": "bounce",
+        "target": {
+         "side": "any",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 3
+         }
+        },
+        "cond": [
+         {
+          "t": "comboAreaHasCard"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ae2dfed6"
+   }
   },
   "FP-098": {
    "id": "FP-098",
@@ -40338,7 +42229,70 @@
    ],
    "text": "[Permanent][Your Turn] If you have 7 or fewer cards in your hand, this card gets +5000 power.\n[When Attacking] Choose up to 1 of your opponent's Battle Cards and reduce its cost by 2 for the turn.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "handLE",
+        "n": 7
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -2,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ac8bec5a"
+   }
   },
   "FB06-066": {
    "id": "FB06-066",
@@ -41845,7 +43799,74 @@
    ],
    "text": "[When Attacking] If attacking a Battle Card with a cost of 4 or more, this card gets +25000 power for the battle. Then, place 1 card from your energy into your Drop.\n[End of Your Turn] If energy is placed into its owner's Drop by this card's skill during this turn, draw 1 card and add this card to your energy in Rest Mode.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard",
+        "filter": {
+         "costGE": 4
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       },
+       {
+        "t": "energyToDrop",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "energyLeftThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "self",
+        "to": "energy",
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "63e3c8fb"
+   }
   },
   "FB04-077": {
    "id": "FB04-077",
@@ -41870,6 +43891,109 @@
     "name": "Majin Buu: Evil",
     "power": 20000,
     "text": "[When Attacking][Once Per Turn] Draw 1 card.\n[Auto][Once Per Turn] When your Battle Card with ≪Majin≫ or ≪Evil Wizard≫ in its special traits is KO'd switch this card or up to 1 of your energy to Active Mode."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAllyKOd",
+      "trigger": {
+       "type": "BATTLE",
+       "traits": [
+        "Majin",
+        "Evil Wizard"
+       ]
+      },
+      "effects": [
+       {
+        "t": "choose",
+        "options": [
+         [
+          {
+           "t": "activate",
+           "target": {
+            "side": "self",
+            "zones": [
+             "battle"
+            ],
+            "count": 1,
+            "upTo": false,
+            "filter": {},
+            "ref": "this"
+           }
+          }
+         ],
+         [
+          {
+           "t": "activateEnergy",
+           "n": 1
+          }
+         ]
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f9c5171e"
    }
   },
   "FP-097": {
@@ -41958,7 +44082,64 @@
    ],
    "text": "[On Play] Choose up to 1 of your <Son Goku: GT> and it gets +5000 power for the turn. Then, if you have an energy marker, that card gets +5000 power for the turn.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Son Goku: GT"
+          ]
+         }
+        },
+        "amount": 5000,
+        "dur": "turn"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "amount": 5000,
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "hasMarker",
+          "yes": true
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3050db58"
+   }
   },
   "FB06-067": {
    "id": "FB06-067",
@@ -42910,7 +45091,29 @@
    ],
    "text": "[Auto][Once Per Turn] When a Battle Card is played from your Drop, choose up to 1 of your opponent's Battle Cards and reduce its cost by 1 for the turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "When a Battle Card is played from your Drop, choose up to 1 of your opponent's Battle Cards and reduce its cost by 1 for the turn."
+      ],
+      "timing": "auto",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "trigger on play from the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c82378ba"
+   }
   },
   "FS12-07": {
    "id": "FS12-07",
@@ -44452,6 +46655,100 @@
     "name": "Vegeta",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main][Once Per Turn] Place 1 of your energy into your Drop: If you have 4 or less energy play up to 1 ≪Saiyan≫-only Battle Card with a cost of 3 or less from your hand."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "energyToDrop",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "energyLE",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "(checked before paying: 4 or less energy after placing 1 into the Drop)"
+      ],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Saiyan"
+         ],
+         "costLE": 3
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "dd5cc080"
    }
   },
   "FB02-068": {
@@ -45737,7 +48034,29 @@
    ],
    "text": "[Activate:Main] Return this card to its owner's hand: Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, play up to 1 <Videl> with a cost of 2 from your hand. Then, you can't play <Videl> for the turn.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Return this card to its owner's hand: Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, play up to 1 <Videl> with a cost of 2 from your hand. Then, you can't play <Videl> for the turn."
+      ],
+      "timing": "activateMain",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "condition on a revealed card"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bfef4337"
+   }
   },
   "FP-024": {
    "id": "FP-024",
@@ -45781,7 +48100,36 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, play up to 1 <Super Sigma> with a cost of 2 from your hand.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Super Sigma"
+         ],
+         "costEQ": 2
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7b324297"
+   }
   },
   "FS10-16": {
    "id": "FS10-16",
@@ -47613,7 +49961,43 @@
    ],
    "text": "[On Play] Look at 5 cards from the top of your deck, then reveal up to 1 non-<Dr. Myuu> card with a cost of 4 or less and ≪Machine Mutant≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 5,
+        "options": [
+         {
+          "costLE": 4,
+          "traits": [
+           "Machine Mutant"
+          ],
+          "notNames": [
+           "Dr. Myuu"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a3ad84d3"
+   }
   },
   "FB02-101": {
    "id": "FB02-101",
@@ -47925,7 +50309,43 @@
    ],
    "text": "[When KO'd] Add up to 1 <Botamo> and up to 1 <Magetta>―both with a cost of 2 or less―from your Drop to your hand.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "names": [
+           "Botamo"
+          ],
+          "costLE": 2
+         },
+         {
+          "names": [
+           "Magetta"
+          ],
+          "costLE": 2
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d52042e4"
+   }
   },
   "FB09-105": {
    "id": "FB09-105",
@@ -48521,7 +50941,68 @@
    ],
    "text": "[On Play] Choose one--\n[ul]\n[li] Add 1 card from your life to your energy in Rest Mode.[/li]\n[li] If you have no <Vegeta> Battle Cards, this card can't attack for the turn.[/li]\n[/ul]",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "choose",
+        "options": [
+         [
+          {
+           "t": "energyFromLife",
+           "n": 1,
+           "rested": true
+          }
+         ],
+         [
+          {
+           "t": "grant",
+           "target": {
+            "side": "self",
+            "zones": [
+             "battle"
+            ],
+            "count": 1,
+            "upTo": false,
+            "filter": {},
+            "ref": "this"
+           },
+           "kw": "cantAttack",
+           "dur": "turn",
+           "cond": [
+            {
+             "t": "battleCount",
+             "op": "none",
+             "n": 0,
+             "side": "self",
+             "filter": {
+              "type": "BATTLE",
+              "names": [
+               "Vegeta"
+              ]
+             }
+            }
+           ]
+          }
+         ]
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "946f42bb"
+   }
   },
   "FS08-03": {
    "id": "FS08-03",
@@ -50264,7 +52745,46 @@
    ],
    "text": "[Activate:Main] Place this card into its owner's Drop: Choose up to 1 card with ≪Great Ape≫ in its special traits in a Battle Area and add it to its owner's energy in Rest Mode.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "toEnergy",
+        "target": {
+         "side": "any",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "traits": [
+           "Great Ape"
+          ]
+         }
+        },
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9ddd0863"
+   }
   },
   "FP-067": {
    "id": "FP-067",
@@ -50529,7 +53049,53 @@
    ],
    "text": "[Double Strike]\n[On Play] Place 1 card from your energy into your Drop: If your Leader has ≪Saiyan≫ in its special traits, choose up to 1 of your opponent's Battle Cards with a cost of 5 or less and KO it.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "doubleStrike"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "energyToDrop",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "18ab54ac"
+   }
   },
   "FB08-066": {
    "id": "FB08-066",
@@ -51542,7 +54108,86 @@
    ],
    "text": "[On Play] If your Leader has ≪Universe 7≫ in its special traits, until the end of your opponent's next turn, this card can't be removed from the Battle Area by your opponent's skills and it gets +20000 power.\n[When Attacking] Choose up to 1 of your opponent's Battle Cards and it gets -10000 power for the turn.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Universe 7"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "removeImmune",
+        "dur": "oppNextTurn"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 20000,
+        "dur": "oppNextTurn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f0ac994f"
+   }
   },
   "FP-004": {
    "id": "FP-004",
@@ -52012,7 +54657,61 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, if your Leader has ≪Machine Mutant≫ in its special traits, play up to 1 Battle Card with a cost of 2 and ≪Brainwashed≫ in its special traits, or up to 1 <Baby Vegeta> with a cost 2 from your hand. Then, you can't play Battle Cards for the turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Machine Mutant"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "anyOf": [
+          {
+           "type": "BATTLE",
+           "costEQ": 2,
+           "traits": [
+            "Brainwashed"
+           ]
+          },
+          {
+           "names": [
+            "Baby Vegeta"
+           ],
+           "costEQ": 2
+          }
+         ]
+        },
+        "n": 1
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "type": "BATTLE"
+        },
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ada25f88"
+   }
   },
   "FB08-118": {
    "id": "FB08-118",
@@ -52207,7 +54906,55 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Auto] When this card is used in a combo from the Battle Area, if your Leader has ≪Machine Mutant≫ in its special traits and you don't have an energy marker, you place 1 energy marker.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Machine Mutant"
+        ]
+       },
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "placeMarker",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5993aa91"
+   }
   },
   "FB07-081": {
    "id": "FB07-081",
@@ -52309,7 +55056,58 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, play up to 1 <Super Sigma> with a cost of 2 from your hand.\n[Activate:Main] Switch this card to Rest Mode: Draw 1 card. Then, discard 1 card from your hand.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Super Sigma"
+         ],
+         "costEQ": 2
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a3c3c034"
+   }
   },
   "ST01-039": {
    "id": "ST01-039",
@@ -52494,6 +55292,80 @@
     "name": "Super Baby 2",
     "power": 20000,
     "text": "[Permanent] You can also use Rest Mode Battle Cards with ≪Brainwashed≫ or ≪Machine Mutant≫ in their special traits in combos.\n[When Attacking] Draw 1 card."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "You can also use Rest Mode Battle Cards with ≪Brainwashed≫ or ≪Machine Mutant≫ in their special traits in combos."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "combo while in Rest Mode"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c0baaf3c"
    }
   },
   "FB09-095": {
@@ -52596,6 +55468,66 @@
     "name": "Son Goku",
     "power": 20000,
     "text": "[Activate:Battle][Once Per Turn] Choose up to 1 Battle Card in a Battle Area and this card's original power becomes the same as that card's power for the battle."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 3
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Choose up to 1 Battle Card in a Battle Area and this card's original power becomes the same as that card's power for the battle."
+      ],
+      "timing": "activateBattle",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "set original power"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "437dd88a"
    }
   },
   "FB10-103": {
@@ -53408,7 +56340,52 @@
    ],
    "text": "[Activate:Main] Place this card and 1 <Kibito> from your Battle Area into their owners' Drop: Play up to 1 skill-less <Kibito Kai> from your Drop.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       },
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Kibito"
+         ],
+         "notNames": [
+          "Kibito Kai"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Kibito Kai"
+         ],
+         "noSkill": true
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "83acbf25"
+   }
   },
   "FB07-019": {
    "id": "FB07-019",
@@ -53677,7 +56654,53 @@
    ],
    "text": "[Permanent] If your Leader is <Son Goku: GT> and this card has 45000 power or more, this card gains [Double Strike].",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku: GT"
+        ]
+       },
+       {
+        "t": "thisMatches",
+        "filter": {
+         "powerGE": 45000
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "doubleStrike",
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c0951fe5"
+   }
   },
   "FB07-045": {
    "id": "FB07-045",
@@ -54399,7 +57422,54 @@
    ],
    "text": "[Activate:Main] pay 2 energy, discard 1 card from your hand and place this card into its owner's Drop: If you have 10 or more cards in your Drop, play up to 1 <Vegito> with a cost of 5 or 6 from your Drop.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 10
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Vegito"
+         ],
+         "costGE": 5,
+         "costLE": 6
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d1cb529f"
+   }
   },
   "ST01-010": {
    "id": "ST01-010",
@@ -55315,7 +58385,54 @@
    ],
    "text": "[Field]\n[Activate:Battle][Once Per Turn] Discard 1 Extra from your hand: Your <Son Gohan: Adolescence> that's in a battle gets +10000 power for the battle.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Son Gohan: Adolescence"
+          ]
+         },
+         "ref": "battler"
+        },
+        "amount": 10000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7fd641e9"
+   }
   },
   "FB02-115": {
    "id": "FB02-115",
@@ -55598,7 +58715,43 @@
    ],
    "text": "[Activate:Main] Place this card into its owner's Drop: Choose up to 1 of your opponent's Battle Cards and it gets -10000 power for the turn.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ea52324f"
+   }
   },
   "FB06-083": {
    "id": "FB06-083",
@@ -57030,7 +60183,48 @@
    ],
    "text": "[Activate:Main] KO 1 of your Battle Cards with ≪Evil Wizard≫ in its special traits: Play up to 1 Battle Card with a cost of 3 or less and ≪Majin≫ in its special traits from your hand.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Evil Wizard"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 3,
+         "traits": [
+          "Majin"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fdf6cf77"
+   }
   },
   "FS08-10": {
    "id": "FS08-10",
@@ -57730,7 +60924,42 @@
    ],
    "text": "[Activate:Main] Choose all Rest Mode Battle Cards with costs of 2 or less and KO them.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "any",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "rested": true,
+          "costLE": 2
+         },
+         "all": true
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b5968941"
+   }
   },
   "FB05-105": {
    "id": "FB05-105",
@@ -57913,7 +61142,37 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, draw 1 card. Then, during this turn, the next time you use an Extra with a cost of 2 or less from your hand, you don't have to pay the cost.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "costLE": 2
+        },
+        "amount": "free"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e1d79292"
+   }
   },
   "FB04-015": {
    "id": "FB04-015",
@@ -57935,7 +61194,40 @@
    ],
    "text": "[Auto][Once Per Turn] When you take damage, this card gets +10000 power for the turn.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenDamaged",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "07333fc5"
+   }
   },
   "FB09-098": {
    "id": "FB09-098",
@@ -59098,7 +62390,39 @@
    ],
    "text": "[Activate:Main] KO 1 of your <Saibaiman> Battle Cards: Draw 2 cards.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Saibaiman"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ae7b0eb9"
+   }
   },
   "FP-076": {
    "id": "FP-076",
@@ -59429,7 +62753,46 @@
    ],
    "text": "[Activate:Main] Choose up to 1 of your Battle Cards with an original power of 30000 power or more and ≪Universe 7≫ in its special traits, and it can't be removed from the Battle Area by the skills of your opponent's Battle Cards until the end of your opponent's next turn.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "powerGE": 30000,
+          "originalPower": true,
+          "traits": [
+           "Universe 7"
+          ]
+         }
+        },
+        "kw": "removeImmune",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "95e74d96"
+   }
   },
   "FS06-08": {
    "id": "FS06-08",
@@ -60008,7 +63371,59 @@
    ],
    "text": "[Activate:Battle] If you have a <Frieza> Battle Card with ≪Universe 7≫ in its special traits, your <Son Goku> that's in a battle gets +20000 power for the battle.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Frieza"
+         ],
+         "traits": [
+          "Universe 7"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Son Goku"
+          ]
+         },
+         "ref": "battler"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7a9a377d"
+   }
   },
   "FB03-117": {
    "id": "FB03-117",
@@ -61599,7 +65014,66 @@
    ],
    "text": "[Permanent][Opponent's Turn] If you have an energy marker, your non-<Trunks: GT> Battle Cards can't be removed from the Battle Area by your opponent's skills.\n[On Play] Add up to 1 card from your life to your hand.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "opp",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "notNames": [
+           "Trunks: GT"
+          ]
+         },
+         "all": true
+        },
+        "kw": "removeImmune",
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5bd5e7dc"
+   }
   },
   "FB04-025": {
    "id": "FB04-025",
@@ -61621,7 +65095,55 @@
    ],
    "text": "[Activate:Battle][Your Turn] Your cards that are in a battle get +25000 power for the battle. Then, choose up to 1 of your opponent's Battle Cards and it gets -15000 power for the turn.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -15000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "781c42e1"
+   }
   },
   "FP-018": {
    "id": "FP-018",
@@ -62148,7 +65670,36 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, play up to 1 <Super Sigma> with a cost of 2 from your hand.",
    "set": "FB04",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Super Sigma"
+         ],
+         "costEQ": 2
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7b324297"
+   }
   },
   "FB06-079": {
    "id": "FB06-079",
@@ -63758,7 +67309,53 @@
    ],
    "text": "[On Play] If you have less than 3 cards with ≪Machine Mutant≫ in their special traits in your Drop, KO this card.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "traits": [
+           "Machine Mutant"
+          ]
+         }
+        },
+        "op": "le",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "58ae2351"
+   }
   },
   "FP-010": {
    "id": "FP-010",
@@ -63893,7 +67490,47 @@
    ],
    "text": "[Activate:Main][Once Per Turn] KO 1 of your Battle Cards: Draw 1 card. Then, if your opponent has 6 or more cards in their hand, your opponent discards 1 card from their hand.",
    "set": "FB04",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "oppDiscard",
+        "n": 1,
+        "cond": [
+         {
+          "t": "oppHandGE",
+          "n": 6
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8c72234b"
+   }
   },
   "FP-005": {
    "id": "FP-005",
@@ -64562,7 +68199,75 @@
    ],
    "text": "[On Play] If you have <Super Sigma> in your Drop, choose up to 1 of your opponent's Battle Cards with a cost of 3 or less and return it to its owner's hand.\n[Auto] When this card is used in a combo from the Battle Area, play up to 1 <Meta-Rilldo> with a cost of 4 from your hand.",
    "set": "FB04",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Super Sigma"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "bounce",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 3
+         }
+        }
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Meta-Rilldo"
+         ],
+         "costEQ": 4
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0a9f17c6"
+   }
   },
   "FB09-107": {
    "id": "FB09-107",
@@ -66402,7 +70107,42 @@
    ],
    "text": "[Auto] When this card is used in a combo from the Battle Area, add up to 2 non-<Trunks: GT> Battle Cards with costs of 4 or less and ≪Brainwashed≫ or ≪Machine Mutant≫ in their special traits from your Drop to your hand.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "BATTLE",
+          "costLE": 4,
+          "traits": [
+           "Brainwashed",
+           "Machine Mutant"
+          ],
+          "notNames": [
+           "Trunks: GT"
+          ]
+         }
+        ],
+        "each": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0354ed68"
+   }
   },
   "FS05-02": {
    "id": "FS05-02",
@@ -66807,7 +70547,44 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Auto][Once Per Turn] When one of your Battle Cards other than this card is switched to Active Mode by your <Cooler> Leader's skill, draw 1 card.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "When one of your Battle Cards other than this card is switched to Active Mode by your <Cooler> Leader's skill, draw 1 card."
+      ],
+      "timing": "auto",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "trigger on switching to Active Mode"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2e9ead6c"
+   }
   },
   "FB03-074": {
    "id": "FB03-074",
@@ -69855,7 +73632,58 @@
    ],
    "text": "[Activate:Main] Plce this card into its owner's Drop: If you have 10 or more cards in your Drop, play up to 1 <Son Goten> with a cost of 2 or less and up to 1 <Trunks: Youth> with a cost of 2 or less from your Drop in Rest Mode.",
    "set": "FB04",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 10
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Son Goten"
+         ],
+         "costLE": 2
+        },
+        "n": 1,
+        "rested": true
+       },
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Trunks: Youth"
+         ],
+         "costLE": 2
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c97667f0"
+   }
   },
   "FB09-085": {
    "id": "FB09-085",

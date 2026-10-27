@@ -54,6 +54,10 @@ function effectValue(e: Effect): number {
     case 'negate': return 1.0;
     case 'redirect': return 1.0;
     case 'winGame': return 50;
+    case 'atEndOfBattle': return e.effects.reduce((a, x) => a + effectValue(x), 0);
+    case 'oppMarker': return -0.7 * e.n;
+    case 'selfDamage': return -1.0 * e.n;
+    case 'energyToDrop': return -1.0 * e.n;
     default: return 0.2;
   }
 }

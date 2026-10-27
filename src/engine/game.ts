@@ -463,6 +463,12 @@ function resolveDamage(s: GameState, ctl: Choosers) {
 }
 
 function endBattle(s: GameState, ctl: Choosers) {
+  const queued = s.battleEnd ?? [];
+  s.battleEnd = undefined;
+  for (const q of queued) {
+    if (s.stage === 'over') break;
+    resolveAbility(s, q.src, { timing: 'auto', once: false, cost: [], cond: [], effects: q.effects, text: '', unparsed: [] }, -1, ctl, { costsPaid: true });
+  }
   for (const side of [0, 1] as Side[]) {
     for (const u of s.p[side].combo.slice()) moveTo(s, u, 'drop');
   }

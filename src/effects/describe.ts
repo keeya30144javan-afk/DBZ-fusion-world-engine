@@ -145,6 +145,10 @@ export function describeEffect(e: Effect): string {
     case 'lifeToDeck': out = `look through your life and place ${plural(e.n, 'card')} on top of your deck`; break;
     case 'negate': out = `${pick}negate ${e.target.ref === 'this' ? "this card's" : 'its'} ${e.scope === 'onPlay' ? '[On Play] skills' : 'skills'}${DUR[e.dur]}`; break;
     case 'winGame': out = 'you win the game'; break;
+    case 'atEndOfBattle': out = `at the end of the battle, ${e.effects.map(describeEffect).join(', then ')}`; break;
+    case 'oppMarker': out = `your opponent places ${e.n} energy marker`; break;
+    case 'selfDamage': out = `you take ${e.n} damage`; break;
+    case 'energyToDrop': out = `place ${plural(e.n, 'card')} from your energy into your Drop`; break;
     case 'redirect': out = `${pick}switch the attack target to ${e.target.ref || e.target.all ? tgt : 'it'}`; break;
     case 'noop': out = e.note; break;
   }
@@ -190,6 +194,7 @@ export function describeCond(c: Cond): string {
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
     case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
+    case 'oppHasMarker': return c.yes ? 'your opponent has an energy marker' : "your opponent doesn't have an energy marker";
     case 'markerPaid': return 'you removed an energy marker to use this card';
     case 'thisMatches': return `this card is a ${describeFilter(c.filter, 'card')}`;
     case 'extraUsedThisTurn': return 'you used an Extra with an original cost of 1 or more during this turn';
@@ -237,7 +242,7 @@ const TIMING: Record<string, string> = {
   startOfYourTurn: 'Start of Your Turn', awaken: 'Awaken', comboFromHand: 'Auto: when used in a combo from your hand',
   comboFromField: 'Auto: when used in a combo from the Battle Area', whenDamaged: 'Auto: when you take damage',
   whenAllyPlayed: 'Auto: when your card is played', whenMilled: 'Auto: when placed from your deck into your Drop',
-  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle",
+  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle", whenAllyKOd: "Auto: when your card is KO'd",
   whenOppAttacks: "Auto: when an opponent's card attacks", whenAllyRemovedBySelf: 'Auto: when your card is removed from the Battle Area by one of your skills',
   whenAllyRemovedByOpp: 'Auto: when your card is removed from the Battle Area by your opponent', auto: 'Auto',
 };
@@ -249,6 +254,7 @@ export function describeAbility(a: Ability): string {
   if (a.turn) tags.push(a.turn === 'your' ? '[Your Turn]' : "[Opponent's Turn]");
   if (a.once) tags.push('[Once per turn]');
   let body = '';
+  if (a.timing === 'whenAllyKOd' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is KO'd, `;
   if (a.timing === 'whenAllyPlayed' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is played, `;
   if ((a.timing === 'whenAllyRemovedBySelf' || a.timing === 'whenAllyRemovedByOpp') && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is removed, `;
   if (a.cost.length) body += a.cost.map(describeCost).join(', ') + ': ';

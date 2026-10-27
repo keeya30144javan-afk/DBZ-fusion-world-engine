@@ -35,10 +35,11 @@ export function setWinner(s: GameState, winner: Side | -1, reason: string) {
 }
 
 /** Sorbet / Golden Frieza: "You will not lose the game even if you have 0 cards in your deck." */
+const NO_DECK_OUT = /(will not|don't|do not) lose the game even if you have 0 cards in your deck/i;
 function ignoresDeckOut(s: GameState, p: Side): boolean {
   const lc = cardOf(s, s.p[p].leader);
   const text = s.p[p].awakened && lc.back ? lc.back.text : lc.text;
-  return /will not lose the game even if you have 0 cards in your deck/i.test(text);
+  return NO_DECK_OUT.test(text) || s.p[p].battle.some((u) => NO_DECK_OUT.test(cardOf(s, u).text));
 }
 
 /** Manual p.6: a player whose deck is reduced to zero cards loses at once. */
@@ -125,6 +126,10 @@ export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
   emit(s, { t: 'toDrop', p: owner, id: s.inst[uid].id, uid });
   fireTriggers(s, uid, 'whenKOd', ctl);
+  for (const u of fieldOf(s, owner)) {
+    if (s.stage === 'over') break;
+    fireTriggers(s, u, 'whenAllyKOd', ctl, uid);
+  }
   return true;
 }
 
@@ -188,7 +193,7 @@ export function fireTriggers(s: GameState, uid: number, timing: Ability['timing'
     const owner = s.inst[uid].owner;
     if (!turnMatches(s, owner, ab.turn)) continue;
     if (ab.once && s.p[owner].usedOnce.includes(onceKey(s, uid, i))) continue;
-    if ((timing === 'whenAllyPlayed' || timing === 'whenAllyRemovedBySelf' || timing === 'whenAllyRemovedByOpp') && (subject === undefined || (ab.trigger && !matchesFilter(s, subject, ab.trigger, uid)))) continue;
+    if ((timing === 'whenAllyPlayed' || timing === 'whenAllyKOd' || timing === 'whenAllyRemovedBySelf' || timing === 'whenAllyRemovedByOpp') && (subject === undefined || (ab.trigger && !matchesFilter(s, subject, ab.trigger, uid)))) continue;
     resolveAbility(s, uid, ab, i, ctl);
   }
 }
@@ -562,6 +567,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
         if (dest === 'hand') me.hand.push(u);
         else if (dest === 'drop') me.drop.push(u);
         else if (dest === 'life') me.life.push(u);
+        else if (cardOf(s, u).type === 'EXTRA') { me.hand.push(u); placeField(s, u, ctl); if (e.rested) s.inst[u].rested = true; }
         else { me.hand.push(u); playCard(s, u, ctl, { rested: e.rested, negate: e.negate }); }
       }
       checkDeckOut(s);
@@ -729,6 +735,14 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
       const until = e.dur === 'oppNextTurn' ? s.turn + 1 : e.dur === 'game' ? 1e9 : s.turn;
       for (const u of ts) { s.inst[u].negatedUntil = until; s.inst[u].negateScope = e.scope ?? 'all'; }
+      return;
+    }
+    case 'atEndOfBattle': if (s.battle) (s.battleEnd ??= []).push({ src, owner, effects: e.effects }); return;
+    case 'oppMarker': s.p[other(owner)].markers += e.n; return;
+    case 'selfDamage': takeLife(s, owner, e.n, false, ctl); return;
+    case 'energyToDrop': {
+      const pick = ctl[owner].choose(s, { kind: 'energyToDrop', player: owner, src, options: me.energy.slice(), min: Math.min(e.n, me.energy.length), max: e.n, intent: 'lose' });
+      for (const u of pick.slice(0, e.n)) moveTo(s, u, 'drop');
       return;
     }
     case 'winGame': s.stage = 'over'; s.winner = owner; s.reason = `${nameOf(s, src)}'s skill`; return;

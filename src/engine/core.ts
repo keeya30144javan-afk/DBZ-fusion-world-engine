@@ -137,6 +137,8 @@ export interface GameState {
   events: GameEvent[] | null;
   /** The player whose skill is resolving right now (for "removed by your/your opponent's skill"). */
   skillBy?: Side;
+  /** Effects to run when the current battle ends ("At the end of the battle, KO this card"). */
+  battleEnd?: { src: number; owner: Side; effects: Effect[] }[];
   /** Battle Cards that left a Battle Area during the current skill, for removal triggers. */
   removals?: { uid: number; owner: Side; by: Side }[];
 }
@@ -389,6 +391,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'extraUsedThisTurn': return me.extraUsedTurn === s.turn;
     case 'thisMatches': return matchesFilter(s, src, c.filter, src);
     case 'markerPaid': return !!s.inst[src].markerPaid;
+    case 'oppHasMarker': return (opp.markers > 0) === c.yes;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;
