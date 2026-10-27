@@ -160,7 +160,7 @@ export type Effect = E<
   | { t: 'discard'; n: number }
   | { t: 'oppDiscard'; n: number }
   | { t: 'mill'; n: number }
-  | { t: 'costReduce'; n: number }
+  | { t: 'costReduce'; n: number; per?: Count }
   | { t: 'cantBlock' }
   | { t: 'damageLeader'; n: number }
   | { t: 'flipLeader' }
@@ -299,8 +299,10 @@ export type Cond =
   | { t: 'bouncedThisTurn' }
   /** A card left your energy this turn. */
   | { t: 'energyLeftThisTurn' }
-  /** You used an Extra with an original cost of 1 or more this turn. */
-  | { t: 'extraUsedThisTurn' }
+  /** You used an Extra this turn (without filter: one with an original cost of 1 or more). */
+  | { t: 'extraUsedThisTurn'; filter?: Filter }
+  /** A card was removed from your life this turn. */
+  | { t: 'lifeLeftThisTurn' }
   /** The card with this skill matches the filter ("if this card has 30000 power or more"). */
   | { t: 'thisMatches'; filter: Filter }
   /** "If you removed an energy marker to use this card". */

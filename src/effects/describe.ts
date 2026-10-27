@@ -122,7 +122,7 @@ export function describeEffect(e: Effect): string {
     case 'discard': out = `discard ${plural(e.n, 'card')} from your hand`; break;
     case 'oppDiscard': out = `your opponent discards ${plural(e.n, 'card')} from their hand`; break;
     case 'mill': out = `place the top ${plural(e.n, 'card')} of your deck into your Drop`; break;
-    case 'costReduce': out = `reduce the cost of this card in your hand by ${e.n}`; break;
+    case 'costReduce': out = `reduce the cost of this card in your hand by ${e.n}${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
     case 'cantBlock': out = "your opponent can't activate [Blocker] during this battle"; break;
     case 'damageLeader': out = `deal ${e.n} damage to your opponent`; break;
     case 'flipLeader': out = 'flip this card over'; break;
@@ -200,7 +200,8 @@ export function describeCond(c: Cond): string {
     case 'oppHasMarker': return c.yes ? 'your opponent has an energy marker' : "your opponent doesn't have an energy marker";
     case 'markerPaid': return 'you removed an energy marker to use this card (or for this skill)';
     case 'thisMatches': return `this card is a ${describeFilter(c.filter, 'card')}`;
-    case 'extraUsedThisTurn': return 'you used an Extra with an original cost of 1 or more during this turn';
+    case 'extraUsedThisTurn': return c.filter ? `you used ${describeFilter(c.filter, 'Extra')} during this turn` : 'you used an Extra with an original cost of 1 or more during this turn';
+    case 'lifeLeftThisTurn': return 'a card was removed from your life during this turn';
     case 'playedBySkill': return 'this card was played by a skill';
     case 'energyLeftThisTurn': return 'a card was removed from your energy during this turn';
     case 'battleTotalCost': return `${c.only ? `you only have ${describeFilter(c.only, 'card')}s in your Battle Area and their` : 'the cards in your Battle Area have a'} total cost is ${c.n} or more`;

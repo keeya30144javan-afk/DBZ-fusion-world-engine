@@ -500,6 +500,7 @@ function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers) {
   payPlan(s, side, plan);
   s.inst[uid].markerPaid = plan.markers > 0;
   if (cardOf(s, uid).cost >= 1) s.p[side].extraUsedTurn = s.turn;
+  (s.p[side].usedExtras ??= []).push({ turn: s.turn, uid });
   const ab = compiledOf(s, uid).abilities[abIdx];
   moveTo(s, uid, 'drop');
   emit(s, { t: 'activate', p: side, id: s.inst[uid].id, uid, fromHand: true });
@@ -541,7 +542,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       payPlan(s, side, plan);
       consumeDiscount(s, a.uid);
       s.inst[a.uid].markerPaid = plan.markers > 0;
-      if (cardOf(s, a.uid).type === 'EXTRA') { if (cardOf(s, a.uid).cost >= 1) me.extraUsedTurn = s.turn; placeField(s, a.uid, ctl); }
+      if (cardOf(s, a.uid).type === 'EXTRA') { if (cardOf(s, a.uid).cost >= 1) me.extraUsedTurn = s.turn; (me.usedExtras ??= []).push({ turn: s.turn, uid: a.uid }); placeField(s, a.uid, ctl); }
       else playCard(s, a.uid, ctl);
       return;
     }

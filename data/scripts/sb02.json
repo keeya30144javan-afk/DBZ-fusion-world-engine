@@ -1,0 +1,1877 @@
+{
+ "SB02-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If a Battle Card with [Evolve] in your Battle Area would be KO'd, you may switch 1 [Field] in your Battle Area to Rest Mode instead."
+    ],
+    "turn": "opp"
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "replacement effects"
+  ]
+ },
+ "SB02-003": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "effects": [],
+    "unparsed": [
+     "Return this card from a Battle Area to its owner's hand: Place any number of Battle Cards with ≪Saiyan≫ and ≪Lookout≫ in their special traits from your hand or Battle Area under <Hyperbolic Time Chamber> in your Battle Area until it has 2 or fewer cards under it. Then, draw 1 card for each card placed by this skill."
+    ]
+   }
+  ],
+  "needs": [
+   "cards under a [Field]"
+  ]
+ },
+ "SB02-004": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku"
+     ],
+     "traits": [
+      "Lookout"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "names": [
+         "Hyperbolic Time Chamber"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -15000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-005": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "names": [
+           "Hyperbolic Time Chamber"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-007": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Gohan: Childhood"
+     ],
+     "costEQ": 4
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "oppNextTurn",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-009": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "powerLE": 25000
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-014": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "effects": [],
+    "unparsed": [
+     "Return this card from a Battle Area to its owner's hand: Place any number of Battle Cards with ≪Saiyan≫ and ≪Lookout≫ in their special traits from your hand or Battle Area under <Hyperbolic Time Chamber> in your Battle Area until it has 2 or fewer cards under it. Then, draw 1 card for each card placed by this skill."
+    ]
+   }
+  ],
+  "needs": [
+   "cards under a [Field]"
+  ]
+ },
+ "SB02-015": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Vegeta"
+     ],
+     "traits": [
+      "Lookout"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "names": [
+         "Hyperbolic Time Chamber"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-016": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If your Leader is <Trunks: Future> and [Evolve] would activate on a Battle Card with ≪Saiyan≫ in its special traits from your hand, you can choose a card from under this card."
+    ]
+   }
+  ],
+  "needs": [
+   "cards under a [Field]"
+  ]
+ },
+ "SB02-017": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "extraUsedThisTurn",
+      "filter": {
+       "type": "EXTRA",
+       "costEQ": 3,
+       "originalCost": true,
+       "traitsAll": [
+        "Saiyan",
+        "Earthling"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "turn"
+     }
+    ],
+    "unparsed": [
+     "(the simulator applies it if the Extra was already used when this activates)"
+    ]
+   }
+  ]
+ },
+ "SB02-018": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Goten",
+        "Trunks: Youth"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-020": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 7,
+      "options": [
+       {
+        "type": "EXTRA"
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "notNames": [
+        "Trunks"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "rested": true
+     },
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Trunks: Youth"
+       ],
+       "notNames": [
+        "Son Goten"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-021": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "extraUsedThisTurn",
+      "filter": {
+       "type": "EXTRA",
+       "costEQ": 3,
+       "originalCost": true,
+       "traitsAll": [
+        "Saiyan",
+        "Earthling"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-022": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "extraUsedThisTurn",
+      "filter": {
+       "type": "EXTRA",
+       "costGE": 3,
+       "originalCost": true,
+       "traitsAll": [
+        "Saiyan",
+        "Earthling"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ],
+    "unparsed": [
+     "(the simulator applies it if the Extra was already used when this activates)"
+    ]
+   }
+  ]
+ },
+ "SB02-023": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "notNames": [
+        "Trunks"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "rested": true
+     },
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Trunks: Youth"
+       ],
+       "notNames": [
+        "Son Goten"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-024": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Goten"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "selfToDrop"
+     },
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Trunks: Youth"
+       ],
+       "costEQ": 2
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-025": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "type": "EXTRA"
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Gotenks"
+        ],
+        "costEQ": 4
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-026": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ]
+     },
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Earthling"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA"
+      },
+      "amount": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-027": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Trunks: Youth"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "selfToDrop"
+     },
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "costEQ": 2
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-029": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Gotenks"
+        ],
+        "costEQ": 4
+       }
+      },
+      "amount": 25000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-030": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "effects": [],
+    "unparsed": [
+     "Choose up to 1 Battle Card in your opponent's Battle Area with a cost less than or equal to the total cost of the Battle Cards in your Battle Area and place it at the bottom of its owner's deck."
+    ]
+   }
+  ],
+  "needs": [
+   "cost compared with a counted total"
+  ]
+ },
+ "SB02-032": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "all": true,
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-033": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 0,
+      "only": {
+       "traits": [
+        "Planet Namek"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-034": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If this card is in Rest Mode, your opponent can't attack Leaders."
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [],
+    "unparsed": [
+     "If your Leader has ≪Planet Namek≫ in its special traits, look through your life and play up to 1 <Son Goku> with a cost of 7 or less and ≪Planet Namek≫ in its special traits. Shuffle your life."
+    ]
+   }
+  ],
+  "needs": [
+   "attack restrictions on the opponent",
+   "play from life"
+  ]
+ },
+ "SB02-035": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "traits": [
+         "Planet Namek"
+        ]
+       }
+      },
+      "amount": 15000,
+      "dur": "turn"
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Guru"
+       ]
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-036": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     },
+     {
+      "t": "lifeLeftThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-037": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-038": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     },
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-039": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Krillin"
+       ],
+       "costLE": 3
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-040": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Gohan: Youth",
+        "Krillin"
+       ],
+       "costLE": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-041": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     },
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Piccolo"
+       ],
+       "costLE": 2
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Piccolo"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-043": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true,
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Planet Namek"
+        ]
+       },
+       {
+        "t": "lifeLE",
+        "n": 3
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-044": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromLife",
+      "n": 1,
+      "rested": true
+     },
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-045": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "lifeLeftThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-047": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "lifeLeftThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 30000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-048": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn",
+      "cond": [
+       {
+        "t": "lifeLeftThisTurn"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-049": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Frieza's Army"
+        ]
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "drop"
+     },
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Ginyu"
+       ],
+       "costEQ": 1
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-050": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza's Army"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "rest",
+      "target": {
+       "count": 2
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-051": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-052": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza's Army"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Frieza's Army"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-053": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza's Army"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 2,
+       "traits": [
+        "Frieza's Army"
+       ],
+       "notNames": [
+        "Frieza"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-054": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If your Leader is <Frieza> and your non-<Frieza> Battle Card would be removed from a Battle Area by an opponent's skill, you may switch this card to Rest Mode instead."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "replacement effects"
+  ]
+ },
+ "SB02-055": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "King Piccolo"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         "King Piccolo"
+        ]
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "traits": [
+         "Demon Clan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-056": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 4
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-058": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "King Piccolo"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1,
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ]
+     },
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "playFrom",
+         "from": "hand",
+         "filter": {
+          "names": [
+           "Demon's Egg"
+          ]
+         },
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "playFrom",
+         "from": "drop",
+         "filter": {
+          "names": [
+           "Demon's Egg"
+          ]
+         },
+         "n": 1
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "SB02-059": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "This card can't be attacked by Leaders or Battle Cards with costs of 3 or less."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "attack restrictions on the opponent"
+  ]
+ },
+ "SB02-060": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "mill",
+      "n": 3
+     },
+     {
+      "t": "negate",
+      "target": {
+       "ref": "this"
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ }
+}

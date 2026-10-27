@@ -81,6 +81,10 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn a card left this player's life. */
+  lifeLeftTurn?: number;
+  /** Extras this player used, by turn (for "if you use an Extra with ... during this turn"). */
+  usedExtras?: { turn: number; uid: number }[];
   /** Last turn this player used a card from their Drop in a combo. */
   comboDropTurn?: number;
   /** Last turn one of this player's Battle Cards left a Battle Area through any skill. */
@@ -400,7 +404,10 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
     case 'bouncedThisTurn': return me.bouncedTurn === s.turn;
     case 'energyLeftThisTurn': return me.energyLeftTurn === s.turn;
-    case 'extraUsedThisTurn': return me.extraUsedTurn === s.turn;
+    case 'extraUsedThisTurn':
+      if (!c.filter) return me.extraUsedTurn === s.turn;
+      return (me.usedExtras ?? []).some((x) => x.turn === s.turn && matchesFilter(s, x.uid, c.filter!, src));
+    case 'lifeLeftThisTurn': return me.lifeLeftTurn === s.turn;
     case 'thisMatches': return matchesFilter(s, src, c.filter, src);
     case 'markerPaid': return !!s.inst[src].markerPaid;
     case 'oppHasMarker': return (opp.markers > 0) === c.yes;
@@ -556,7 +563,7 @@ export function costInHand(s: GameState, uid: number): number {
   let cost = card.cost;
   for (const ab of compiledOf(s, uid).abilities) {
     if (ab.timing !== 'permanent' || !turnMatches(s, owner, ab.turn) || !condsHold(s, owner, uid, ab.cond)) continue;
-    for (const e of ab.effects) if (e.t === 'costReduce' && condsHold(s, owner, uid, e.cond)) cost -= e.n;
+    for (const e of ab.effects) if (e.t === 'costReduce' && condsHold(s, owner, uid, e.cond)) cost -= e.per ? e.n * countOf(s, owner, uid, e.per) : e.n;
   }
   for (const m of activeMods(s, owner)) {
     if (!matchesFilter(s, uid, m.filter, uid)) continue;

@@ -75,6 +75,7 @@ export function takeLife(s: GameState, p: Side, n: number, toDrop: boolean, ctl?
       return;
     }
     const top = me.life.pop()!;
+    me.lifeLeftTurn = s.turn;
     taken++;
     if (toDrop) { me.drop.push(top); emit(s, { t: 'toDrop', p, id: s.inst[top].id, uid: top }); }
     else me.hand.push(top);
@@ -615,6 +616,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'energyFromLife': {
       for (let i = 0; i < e.n; i++) {
         const u = me.life.pop();
+        if (u !== undefined) me.lifeLeftTurn = s.turn;
         if (u === undefined) break;
         me.energy.push(u);
         s.inst[u].rested = e.rested;
@@ -696,7 +698,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'dropToDeck': { for (const u of me.drop.splice(0)) { resetInst(s.inst[u]); me.deck.push(u); } shuffle(s, me.deck); return; }
     case 'lifeToDeck': {
       const pick = pickFrom(s, owner, src, me.life.slice(), e.n, ctl, 'gain', Math.min(e.n, me.life.length));
-      for (const u of pick) { me.life.splice(me.life.indexOf(u), 1); me.deck.push(u); }
+      for (const u of pick) { me.life.splice(me.life.indexOf(u), 1); me.deck.push(u); me.lifeLeftTurn = s.turn; }
       if (me.life.length === 0 && s.rules.loseAtZeroLife) setWinner(s, other(owner), 'life reached 0');
       shuffle(s, me.life);
       return;
