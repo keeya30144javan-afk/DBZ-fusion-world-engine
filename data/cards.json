@@ -1798,7 +1798,64 @@
    ],
    "text": "[Permanent] If your card with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name is removed from a Battle Area by your opponent, you may KO this card instead.\n[On Play] Play up to 1 card with a cost of 2 or less and <Son Gohan> in its card name from your hand. Then, that card gets +1 Ki.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If your card with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name is removed from a Battle Area by your opponent, you may KO this card instead."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "costLE": 2,
+         "names": [
+          "Son Gohan"
+         ]
+        },
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "replacement effects"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "96b25f0a"
+   }
   },
   "FB10-091": {
    "id": "FB10-091",
@@ -2668,6 +2725,118 @@
     "name": "Son Goku",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Auto] When an opponent's Battle Card attacks, you may choose 1 card with [Evolve] in your Battle Area. If you do, switch the attack target to the chosen card. Then, this skill can't activate for the turn."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "lifeLE",
+          "n": 4
+         },
+         {
+          "t": "not",
+          "c": {
+           "t": "or",
+           "any": [
+            {
+             "t": "not",
+             "c": {
+              "t": "energyGE",
+              "n": 2
+             }
+            },
+            {
+             "t": "not",
+             "c": {
+              "t": "battleCount",
+              "op": "ge",
+              "n": 1,
+              "side": "self",
+              "filter": {
+               "keyword": "evolve"
+              }
+             }
+            }
+           ]
+          }
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenOppAttacks",
+      "effects": [
+       {
+        "t": "redirect",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "keyword": "evolve"
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "95a68abe"
    }
   },
   "FB11-002": {
@@ -2690,7 +2859,82 @@
    ],
    "text": "[On Play] If your Leader is a ≪Saiyan≫-only <Son Goku>, play up to 1 Battle Card with a cost of 1 and ≪Saiyan≫ or ≪Earthling≫ in its special traits from your hand. Then, during this turn, reduce the cost of the next [Evolve] skill you activate from your hand by (2).\n[When Attacking] This card gets +5000 power for the battle.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       },
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Saiyan"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "Then, during this turn, reduce the cost of the next [Evolve] skill you activate from your hand by (2)."
+      ],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costEQ": 1,
+         "traits": [
+          "Saiyan",
+          "Earthling"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "discount on Evolve costs"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f9c46dee"
+   }
   },
   "FB11-025": {
    "id": "FB11-025",
@@ -2715,6 +2959,113 @@
     "name": "Trunks: Future",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Choose up to 1 Battle Card with <Future> in its card name in your Battle Area and it gets +1 Ki. Then, return up to 1 Battle Card with a cost of 3 or less and <Future> in its card name in your Battle Area to its owner's hand."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "kiTotalGE",
+        "n": 2,
+        "scope": "battle"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "names": [
+           "Future"
+          ]
+         }
+        },
+        "n": 1
+       },
+       {
+        "t": "bounce",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "costLE": 3,
+          "names": [
+           "Future"
+          ]
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "057edac9"
    }
   },
   "SB02-021": {
@@ -2825,7 +3176,66 @@
    ],
    "text": "[Fusion Evolve] pay 0 energy: <Son Goku: BR> and <Vegeta: BR> with equal power of 20000 or more.\n[Permanent] this card and your <Gogeta: BR> Leader get +15000 power while they are in a battle with an opponent's card with an original power of 30000.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Goku: BR"
+       ]
+      },
+      {
+       "names": [
+        "Vegeta: BR"
+       ]
+      }
+     ],
+     "cost": 0,
+     "equalPowerGE": 20000
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "inBattleWith",
+        "filter": {
+         "powerEQ": 30000,
+         "originalPower": true
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "(your <Gogeta: BR> Leader also gets +15000 power while it is in a battle with an opponent's card with an original power of 30000)"
+      ],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c3e4bd73"
+   }
   },
   "FB11-006": {
    "id": "FB11-006",
@@ -3001,7 +3411,45 @@
    ],
    "text": "[Evolve] pay 1 energy: <Son Goku>\n[Auto] [Once Per Turn] When this card wins a battle, look at 2 cards from the top of your deck and add 1 card to your hand. Place the rest at the bottom of your deck.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Goku"
+       ]
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenWinsBattle",
+      "effects": [
+       {
+        "t": "search",
+        "look": 2,
+        "options": [
+         {}
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6a90d00f"
+   }
   },
   "FB11-012": {
    "id": "FB11-012",
@@ -3023,7 +3471,64 @@
    ],
    "text": "[On Play] pay 1 energy: If your Leader is <Gogeta: BR>, play up to 1 <Vegeta: BR> with a cost of 2 or less from your hand in Rest Mode.\n[When Attacking] Add up to 1 card from your life to your hand.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gogeta: BR"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Vegeta: BR"
+         ],
+         "costLE": 2
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c120b0dd"
+   }
   },
   "SB02-059": {
    "id": "SB02-059",
@@ -3265,7 +3770,95 @@
    ],
    "text": "[On Play] Choose all Battle Cards in your Battle Area with ≪Saiyan≫ or ≪Earthling≫ in their special traits other than this card and they get +1 Ki.\n[When Attacking] [Once Per Turn] Remove a total of 1 or more Ki from your Battle Area: Switch this card to Active Mode and this card gets +5000 power for the turn for each Ki removed by this skill.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Saiyan",
+           "Earthling"
+          ],
+          "other": true
+         },
+         "all": true
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "battle",
+        "max": 99
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "turn",
+        "per": {
+         "side": "self",
+         "zone": "kiRemoved"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "85f86a35"
+   }
   },
   "FB11-014": {
    "id": "FB11-014",
@@ -3375,7 +3968,78 @@
    ],
    "text": "[Activate:Battle] pay 1 energy, place this card into your Drop: If your Leader is <Son Goku>, your card with an original power of 30000 or more and [Evolve] that's in a battle gains [Double Strike] and +5000 power for the battle.\n( [Double Strike] ( This card inflicts 2 damage instead of 1 when attacking. ))",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "powerGE": 30000,
+          "originalPower": true,
+          "keyword": "evolve"
+         },
+         "ref": "battler"
+        },
+        "kw": "doubleStrike",
+        "dur": "battle"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "powerGE": 30000,
+          "originalPower": true,
+          "keyword": "evolve"
+         },
+         "ref": "battler"
+        },
+        "amount": 5000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c683e4a5"
+   }
   },
   "FB11-018": {
    "id": "FB11-018",
@@ -3397,7 +4061,63 @@
    ],
    "text": "[Activate:Main] Place this card and 1 <Son Goten> -- both with 20000 power -- from your Battle Area into their owner's Drop: Play up to 1 <Gotenks> with a cost of 4 from your hand.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       },
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Son Goten"
+         ],
+         "powerEQ": 20000
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Son Goten"
+         ],
+         "powerEQ": 20000
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Gotenks"
+         ],
+         "costEQ": 4
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "51be6a7e"
+   }
   },
   "FB11-019": {
    "id": "FB11-019",
@@ -3617,7 +4337,44 @@
    ],
    "text": "[Activate:Main] If your Leader is awakened and you have a <Trunks: Youth> in your Battle Area, draw 2 cards.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderAwakened"
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Trunks: Youth"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b83fa057"
+   }
   },
   "FB11-117": {
    "id": "FB11-117",
@@ -3639,7 +4396,64 @@
    ],
    "text": "[Permanent] If your Leader is <Bardock>, reduce the cost of this card in its owner's Drop by 1.\n[When KO'd] Discard 1 card from your hand: Add up to 1 Battle Card with a cost of 2 or less and ≪Bardock's Crew≫ in its special traits from your Drop to your hand.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "reduce the cost of this card in its owner's Drop by 1."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "BATTLE",
+          "costLE": 2,
+          "traits": [
+           "Bardock's Crew"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost changes in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a526c186"
+   }
   },
   "FB11-049": {
    "id": "FB11-049",
@@ -3664,6 +4478,119 @@
     "name": "Goku Black",
     "power": 20000,
     "text": "[When Attacking] Draw 2 cards and discard 1 card from your hand. Then, choose up to 1 <Goku Black> and up to 1 <Zamasu> in your Battle Area and they get +1 Ki."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Goku Black",
+          "Zamasu"
+         ]
+        }
+       },
+       {
+        "t": "kiTotalGE",
+        "n": 2,
+        "scope": "battle"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "names": [
+           "Goku Black"
+          ]
+         }
+        },
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "names": [
+           "Zamasu"
+          ]
+         }
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "4caa314a"
    }
   },
   "FB01-100": {
@@ -3752,7 +4679,50 @@
    ],
    "text": "[When Attacking] If your Leader is <Goku Black> and any Ki have been removed from your Battle Area during this turn, this card gests +10000 power for the battle.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Goku Black"
+        ]
+       },
+       {
+        "t": "kiRemovedThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f62bd069"
+   }
   },
   "FB11-052": {
    "id": "FB11-052",
@@ -3796,7 +4766,68 @@
    ],
    "text": "[Permanent] Add 1 to the cost of this card for each Ki this card has.\n[On Play] This card gets +2 Ki.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 1,
+        "dur": "static",
+        "per": {
+         "side": "self",
+         "zone": "thisKi"
+        }
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "539270e4"
+   }
   },
   "FB07-027": {
    "id": "FB07-027",
@@ -4038,7 +5069,37 @@
    ],
    "text": "[On Play] If your Battle Card was removed from a Battle Area by one of your skills during this turn, draw 2 cards. Then, discard 1 card from your hand.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "removedOwnThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6fbf371b"
+   }
   },
   "FB11-027": {
    "id": "FB11-027",
@@ -4487,7 +5548,74 @@
    ],
    "text": "[On Play] Play up to 1 Battle Card with a cost of 2 or less and <Future> in its card name from your hand. Then, choose up to 1 Battle Card in your Battle Area and it gets +1 Ki.\n[When Attacking] Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2,
+         "names": [
+          "Future"
+         ]
+        },
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bc9d2180"
+   }
   },
   "FP-085": {
    "id": "FP-085",
@@ -4619,7 +5747,51 @@
    ],
    "text": "[Activate:Main] Place this card with 3 or more Ki at the bottom of its owner's deck: If your Leader is <Trunks: Future>, play up to 1 <Trunks: Future> with a cost of 4 or less from your hand.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDeckBottom"
+       }
+      ],
+      "cond": [
+       {
+        "t": "thisKiGE",
+        "n": 3
+       },
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Trunks: Future"
+         ],
+         "costLE": 4
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b1e064c0"
+   }
   },
   "FB11-035": {
    "id": "FB11-035",
@@ -4641,7 +5813,75 @@
    ],
    "text": "[On Play] This card gets +1 Ki.\n[Activate:Main] Remove 2 or more Ki from this card and place this card at the bottom of its owner's deck: If your Leader is <Trunks: Future>, draw 1 card and play up to 1 <Trunks: Future> with a cost of 1 greater than the number of Ki removed by this skill from your hand.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "this",
+        "max": 99
+       },
+       {
+        "t": "selfToDeckBottom"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "and play up to 1 <Trunks: Future> with a cost of 1 greater than the number of Ki removed by this skill from your hand."
+      ],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost equal to a counted number"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0edf83d5"
+   }
   },
   "FB11-036": {
    "id": "FB11-036",
@@ -4663,7 +5903,69 @@
    ],
    "text": "[When Attacking] Choose up to 2 Battle Cards with costs of 3 or less in your opponent's Battle Area and return them to their owner's hand.\n[Activate:Main] [Once Per Turn] Reduce the Ki of your Battle Area by 1: Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 3 for the turn.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "bounce",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 2,
+         "upTo": true,
+         "filter": {
+          "costLE": 3
+         }
+        }
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "battle"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -3,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "36dfd4ad"
+   }
   },
   "SB01-008": {
    "id": "SB01-008",
@@ -4864,7 +6166,53 @@
    ],
    "text": "[On Play] If your Leader has ≪Tournament of Power≫ in it special traits, look at 3 cards from the top of your deck, reveal up to 1 card with ≪Tournament of Power≫ in its special traits other than <Frieza> and add it to your hand. Place the rest into their owner's Drop. Then, discard 1 card from your hand.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Tournament of Power"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "traits": [
+           "Tournament of Power"
+          ],
+          "notNames": [
+           "Frieza"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "drop"
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e9b304cb"
+   }
   },
   "FB11-041": {
    "id": "FB11-041",
@@ -4886,7 +6234,39 @@
    ],
    "text": "[On Play] If your Leader is <Trunks: Future> and your Battle Card was removed from a Battle Area by one of your skills during this turn, look at the bottom card of your deck, reveal up to 1 <Trunks: Future> and add it to your hand. Place the rest at the bottom of your deck.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       },
+       {
+        "t": "removedOwnThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "look at the bottom card of your deck, reveal up to 1 <Trunks: Future> and add it to your hand. Place the rest at the bottom of your deck."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "look at the bottom of the deck"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "410aae0a"
+   }
   },
   "FB07-024": {
    "id": "FB07-024",
@@ -4994,7 +6374,45 @@
    ],
    "text": "[When Attacking] Discard 1 card from your hand, then place the top 2 cards of your deck into your Drop: If your Leader has ≪Tournament of Power≫ in its special traits, draw 1 card.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "mill",
+        "n": 2
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Tournament of Power"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5d16b0e7"
+   }
   },
   "FB09-028": {
    "id": "FB09-028",
@@ -5104,7 +6522,29 @@
    ],
    "text": "[Permanent] If this card would be removed from a Battle Area by your opponent's skill, return this card to its owner's hand instead.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If this card would be removed from a Battle Area by your opponent's skill, return this card to its owner's hand instead."
+      ],
+      "timing": "permanent",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "replacement effects"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2e308b17"
+   }
   },
   "FB01-089": {
    "id": "FB01-089",
@@ -5349,7 +6789,61 @@
    ],
    "text": "[Activate:Battle] [Your Turn] Your card that's in a battle gets +15000 power for the battle. Then, if your Battle Card was removed from a Battle Area by one of your skills during this turn, your card that's in a battle gets +10000 power for the battle.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 10000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "removedOwnThisTurn"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b7e28436"
+   }
   },
   "FB09-030": {
    "id": "FB09-030",
@@ -5503,7 +6997,91 @@
    ],
    "text": "[When Attacking] This card gets +5000 power for the battle.\n[Activate:Main] Choose 1 <Goku Black> with a cost of 3 and 25000 power from your energy, and reduce the total Ki of your Battle Area by 2: Add this card to your energy in Rest Mode. Then, play the card chosen by this skill with its base skills negated for the turn.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "battle"
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "energy",
+         "filter": {
+          "names": [
+           "Goku Black"
+          ],
+          "costEQ": 3,
+          "powerEQ": 25000
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "self",
+        "to": "energy",
+        "rested": true
+       },
+       {
+        "t": "playFrom",
+        "from": "energy",
+        "filter": {
+         "names": [
+          "Goku Black"
+         ],
+         "costEQ": 3,
+         "powerEQ": 25000
+        },
+        "n": 1,
+        "negate": "all"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a6c453cd"
+   }
   },
   "FB11-057": {
    "id": "FB11-057",
@@ -5525,7 +7103,66 @@
    ],
    "text": "[Activate:Main] [Once Per Turn] Remove a total of 2 or more Ki from your Battle Area: Play up to 1 <Goku Black> with a cost of 3 or less from your energy. Then, choose all <Goku Black> in your Battle Area and they get +5000 power for the turn for each Ki removed by this skill.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "battle",
+        "max": 99
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "energy",
+        "filter": {
+         "names": [
+          "Goku Black"
+         ],
+         "costLE": 3
+        },
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Goku Black"
+          ]
+         },
+         "all": true
+        },
+        "amount": 5000,
+        "dur": "turn",
+        "per": {
+         "side": "self",
+         "zone": "kiRemoved"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "462a9d7b"
+   }
   },
   "ST01-028": {
    "id": "ST01-028",
@@ -5745,7 +7382,79 @@
    ],
    "text": "[On Play] If your Leader is <Goku Black>, choose up to 1 <Goku Black> in your Battle Area and it gets +1 Ki. Then, both this card and the card chosen by this skill can't be KO'd until the end of your opponent's next turn.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Goku Black"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Goku Black"
+          ]
+         }
+        },
+        "n": 1
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "kw": "koImmune",
+        "dur": "oppNextTurn"
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "koImmune",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "684cd2a3"
+   }
   },
   "FB03-033": {
    "id": "FB03-033",
@@ -5899,7 +7608,71 @@
    ],
    "text": "[On Play] If your Leader has ≪Master's Teachings≫ in its special traits, this card gets +2 Ki.\n[When Attacking] Place 1 of your energy into your Drop and reduce the Ki of this card by 2: Add the top card of your deck to your energy.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Master's Teachings"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "energyToDrop",
+        "n": 1
+       },
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "this"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "energyFromDeck",
+        "n": 1,
+        "rested": false
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "63afc2d9"
+   }
   },
   "FB11-091": {
    "id": "FB11-091",
@@ -5921,7 +7694,67 @@
    ],
    "text": "[When Attacking] [Once Per Turn] pay 1 energy: If you have a <Shallot> in your Battle Area, switch this card to Active Mode. Then, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "30f61001"
+   }
   },
   "FB11-065": {
    "id": "FB11-065",
@@ -6031,7 +7864,70 @@
    ],
    "text": "[Activate:Battle] [Your Turn] Your card that's in a battle gets +15000 power for the battle. Then, if you have a <Goku Black> with 1 or more Ki in your Battle Area, your card that's in a battle gets +10000 power for the battle.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 10000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "names": [
+            "Goku Black"
+           ],
+           "kiGE": 1
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "4fb7ccd4"
+   }
   },
   "FB03-116": {
    "id": "FB03-116",
@@ -6323,6 +8219,126 @@
     "name": "Shallet",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] If you have <Shallot> and <Giblet> in your Battle Area, switch 2 of your energy to Active Mode. Then, you can't play Battle Cards with original cost of 4 or less fro the turn."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "gameStart",
+      "effects": [
+       {
+        "t": "cantPlay",
+        "filter": {
+         "costLE": 4,
+         "keyword": "evolve"
+        },
+        "dur": "game"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "activateEnergy",
+        "n": 2
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 4,
+         "originalCost": true
+        },
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f4f228bc"
    }
   },
   "FB11-074": {
@@ -6455,7 +8471,78 @@
    ],
    "text": "[Permanent] If your Leader has 2 or less Ki, this card can't attack.\n[When Attacking] [Once Per Turn] If your Leader has ≪Boujack Brigade≫ in its special traits, add up to 1 Battle Card other than <Gokua> with a cost of 2 or less from your Drop to your hand.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "not",
+        "c": {
+         "t": "kiLeaderGE",
+         "n": 3
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "cantAttack",
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Boujack Brigade"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "BATTLE",
+          "costLE": 2,
+          "notNames": [
+           "Gokua"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2dbc67be"
+   }
   },
   "FB08-121": {
    "id": "FB08-121",
@@ -6651,7 +8738,58 @@
    ],
    "text": "[When Attacking] If you have a <Son Gohan: Adolescence> or <Great Saiyaman> -- both with a cost of 3 or more -- in your Battle Area, choose up to 1 <Son Gohan: Adolescence> or up to 1 card with <Great Saiyaman> in its card name in your Battle Area and it gets +10000 power for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Son Gohan: Adolescence",
+          "Great Saiyaman"
+         ],
+         "costGE": 3
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Son Gohan: Adolescence",
+           "Great Saiyaman"
+          ]
+         }
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8aa082cf"
+   }
   },
   "FB07-073": {
    "id": "FB07-073",
@@ -6720,7 +8858,76 @@
    ],
    "text": "[Permanent] If you have <Shallot> but not <Giblet> in your Battle Area, reduce the cost of this card in your hand by 1.\n[On Play] Choose up to 2 Battle Cards with costs of 4 or less in your opponent's Battle Area and switch them to Rest Mode.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "none",
+        "n": 0,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 2,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c3cc2351"
+   }
   },
   "FB11-082": {
    "id": "FB11-082",
@@ -6742,7 +8949,70 @@
    ],
    "text": "[Permanent] If you have <Shallot> but not <Giblet> in your Battle Area, reduce the cost of this card in your hand by 1.\n[On Play] Draw 2 cards. Then, discard 2 cards from your hand.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "none",
+        "n": 0,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "83cdbc78"
+   }
   },
   "FP-034": {
    "id": "FP-034",
@@ -7015,7 +9285,58 @@
    ],
    "text": "[Evolve] pay 1 energy: <Giblet> with a cost of 2.\n[When Attacking] If your Leader is <Shallot/Giblet> or <Shallet>, choose up to 1 Rest Mode Battle Card in your opponent's Battle Area and it can't switch to Active Mode during your opponent's next turn.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Giblet"
+       ],
+       "costEQ": 2
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Shallot/Giblet",
+         "Shallet"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "42bc3754"
+   }
   },
   "FB08-007": {
    "id": "FB08-007",
@@ -7211,7 +9532,74 @@
    ],
    "text": "[Permanent] If you have <Shallot> and <Giblet> in your Battle Area, reduce the cost of this card in your hand by 3.\n[When KO'd] Add up to 1 <Shallot> or <Giblet> from your Drop to your hand.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 3
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "names": [
+           "Shallot",
+           "Giblet"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "81617fbe"
+   }
   },
   "FB08-073": {
    "id": "FB08-073",
@@ -7258,7 +9646,67 @@
    ],
    "text": "[When Attacking] If your Leader has ≪Boujack Brigade≫ in its special traits, your Leader gets +1 Ki. Then, your Leader with 2 or more Ki gains [Critical] for the turn.\n[Critical] ( When this card inflicts damage with an attack, the life is placed in the Drop. )",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Boujack Brigade"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "kw": "critical",
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "kiLeaderGE",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e8863ee0"
+   }
   },
   "FB09-101": {
    "id": "FB09-101",
@@ -7412,7 +9860,45 @@
    ],
    "text": "[Activate:Battle] [Your Turn] Your <Zahha> that's in a battle gets +35000 power for the battle.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Zahha"
+          ]
+         },
+         "ref": "battler"
+        },
+        "amount": 35000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "acf09779"
+   }
   },
   "FB11-097": {
    "id": "FB11-097",
@@ -7437,6 +9923,86 @@
     "name": "Bardock",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Reduce the Ki of this card by 1: Choose up to 1 card with a cost of 2 and ≪Bardock's Crew≫ in its special traits in your Drop, and activate its [When KO'd] skill. Then, place that card at the bottom of its owner's deck."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "leader"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Choose up to 1 card with a cost of 2 and ≪Bardock's Crew≫ in its special traits in your Drop, and activate its [When KO'd] skill. Then, place that card at the bottom of its owner's deck."
+      ],
+      "timing": "activateMain",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "activate a skill of a card in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "56e91637"
    }
   },
   "FB10-053": {
@@ -7635,7 +10201,63 @@
    ],
    "text": "[Permanent] If your Leader is <Bardock>, reduce the cost of this card in its owner's Drop by 1.\n[When KO'd] Choose up to 1 Battle Card with an original cost of 5 or less in your opponent's Battle Area, and that card can't attack until the end of your opponent's next turn.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "reduce the cost of this card in its owner's Drop by 1."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5,
+          "originalCost": true
+         }
+        },
+        "kw": "cantAttack",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost changes in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8474342c"
+   }
   },
   "FB08-107": {
    "id": "FB08-107",
@@ -7726,7 +10348,46 @@
    ],
    "text": "[Evolve] pay 1 energy: <Cell> with an original cost of 1.\n[On Play] Discard 1 card from your hand: If you used a card from your Battle Area in a combo during this turn, play up to 1 Battle Card with a cost of 1 or less and ≪Android≫ in its special traits from your Drop.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Cell"
+       ],
+       "costEQ": 1,
+       "originalCost": true
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If you used a card from your Battle Area in a combo during this turn, play up to 1 Battle Card with a cost of 1 or less and ≪Android≫ in its special traits from your Drop."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "combo history this turn"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5109b281"
+   }
   },
   "FB11-102": {
    "id": "FB11-102",
@@ -7748,7 +10409,61 @@
    ],
    "text": "[Evolve] pay 1 energy: <Cell> with a cost of 4.\n[On Play] If your Leader is <Cell>, draw 2 cards and discard 2 cards from your hand. Then, during this next turn, the next time you use an Extra with ≪Android≫ in its special traits, reduce the cost by (1).",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Cell"
+       ],
+       "costEQ": 4
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Cell"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 2
+       },
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "traits": [
+          "Android"
+         ]
+        },
+        "amount": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "06e3db77"
+   }
   },
   "FB03-057": {
    "id": "FB03-057",
@@ -7858,7 +10573,68 @@
    ],
    "text": "[Permanent] If your Leader is <Bardock>, reduce the cost of this card in its owner's Drop by 1.\n[When KO'd] Your <Bardock> Leader gets +10000 power for the turn.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "reduce the cost of this card in its owner's Drop by 1."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost changes in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5c4789d8"
+   }
   },
   "FB11-108": {
    "id": "FB11-108",
@@ -7902,7 +10678,66 @@
    ],
    "text": "[Permanent] If your Leader is <Bardock>, reduce the cost of this card in its owner's Drop by 1.\n[When KO'd] Reduce the Ki of your Leader by 1: Choose up to 1 Battle Card with a cost of 4 or less in your opponent's Battle Area and KO it.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "reduce the cost of this card in its owner's Drop by 1."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "leader"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost changes in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "00a314fa"
+   }
   },
   "FB06-106": {
    "id": "FB06-106",
@@ -7990,7 +10825,54 @@
    ],
    "text": "[Permanent] If your Leader is <Bardock> and this card is in Rest Mode, the cost of <Bardock> with an original power of 25000 in your Drop becomes 2.\n[On Play] Look at 3 cards from the top of your deck and place them at the top of their owner's deck in any order.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       },
+       {
+        "t": "thisRested",
+        "yes": true
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "the cost of <Bardock> with an original power of 25000 in your Drop becomes 2."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "look at 3 cards from the top of your deck and place them back in any order"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost changes in the Drop"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2e3e33b7"
+   }
   },
   "FB01-131": {
    "id": "FB01-131",
@@ -8147,7 +11029,97 @@
    ],
    "text": "[When Attacking] Your Leader gets +1 Ki, and if your Leader has 3 or more Ki, this card gets +5000 power for the battle.\n[When KO'd] Draw 1 card and place 1 card from your hand at the top or bottom of its owner's deck. Then, if any Ki have been removed from your Leader during this turn, your Leader gets +1 Ki.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "kiLeaderGE",
+          "n": 3
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "handToDeck",
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1,
+        "cond": [
+         {
+          "t": "kiRemovedThisTurn"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "30f00fef"
+   }
   },
   "ST01-047": {
    "id": "ST01-047",
@@ -8519,7 +11491,96 @@
    ],
    "text": "[Activate:Main] Draw 2 cards. Then, if your Leader has 3 or more Ki, and if you have 4 or more Battle Cards in your Drop, play up to 1 <Bardock> with 25000 power or up to 1 Battle Card with a cost of 2 or less and ≪Saiyan≫ in its special traits from your hand, and you can't use <Bloodstained Vow> for the turn.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "anyOf": [
+          {
+           "names": [
+            "Bardock"
+           ],
+           "powerEQ": 25000
+          },
+          {
+           "costLE": 2,
+           "traits": [
+            "Saiyan"
+           ]
+          }
+         ]
+        },
+        "n": 1,
+        "cond": [
+         {
+          "t": "kiLeaderGE",
+          "n": 3
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "drop",
+           "filter": {
+            "type": "BATTLE"
+           }
+          },
+          "op": "ge",
+          "n": 4
+         }
+        ]
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "names": [
+          "Bloodstained Vow"
+         ]
+        },
+        "extras": true,
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "kiLeaderGE",
+          "n": 3
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "drop",
+           "filter": {
+            "type": "BATTLE"
+           }
+          },
+          "op": "ge",
+          "n": 4
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2adcd961"
+   }
   },
   "FB11-120": {
    "id": "FB11-120",
@@ -8541,7 +11602,54 @@
    ],
    "text": "[Activate:Battle] [Your Turn] Reduce the Ki of your <Bardock> Leader by 1: Your card that's in a battle gets +35000 power for the battle.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "leader"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 35000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7613b1cb"
+   }
   },
   "FB05-005": {
    "id": "FB05-005",
@@ -8695,7 +11803,83 @@
    ],
    "text": "[Evolve] pay 3 energy, discard 1 card from your hand: <Son Goku>\n[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -20000 power for the turn. Then, increase the cost of this card by 99 until the end of your opponent's next turn.\n[Auto] [Once Per Turn] When this card wins a battle, draw 1 card. Then, if your opponent's life is at 1, deal 1 damage to your opponent.",
    "set": "FB11",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -20000,
+        "dur": "turn"
+       },
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 99,
+        "dur": "oppNextTurn"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenWinsBattle",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "damageLeader",
+        "n": 1,
+        "cond": [
+         {
+          "t": "oppLifeLE",
+          "n": 1
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "unparsed": [
+     "[Evolve] pay 3 energy, discard 1 card from your hand: <Son Goku>"
+    ],
+    "needs": [
+     "Evolve with an extra cost"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "textHash": "548ef705"
+   }
   },
   "FB04-011": {
    "id": "FB04-011",
@@ -8981,7 +12165,88 @@
    ],
    "text": "[On Play] Your Leader gets +1 Ki.\n[When KO'd] [Your Turn] If your Leader has ≪Boujack Brigade≫ in its special traits, choose up to 1 of your <Boujack> Leaders or up to 1 <Boujack> in your Battle Area, switch it to Active Mode, and negate the base skills of the chosen card for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Boujack Brigade"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader",
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Boujack"
+          ]
+         }
+        }
+       },
+       {
+        "t": "negate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a034e52e"
+   }
   },
   "FB05-103": {
    "id": "FB05-103",
@@ -9025,7 +12290,103 @@
    ],
    "text": "[Fusion Evolve] pay 2 energy: <Shallot> and <Giblet> in Rest Mode and with equal power.\n[Permanent] [Your Turn] this card gets +5000 power.\n[When Attacking] [Once Per Turn] pay 1 energy: Switch this card to Active Mode. Then, if this card was played this turn, choose up to 1 of your Leaders or up to 1 Battle Card in your Battle Area and switch it to Active Mode.",
    "set": "FB11",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Shallot"
+       ]
+      },
+      {
+       "names": [
+        "Giblet"
+       ]
+      }
+     ],
+     "cost": 2,
+     "baseMode": "rested"
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader",
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "cond": [
+         {
+          "t": "playedThisTurn"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "43f75173"
+   }
   },
   "FB02-114": {
    "id": "FB02-114",
@@ -9069,7 +12430,75 @@
    ],
    "text": "[Permanent] If this card is in Rest Mode, your opponent can't attack a <Bardock> Leader.\n[On Play] Your Leader gets +2 Ki.\n[When KO'd] If your Leader has 3 or more Ki, look at the top card of your deck, and play up to 1 Battle Card with a cost of 3 or less with its [On Play] skills negated for the turn. Add the rest to your hand.",
    "set": "FB11",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "thisRested",
+        "yes": true
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "your opponent can't attack a <Bardock> Leader."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 3
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "look at the top card of your deck, and play up to 1 Battle Card with a cost of 3 or less with its [On Play] skills negated for the turn. Add the rest to your hand."
+      ],
+      "timing": "whenKOd",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "Leader can't be attacked",
+     "search: play with skills negated, rest to hand"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "1c8458e7"
+   }
   },
   "FB05-012": {
    "id": "FB05-012",
@@ -9666,7 +13095,70 @@
    ],
    "text": "[Evolve] pay 1 energy: <Vegeta>\n[When Attacking] Add 1 card from your life to your hand: This card gains [Critical] and +5000 power for the battle.",
    "set": "FB11",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Vegeta"
+       ]
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "lifeToHand",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "critical",
+        "dur": "battle"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f6f0b5a8"
+   }
   },
   "ST01-057": {
    "id": "ST01-057",
@@ -10373,7 +13865,49 @@
    ],
    "text": "[Activate:Main][Once Per Turn] If your Leader has 3 or more Ki, choose your <Bardock> Leader or up to 1 <Bardock> in your Battle Area and it gets +5000 power for the turn.",
    "set": "FB11",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 3
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader",
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Bardock"
+          ]
+         }
+        },
+        "amount": 5000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "252cf723"
+   }
   },
   "FB08-004": {
    "id": "FB08-004",
@@ -12170,7 +15704,68 @@
    ],
    "text": "[Evolve] pay 2 energy: <Son Gohan: Adolescence> or <Great Saiyaman>\n[On Play] Choose up to 1 Battle Card with an original power of 10000 and ≪Earthling≫ in its special traits in your Battle Area, and switch this card and the chosen card to Active Mode.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Gohan: Adolescence",
+        "Great Saiyaman"
+       ]
+      }
+     ],
+     "cost": 2
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "powerEQ": 10000,
+          "originalPower": true,
+          "traits": [
+           "Earthling"
+          ]
+         }
+        }
+       },
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d68d5d45"
+   }
   },
   "SB01-056": {
    "id": "SB01-056",
@@ -12792,7 +16387,72 @@
    ],
    "text": "[When KO'd] Discard 1 card from your hand: If you have 4 or less energy, play this card from its owner's Drop.\n[Activate:Main] [Once Per Turn] If your Leader is <Giblet>, place any number of cards from your energy to your Drop. Then, add up to 1 green Extra from your Drop to your hand.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "energyLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "self",
+        "to": "play"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Giblet"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "place any number of cards from your energy to your Drop (the simulator places none)"
+       },
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "EXTRA",
+          "colors": [
+           "Green"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "79cecfd7"
+   }
   },
   "FB04-106": {
    "id": "FB04-106",
@@ -12924,7 +16584,58 @@
    ],
    "text": "[When KO'd] If your Leader is <Shallot>, draw 1 card. Then, you place 3 energy markers.\n[Activate:Main] [Once Per Turn] Draw 2 cards. Then, place 1 card from your hand on top of its owner's deck.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Shallot"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "placeMarker",
+        "n": 3
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "handToDeck",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "cd9bee28"
+   }
   },
   "FB07-113": {
    "id": "FB07-113",
@@ -14568,7 +18279,55 @@
    ],
    "text": "[Permanent] [Your Turn] this card gets +5000 power.\n[On Play] Choose 1 of your awakened <Gogeta: BR> Leaders and its original power becomes 25000 until the end of your opponent's next turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Choose 1 of your awakened <Gogeta: BR> Leaders and its original power becomes 25000 until the end of your opponent's next turn."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "set original power"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9708e678"
+   }
   },
   "FB04-123": {
    "id": "FB04-123",
@@ -17641,7 +21400,72 @@
    ],
    "text": "[Permanent] If you have 12 or more cards in your Drop, reduce the cost of this card in your hand by 2.\n[On Play] Choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area, place it at the bottom of its owner's deck, and discard 2 cards from your hand. Then, you can't play <Son Goku> with a cost of 3 or less for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 12
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "bottom",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 2
+         }
+        }
+       },
+       {
+        "t": "discard",
+        "n": 2
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "names": [
+          "Son Goku"
+         ],
+         "costLE": 3
+        },
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e393a93b"
+   }
   },
   "FB02-007": {
    "id": "FB02-007",
@@ -17773,7 +21597,84 @@
    ],
    "text": "[On Play] Your Leader gets +1 Ki.\n[When KO'd] pay 1 energy, remove 1 or more Ki from your Leader: Choose up to 1 <Bardock> with an original power of 25000 in your Battle Area and it gets +5000 power for the turn for each Ki removed by this skill.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       },
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "leader",
+        "max": 99
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Bardock"
+          ],
+          "powerEQ": 25000,
+          "originalPower": true
+         }
+        },
+        "amount": 5000,
+        "dur": "turn",
+        "per": {
+         "side": "self",
+         "zone": "kiRemoved"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b168a2df"
+   }
   },
   "FB11-083": {
    "id": "FB11-083",
@@ -17795,7 +21696,87 @@
    ],
    "text": "[Permanent] If you have <Shallot> but not <Giblet> in your Battle Area, reduce the cost of this card in your hand by 1.\n[Activate:Main] [Once Per Turn] Switch 1 <Shallot> in your Battle Area to Rest Mode: Your Leader gets +5000 power for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "none",
+        "n": 0,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Shallot"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 5000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "00c6713f"
+   }
   },
   "FB07-042": {
    "id": "FB07-042",
@@ -23328,7 +27309,54 @@
    ],
    "text": "[Blocker] ( After an opponent's attack, you may switch this card to Rest Mode and change the target of the attack to this card )\n[Permanent] If your Leader is <Goku Black> and you have a total of 2 or more Ki in your Battle Area, this card can't be KO'd once per turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Goku Black"
+        ]
+       },
+       {
+        "t": "kiTotalGE",
+        "n": 2,
+        "scope": "battle"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "koImmuneOnce",
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "49db3e73"
+   }
   },
   "FB02-132": {
    "id": "FB02-132",
@@ -24300,7 +28328,73 @@
    ],
    "text": "[Evolve] pay 1 energy: <Cell> with a cost of 4 or more.\n[Activate:Main] KO this card: If your Leader is <Cell>, choose up to 1 Battle Card with a cost of 5 or less in your opponent's Battle Area and KO it. Then, add up to 1 <Cell> with a cost of 6 or less from your Drop to your hand.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Cell"
+       ],
+       "costGE": 4
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Cell"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5
+         }
+        }
+       },
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "names": [
+           "Cell"
+          ],
+          "costLE": 6
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6b956d96"
+   }
   },
   "FS12-02": {
    "id": "FS12-02",
@@ -24476,7 +28570,63 @@
    ],
    "text": "[Activate:Main] Switch this card to Rest Mode: If your Leader is <Trunks: Future>, draw 1 card and discard 1 card from your hand. Then, choose up to 1 of your Battle Cards with 1 or more Ki and <Future> in its card name and it gets +2 Ki.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "kiGE": 1,
+          "names": [
+           "Future"
+          ]
+         }
+        },
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8d5262dc"
+   }
   },
   "FB08-067": {
    "id": "FB08-067",
@@ -24718,7 +28868,83 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -5000 power for the turn.\n[Activate:Main] Place this card into your Drop: If your Leader is <Son Goku> and you have a card with [Evolve] in your Battle Area, choose up to 1 Battle Card in your opponent's Battle Area and it gets -10000 power for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -5000,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "keyword": "evolve"
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a39ff295"
+   }
   },
   "FS07-03": {
    "id": "FS07-03",
@@ -26375,7 +30601,74 @@
    ],
    "text": "[On Play] If your Leader is <Shallot/Giblet> or <Shallet>, add up to 1 card from your life to your hand. Then, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.\n[Activate:Main] [Once Per Turn] Switch 1 <Giblet> in your Battle Area to Rest Mode: Draw 1 card.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Shallot/Giblet",
+         "Shallet"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Giblet"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e4e58a8a"
+   }
   },
   "FB07-043": {
    "id": "FB07-043",
@@ -31170,7 +35463,90 @@
    ],
    "text": "[When Attacking] This card gets +1 Ki.\n[Activate:Main] Choose 1 <Goku Black> with a cost of 3 and 20000 power from your energy, and reduce the total Ki of your Battle Area by 2: Add this card to your energy in Rest Mode. Then, play the card chosen by this skill with its base skills negated for the turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "battle"
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "energy",
+         "filter": {
+          "names": [
+           "Goku Black"
+          ],
+          "costEQ": 3,
+          "powerEQ": 20000
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "self",
+        "to": "energy",
+        "rested": true
+       },
+       {
+        "t": "playFrom",
+        "from": "energy",
+        "filter": {
+         "names": [
+          "Goku Black"
+         ],
+         "costEQ": 3,
+         "powerEQ": 20000
+        },
+        "n": 1,
+        "negate": "all"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d56f330d"
+   }
   },
   "FB09-077": {
    "id": "FB09-077",
@@ -31767,7 +36143,66 @@
    ],
    "text": "[On Play] If your Leader has ≪Master's Teachings≫ in its special traits, choose up to 2 Battle Cards with costs of 3 or less and ≪Master's Teachings≫ in their special traits in your Battle Area and they get +1 Ki. Then, the chosen cards can't be removed from the Battle Area by your opponent's skills until the end of your opponent's next turn.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Master's Teachings"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 2,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "costLE": 3,
+          "traits": [
+           "Master's Teachings"
+          ]
+         }
+        },
+        "n": 1
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "kw": "removeImmune",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8c429bed"
+   }
   },
   "SB02-002": {
    "id": "SB02-002",

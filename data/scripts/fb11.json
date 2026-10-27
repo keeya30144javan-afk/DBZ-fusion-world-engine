@@ -1,0 +1,3201 @@
+{
+ "FB11-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       },
+       {
+        "t": "not",
+        "c": {
+         "t": "or",
+         "any": [
+          {
+           "t": "not",
+           "c": {
+            "t": "energyGE",
+            "n": 2
+           }
+          },
+          {
+           "t": "not",
+           "c": {
+            "t": "battleCount",
+            "op": "ge",
+            "n": 1,
+            "side": "self",
+            "filter": {
+             "keyword": "evolve"
+            }
+           }
+          }
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenOppAttacks",
+    "once": true,
+    "effects": [
+     {
+      "t": "redirect",
+      "target": {
+       "side": "self",
+       "filter": {
+        "keyword": "evolve"
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-002": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     },
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 1,
+       "traits": [
+        "Saiyan",
+        "Earthling"
+       ]
+      },
+      "n": 1
+     }
+    ],
+    "unparsed": [
+     "Then, during this turn, reduce the cost of the next [Evolve] skill you activate from your hand by (2)."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "discount on Evolve costs"
+  ]
+ },
+ "FB11-003": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Gohan: Adolescence",
+        "Great Saiyaman"
+       ],
+       "costGE": 3
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Gohan: Adolescence",
+         "Great Saiyaman"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-005": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku: BR"
+     ]
+    },
+    {
+     "names": [
+      "Vegeta: BR"
+     ]
+    }
+   ],
+   "cost": 0,
+   "equalPowerGE": 20000
+  },
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "inBattleWith",
+      "filter": {
+       "powerEQ": 30000,
+       "originalPower": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "static"
+     }
+    ],
+    "unparsed": [
+     "(your <Gogeta: BR> Leader also gets +15000 power while it is in a battle with an opponent's card with an original power of 30000)"
+    ]
+   }
+  ]
+ },
+ "FB11-011": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "whenWinsBattle",
+    "once": true,
+    "effects": [
+     {
+      "t": "search",
+      "look": 2,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-012": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gogeta: BR"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Vegeta: BR"
+       ],
+       "costLE": 2
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-016": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Gohan: Adolescence",
+      "Great Saiyaman"
+     ]
+    }
+   ],
+   "cost": 2
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "powerEQ": 10000,
+        "originalPower": true,
+        "traits": [
+         "Earthling"
+        ]
+       }
+      }
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-017": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "powerGE": 30000,
+        "originalPower": true,
+        "keyword": "evolve"
+       }
+      },
+      "kw": "doubleStrike",
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "powerGE": 30000,
+        "originalPower": true,
+        "keyword": "evolve"
+       }
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-018": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     },
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "powerEQ": 20000
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Goten"
+       ],
+       "powerEQ": 20000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-020": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-022": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Vegeta"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "critical",
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-023": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "Choose 1 of your awakened <Gogeta: BR> Leaders and its original power becomes 25000 until the end of your opponent's next turn."
+    ]
+   }
+  ],
+  "needs": [
+   "set original power"
+  ]
+ },
+ "FB11-024": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Trunks: Youth"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-025": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "kiTotalGE",
+      "n": 2,
+      "scope": "battle"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "names": [
+         "Future"
+        ]
+       }
+      },
+      "n": 1
+     },
+     {
+      "t": "bounce",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "costLE": 3,
+        "names": [
+         "Future"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-026": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "removedOwnThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-029": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 12
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     },
+     {
+      "t": "discard",
+      "n": 2
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costLE": 3
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-033": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 2,
+       "names": [
+        "Future"
+       ]
+      },
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "side": "self"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-034": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDeckBottom"
+     }
+    ],
+    "cond": [
+     {
+      "t": "thisKiGE",
+      "n": 3
+     },
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Trunks: Future"
+       ],
+       "costLE": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-035": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 2,
+      "scope": "this",
+      "max": 99
+     },
+     {
+      "t": "selfToDeckBottom"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ],
+    "unparsed": [
+     "and play up to 1 <Trunks: Future> with a cost of 1 greater than the number of Ki removed by this skill from your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "cost equal to a counted number"
+  ]
+ },
+ "FB11-036": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "battle"
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -3,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-037": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "traits": [
+         "Saiyan",
+         "Earthling"
+        ],
+        "other": true
+       }
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "battle",
+      "max": 99
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "turn",
+      "per": {
+       "side": "self",
+       "zone": "kiRemoved"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-039": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Tournament of Power"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "traits": [
+         "Tournament of Power"
+        ],
+        "notNames": [
+         "Frieza"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "drop"
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-040": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "kiGE": 1,
+        "names": [
+         "Future"
+        ]
+       }
+      },
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-041": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     },
+     {
+      "t": "removedOwnThisTurn"
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "look at the bottom card of your deck, reveal up to 1 <Trunks: Future> and add it to your hand. Place the rest at the bottom of your deck."
+    ]
+   }
+  ],
+  "needs": [
+   "look at the bottom of the deck"
+  ]
+ },
+ "FB11-043": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "mill",
+      "n": 2
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Tournament of Power"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-047": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If this card would be removed from a Battle Area by your opponent's skill, return this card to its owner's hand instead."
+    ]
+   }
+  ],
+  "needs": [
+   "replacement effects"
+  ]
+ },
+ "FB11-048": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "removedOwnThisTurn"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-049": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Goku Black",
+        "Zamasu"
+       ]
+      }
+     },
+     {
+      "t": "kiTotalGE",
+      "n": 2,
+      "scope": "battle"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "names": [
+         "Goku Black"
+        ]
+       }
+      },
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "names": [
+         "Zamasu"
+        ]
+       }
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-051": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Goku Black"
+      ]
+     },
+     {
+      "t": "kiRemovedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-053": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 1,
+      "dur": "static",
+      "per": {
+       "side": "self",
+       "zone": "thisKi"
+      }
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-055": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 2,
+      "scope": "battle"
+     }
+    ],
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Goku Black"
+        ],
+        "costEQ": 3,
+        "powerEQ": 20000
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true
+     },
+     {
+      "t": "playFrom",
+      "from": "energy",
+      "filter": {
+       "names": [
+        "Goku Black"
+       ],
+       "costEQ": 3,
+       "powerEQ": 20000
+      },
+      "n": 1,
+      "negate": "all"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-056": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 2,
+      "scope": "battle"
+     }
+    ],
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Goku Black"
+        ],
+        "costEQ": 3,
+        "powerEQ": 25000
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true
+     },
+     {
+      "t": "playFrom",
+      "from": "energy",
+      "filter": {
+       "names": [
+        "Goku Black"
+       ],
+       "costEQ": 3,
+       "powerEQ": 25000
+      },
+      "n": 1,
+      "negate": "all"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-057": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 2,
+      "scope": "battle",
+      "max": 99
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "energy",
+      "filter": {
+       "names": [
+        "Goku Black"
+       ],
+       "costLE": 3
+      },
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         "Goku Black"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "turn",
+      "per": {
+       "side": "self",
+       "zone": "kiRemoved"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-061": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Goku Black"
+      ]
+     },
+     {
+      "t": "kiTotalGE",
+      "n": 2,
+      "scope": "battle"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "koImmuneOnce",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-063": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Goku Black"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Goku Black"
+        ]
+       }
+      },
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "koImmune",
+      "dur": "oppNextTurn"
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "koImmune",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-064": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "energyLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "play"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Giblet"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "noop",
+      "note": "place any number of cards from your energy to your Drop (the simulator places none)"
+     },
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "EXTRA",
+        "colors": [
+         "Green"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-067": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Master's Teachings"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     },
+     {
+      "t": "reduceKi",
+      "n": 2,
+      "scope": "this"
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-068": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Master's Teachings"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "count": 2,
+       "filter": {
+        "type": "BATTLE",
+        "costLE": 3,
+        "traits": [
+         "Master's Teachings"
+        ]
+       }
+      },
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "removeImmune",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-069": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If your card with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name is removed from a Battle Area by your opponent, you may KO this card instead."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "costLE": 2,
+       "names": [
+        "Son Gohan"
+       ]
+      },
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "ref": "prev"
+      },
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "replacement effects"
+  ]
+ },
+ "FB11-071": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Goku Black"
+         ],
+         "kiGE": 1
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-073": {
+  "abilities": [
+   {
+    "timing": "gameStart",
+    "effects": [
+     {
+      "t": "cantPlay",
+      "filter": {
+       "costLE": 4,
+       "keyword": "evolve"
+      },
+      "dur": "game"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 2
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 4,
+       "originalCost": true
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-076": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "not",
+      "c": {
+       "t": "kiLeaderGE",
+       "n": 3
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "cantAttack",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Boujack Brigade"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 2,
+        "notNames": [
+         "Gokua"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-080": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Boujack Brigade"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Boujack"
+        ]
+       }
+      }
+     },
+     {
+      "t": "negate",
+      "target": {
+       "ref": "prev"
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-081": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-082": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-083": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-084": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Giblet"
+     ],
+     "costEQ": 2
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot/Giblet",
+       "Shallet"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-087": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot/Giblet",
+       "Shallet"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-090": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Giblet"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 3
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Shallot",
+         "Giblet"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-091": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Shallot"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-092": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Boujack Brigade"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "leader"
+      },
+      "kw": "critical",
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 2
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-096": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "names": [
+         "Zahha"
+        ]
+       }
+      },
+      "amount": 35000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-097": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "kiLeaderGE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "leader"
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "Choose up to 1 card with a cost of 2 and ≪Bardock's Crew≫ in its special traits in your Drop, and activate its [When KO'd] skill. Then, place that card at the bottom of its owner's deck."
+    ]
+   }
+  ],
+  "needs": [
+   "activate a skill of a card in the Drop"
+  ]
+ },
+ "FB11-098": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "kiLeaderGE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Bardock"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-100": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "reduce the cost of this card in its owner's Drop by 1."
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5,
+        "originalCost": true
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes in the Drop"
+  ]
+ },
+ "FB11-107": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "reduce the cost of this card in its owner's Drop by 1."
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes in the Drop"
+  ]
+ },
+ "FB11-109": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "reduce the cost of this card in its owner's Drop by 1."
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "leader"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes in the Drop"
+  ]
+ },
+ "FB11-117": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "reduce the cost of this card in its owner's Drop by 1."
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 2,
+        "traits": [
+         "Bardock's Crew"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes in the Drop"
+  ]
+ },
+ "FB11-101": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Cell"
+     ],
+     "costEQ": 1,
+     "originalCost": true
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "If you used a card from your Battle Area in a combo during this turn, play up to 1 Battle Card with a cost of 1 or less and ≪Android≫ in its special traits from your Drop."
+    ]
+   }
+  ],
+  "needs": [
+   "combo history this turn"
+  ]
+ },
+ "FB11-102": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Cell"
+     ],
+     "costEQ": 4
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 2
+     },
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "traits": [
+        "Android"
+       ]
+      },
+      "amount": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-103": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Cell"
+     ],
+     "costGE": 4
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      }
+     },
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Cell"
+        ],
+        "costLE": 6
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-105": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "placeMarker",
+      "n": 3
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-106": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "leader",
+      "max": 99
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Bardock"
+        ],
+        "powerEQ": 25000,
+        "originalPower": true
+       }
+      },
+      "amount": 5000,
+      "dur": "turn",
+      "per": {
+       "side": "self",
+       "zone": "kiRemoved"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-111": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     },
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "the cost of <Bardock> with an original power of 25000 in your Drop becomes 2."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at 3 cards from the top of your deck and place them back in any order"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes in the Drop"
+  ]
+ },
+ "FB11-114": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 3
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "kiRemovedThisTurn"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-119": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "anyOf": [
+        {
+         "names": [
+          "Bardock"
+         ],
+         "powerEQ": 25000
+        },
+        {
+         "costLE": 2,
+         "traits": [
+          "Saiyan"
+         ]
+        }
+       ]
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 3
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "BATTLE"
+         }
+        },
+        "op": "ge",
+        "n": 4
+       }
+      ]
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Bloodstained Vow"
+       ]
+      },
+      "extras": true,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "kiLeaderGE",
+        "n": 3
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "BATTLE"
+         }
+        },
+        "op": "ge",
+        "n": 4
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-120": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "leader"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 35000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-121": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -20000,
+      "dur": "turn"
+     },
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 99,
+      "dur": "oppNextTurn"
+     }
+    ]
+   },
+   {
+    "timing": "whenWinsBattle",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "damageLeader",
+      "n": 1,
+      "cond": [
+       {
+        "t": "oppLifeLE",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "unparsed": [
+   "[Evolve] pay 3 energy, discard 1 card from your hand: <Son Goku>"
+  ],
+  "needs": [
+   "Evolve with an extra cost"
+  ]
+ },
+ "FB11-122": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Shallot"
+     ]
+    },
+    {
+     "names": [
+      "Giblet"
+     ]
+    }
+   ],
+   "cost": 2,
+   "baseMode": "rested"
+  },
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "cond": [
+       {
+        "t": "playedThisTurn"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB11-123": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "your opponent can't attack a <Bardock> Leader."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "kiLeaderGE",
+      "n": 3
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "look at the top card of your deck, and play up to 1 Battle Card with a cost of 3 or less with its [On Play] skills negated for the turn. Add the rest to your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "Leader can't be attacked",
+   "search: play with skills negated, rest to hand"
+  ]
+ }
+}

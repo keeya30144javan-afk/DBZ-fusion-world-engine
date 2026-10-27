@@ -434,7 +434,7 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   if (f.costLE !== undefined && cost > f.costLE) return false;
   if (f.costGE !== undefined && cost < f.costGE) return false;
   if (f.costEQ !== undefined && cost !== f.costEQ) return false;
-  const pw = here && (leader || s.p[inst.owner].battle.includes(uid)) ? powerOf(s, uid) : card.power;
+  const pw = f.originalPower ? (leader ? basePower(s, uid) : card.power) : here && (leader || s.p[inst.owner].battle.includes(uid)) ? powerOf(s, uid) : card.power;
   if (f.powerLE !== undefined && pw > f.powerLE) return false;
   if (f.powerGE !== undefined && pw < f.powerGE) return false;
   if (f.powerEQ !== undefined && pw !== f.powerEQ) return false;

@@ -49,6 +49,8 @@ export interface Filter {
   costEQ?: number;
   /** Printed cost, ignoring cost changes ("original cost"). */
   originalCost?: boolean;
+  /** Printed power, ignoring power changes ("original power"). */
+  originalPower?: boolean;
   powerLE?: number;
   powerGE?: number;
   powerEQ?: number;

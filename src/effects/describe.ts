@@ -22,9 +22,10 @@ export function describeFilter(f: Filter, noun = 'card'): string {
   if (f.costLE !== undefined && f.costGE !== undefined) post.push(`${cost} of ${f.costGE} to ${f.costLE}`);
   else if (f.costLE !== undefined) post.push(`${cost} of ${f.costLE} or less`);
   else if (f.costGE !== undefined) post.push(`${cost} of ${f.costGE} or more`);
-  if (f.powerEQ !== undefined) post.push(`${f.powerEQ} power`);
-  if (f.powerLE !== undefined) post.push(`${f.powerLE} power or less`);
-  if (f.powerGE !== undefined) post.push(`${f.powerGE} power or more`);
+  const pwr = f.originalPower ? 'an original power of ' : '';
+  if (f.powerEQ !== undefined) post.push(f.originalPower ? `${pwr}${f.powerEQ}` : `${f.powerEQ} power`);
+  if (f.powerLE !== undefined) post.push(f.originalPower ? `${pwr}${f.powerLE} or less` : `${f.powerLE} power or less`);
+  if (f.powerGE !== undefined) post.push(f.originalPower ? `${pwr}${f.powerGE} or more` : `${f.powerGE} power or more`);
   if (f.traits?.length) post.push(`${list(f.traits.map((t) => `≪${t}≫`))} in its special traits`);
   if (f.traitsAll?.length) post.push(`${list(f.traitsAll.map((t) => `≪${t}≫`), 'and')} in its special traits`);
   if (f.onlyTraits?.length) pre.unshift(`${list(f.onlyTraits.map((t) => `≪${t}≫`))}-only`);

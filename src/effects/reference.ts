@@ -30,7 +30,7 @@ Target (for effects that choose) — every field optional, defaults to up to 1 o
  { "side": "opp"|"self"|"any", "zones": ["battle"] | ["leader","battle"] | ["field"], "count": n, "upTo": bool, "all": bool ("choose all ..."), "filter": Filter,
    "ref": "this" | "leader" (your Leader) | "oppLeader" | "prev" (the card(s) the previous effect chose: "it", "that card") | "battler" (your card that's in a battle) | "oppBattler",
    "chooser": "opp" ("Your opponent KO's 1 of their ..." — the opponent picks; use "upTo": false) }
-Filter (all optional): costLE, costGE, costEQ, originalCost (bool), powerLE, powerGE, powerEQ, rested, active, names: ["Son Goku"] (card name contains), notNames, traits: ["Saiyan"] (any of),
+Filter (all optional): costLE, costGE, costEQ, originalCost (bool), originalPower (bool: power filters use printed power), powerLE, powerGE, powerEQ, rested, active, names: ["Son Goku"] (card name contains), notNames, traits: ["Saiyan"] (any of),
  traitsAll (all of), onlyTraits ("≪Saiyan≫-only"), notTraits, colors: ["Red"], type: "BATTLE"|"EXTRA", other (not this card), keyword: e.g. "blocker"|"evolve"|"fusionEvolve", noSkill, kiGE, underNames,
  anyOf: [Filter, Filter] ("a <Sorbet> or a card with a cost of 1")
 

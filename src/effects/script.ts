@@ -141,7 +141,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   or: { any: 'Cond[]' },
 };
 const FILTER: Spec = {
-  costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
+  costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', originalPower: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
   names: 's[]?', notNames: 's[]?', traits: 's[]?', traitsAll: 's[]?', onlyTraits: 's[]?', colors: 'col[]?', type: 'Z:BATTLE|EXTRA?',
   other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', notTraits: 's[]?', underNames: 's[]?', anyOf: 'F[]?',
 };
