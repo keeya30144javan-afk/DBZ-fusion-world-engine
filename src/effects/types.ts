@@ -303,6 +303,8 @@ export type Cond =
   /** "If you removed an energy marker to use this card". */
   | { t: 'markerPaid' }
   | { t: 'oppHasMarker'; yes: boolean }
+  /** One of your energy markers was removed this turn. */
+  | { t: 'markerUsedThisTurn' }
   /** This card was played by a skill this turn. */
   | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */

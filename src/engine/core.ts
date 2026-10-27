@@ -81,6 +81,8 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn one of this player's energy markers was removed. */
+  markerUsedTurn?: number;
   /** Last turn this player used an Extra with an original cost of 1 or more. */
   extraUsedTurn?: number;
   /** Last turn a card left this player's energy. */
@@ -229,7 +231,7 @@ const auraCache = new WeakMap<object, boolean>();
 const hasAura = (abs: Ability[]) => {
   let v = auraCache.get(abs);
   if (v === undefined) {
-    v = abs.some((a) => a.timing === 'permanent' && a.effects.some((e) => (e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && e.target.all));
+    v = abs.some((a) => a.timing === 'permanent' && a.effects.some((e) => (e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && (e.target.all || e.target.ref === 'leader')));
     auraCache.set(abs, v);
   }
   return v;
@@ -252,8 +254,14 @@ export function auraEffects(s: GameState, uid: number): Effect[] {
         for (const ab of abs) {
           if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) continue;
           for (const e of ab.effects) {
-            if ((e.t !== 'grant' && e.t !== 'power' && e.t !== 'costMod') || !e.target.all) continue;
+            if (e.t !== 'grant' && e.t !== 'power' && e.t !== 'costMod') continue;
             const t = e.target;
+            // "Your Leader gets +X" written on a Battle Card or Field.
+            if (t.ref === 'leader' && src !== p.leader) {
+              if (uid === p.leader && condsHold(s, side, src, ab.cond) && condsHold(s, side, src, e.cond)) out.push(e);
+              continue;
+            }
+            if (!t.all) continue;
             const owner = s.inst[uid].owner;
             if (t.side === 'self' ? owner !== side : t.side === 'opp' ? owner === side : false) continue;
             if (!t.zones.includes(where as 'leader' | 'battle')) continue;
@@ -392,6 +400,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'thisMatches': return matchesFilter(s, src, c.filter, src);
     case 'markerPaid': return !!s.inst[src].markerPaid;
     case 'oppHasMarker': return (opp.markers > 0) === c.yes;
+    case 'markerUsedThisTurn': return me.markerUsedTurn === s.turn;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;
@@ -609,6 +618,7 @@ export function planPayment(s: GameState, p: Side, total: number, spec: Partial<
 export function payPlan(s: GameState, p: Side, plan: { rest: number[]; markers: number }) {
   for (const u of plan.rest) s.inst[u].rested = true;
   s.p[p].markers -= plan.markers;
+  if (plan.markers > 0) s.p[p].markerUsedTurn = s.turn;
 }
 
 export function specFor(s: GameState, uid: number, total: number): Partial<Record<Color, number>> {

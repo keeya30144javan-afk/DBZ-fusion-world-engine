@@ -148,6 +148,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   thisMatches: { filter: 'F' },
   markerPaid: {},
   oppHasMarker: { yes: 'b' },
+  markerUsedThisTurn: {},
   playedBySkill: {},
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },

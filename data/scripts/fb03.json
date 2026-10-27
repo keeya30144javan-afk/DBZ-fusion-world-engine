@@ -1,0 +1,2303 @@
+{
+ "FB03-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "powerGE": 30000
+      }
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "you only take up to 1 damage in each battle."
+    ]
+   },
+   {
+    "timing": "whenDamaged",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "damage cap"
+  ]
+ },
+ "FB03-005": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "powerLE": 25000
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-009": {
+  "keywords": [
+   "koImmuneOnce"
+  ],
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "once": true,
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-010": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Pride Troopers"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 3
+       },
+       {
+        "t": "and",
+        "all": [
+         {
+          "t": "leaderTrait",
+          "traits": [
+           "Pride Troopers"
+          ]
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "BATTLE",
+            "traits": [
+             "Pride Troopers"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-011": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "powerGE": 30000
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "opp",
+        "filter": {
+         "type": "BATTLE",
+         "powerGE": 30000
+        }
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-014": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If this card would be removed from your Battle Area by your opponent, you may place 1 card from your life in its owner's Drop instead."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 5000
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "replacement effects"
+  ]
+ },
+ "FB03-017": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 3,
+       "traits": [
+        "Universe 6"
+       ]
+      },
+      "amount": "free"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-018": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "God of Destruction"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Beerus"
+       ],
+       "powerEQ": 35000
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-020": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "koImmune",
+      "dur": "oppNextTurn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 30000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 25000
+       }
+      }
+     },
+     {
+      "t": "ko",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-023": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "powerGE": 30000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "all": true,
+       "filter": {
+        "powerLE": 25000
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-025": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "BATTLE",
+            "traits": [
+             "Pride Troopers"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 3
+         },
+         {
+          "t": "and",
+          "all": [
+           {
+            "t": "leaderTrait",
+            "traits": [
+             "Pride Troopers"
+            ]
+           },
+           {
+            "t": "count",
+            "what": {
+             "side": "self",
+             "zone": "battle",
+             "filter": {
+              "type": "BATTLE",
+              "traits": [
+               "Pride Troopers"
+              ]
+             }
+            },
+            "op": "ge",
+            "n": 2
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-026": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 25000
+       }
+      }
+     },
+     {
+      "t": "damageLeader",
+      "n": 1,
+      "cond": [
+       {
+        "t": "oppLifeGE",
+        "n": 4
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-027": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "once": true,
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {}
+     }
+    ],
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-029": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "blocker",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-031": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "turn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-033": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, during this turn, the next time you use an Extra from your hand, reduce the cost by (1)."
+    ]
+   }
+  ],
+  "needs": [
+   "condition on a revealed card"
+  ]
+ },
+ "FB03-034": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at the top card of your opponent's deck and place it at the top or bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-036": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-040": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     },
+     {
+      "t": "self",
+      "to": "deckBottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-041": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-045": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 3
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-046": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "atEndOfTurn",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-048": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "This card's name is also treated as <Son Goten> and <Trunks: Youth> in all areas."
+    ]
+   }
+  ],
+  "needs": [
+   "name aliases"
+  ]
+ },
+ "FB03-049": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [],
+    "unparsed": [
+     "Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, choose up to 1 of your opponent's Battle Cards and reduce its cost by 2 for the turn."
+    ]
+   }
+  ],
+  "needs": [
+   "condition on a revealed card"
+  ]
+ },
+ "FB03-050": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 2
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 4,
+        "traits": [
+         "Satan City"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-052": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Satan City"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 3
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-053": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenDealsDamage",
+    "once": true,
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 8
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-056": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "Return 1 Extra from your energy to your hand: Add the top card of your deck to your energy in Rest Mode."
+    ]
+   }
+  ],
+  "needs": [
+   "energy card to hand as a cost"
+  ]
+ },
+ "FB03-059": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "zones": [
+        "field"
+       ],
+       "filter": {
+        "traits": [
+         "Android"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-060": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "side": "any",
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 4
+       }
+      },
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-061": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "all": true,
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 6
+       }
+      },
+      "rested": true
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "play",
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-070": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 8
+     }
+    ],
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 5
+      },
+      "amount": "free"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-073": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE",
+       "onlyTraits": [
+        "Earthling"
+       ],
+       "costLE": 1
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-074": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "type": "BATTLE",
+        "noSkill": true,
+        "costLE": 7
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-075": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Piccolo"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 40000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-076": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [],
+    "unparsed": [
+     "Choose 1 card from your opponent's hand and reveal it. If the revealed card's cost is less than or equal to your energy, add the top card of your deck to your energy in Rest Mode."
+    ]
+   }
+  ],
+  "needs": [
+   "condition on a revealed card"
+  ]
+ },
+ "FB03-083": {
+  "keywords": [
+   "barrier"
+  ],
+  "abilities": [
+   {
+    "timing": "whenOppAttacks",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "(only when the attacker is a Battle Card with a cost of 3) draw 1 card."
+    ]
+   }
+  ],
+  "needs": [
+   "filter on the attacking card"
+  ]
+ },
+ "FB03-086": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {
+       "zones": [
+        "field"
+       ],
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-093": {
+  "keywords": [
+   "barrier"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "play",
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-094": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Meta-Cooler"
+       ],
+       "notNames": [
+        "Meta-Cooler Core"
+       ],
+       "costLE": 3
+      },
+      "n": 2,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-097": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Ginyu Force"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-098": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE"
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Majin Buu"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-100": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Babidi"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "count": 2,
+       "filter": {
+        "type": "BATTLE",
+        "costLE": 4,
+        "traits": [
+         "Wicked Soul"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-101": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "whenAllyPlayed",
+    "turn": "your",
+    "once": true,
+    "trigger": {
+     "anyOf": [
+      {
+       "names": [
+        "Babidi"
+       ]
+      },
+      {
+       "traits": [
+        "Wicked Soul"
+       ]
+      }
+     ]
+    },
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-104": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "power",
+         "target": {
+          "side": "self"
+         },
+         "amount": 10000,
+         "dur": "oppNextTurn",
+         "cond": [
+          {
+           "t": "not",
+           "c": {
+            "t": "markerPaid"
+           }
+          }
+         ]
+        }
+       ],
+       [
+        {
+         "t": "power",
+         "target": {
+          "side": "self"
+         },
+         "amount": 15000,
+         "dur": "oppNextTurn",
+         "cond": [
+          {
+           "t": "markerPaid"
+          }
+         ]
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-105": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-107": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "deckTop",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Saiyan"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-109": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-110": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-111": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "placeMarker",
+      "n": 1,
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-113": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-114": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-115": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-116": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "drop",
+      "rest": "top"
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "combo",
+       "filter": {}
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-117": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-118": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "side": "any",
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-119": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-120": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Luud"
+       ],
+       "costEQ": 4
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "markerPaid"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-121": {
+  "abilities": [
+   {
+    "timing": "auto",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "When you use a card in a combo while this card is in a battle, draw 1 card. Then, switch this card to Active Mode."
+    ]
+   }
+  ],
+  "needs": [
+   "trigger on combo"
+  ]
+ },
+ "FB03-122": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "combo",
+       "filter": {}
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-123": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "markerPaid"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {},
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-125": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "bounce",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      },
+      "cond": [
+       {
+        "t": "markerPaid"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-128": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "placeMarker",
+      "n": 1,
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-132": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "costLE": 1,
+        "notNames": [
+         "Hercule: GT"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-134": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-135": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Bardock's Crew"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Bardock"
+       ],
+       "costEQ": 5
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-136": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         ": GT"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         ": GT"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-137": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "ko",
+         "target": {
+          "filter": {
+           "costLE": 2
+          }
+         }
+        }
+       ],
+       [
+        {
+         "t": "ko",
+         "target": {
+          "count": 2,
+          "filter": {
+           "costLE": 3
+          }
+         },
+         "cond": [
+          {
+           "t": "markerPaid"
+          }
+         ]
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-138": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "costGE": 4,
+           "traits": [
+            "Saiyan"
+           ]
+          }
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "opp",
+          "filter": {
+           "costGE": 4,
+           "traits": [
+            "Saiyan"
+           ]
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-139": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 8
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "zones": [
+        "leader"
+       ]
+      },
+      "amount": 20000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB03-140": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "markerUsedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ }
+}

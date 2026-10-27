@@ -265,7 +265,7 @@ function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers): numb
         break;
       }
       case 'restSelf': s.inst[uid].rested = true; break;
-      case 'restEnergy': { const plan = planPayment(s, owner, c.n, {}); if (plan) payPlan(s, owner, plan); break; }
+      case 'restEnergy': { const plan = planPayment(s, owner, c.n, {}); if (plan) { payPlan(s, owner, plan); s.inst[uid].markerPaid = plan.markers > 0; } break; }
       case 'lifeToHand': takeLife(s, owner, c.n, false); break;
       case 'lifeToDrop': takeLife(s, owner, c.n, true); break;
       case 'selfToDrop': if (me.field === uid) { removeFrom(s, uid); me.drop.push(uid); } else moveTo(s, uid, 'drop'); break;
