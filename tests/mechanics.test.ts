@@ -7,7 +7,7 @@ import { GameState, Side, powerOf, costInHand } from '../src/engine/core';
 import { koCard } from '../src/engine/effects';
 import { defaultChooser } from '../src/ai/heuristics';
 import { clearCompileCache, compileCard } from '../src/effects/parse';
-import { textHash, validateScript } from '../src/effects/script';
+import { expandScript, textHash, validateScript } from '../src/effects/script';
 import { describeCompiled } from '../src/effects/describe';
 import { Card } from '../src/data/types';
 import { CardScript } from '../src/effects/types';
@@ -199,4 +199,69 @@ test('trust order: an unreviewed translation never overrides a card the parser r
   const withVerified = compileCard({ ...cards[id], id: 'tmp-c', script: { ...sc, source: 'verified' } });
   assert.equal(withVerified.source, 'verified');
   clearCompileCache();
+});
+
+/** Shorthand translation for a test, expanded the way data/scripts files are. */
+function ws(id: string, sc: object) {
+  withScript(id, expandScript(sc) as any);
+}
+function unscript(...ids: string[]) {
+  for (const id of ids) cards[id] = { ...cards[id], script: undefined };
+  clearCompileCache();
+}
+
+test('aura: a [Permanent] that powers up your other Battle Cards', () => {
+  ws('FS01-07', { abilities: [{ timing: 'permanent', effects: [{ t: 'power', target: { all: true, side: 'self', filter: { other: true } }, amount: 5000, dur: 'static' }] }] });
+  const s = fresh();
+  const other = spawn(s, 0, 'FS04-06', 'battle');
+  const before = powerOf(s, other);
+  spawn(s, 0, 'FS01-07', 'battle');
+  assert.equal(powerOf(s, other), before + 5000);
+  const opp = spawn(s, 1, 'FS04-06', 'battle');
+  assert.equal(powerOf(s, opp), before, "the opponent's cards are unaffected");
+  unscript('FS01-07');
+});
+
+test('Ki: "remove 1 or more Ki: +5000 power for each Ki removed"', () => {
+  ws('FS01-07', { abilities: [{ timing: 'activateMain', once: true, cost: [{ t: 'reduceKi', n: 1, scope: 'battle', max: 99 }], effects: [{ t: 'power', target: { ref: 'this' }, amount: 5000, dur: 'turn', per: { side: 'self', zone: 'kiRemoved' } }] }] });
+  const s = fresh();
+  const u = spawn(s, 0, 'FS01-07', 'battle');
+  const b = spawn(s, 0, 'FS04-06', 'battle');
+  s.inst[u].ki = 1; s.inst[b].ki = 2;
+  const before = powerOf(s, u);
+  step(s, acts(s, (a) => a.k === 'activate' && a.uid === u)[0], ctl);
+  assert.equal(powerOf(s, u), before + 15000);
+  assert.equal(s.inst[u].ki + s.inst[b].ki, 0);
+  assert.equal(s.p[0].kiRemovedTurn, s.turn);
+  unscript('FS01-07');
+});
+
+test('removal tracking: "if your Battle Card was removed by one of your skills this turn"', () => {
+  ws('FS01-07', { abilities: [{ timing: 'activateMain', once: true, effects: [
+    { t: 'bounce', target: { side: 'self', upTo: false, filter: { other: true } } },
+    { t: 'draw', n: 1, cond: [{ t: 'removedOwnThisTurn' }] },
+  ] }] });
+  const s = fresh();
+  const u = spawn(s, 0, 'FS01-07', 'battle');
+  const b = spawn(s, 0, 'FS04-06', 'battle');
+  const hand = s.p[0].hand.length;
+  step(s, acts(s, (a) => a.k === 'activate' && a.uid === u)[0], ctl);
+  assert.ok(s.p[0].hand.includes(b));
+  assert.equal(s.p[0].hand.length, hand + 2, 'bounced card + 1 draw');
+  unscript('FS01-07');
+});
+
+test('negate: "play it with its [On Play] skills negated"', () => {
+  const name = cards['FS01-07'].name;
+  ws('FS01-07', { abilities: [{ timing: 'onPlay', effects: [{ t: 'draw', n: 3 }] }] });
+  ws('FS04-06', { abilities: [{ timing: 'activateMain', once: true, effects: [{ t: 'playFrom', from: 'hand', filter: { names: [name] }, n: 1, negate: 'onPlay' }] }] });
+  const s = fresh();
+  const host = spawn(s, 0, 'FS04-06', 'battle');
+  s.p[0].hand = [];
+  const target = spawn(s, 0, 'FS01-07', 'hand');
+  const hand = s.p[0].hand.length;
+  step(s, acts(s, (a) => a.k === 'activate' && a.uid === host)[0], ctl);
+  assert.ok(s.p[0].battle.includes(target));
+  assert.equal(s.p[0].hand.length, hand - 1, 'no cards drawn');
+  unscript('FS01-07', 'FS04-06');
 });

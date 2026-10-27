@@ -393,7 +393,14 @@ function declareAttack(s: GameState, attacker: number, target: number, ctl: Choo
   fireTriggers(s, attacker, 'whenAttacking', ctl);
   if (s.stage === 'over') return;
   if (!battleStillValid(s)) return endBattle(s, ctl);
-  fireTriggers(s, target, 'whenAttacked', ctl);
+  const def = other(side);
+  for (const u of [s.p[def].leader, ...s.p[def].battle]) {
+    if ((s.stage as string) === 'over' || !battleStillValid(s)) break;
+    fireTriggers(s, u, 'whenOppAttacks', ctl);
+  }
+  if ((s.stage as string) === 'over') return;
+  if (!battleStillValid(s)) return endBattle(s, ctl);
+  fireTriggers(s, s.battle!.target, 'whenAttacked', ctl);
   if ((s.stage as string) === 'over') return;
   if (!battleStillValid(s)) return endBattle(s, ctl);
   advanceBattle(s, 'counter', ctl);
@@ -446,6 +453,10 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       koCard(s, b.target, ctl, { src: b.attacker });
     }
   } else log(s, `blocked out: ${atk} vs ${def}`);
+  // "When this card wins a battle": the attacker on a hit, the defender otherwise.
+  const winner = atk >= def ? b.attacker : b.target;
+  const stillThere = isLeader(s, winner) || s.p[s.inst[winner].owner].battle.includes(winner);
+  if (stillThere && s.stage !== 'over') fireTriggers(s, winner, 'whenWinsBattle', ctl);
   endBattle(s, ctl);
 }
 

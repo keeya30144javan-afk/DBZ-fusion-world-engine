@@ -71,6 +71,10 @@ const KW: Record<string, string> = {
 };
 
 function describeCount(c: Count): string {
+  if (c.zone === 'thisKi') return 'Ki this card has';
+  if (c.zone === 'kiTotal') return 'Ki you have in total';
+  if (c.zone === 'kiRemoved') return 'Ki removed by this skill';
+  if (c.zone === 'prev') return `${describeFilter(c.filter ?? {}, 'card')} chosen by this skill`;
   const zone = c.zone === 'under' ? 'under your cards' : `in ${c.side === 'self' ? 'your' : "your opponent's"} ${c.zone === 'battle' ? 'Battle Area' : c.zone[0].toUpperCase() + c.zone.slice(1)}`;
   return `${describeFilter(c.filter ?? {})} ${zone}`;
 }
@@ -81,7 +85,7 @@ export function describeEffect(e: Effect): string {
   const subj = 'target' in e && (e.target.ref || e.target.all) ? tgt : 'it';
   let out: string;
   switch (e.t) {
-    case 'draw': out = `draw ${plural(e.n, 'card')}`; break;
+    case 'draw': out = `draw ${plural(e.n, 'card')}${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
     case 'lifeToHand': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your life to your hand`; break;
     case 'power': out = `${pick}${subj} gets ${e.amount >= 0 ? '+' : ''}${e.amount} power${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`; break;
     case 'comboPower': out = `${subj === 'it' ? 'this card' : subj} gets +${e.amount} combo power`; break;
@@ -94,14 +98,14 @@ export function describeEffect(e: Effect): string {
     case 'activate': out = `${pick ? pick + 'switch it' : `switch ${tgt}`} to Active Mode`; break;
     case 'lockActive': out = `${pick}${subj} can't switch to Active Mode during your opponent's next turn`; break;
     case 'grant': out = `${pick}${subj} ${KW[e.kw] ?? `gains [${e.kw}]`}${DUR[e.dur]}`; break;
-    case 'costMod': out = `${pick}${e.amount < 0 ? `reduce its cost by ${-e.amount}` : `increase its cost by ${e.amount}`}${DUR[e.dur]}`; break;
+    case 'costMod': out = `${pick}${e.amount < 0 ? `reduce its cost by ${-e.amount}` : `increase its cost by ${e.amount}`}${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`; break;
     case 'search': {
       const dest = e.dest ?? 'hand';
       out = `look at ${plural(e.look, 'card')} from the top of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? 'play it' : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : 'at the bottom of your deck in a random order'}`;
       break;
     }
     case 'dropToHand': out = `add ${list(e.options.map((f) => `up to ${e.each} ${describeFilter(f)}`), 'and')} from your Drop to your hand`; break;
-    case 'playFrom': out = `play up to ${e.n} ${describeFilter(e.filter)} from your ${e.from === 'drop' ? 'Drop' : e.from}${e.rested ? ' in Rest Mode' : ''}`; break;
+    case 'playFrom': out = `play up to ${e.n} ${describeFilter(e.filter)} from your ${e.from === 'drop' ? 'Drop' : e.from}${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}`; break;
     case 'energyFromDeck': out = `add the top ${plural(e.n, 'card')} of your deck to your energy${e.rested ? ' in Rest Mode' : ''}`; break;
     case 'energyFromDrop': out = `add up to ${e.n} ${describeFilter(e.filter)} from your Drop to your energy${e.rested ? ' in Rest Mode' : ''}`; break;
     case 'energyFromLife': out = `add ${plural(e.n, 'card')} from your life to your energy${e.rested ? ' in Rest Mode' : ''}`; break;
@@ -114,7 +118,7 @@ export function describeEffect(e: Effect): string {
     case 'cantBlock': out = "your opponent can't activate [Blocker] during this battle"; break;
     case 'damageLeader': out = `deal ${e.n} damage to your opponent`; break;
     case 'flipLeader': out = 'flip this card over'; break;
-    case 'ki': out = `${pick}${subj} gets +${e.n} Ki`; break;
+    case 'ki': out = `${pick}${subj} gets +${e.n} Ki${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
     case 'placeMarker': out = `you place ${e.n} energy marker`; break;
     case 'lifeFromDeck': out = `add the top ${plural(e.n, 'card')} of your deck to your life`; break;
     case 'handToLife': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your hand to your life`; break;
@@ -131,6 +135,8 @@ export function describeEffect(e: Effect): string {
     case 'lockSkill': out = `you can't activate the [${e.timing === 'activateMain' ? 'Activate: Main' : 'Activate: Battle'}] of ${list(e.names.map((n) => `<${n}>`))}${DUR[e.dur]}`; break;
     case 'dropToDeck': out = "return all cards from your Drop to your deck in a random order"; break;
     case 'lifeToDeck': out = `look through your life and place ${plural(e.n, 'card')} on top of your deck`; break;
+    case 'negate': out = `${pick}negate ${e.target.ref === 'this' ? "this card's" : 'its'} ${e.scope === 'onPlay' ? '[On Play] skills' : 'skills'}${DUR[e.dur]}`; break;
+    case 'redirect': out = `${pick}switch the attack target to ${e.target.ref || e.target.all ? tgt : 'it'}`; break;
     case 'noop': out = e.note; break;
   }
   return e.cond?.length ? `if ${e.cond.map(describeCond).join(' and ')}, ${out}` : out;
@@ -172,6 +178,9 @@ export function describeCond(c: Cond): string {
     case 'koedThisTurn': return `your ${c.filter ? describeFilter(c.filter) : 'card'} has KO'd one of your opponent's Battle Cards during this turn`;
     case 'playedByLeaderSkill': return "this card was played by your Leader's skill";
     case 'leaderInBattle': return 'your Leader is in a battle';
+    case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
+    case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
+    case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
   }
 }
 
@@ -187,7 +196,8 @@ export function describeCost(c: Cost): string {
     case 'koSelf': return 'KO this card';
     case 'lifeToHand': return `add ${plural(c.n, 'card')} from your life to your hand`;
     case 'lifeToDrop': return `place ${plural(c.n, 'card')} from your life into your Drop`;
-    case 'reduceKi': return `reduce ${c.scope === 'this' ? "this card's" : c.scope === 'leader' ? "your Leader's" : c.scope === 'battle' ? 'the' : 'your'} Ki${c.scope === 'battle' ? ' of your Battle Area' : ''} by ${c.n}`;
+    case 'reduceKi': if (c.max) return `remove ${c.max >= 99 ? `all ${c.n > 1 ? `${c.n} or more ` : ''}` : `${c.n} or more (up to ${c.max}) `}Ki from ${c.scope === 'this' ? 'this card' : c.scope === 'leader' ? 'your Leader' : c.scope === 'battle' ? 'your Battle Area' : 'your cards'}`;
+      return `reduce ${c.scope === 'this' ? "this card's" : c.scope === 'leader' ? "your Leader's" : c.scope === 'battle' ? 'the' : 'your'} Ki${c.scope === 'battle' ? ' of your Battle Area' : ''} by ${c.n}`;
     case 'koOwn': return `KO ${c.n} ${describeFilter(c.filter, 'Battle Card')} in your Battle Area`;
     case 'restOwn': return `switch ${c.n} ${describeFilter(c.filter, 'card')} in your Battle Area to Rest Mode`;
     case 'dropOwn': return `place ${c.n} ${describeFilter(c.filter, 'card')} from your Battle Area into your Drop`;
@@ -208,7 +218,9 @@ const TIMING: Record<string, string> = {
   startOfYourTurn: 'Start of Your Turn', awaken: 'Awaken', comboFromHand: 'Auto: when used in a combo from your hand',
   comboFromField: 'Auto: when used in a combo from the Battle Area', whenDamaged: 'Auto: when you take damage',
   whenAllyPlayed: 'Auto: when your card is played', whenMilled: 'Auto: when placed from your deck into your Drop',
-  gameStart: 'Auto: when placed in your Leader Area', auto: 'Auto',
+  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle',
+  whenOppAttacks: "Auto: when an opponent's card attacks", whenAllyRemovedBySelf: 'Auto: when your card is removed from the Battle Area by one of your skills',
+  whenAllyRemovedByOpp: 'Auto: when your card is removed from the Battle Area by your opponent', auto: 'Auto',
 };
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -219,6 +231,7 @@ export function describeAbility(a: Ability): string {
   if (a.once) tags.push('[Once per turn]');
   let body = '';
   if (a.timing === 'whenAllyPlayed' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is played, `;
+  if ((a.timing === 'whenAllyRemovedBySelf' || a.timing === 'whenAllyRemovedByOpp') && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is removed, `;
   if (a.cost.length) body += a.cost.map(describeCost).join(', ') + ': ';
   if (a.cond.length) body += `If ${a.cond.map(describeCond).join(' and ')}, `;
   body += a.effects.map(describeEffect).join('. Then, ');

@@ -19,7 +19,8 @@ export function textHash(card: Pick<Card, 'text' | 'back'>): string {
 
 export const TIMINGS: Timing[] = [
   'onPlay', 'whenAttacking', 'whenAttacked', 'whenKOd', 'whenBlocking', 'activateMain', 'activateBattle', 'counter', 'permanent',
-  'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart', 'auto',
+  'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart',
+  'whenWinsBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
@@ -34,7 +35,7 @@ type Spec = Record<string, string>;
  * K=Keyword, E[][]=effect option lists, C=Count, Z:a|b=one of; trailing ? = optional.
  */
 const EFFECTS: Record<Effect['t'], Spec> = {
-  draw: { n: 'n' },
+  draw: { n: 'n', per: 'C?' },
   lifeToHand: { n: 'n', upTo: 'b' },
   power: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
   comboPower: { target: 'T', amount: 'n' },
@@ -47,10 +48,10 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   activate: { target: 'T' },
   lockActive: { target: 'T' },
   grant: { target: 'T', kw: 'K', dur: 'D' },
-  costMod: { target: 'T', amount: 'n', dur: 'D' },
+  costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
   search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top?' },
   dropToHand: { options: 'F[]', each: 'n' },
-  playFrom: { from: 'Z:drop|hand|deck|energy', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?' },
+  playFrom: { from: 'Z:drop|hand|deck|energy', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?' },
   energyFromDeck: { n: 'n', rested: 'b' },
   energyFromDrop: { filter: 'F', n: 'n', rested: 'b' },
   energyFromLife: { n: 'n', rested: 'b' },
@@ -63,7 +64,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   cantBlock: {},
   damageLeader: { n: 'n' },
   flipLeader: {},
-  ki: { target: 'T', n: 'n' },
+  ki: { target: 'T', n: 'n', per: 'C?' },
   placeMarker: { n: 'n' },
   lifeFromDeck: { n: 'n' },
   handToLife: { n: 'n', upTo: 'b' },
@@ -80,6 +81,8 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   lockSkill: { names: 's[]', timing: 'Z:activateMain|activateBattle', dur: 'D' },
   dropToDeck: {},
   lifeToDeck: { n: 'n' },
+  negate: { target: 'T', dur: 'D', scope: 'Z:all|onPlay?' },
+  redirect: { target: 'T' },
   noop: { note: 's' },
 };
 const COSTS: Record<Cost['t'], Spec> = {
@@ -93,7 +96,7 @@ const COSTS: Record<Cost['t'], Spec> = {
   koSelf: {},
   lifeToHand: { n: 'n' },
   lifeToDrop: { n: 'n' },
-  reduceKi: { n: 'n', scope: 'Z:this|leader|your|battle' },
+  reduceKi: { n: 'n', scope: 'Z:this|leader|your|battle', max: 'n?' },
   koOwn: { n: 'n', filter: 'F' },
   restOwn: { n: 'n', filter: 'F' },
   dropOwn: { n: 'n', filter: 'F' },
@@ -131,6 +134,9 @@ const CONDS: Record<Cond['t'], Spec> = {
   koedThisTurn: { filter: 'F?' },
   playedByLeaderSkill: {},
   leaderInBattle: {},
+  removedOwnThisTurn: {},
+  kiRemovedThisTurn: {},
+  inBattleWith: { filter: 'F' },
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
 };
@@ -142,7 +148,7 @@ const FILTER: Spec = {
 const TARGET: Spec = {
   side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
 };
-const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under', filter: 'F?' };
+const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev', filter: 'F?' };
 
 // ------------------------------------------------------------------ validation
 

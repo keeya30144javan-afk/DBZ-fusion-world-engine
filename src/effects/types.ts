@@ -31,6 +31,14 @@ export type Timing =
   | 'whenMilled'
   /** [Auto] "When this card is placed in your Leader Area" (game start). */
   | 'gameStart'
+  /** [Auto] "When this card wins a battle". */
+  | 'whenWinsBattle'
+  /** [Auto] "When an opponent's Battle Card attacks" (on the defending player's cards). */
+  | 'whenOppAttacks'
+  /** [Auto] "When your <X> is removed from the Battle Area by one of your skills" (filter in `trigger`). */
+  | 'whenAllyRemovedBySelf'
+  /** [Auto] "When your <X> is removed from the Battle Area by your opponent" (filter in `trigger`). */
+  | 'whenAllyRemovedByOpp'
   | 'auto';
 
 export type Duration = 'battle' | 'turn' | 'oppNextTurn' | 'static' | 'game';
@@ -95,14 +103,18 @@ export interface Target {
 /** Something to count, for "for each ..." and count conditions. */
 export interface Count {
   side: 'self' | 'opp';
-  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under';
+  /**
+   * thisKi = Ki on the card with the skill; kiTotal = Ki on your Leader and Battle Cards;
+   * kiRemoved = Ki removed by this skill's cost; prev = cards the previous effect affected.
+   */
+  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev';
   filter?: Filter;
 }
 
 type E<T> = T & { cond?: Cond[] };
 
 export type Effect = E<
-  | { t: 'draw'; n: number }
+  | { t: 'draw'; n: number; per?: Count }
   | { t: 'lifeToHand'; n: number; upTo: boolean }
   | { t: 'power'; target: Target; amount: number; dur: Duration; per?: Count }
   | { t: 'comboPower'; target: Target; amount: number }
@@ -118,14 +130,14 @@ export type Effect = E<
   | { t: 'lockActive'; target: Target }
   | { t: 'grant'; target: Target; kw: Keyword; dur: Duration }
   /** Change the cost of a card in play ("reduce its cost by 1 for the turn"). */
-  | { t: 'costMod'; target: Target; amount: number; dur: Duration }
+  | { t: 'costMod'; target: Target; amount: number; dur: Duration; per?: Count }
   /**
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
   | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' }
   | { t: 'dropToHand'; options: Filter[]; each: number }
-  | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy'; filter: Filter; n: number; rested?: boolean; extraType?: boolean }
+  | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy'; filter: Filter; n: number; rested?: boolean; extraType?: boolean; negate?: 'all' | 'onPlay' }
   | { t: 'energyFromDeck'; n: number; rested: boolean }
   | { t: 'energyFromDrop'; filter: Filter; n: number; rested: boolean }
   | { t: 'energyFromLife'; n: number; rested: boolean }
@@ -139,7 +151,7 @@ export type Effect = E<
   | { t: 'damageLeader'; n: number }
   | { t: 'flipLeader' }
   /** Place N energy markers from outside the game under the target as Ki (manual p.12). */
-  | { t: 'ki'; target: Target; n: number }
+  | { t: 'ki'; target: Target; n: number; per?: Count }
   /** "you place 1 energy marker". */
   | { t: 'placeMarker'; n: number }
   /** Top card(s) of your deck to your life. */
@@ -171,6 +183,10 @@ export type Effect = E<
   | { t: 'dropToDeck' }
   /** Look through your life and place N of those cards on top of your deck. */
   | { t: 'lifeToDeck'; n: number }
+  /** "Negate its skills for the turn" ('onPlay': only its [On Play]). */
+  | { t: 'negate'; target: Target; dur: Duration; scope?: 'all' | 'onPlay' }
+  /** "Switch the attack target to the chosen card" (choose among your own cards). */
+  | { t: 'redirect'; target: Target }
   /** Reveal/rearrange deck or shuffle: no effect the simulator models. */
   | { t: 'noop'; note: string }
 >;
@@ -187,7 +203,8 @@ export type Cost =
   | { t: 'lifeToHand'; n: number }
   | { t: 'lifeToDrop'; n: number }
   /** Remove N Ki. 'your' = leader and Battle Cards, 'battle' = Battle Cards only (manual p.12). */
-  | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle' }
+  /** `max`: "remove N or more" / "remove all" — removes up to max (99 = all); the amount is countable as kiRemoved. */
+  | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle'; max?: number }
   /** KO / rest / drop / bounce N of your own cards in play matching filter. */
   | { t: 'koOwn'; n: number; filter: Filter }
   | { t: 'restOwn'; n: number; filter: Filter }
@@ -247,6 +264,12 @@ export type Cond =
   /** This card was played by your Leader's skill. */
   | { t: 'playedByLeaderSkill' }
   | { t: 'leaderInBattle' }
+  /** One of your Battle Cards was removed from a Battle Area by your own skill this turn. */
+  | { t: 'removedOwnThisTurn' }
+  /** Ki was removed from your cards this turn. */
+  | { t: 'kiRemovedThisTurn' }
+  /** This card is in a battle with an opponent's card matching the filter. */
+  | { t: 'inBattleWith'; filter: Filter }
   | { t: 'not'; c: Cond }
   | { t: 'or'; any: Cond[] };
 

@@ -154,7 +154,9 @@ export class HeuristicChooser implements Chooser {
     const e = req.effect!;
     let scored: [number, number][];
     if (req.intent === 'harm') {
-      scored = req.options.filter((u) => s.inst[u].owner !== me).map((u) => {
+      // Own cards only when the skill forces a pick ("return 1 of your Battle Cards"): the least valuable first.
+      scored = req.options.map((u) => {
+        if (s.inst[u].owner === me) return [u, -10 - boardValue(s, u)] as [number, number];
         let v = boardValue(s, u);
         if (e.t === 'power' && powerOf(s, u) + e.amount <= 0) v += 3; // it will drop
         if (e.t === 'rest' && s.inst[u].rested) v -= 5;
@@ -173,7 +175,7 @@ export class HeuristicChooser implements Chooser {
       });
     }
     scored.sort((a, b) => b[1] - a[1]);
-    const take = Math.max(req.min, Math.min(req.max, scored.filter(([, v]) => v > -5).length));
+    const take = Math.min(scored.length, Math.max(req.min, Math.min(req.max, scored.filter(([, v]) => v > -5).length)));
     return scored.slice(0, take).map(([u]) => u);
   }
 }
