@@ -232,6 +232,7 @@ export type Cost =
   | { t: 'restOwn'; n: number; filter: Filter }
   | { t: 'dropOwn'; n: number; filter: Filter }
   | { t: 'bounceOwn'; n: number; filter: Filter }
+  | { t: 'bottomOwn'; n: number; filter: Filter }
   /** N cards from your hand on top of your deck. */
   | { t: 'handToDeckTop'; n: number }
   | { t: 'mill'; n: number }

@@ -222,7 +222,7 @@ export function canPayCosts(s: GameState, uid: number, costs: Cost[], excludeFro
       case 'lifeToHand': case 'lifeToDrop': if (me.life.length < c.n) return false; break;
       case 'selfToDrop': case 'selfToHand': case 'selfToDeckBottom': case 'koSelf': break;
       case 'reduceKi': if (kiPool(s, uid, c.scope).reduce((a, u) => a + s.inst[u].ki, 0) < c.n) return false; break;
-      case 'koOwn': case 'dropOwn': case 'bounceOwn': if (ownInPlay(s, owner, c.filter, uid).length < c.n) return false; break;
+      case 'koOwn': case 'dropOwn': case 'bounceOwn': case 'bottomOwn': if (ownInPlay(s, owner, c.filter, uid).length < c.n) return false; break;
       case 'restOwn': if (ownInPlay(s, owner, { ...c.filter, active: true }, uid).length < c.n) return false; break;
       case 'handToDeckTop': if (hand.length < c.n) return false; break;
       case 'mill': if (me.deck.length < c.n) return false; break;
@@ -287,6 +287,7 @@ function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers): numb
       case 'koOwn': for (const u of pickOwn(ownInPlay(s, owner, c.filter, uid), c.n)) koCard(s, u, ctl); break;
       case 'dropOwn': for (const u of pickOwn(ownInPlay(s, owner, c.filter, uid), c.n)) moveTo(s, u, 'drop'); break;
       case 'bounceOwn': for (const u of pickOwn(ownInPlay(s, owner, c.filter, uid), c.n)) moveTo(s, u, 'hand'); break;
+      case 'bottomOwn': for (const u of pickOwn(ownInPlay(s, owner, c.filter, uid), c.n)) moveTo(s, u, 'deck', { bottom: true }); break;
       case 'restOwn': for (const u of pickOwn(ownInPlay(s, owner, { ...c.filter, active: true }, uid), c.n)) s.inst[u].rested = true; break;
       case 'handToDeckTop': {
         const pick = ctl[owner].choose(s, { kind: 'discard', player: owner, src: uid, options: me.hand.filter((u) => u !== uid), min: c.n, max: c.n, intent: 'lose' });

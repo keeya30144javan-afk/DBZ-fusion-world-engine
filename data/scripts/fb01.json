@@ -324,7 +324,7 @@
     "once": true,
     "cost": [
      {
-      "t": "bounceOwn",
+      "t": "bottomOwn",
       "n": 1,
       "filter": {
        "names": [
@@ -346,9 +346,6 @@
       },
       "amount": 2
      }
-    ],
-    "unparsed": [
-     "(the <Zamasu> goes to the bottom of your deck, not your hand)"
     ]
    }
   ]

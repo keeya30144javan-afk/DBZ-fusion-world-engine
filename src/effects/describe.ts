@@ -227,6 +227,7 @@ export function describeCost(c: Cost): string {
     case 'restOwn': return `switch ${c.n} ${describeFilter(c.filter, 'card')} in your Battle Area to Rest Mode`;
     case 'dropOwn': return `place ${c.n} ${describeFilter(c.filter, 'card')} from your Battle Area into your Drop`;
     case 'bounceOwn': return `return ${c.n} ${describeFilter(c.filter, 'card')} from your Battle Area to your hand`;
+    case 'bottomOwn': return `place ${c.n} ${describeFilter(c.filter, 'Battle Card')} from your Battle Area at the bottom of your deck`;
     case 'handToDeckTop': return `place ${plural(c.n, 'card')} from your hand on top of your deck`;
     case 'mill': return `place the top ${plural(c.n, 'card')} of your deck into your Drop`;
     case 'reveal': return `reveal 1 ${describeFilter(c.filter)} from your hand`;

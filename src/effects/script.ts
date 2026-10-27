@@ -106,6 +106,7 @@ const COSTS: Record<Cost['t'], Spec> = {
   restOwn: { n: 'n', filter: 'F' },
   dropOwn: { n: 'n', filter: 'F' },
   bounceOwn: { n: 'n', filter: 'F' },
+  bottomOwn: { n: 'n', filter: 'F' },
   handToDeckTop: { n: 'n' },
   mill: { n: 'n' },
   reveal: { filter: 'F' },

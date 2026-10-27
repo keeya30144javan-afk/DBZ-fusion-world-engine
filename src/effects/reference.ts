@@ -62,7 +62,7 @@ Count = {"side":"self"|"opp","zone":"battle"|"drop"|"hand"|"energy"|"life"|"deck
 
 Cost: {"t":"discard","n","filter"?} {"t":"restSelf"} {"t":"restEnergy","n"} ("(2)" or "pay 2 energy") {"t":"energyToDrop","n"} {"t":"selfToDrop"} {"t":"selfToHand"} {"t":"selfToDeckBottom"} {"t":"koSelf"}
  {"t":"lifeToHand","n"} {"t":"lifeToDrop","n"} {"t":"reduceKi","n","scope":"this"|"leader"|"your"|"battle","max"?} ("Remove 1 or more Ki" -> n:1,max:99; "Remove all 3 or more Ki" -> n:3,max:99) {"t":"koOwn","n","filter"} {"t":"restOwn","n","filter"} {"t":"dropOwn","n","filter"}
- {"t":"bounceOwn","n","filter"} {"t":"handToDeckTop","n"} {"t":"mill","n"} {"t":"reveal","filter"} {"t":"underToDrop","n","filter"?}
+ {"t":"bounceOwn","n","filter"} {"t":"bottomOwn","n","filter"} {"t":"handToDeckTop","n"} {"t":"mill","n"} {"t":"reveal","filter"} {"t":"underToDrop","n","filter"?}
  {"t":"dropToDeck","n","filter"} (return n cards from your Drop to your deck) {"t":"handToUnder","filter","onto":Filter} {"t":"activateOwn","filter"} (switch your rested card to Active Mode)
 
 Cond: {"t":"handLE"|"handGE"|"energyGE"|"energyLE"|"lifeLE"|"lifeGE"|"oppLifeLE"|"oppLifeGE"|"oppHandGE"|"dropGE","n"}
