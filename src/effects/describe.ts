@@ -34,6 +34,7 @@ export function describeFilter(f: Filter, noun = 'card'): string {
   if (f.noSkill) pre.unshift('skill-less');
   if (f.kiGE !== undefined) post.push(`${f.kiGE} or more Ki`);
   if (f.underNames?.length) post.push(`a ${list(f.underNames.map((n) => `<${n}>`))} under it`);
+  if (f.anyOf?.length) return `${f.anyOf.map((x) => describeFilter(x, noun)).join(' or ')}`;
   let out = [...pre, base].join(' ');
   if (post.length) out += ` with ${list(post, 'and')}`;
   if (f.other) out = `other ${out}`;
@@ -56,10 +57,11 @@ export function describeTarget(t: Target): string {
   const what = describeFilter(t.filter, t.zones.includes('field') && !t.zones.includes('battle') ? '[Field]' : 'Battle Card');
   const who = t.zones.includes('leader') && t.zones.includes('battle') ? (t.side === 'opp' ? "your opponent's Leader or" : 'your Leader or') : '';
   const qty = t.all ? 'all' : `${t.upTo ? 'up to ' : ''}${t.count}`;
-  return `${who ? who + ' ' : ''}${qty} ${what}${t.all || t.count > 1 ? '(s)' : ''} ${whose(t)}`;
+  const base = `${who ? who + ' ' : ''}${qty} ${what}${t.all || t.count > 1 ? '(s)' : ''} ${whose(t)}`;
+  return t.chooser === 'opp' ? `${base} (your opponent chooses)` : base;
 }
 
-const DUR: Record<string, string> = { battle: ' for the battle', turn: ' for the turn', oppNextTurn: " until the end of your opponent's next turn", static: '' };
+const DUR: Record<string, string> = { battle: ' for the battle', turn: ' for the turn', oppNextTurn: " until the end of your opponent's next turn", static: '', game: ' for the game' };
 
 const KW: Record<string, string> = {
   cantAttack: "can't attack", cantAttackLeader: "can't attack your opponent's Leader", cantBlock: "can't activate [Blocker]",
@@ -125,6 +127,10 @@ export function describeEffect(e: Effect): string {
     case 'placeUnder': out = `place ${list(e.filters.map((f) => `up to ${e.n} ${describeFilter(f)}`), 'and')} from your ${e.from === 'drop' ? 'Drop' : e.from} under ${describeTarget(e.target)}`; break;
     case 'choose': out = `choose one — ${e.options.map((o, i) => `(${i + 1}) ${o.map(describeEffect).join('. Then, ')}`).join(' ')}`; break;
     case 'comboFrom': out = `use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
+    case 'atEndOfTurn': out = `at the end of the turn, ${e.effects.map(describeEffect).join(', then ')}`; break;
+    case 'lockSkill': out = `you can't activate the [${e.timing === 'activateMain' ? 'Activate: Main' : 'Activate: Battle'}] of ${list(e.names.map((n) => `<${n}>`))}${DUR[e.dur]}`; break;
+    case 'dropToDeck': out = "return all cards from your Drop to your deck in a random order"; break;
+    case 'lifeToDeck': out = `look through your life and place ${plural(e.n, 'card')} on top of your deck`; break;
     case 'noop': out = e.note; break;
   }
   return e.cond?.length ? `if ${e.cond.map(describeCond).join(' and ')}, ${out}` : out;
@@ -161,6 +167,11 @@ export function describeCond(c: Cond): string {
     case 'yourTurn': return c.yes ? "it's your turn" : "it's your opponent's turn";
     case 'not': return `not (${describeCond(c.c)})`;
     case 'or': return c.any.map(describeCond).join(' or ');
+    case 'thisHasUnder': return c.yes ? 'there are cards under this card' : 'there are no cards under this card';
+    case 'attacking': return `attacking ${describeFilter(c.filter)}`;
+    case 'koedThisTurn': return `your ${c.filter ? describeFilter(c.filter) : 'card'} has KO'd one of your opponent's Battle Cards during this turn`;
+    case 'playedByLeaderSkill': return "this card was played by your Leader's skill";
+    case 'leaderInBattle': return 'your Leader is in a battle';
   }
 }
 
@@ -184,6 +195,9 @@ export function describeCost(c: Cost): string {
     case 'handToDeckTop': return `place ${plural(c.n, 'card')} from your hand on top of your deck`;
     case 'mill': return `place the top ${plural(c.n, 'card')} of your deck into your Drop`;
     case 'reveal': return `reveal 1 ${describeFilter(c.filter)} from your hand`;
+    case 'dropToDeck': return `place ${c.n} ${describeFilter(c.filter ?? {})}s from your Drop at the bottom of your deck`;
+    case 'handToUnder': return `place 1 ${describeFilter(c.filter)} from your hand under ${describeFilter(c.onto)} in your Battle Area`;
+    case 'activateOwn': return `switch 1 ${describeFilter(c.filter)} in your Battle Area to Active Mode`;
     case 'underToDrop': return `place ${plural(c.n, 'card')} from under your ${c.filter ? describeFilter(c.filter) : 'cards'} into your Drop`;
   }
 }

@@ -33,7 +33,7 @@ export type Timing =
   | 'gameStart'
   | 'auto';
 
-export type Duration = 'battle' | 'turn' | 'oppNextTurn' | 'static';
+export type Duration = 'battle' | 'turn' | 'oppNextTurn' | 'static' | 'game';
 
 export interface Filter {
   costLE?: number;
@@ -69,6 +69,8 @@ export interface Filter {
   notTraits?: string[];
   /** Has a card with one of these names under it ("with a <Potara> under them"). */
   underNames?: string[];
+  /** Matches if any of these filters match ("<Sorbet> or a Battle Card with a cost of 1"). */
+  anyOf?: Filter[];
 }
 
 export interface Target {
@@ -85,6 +87,8 @@ export interface Target {
   upTo: boolean;
   /** "Choose all ...". */
   all?: boolean;
+  /** Who makes the choice: 'opp' for "your opponent KO's 1 Battle Card in their Battle Area". */
+  chooser?: 'opp';
   filter: Filter;
 }
 
@@ -159,6 +163,14 @@ export type Effect = E<
   | { t: 'choose'; options: Effect[][] }
   /** Use cards from a zone in the current battle's combo. */
   | { t: 'comboFrom'; from: 'drop' | 'deckTop'; filter: Filter; n: number }
+  /** Run these effects at the end of the current turn ("at the end of the turn, switch this card to Active Mode"). */
+  | { t: 'atEndOfTurn'; effects: Effect[] }
+  /** "You can't activate the [Activate:Main] of <X> for the turn." */
+  | { t: 'lockSkill'; names: string[]; timing: 'activateMain' | 'activateBattle'; dur: Duration }
+  /** Return every card in your Drop to your deck and shuffle. */
+  | { t: 'dropToDeck' }
+  /** Look through your life and place N of those cards on top of your deck. */
+  | { t: 'lifeToDeck'; n: number }
   /** Reveal/rearrange deck or shuffle: no effect the simulator models. */
   | { t: 'noop'; note: string }
 >;
@@ -187,7 +199,13 @@ export type Cost =
   /** Reveal a card from hand (must exist). */
   | { t: 'reveal'; filter: Filter }
   /** Remove N cards from under your cards (filter on the card above). */
-  | { t: 'underToDrop'; n: number; filter?: Filter };
+  | { t: 'underToDrop'; n: number; filter?: Filter }
+  /** Place N cards from your Drop at the bottom of your deck. */
+  | { t: 'dropToDeck'; n: number; filter?: Filter }
+  /** Place a card from your hand under one of your cards in play. */
+  | { t: 'handToUnder'; filter: Filter; onto: Filter }
+  /** Switch one of your Rest Mode cards in play to Active Mode. */
+  | { t: 'activateOwn'; filter: Filter };
 
 export type Cond =
   | { t: 'handLE'; n: number }
@@ -220,6 +238,15 @@ export type Cond =
   /** The card(s) the previous effect chose match a filter ("if that card has a cost of 2 or less"). */
   | { t: 'prevMatches'; filter: Filter }
   | { t: 'yourTurn'; yes: boolean }
+  /** This card has cards under it / none. */
+  | { t: 'thisHasUnder'; yes: boolean }
+  /** This card is attacking a card (Leader or Battle Card) that matches. */
+  | { t: 'attacking'; filter: Filter }
+  /** One of your cards matching filter KO'd an opponent's Battle Card this turn. */
+  | { t: 'koedThisTurn'; filter?: Filter }
+  /** This card was played by your Leader's skill. */
+  | { t: 'playedByLeaderSkill' }
+  | { t: 'leaderInBattle' }
   | { t: 'not'; c: Cond }
   | { t: 'or'; any: Cond[] };
 

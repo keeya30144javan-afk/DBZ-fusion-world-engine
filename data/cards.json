@@ -41705,6 +41705,89 @@
     "name": "Vegeta",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Battle] [Your Turn] [Once Per Turn] If your Battle Card that's in a battle is a <Son Goku> or <Vegeta> with a cost of 1, choose up to 1 <Son Goku> or up to 1 <Vegeta> in your Battle Area—both with [Evolve], an original power of 30000 or less, and a card name different from the card that's in a battle—and change your card that's in a battle to the chosen card."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 6
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Vegeta"
+         ],
+         "keyword": "evolve"
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If your Battle Card that's in a battle is a <Son Goku> or <Vegeta> with a cost of 1, choose up to 1 <Son Goku> or up to 1 <Vegeta> in your Battle Area—both with [Evolve], an original power of 30000 or less, and a card name different from the card that's in a battle—and change your card that's in a battle to the chosen card."
+      ],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "swap the card in a battle"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ef4cc20c"
    }
   },
   "FB12-021": {
@@ -41752,6 +41835,126 @@
     "name": "Son Goku",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card. Then, if you have a total of 3 or more Ki, this card gets +5000 power for the battle.\n[Activate:Main] [Once Per Turn] Place 5 cards with ≪Saiyan≫ or ≪Earthling≫ in their special traits from your Drop at the bottom of their owner's deck in a random order: Play up to 1 <Son Goku> with a cost of 1 from your Drop."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "lifeLE",
+          "n": 4
+         },
+         {
+          "t": "kiTotalGE",
+          "n": 2,
+          "scope": "battle"
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "kiTotalGE",
+          "n": 3,
+          "scope": "your"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "dropToDeck",
+        "n": 5,
+        "filter": {
+         "traits": [
+          "Saiyan",
+          "Earthling"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Son Goku"
+         ],
+         "costEQ": 1
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "afcddf27"
    }
   },
   "FB12-041": {
@@ -41774,7 +41977,83 @@
    ],
    "text": "[On Play] If your Leader is <Son Goku>, look at 4 cards from the top of your deck, reveal up to 1 <Son Goku> or up to 1 card with a cost of 2 or less and ≪Saiyan≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.\n[Activate:Main] Place this card into your Drop: Choose up to 1 <Son Goku> with a cost of 1 in your Battle Area and it gets +1 Ki.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 4,
+        "options": [
+         {
+          "names": [
+           "Son Goku"
+          ]
+         },
+         {
+          "costLE": 2,
+          "traits": [
+           "Saiyan"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Son Goku"
+          ],
+          "costEQ": 1
+         }
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fe3eda24"
+   }
   },
   "FB12-049": {
    "id": "FB12-049",
@@ -41799,6 +42078,137 @@
     "name": "Beerus",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] If your card with ≪God of Destruction≫ in its special traits has KO'd one of your opponent's Battle Cards during this turn, add up to 2 Battle Cards with ≪God of Destruction≫ or ≪Angel≫ in their special traits from your Drop to your energy in Rest Mode."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "gameStart",
+      "effects": [
+       {
+        "t": "cantPlay",
+        "filter": {
+         "costGE": 6,
+         "notTraits": [
+          "God of Destruction"
+         ]
+        },
+        "dur": "game"
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "costGE": 6,
+         "notTraits": [
+          "God of Destruction"
+         ]
+        },
+        "extras": true,
+        "dur": "game"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "lifeLE",
+          "n": 3
+         },
+         {
+          "t": "energyGE",
+          "n": 7
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "koedThisTurn",
+        "filter": {
+         "traits": [
+          "God of Destruction"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "energyFromDrop",
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "God of Destruction",
+          "Angel"
+         ]
+        },
+        "n": 2,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6cb34810"
    }
   },
   "FB12-053": {
@@ -41821,7 +42231,43 @@
    ],
    "text": "[Permanent] This card can't attack.\n[Activate:Main] Switch this card to Rest Mode: If your Leader has ≪God of Destruction≫ in its special traits, add up to 1 card from your hand to your energy in Rest Mode.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "cantAttack"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "God of Destruction"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "energyFromHand",
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "95fd56da"
+   }
   },
   "FB12-073": {
    "id": "FB12-073",
@@ -41846,6 +42292,110 @@
     "name": "Whis",
     "power": 20000,
     "text": "[Activate:Main] Switch this card to Rest Mode: Draw 1 card. Then, during this turn, the next time you use an Extra with ≪Angel≫ in its special traits, you don't have to pay the cost.\n[Activate:Battle] [Opponent's Turn] Discard 1 Extra from your hand: This card gets +10000 power for the battle."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "traits": [
+          "Angel"
+         ]
+        },
+        "amount": "free"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "opp",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9b3c815e"
    }
   },
   "FB12-096": {
@@ -41868,7 +42418,52 @@
    ],
    "text": "[Activate:Main] Choose up to 1 Rest Mode Battle Card with a cost of 6 or less in your opponent's Battle Area and KO it. Then, if the card chosen by this skill has a cost of 2 or less, switch 1 of your energy to Active Mode.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 6
+         }
+        }
+       },
+       {
+        "t": "activateEnergy",
+        "n": 1,
+        "cond": [
+         {
+          "t": "prevMatches",
+          "filter": {
+           "costLE": 2
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "cee4c63e"
+   }
   },
   "FB12-097": {
    "id": "FB12-097",
@@ -41893,6 +42488,143 @@
     "name": "Golden Frieza",
     "power": 20000,
     "text": "[Permanent] You will not lose the game even if you have 0 cards in your deck.\n[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Discard 1 card from your hand: If you have 0 cards in your deck, play up to 1 <Frieza> with a cost of 5 from your Drop. Then, return all cards from your Drop to their owner's deck in a random order."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "you will not lose the game even if you have 0 cards in your deck"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "mill",
+        "n": 3
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "traits": [
+           "Dragon Ball"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 7
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "you will not lose the game even if you have 0 cards in your deck"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "deck"
+        },
+        "op": "none",
+        "n": 0
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Frieza"
+         ],
+         "costEQ": 5
+        },
+        "n": 1
+       },
+       {
+        "t": "dropToDeck"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fc7f9c11"
    }
   },
   "FB12-104": {
@@ -41915,7 +42647,54 @@
    ],
    "text": "[On Play] Add the top 2 cards of your deck to your life. Then, look through your life and place 2 cards on top of their owner's deck in any order. Shuffle your life.\n[When KO'd] If your Leader has ≪Frieza's Army≫ in its special traits, draw 2 cards.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeFromDeck",
+        "n": 2
+       },
+       {
+        "t": "lifeToDeck",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Frieza's Army"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8887e069"
+   }
   },
   "FS13-01": {
    "id": "FS13-01",
@@ -41940,6 +42719,124 @@
     "name": "Son Goku",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main] [Once Per Turn] Discard 1 card from your hand and reduce the Ki of your Battle Area by 1: Reveal the top card of your deck, and if the revealed card is a Battle Card with a cost of 2 or less and ≪Universe 7≫ in its special traits, play it. Then, that card gets +10000 power for the turn."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "lifeLE",
+          "n": 4
+         },
+         {
+          "t": "kiTotalGE",
+          "n": 2,
+          "scope": "battle"
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "reduceKi",
+        "n": 1,
+        "scope": "battle"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "search",
+        "look": 1,
+        "options": [
+         {
+          "type": "BATTLE",
+          "costLE": 2,
+          "traits": [
+           "Universe 7"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": false,
+        "dest": "play",
+        "rest": "top"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "80ed8bb5"
    }
   },
   "FS13-02": {
@@ -41962,7 +42859,82 @@
    ],
    "text": "[On Play] This card gets +2 Ki. Then, draw 1 card and place 1 card from your hand on top of its owner's deck.\n[When Attacking] If you have 2 or more Battle Cards with costs of 2 or more in your Battle Area, this card gets +15000 power for the battle.",
    "set": "FS13",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 2
+       },
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "handToDeck",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 2,
+        "side": "self",
+        "filter": {
+         "costGE": 2
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "510b742a"
+   }
   },
   "FS13-05": {
    "id": "FS13-05",
@@ -41984,7 +42956,72 @@
    ],
    "text": "[On Play] Look at 3 cards from the top of your deck, reveal up to 1 card with ≪Universe 7≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.\n[Activate:Battle] Place this card into your Drop: Your <Son Goku> with a cost of 5 that's in a battle gets +20000 power for the battle.",
    "set": "FS13",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "traits": [
+           "Universe 7"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Son Goku"
+          ],
+          "costEQ": 5
+         },
+         "ref": "battler"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "32fc47e9"
+   }
   },
   "FS13-13": {
    "id": "FS13-13",
@@ -42028,7 +43065,60 @@
    ],
    "text": "[Double Strike]\n[On Play] Discard 1 card from your hand or place 1 card from your hand on top of its owner's deck: This card gets +1 Ki. Then, add up to 2 cards with costs of 3 or less and ≪Universe 7≫ in their special traits from your Drop to your hand.",
    "set": "FS13",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "doubleStrike"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "(cost alternative not modelled: place 1 card from your hand on top of your deck instead of discarding)"
+      ],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 1
+       },
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "costLE": 3,
+          "traits": [
+           "Universe 7"
+          ]
+         }
+        ],
+        "each": 2
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "697aa27e"
+   }
   },
   "FS14-01": {
    "id": "FS14-01",
@@ -42053,6 +43143,118 @@
     "name": "Vegeta",
     "power": 20000,
     "text": "[When Attacking] Draw 2 cards. Then, place 1 card from your hand at the bottom of its owner's deck.\n[Activate:Main] [Once Per Turn] pay 1 energy: If you have a card with [Evolve] and with <Vegeta> in its card name in your Battle Area, during this turn, the next time you use an Extra with a cost of 3 and ≪Saiyan≫ in its special traits, you don't have to pay the cost."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 6
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Vegeta"
+         ],
+         "keyword": "evolve"
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "handToDeck",
+        "n": 1,
+        "bottom": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Vegeta"
+         ],
+         "keyword": "evolve"
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "costEQ": 3,
+         "traits": [
+          "Saiyan"
+         ]
+        },
+        "amount": "free"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "eeba23e4"
    }
   },
   "FS14-03": {
@@ -42075,7 +43277,71 @@
    ],
    "text": "[On Play] Reveal 1 card with [Evolve] from your hand: Draw 1 card.\n[When Attacking] If your <Vegeta> Leader is awakened, this card gets +15000 power for the battle.",
    "set": "FS14",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reveal",
+        "filter": {
+         "keyword": "evolve"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       },
+       {
+        "t": "leaderAwakened"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d4366ef8"
+   }
   },
   "FS14-07": {
    "id": "FS14-07",
@@ -42097,7 +43363,67 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta>, look at 2 cards from the top of your deck and add 1 card to your hand. Place the rest at the bottom of your deck.\n[Activate:Main] Place this card into your Drop: Play up to 1 Battle Card with a cost of 1 and <Vegeta> or <Trunks> in its card name from your hand.",
    "set": "FS14",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 2,
+        "options": [
+         {}
+        ],
+        "take": 1,
+        "toHand": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Vegeta",
+          "Trunks"
+         ],
+         "costEQ": 1
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "38a35c40"
+   }
   },
   "FS14-14": {
    "id": "FS14-14",
@@ -42119,7 +43445,69 @@
    ],
    "text": "[Evolve] pay 2 energy: <Vegeta>\n[When Attacking] This card gets +5000 power for the turn. Then, if this card was played this turn, choose up to 1 Battle Card in your opponent's Battle Area and it gets -15000 power for the turn.",
    "set": "FS14",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Vegeta"
+       ]
+      }
+     ],
+     "cost": 2
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "turn"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -15000,
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "playedThisTurn"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2bdf33e8"
+   }
   },
   "FS14-15": {
    "id": "FS14-15",
@@ -42163,7 +43551,75 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta>, add up to 1 card from your life to your hand.\n[When KO'd] If your Leader is awakened, draw 1 card and discard 1 card from your hand. Then, choose up to 1 Battle Card with 20000 power or more in your opponent's Battle Area and it gets -5000 power for the turn.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderAwakened"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "powerGE": 20000
+         }
+        },
+        "amount": -5000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ee8a4bcb"
+   }
   },
   "FB12-020": {
    "id": "FB12-020",
@@ -42207,7 +43663,60 @@
    ],
    "text": "[Auto] When your Battle Card with a cost of 2 and ≪Saiyan≫ in its special traits is played, if your Leader is <Son Goku> and this card has 4 or less Ki, this card gets +1 Ki.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       },
+       {
+        "t": "not",
+        "c": {
+         "t": "thisKiGE",
+         "n": 5
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAllyPlayed",
+      "trigger": {
+       "type": "BATTLE",
+       "costEQ": 2,
+       "traits": [
+        "Saiyan"
+       ]
+      },
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9689030c"
+   }
   },
   "FB12-044": {
    "id": "FB12-044",
@@ -42273,7 +43782,29 @@
    ],
    "text": "[On Play] Reveal the top card of your opponent's deck and place it at the top or bottom of its owner's deck.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "noop",
+        "note": "reveal the top card of your opponent's deck and place it at the top or bottom of its owner's deck"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "36abd88e"
+   }
   },
   "FB12-065": {
    "id": "FB12-065",
@@ -42317,7 +43848,49 @@
    ],
    "text": "[On Play] If you have 5 or more Extras with ≪Angel≫ in their special traits in your Drop, draw 2 cards. Then, discard 1 card from your hand.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "EXTRA",
+          "traits": [
+           "Angel"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f179010f"
+   }
   },
   "FB12-111": {
    "id": "FB12-111",
@@ -42339,7 +43912,91 @@
    ],
    "text": "[On Play] Look at 2 cards from the top of your deck, reveal up to 1 <Sorbet> or up to 1 card with a cost of 1 or less and add it to your hand. Place the rest into their owner's Drop.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 2,
+        "options": [
+         {
+          "names": [
+           "Sorbet"
+          ]
+         },
+         {
+          "costLE": 1
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "drop"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "anyOf": [
+          {
+           "names": [
+            "Sorbet"
+           ]
+          },
+          {
+           "costEQ": 1
+          }
+         ]
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Golden Frieza"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 3,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7bec0957"
+   }
   },
   "FB12-119": {
    "id": "FB12-119",
@@ -42359,7 +44016,51 @@
    ],
    "text": "[dragon ball].\n[Activate:Battle] Place the top card of your deck into your Drop. Then, your Leader that's in a battle gets +10000 power for the battle.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "dragonBall"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "mill",
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 10000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "leaderInBattle"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "28a8a2d4"
+   }
   },
   "FB12-003": {
    "id": "FB12-003",
@@ -42381,7 +44082,52 @@
    ],
    "text": "[Permanent] If you have 2 or more ≪Earthling≫-only Battle Cards in your Battle Area, this card gets +10000 power.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 2,
+        "side": "self",
+        "filter": {
+         "onlyTraits": [
+          "Earthling"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "91ea1dbd"
+   }
   },
   "FB12-005": {
    "id": "FB12-005",
@@ -42403,7 +44149,16 @@
    ],
    "text": "[Permanent] This card can't be KO'd by your opponent's skills.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "koImmuneSkills"
+    ],
+    "abilities": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2d8ca3cf"
+   }
   },
   "FB12-016": {
    "id": "FB12-016",
@@ -42469,7 +44224,49 @@
    ],
    "text": "[When Attacking] If attacking a <Beerus>, this card gets +20000 power for the battle.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attacking",
+        "filter": {
+         "names": [
+          "Beerus"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d1f75a6e"
+   }
   },
   "FB12-069": {
    "id": "FB12-069",
@@ -42491,7 +44288,35 @@
    ],
    "text": "[On Play] Add up to 1 card with ≪God of Destruction≫ in its special traits from your hand to your energy.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "energyFromHand",
+        "n": 1,
+        "rested": false,
+        "filter": {
+         "traits": [
+          "God of Destruction"
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e1a53f65"
+   }
   },
   "FB12-078": {
    "id": "FB12-078",
@@ -42535,7 +44360,81 @@
    ],
    "text": "[On Play] If you have a <Fate Transcending Generations> in your Battle Area, your Leader gets +1 Ki.\n[When Attacking] Discard 1 card from your hand: Add up to 1 Extra with <Kamehameha> in its card name from your Drop to your hand.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "names": [
+           "Fate Transcending Generations"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "EXTRA",
+          "names": [
+           "Kamehameha"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "db677ac6"
+   }
   },
   "FB12-011": {
    "id": "FB12-011",
@@ -42579,7 +44478,62 @@
    ],
    "text": "[On Play] Switch 1 of your Battle Cards with 5000 power in your Battle Area to Rest Mode: If you have a <Fate Transcending Generations> in your Battle Area, your Leader gets +1 Ki.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {
+         "powerEQ": 5000
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "names": [
+           "Fate Transcending Generations"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "415fd3eb"
+   }
   },
   "FB12-018": {
    "id": "FB12-018",
@@ -42623,7 +44577,41 @@
    ],
    "text": "[On Play] Place the top card of your deck into your Drop: If your Leader is <Son Goku>, draw 1 card.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "mill",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7255e714"
+   }
   },
   "FB12-030": {
    "id": "FB12-030",
@@ -42645,7 +44633,49 @@
    ],
    "text": "[Evolve] pay 1 energy: <Son Goku>\n[When Attacking] Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Goku"
+       ]
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7e411766"
+   }
   },
   "FB12-050": {
    "id": "FB12-050",
@@ -42689,7 +44719,48 @@
    ],
    "text": "[Activate:Main] Place this card into your Drop: If your Leader has ≪God of Destruction≫ in its special traits and your card with ≪God of Destruction≫ in its special traits has KO'd one of your opponent's Battle Cards during this turn, draw 2 cards.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "God of Destruction"
+        ]
+       },
+       {
+        "t": "koedThisTurn",
+        "filter": {
+         "traits": [
+          "God of Destruction"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6c0e92a7"
+   }
   },
   "FB12-075": {
    "id": "FB12-075",
@@ -42711,7 +44782,44 @@
    ],
    "text": "[On Play] Discard 1 Extra from your hand: If your Leader is <Whis>, draw 2 cards.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Whis"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "756a46f4"
+   }
   },
   "FB12-079": {
    "id": "FB12-079",
@@ -42755,7 +44863,82 @@
    ],
    "text": "[On Play] Draw 1 card. Then, discard 1 card from your hand.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "anyOf": [
+          {
+           "names": [
+            "Sorbet"
+           ]
+          },
+          {
+           "costEQ": 1
+          }
+         ]
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Golden Frieza"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 3,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "4f16c273"
+   }
   },
   "FB12-034": {
    "id": "FB12-034",
@@ -42777,7 +44960,122 @@
    ],
    "text": "[On Play] If your Leader is <Son Goku/Vegeta> or <Vegito>, choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.\n[Activate:Main] [Once Per Turn] pay 1 energy: If there are no cards under this card, and you have <Vegeta> and <Potara> in your Drop, place 1 <Vegeta> and 1 <Potara> from your Drop under this card.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku/Vegeta",
+         "Vegito"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "thisHasUnder",
+        "yes": false
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Vegeta"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Potara"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "placeUnder",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "from": "drop",
+        "filters": [
+         {
+          "names": [
+           "Vegeta"
+          ]
+         },
+         {
+          "names": [
+           "Potara"
+          ]
+         }
+        ],
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5ae304df"
+   }
   },
   "FB12-046": {
    "id": "FB12-046",
@@ -42799,7 +45097,116 @@
    ],
    "text": "[On Play] If your Leader is <Son Goku/Vegeta> or <Vegito>, draw 1 card.\n[Activate:Main] [Once Per Turn] pay 1 energy, discard 1 card from your hand: If there are no cards under this card, and you have <Son Goku> and <Potara> in your Drop, place 1 <Son Goku> and 1 <Potara> from your Drop under this card.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku/Vegeta",
+         "Vegito"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "thisHasUnder",
+        "yes": false
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Son Goku"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Potara"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "placeUnder",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "from": "drop",
+        "filters": [
+         {
+          "names": [
+           "Son Goku"
+          ]
+         },
+         {
+          "names": [
+           "Potara"
+          ]
+         }
+        ],
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8c86e7f6"
+   }
   },
   "FB12-047": {
    "id": "FB12-047",
@@ -42821,7 +45228,94 @@
    ],
    "text": "[Evolve] pay 0 energy: <Son Goku> or <Vegeta> with a <Potara> under them.\n[When Attacking] Place 3 cards from under this card into their owner's Drop: Add up to 1 <Son Goku>, or up to 1 <Vegeta>, or up to 1 Extra—all with a cost of 1—from your Drop to your hand.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Goku",
+        "Vegeta"
+       ],
+       "underNames": [
+        "Potara"
+       ]
+      }
+     ],
+     "cost": 0
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "underToDrop",
+        "n": 3,
+        "filter": {
+         "names": [
+          "Vegito"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "choose",
+        "options": [
+         [
+          {
+           "t": "dropToHand",
+           "options": [
+            {
+             "names": [
+              "Son Goku"
+             ],
+             "costEQ": 1
+            }
+           ],
+           "each": 1
+          }
+         ],
+         [
+          {
+           "t": "dropToHand",
+           "options": [
+            {
+             "names": [
+              "Vegeta"
+             ],
+             "costEQ": 1
+            }
+           ],
+           "each": 1
+          }
+         ],
+         [
+          {
+           "t": "dropToHand",
+           "options": [
+            {
+             "type": "EXTRA",
+             "costEQ": 1
+            }
+           ],
+           "each": 1
+          }
+         ]
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2cd14f36"
+   }
   },
   "FB12-019": {
    "id": "FB12-019",
@@ -42843,7 +45337,65 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta>, choose up to 1 Battle Card with ≪Saiyan≫ in its special traits in your Battle Area and it can attack Active Mode Battle Cards in your opponent's Battle Area during this turn.\n[When Attacking] Add up to 1 card from your life to your hand.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "traits": [
+           "Saiyan"
+          ]
+         }
+        },
+        "kw": "attackActive",
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2a9ad5a7"
+   }
   },
   "FB12-027": {
    "id": "FB12-027",
@@ -42865,7 +45417,69 @@
    ],
    "text": "[On Play] If your Leader has ≪Saiyan≫ in its special traits, add up to 1 card with a cost of 3 or less and both ≪Saiyan≫ and ≪Earthling≫ in its special traits from your Drop to your hand.\n[When Attacking] Choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "costLE": 3,
+          "traitsAll": [
+           "Saiyan",
+           "Earthling"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "07885143"
+   }
   },
   "FB12-035": {
    "id": "FB12-035",
@@ -42909,7 +45523,44 @@
    ],
    "text": "[Activate:Main] [Once Per Turn] Place 1 Battle Card with ≪Majin≫ in its special traits from your hand under <Demonic Maze> in your Battle Area: Draw 1 card.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "handToUnder",
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Majin"
+         ]
+        },
+        "onto": {
+         "names": [
+          "Demonic Maze"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "60b644cb"
+   }
   },
   "FB12-067": {
    "id": "FB12-067",
@@ -42931,7 +45582,60 @@
    ],
    "text": "[Evolve] pay 1 energy: <Majin Buu: Evil> with a cost of 2 or 3.\n[On Play] Place a total of 2 cards from under your cards with ≪Majin≫ in their special traits in your Battle Area into their owner's Drop: Add up to 1 Battle Card with a cost of 2 and ≪Majin≫ in its special traits from your Drop to your hand.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Majin Buu: Evil"
+       ],
+       "costGE": 2,
+       "costLE": 3
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "underToDrop",
+        "n": 2,
+        "filter": {
+         "traits": [
+          "Majin"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "type": "BATTLE",
+          "costEQ": 2,
+          "traits": [
+           "Majin"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "70642e9e"
+   }
   },
   "FB12-068": {
    "id": "FB12-068",
@@ -42953,7 +45657,62 @@
    ],
    "text": "[Evolve] pay 1 energy: <Majin Buu: Evil> with a cost of 3 or 4.\n[Activate:Main] Place this card into your Drop: If your Leader has ≪Majin≫ in its special traits, choose up to 1 Battle Card with a cost of 7 or less in your opponent's Battle Area and KO it.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Majin Buu: Evil"
+       ],
+       "costGE": 3,
+       "costLE": 4
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 7
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "219d0ce0"
+   }
   },
   "FB12-084": {
    "id": "FB12-084",
@@ -42975,7 +45734,65 @@
    ],
    "text": "[Activate:Main] pay 2 energy, place this card into your Drop: If your Leader is <Gogeta>, choose up to 1 card with [Evolve] and ≪Another World≫ in its special traits in your Battle Area and switch it to Active Mode. Then, you can't activate the [Activate:Main] of <Son Goku> for the turn.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 2
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gogeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "keyword": "evolve",
+          "traits": [
+           "Another World"
+          ]
+         }
+        }
+       },
+       {
+        "t": "lockSkill",
+        "names": [
+         "Son Goku"
+        ],
+        "timing": "activateMain",
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a601304f"
+   }
   },
   "FB12-085": {
    "id": "FB12-085",
@@ -42997,7 +45814,60 @@
    ],
    "text": "[Permanent] If your Leader is <Gogeta> or <Son Goku/Vegeta>, reduce the cost of this card in your hand by 2.\n[On Play] Reveal 1 <Veku> from your hand: Draw 1 card.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gogeta",
+         "Son Goku/Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "reveal",
+        "filter": {
+         "names": [
+          "Veku"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "619bfb15"
+   }
   },
   "FB12-087": {
    "id": "FB12-087",
@@ -43019,7 +45889,75 @@
    ],
    "text": "[Permanent] If <Son Goku/Vegeta> in your Battle Area is removed from the Battle Area by your opponent, you may KO this card instead.\n[On Play] If your Leader is <Son Goku/Vegeta> and you have 1 <Paikuhan> in your Battle Area, switch 2 of your energy to Active Mode.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If <Son Goku/Vegeta> in your Battle Area is removed from the Battle Area by your opponent, you may KO this card instead."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku/Vegeta"
+        ]
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Paikuhan"
+         ]
+        }
+       },
+       {
+        "t": "not",
+        "c": {
+         "t": "battleCount",
+         "op": "ge",
+         "n": 2,
+         "side": "self",
+         "filter": {
+          "names": [
+           "Paikuhan"
+          ]
+         }
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "activateEnergy",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "replacement effects"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "15f507a5"
+   }
   },
   "FB12-108": {
    "id": "FB12-108",
@@ -43063,7 +46001,47 @@
    ],
    "text": "[On Play] Switch 1 <Wicked Soul Discovered> in your Battle Area to Active Mode: Look at 4 cards from the top of your deck, reveal up to 1 card with ≪Wicked Soul≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "activateOwn",
+        "filter": {
+         "names": [
+          "Wicked Soul Discovered"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 4,
+        "options": [
+         {
+          "traits": [
+           "Wicked Soul"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a2d3758b"
+   }
   },
   "FB12-118": {
    "id": "FB12-118",
@@ -43107,7 +46085,69 @@
    ],
    "text": "[Activate:Main] Place this card into your Drop: If your <Vegeta> Leader is awakened, play up to 1 <Son Goku> and up to 1 <Vegeta>—both with a cost of 1—from your hand. Then, you can't activate the [Activate:Main] of <Bulma> for the turn.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       },
+       {
+        "t": "leaderAwakened"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Son Goku"
+         ],
+         "costEQ": 1
+        },
+        "n": 1
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Vegeta"
+         ],
+         "costEQ": 1
+        },
+        "n": 1
+       },
+       {
+        "t": "lockSkill",
+        "names": [
+         "Bulma"
+        ],
+        "timing": "activateMain",
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d53c3461"
+   }
   },
   "FB12-056": {
    "id": "FB12-056",
@@ -43129,7 +46169,40 @@
    ],
    "text": "[Permanent] This card can't attack.\n[Activate:Main] Switch this card to Rest Mode: Add up to 2 cards from your hand to your energy. Then, draw 2 cards.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "cantAttack"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "energyFromHand",
+        "n": 2,
+        "rested": false
+       },
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5c7b2efe"
+   }
   },
   "FB12-062": {
    "id": "FB12-062",
@@ -43151,7 +46224,53 @@
    ],
    "text": "[On Play] Your opponent KO's 1 Battle Card with a cost of 2 or less in their Battle Area. Then, if a Battle Card with a cost of 1 or less was KO'd by this skill, add the top card of your deck to your energy in Rest Mode.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "costLE": 2
+         },
+         "chooser": "opp"
+        }
+       },
+       {
+        "t": "energyFromDeck",
+        "n": 1,
+        "rested": true,
+        "cond": [
+         {
+          "t": "prevMatches",
+          "filter": {
+           "costLE": 1
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2393f94d"
+   }
   },
   "FB12-076": {
    "id": "FB12-076",
@@ -43173,7 +46292,75 @@
    ],
    "text": "[Permanent] If you have 5 or more Extras with ≪Angel≫ in their special traits in your Drop, reduce the cost of this card in your hand by 2.\n[End of Your Turn] If your Leader is <Whis>, switch this card to Active Mode.",
    "set": "FB12",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "EXTRA",
+          "traits": [
+           "Angel"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Whis"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a47d9678"
+   }
   },
   "FB12-045": {
    "id": "FB12-045",
@@ -43195,7 +46382,62 @@
    ],
    "text": "[On Play] Place the top 2 cards of your deck into your Drop.\n[When Attacking] Choose up to 1 <Son Goku> with a cost of 1 in your Battle Area and it gets +1 Ki. Then, if you have a total of 5 or more Ki in your Battle Area, your <Son Goku> Leader's original power becomes 25000 until the end of your opponent's next turn.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "mill",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Then, if you have a total of 5 or more Ki in your Battle Area, your <Son Goku> Leader's original power becomes 25000 until the end of your opponent's next turn."
+      ],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Son Goku"
+          ],
+          "costEQ": 1
+         }
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "set original power"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "15120ac2"
+   }
   },
   "FB12-077": {
    "id": "FB12-077",
@@ -43217,7 +46459,67 @@
    ],
    "text": "[barrier]\n[When Attacking] Discard 1 card with ≪Angel≫ in its special traits from your hand: Draw 1 card. Then, if your Leader is <Whis>, at the end of the turn, switch this card to Active Mode.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "barrier"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "traits": [
+          "Angel"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "atEndOfTurn",
+        "cond": [
+         {
+          "t": "leaderIs",
+          "names": [
+           "Whis"
+          ]
+         }
+        ],
+        "effects": [
+         {
+          "t": "activate",
+          "target": {
+           "side": "self",
+           "zones": [
+            "battle"
+           ],
+           "count": 1,
+           "upTo": false,
+           "filter": {},
+           "ref": "this"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b3a239be"
+   }
   },
   "FB12-117": {
    "id": "FB12-117",
@@ -43239,7 +46541,66 @@
    ],
    "text": "[Evolve] pay 1 energy: <Frieza> with a cost of 4.\n[On Play] Place the top 3 cards of your deck into your Drop and draw 1 card. Then, if this card was played by your Leader's skill, choose all Battle Cards with original costs of 5 or less in the Battle Areas other than this card and KO them.",
    "set": "FB12",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Frieza"
+       ],
+       "costEQ": 4
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "mill",
+        "n": 3
+       },
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "ko",
+        "target": {
+         "side": "any",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "costLE": 5,
+          "originalCost": true,
+          "other": true
+         },
+         "all": true
+        },
+        "cond": [
+         {
+          "t": "playedByLeaderSkill"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "04578ff2"
+   }
   },
   "FP-104": {
    "id": "FP-104",
@@ -43327,7 +46688,75 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -5000 power for the turn.\n[When Attacking] [Once Per Turn] If you have a <Son Gohan: Adolescence> with a cost of 2 or more in your Battle Area, switch this card to Active Mode.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -5000,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Son Gohan: Adolescence"
+         ],
+         "costGE": 2
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fe575b84"
+   }
   },
   "FB12-071": {
    "id": "FB12-071",
@@ -43349,7 +46778,46 @@
    ],
    "text": "[On Play] If your Leader has ≪God of Destruction≫ in its special traits, choose up to 1 Battle Card with a cost of 3 or less in your opponent's Battle Area and KO it.",
    "set": "FB12",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "God of Destruction"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 3
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f32c9752"
+   }
   },
   "FB12-082": {
    "id": "FB12-082",
@@ -43393,7 +46861,88 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it.\n[Activate:Main] [Once Per Turn] KO 1 <Sorbet> in your Battle Area or 1 Battle Card with a cost of 1 in your Battle Area: If your Leader is <Golden Frieza>, increase the cost of this card by 3 for the turn.",
    "set": "FB12",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 1
+         }
+        }
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "anyOf": [
+          {
+           "names": [
+            "Sorbet"
+           ]
+          },
+          {
+           "costEQ": 1
+          }
+         ]
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Golden Frieza"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 3,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2ccb1234"
+   }
   }
  }
 }

@@ -30,11 +30,14 @@ export interface Inst {
   under?: number[];
   /** Turn on which a "can't be KO'd once per turn" shield was used. */
   koShieldTurn?: number;
+  /** This card was played by its owner's Leader's skill (FB12-117). */
+  playedByLeader?: boolean;
 }
 
 /** A lasting rule change on one player: discounts, play bans, taxes. */
 export interface PlayerMod {
-  kind: 'discount' | 'cantPlay' | 'tax' | 'playRested';
+  kind: 'discount' | 'cantPlay' | 'tax' | 'playRested' | 'skillLock';
+  timing?: 'activateMain' | 'activateBattle';
   filter: Filter;
   amount?: number | 'free';
   extras?: boolean;
@@ -61,6 +64,10 @@ export interface PlayerState {
   usedOnce: string[];
   mulliganed: boolean;
   mods?: PlayerMod[];
+  /** Cards (uids) of this player that KO'd an opponent's Battle Card, by turn. */
+  koBy?: { turn: number; uid: number }[];
+  /** Effects to run at the end of this turn: [source card, effects]. */
+  atEnd?: { src: number; effects: import('../effects/types').Effect[] }[];
 }
 
 export type Stage = 'mulligan' | 'charge' | 'main' | 'counter' | 'block' | 'offCombo' | 'defCombo' | 'over';
@@ -143,6 +150,8 @@ export function cloneState(s: GameState): GameState {
     markers: p.markers,
     usedOnce: p.usedOnce.slice(),
     mods: p.mods ? p.mods.slice() : undefined,
+    koBy: p.koBy ? p.koBy.slice() : undefined,
+    atEnd: p.atEnd ? p.atEnd.slice() : undefined,
     mulliganed: p.mulliganed,
   });
   return {
@@ -244,6 +253,7 @@ export function countOf(s: GameState, owner: Side, src: number, w: Count): numbe
   const p = s.p[w.side === 'self' ? owner : other(owner)];
   let list: number[];
   if (w.zone === 'under') list = p.battle.flatMap((u) => s.inst[u].under ?? []);
+  else if (w.zone === 'battle') list = p.field !== null ? [...p.battle, p.field] : p.battle;
   else list = p[w.zone];
   return w.filter ? list.filter((u) => matchesFilter(s, u, w.filter!, src)).length : list.length;
 }
@@ -279,6 +289,11 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'yourTurn': return (s.active === owner) === c.yes;
     case 'not': return !condHolds(s, owner, src, c.c, prev);
     case 'or': return c.any.some((x) => condHolds(s, owner, src, x, prev));
+    case 'thisHasUnder': return ((s.inst[src].under?.length ?? 0) > 0) === c.yes;
+    case 'attacking': return !!s.battle && s.battle.attacker === src && matchesFilter(s, s.battle.target, c.filter, src);
+    case 'koedThisTurn': return (me.koBy ?? []).some((k) => k.turn === s.turn && (!c.filter || matchesFilter(s, k.uid, c.filter, src)));
+    case 'playedByLeaderSkill': return !!s.inst[src].playedByLeader && s.inst[src].playedTurn === s.turn;
+    case 'leaderInBattle': return !!s.battle && (s.battle.attacker === me.leader || s.battle.target === me.leader);
     case 'handLE': return me.hand.length <= c.n;
     case 'handGE': return me.hand.length >= c.n;
     case 'energyGE': return me.energy.length >= c.n;
@@ -352,6 +367,7 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   if (f.kiGE !== undefined && inst.ki < f.kiGE) return false;
   if (f.notTraits && card.traits.some((ct) => f.notTraits!.some((t) => ct.toLowerCase() === t.toLowerCase()))) return false;
   if (f.underNames && !(inst.under ?? []).some((u) => nameMatches(cardOf(s, u), f.underNames!))) return false;
+  if (f.anyOf && !f.anyOf.some((x) => matchesFilter(s, uid, x, src))) return false;
   if (f.noSkill && card.text.trim() !== '' && card.text.trim() !== '-') return false;
   if (f.keyword) {
     const cc = compiledOf(s, uid);

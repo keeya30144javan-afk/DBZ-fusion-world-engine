@@ -23,3 +23,4 @@ for (const f of inputs) Object.assign(cards, normalizeCards(rowsOf(JSON.parse(re
 const db: CardDB = { version: new Date().toISOString().slice(0, 10), source, updated: new Date().toISOString(), cards };
 writeFileSync(out, JSON.stringify(db, null, 1));
 console.log(`${Object.keys(cards).length} cards -> ${out}`);
+console.log('Run "npx tsx cli/scripts.ts apply" to attach the card translations in data/scripts/.');

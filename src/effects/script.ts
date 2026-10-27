@@ -25,7 +25,7 @@ export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
   'cantAttack', 'cantAttackLeader', 'cantBlock', 'koImmuneSkills', 'koImmune', 'koImmuneOnce', 'removeImmune', 'cantBeRested', 'attackActive',
 ];
-const DURATIONS = ['battle', 'turn', 'oppNextTurn', 'static'];
+const DURATIONS = ['battle', 'turn', 'oppNextTurn', 'static', 'game'];
 const COLORS = ['Red', 'Blue', 'Green', 'Yellow', 'Black'];
 
 type Spec = Record<string, string>;
@@ -76,6 +76,10 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   placeUnder: { target: 'T', from: 'Z:drop|hand|deck|battle', filters: 'F[]', n: 'n' },
   choose: { options: 'E[][]' },
   comboFrom: { from: 'Z:drop|deckTop', filter: 'F', n: 'n' },
+  atEndOfTurn: { effects: 'E[]' },
+  lockSkill: { names: 's[]', timing: 'Z:activateMain|activateBattle', dur: 'D' },
+  dropToDeck: {},
+  lifeToDeck: { n: 'n' },
   noop: { note: 's' },
 };
 const COSTS: Record<Cost['t'], Spec> = {
@@ -98,6 +102,9 @@ const COSTS: Record<Cost['t'], Spec> = {
   mill: { n: 'n' },
   reveal: { filter: 'F' },
   underToDrop: { n: 'n', filter: 'F?' },
+  dropToDeck: { n: 'n', filter: 'F?' },
+  handToUnder: { filter: 'F', onto: 'F' },
+  activateOwn: { filter: 'F' },
 };
 const CONDS: Record<Cond['t'], Spec> = {
   handLE: { n: 'n' }, handGE: { n: 'n' }, energyGE: { n: 'n' }, energyLE: { n: 'n' }, lifeLE: { n: 'n' }, lifeGE: { n: 'n' },
@@ -119,16 +126,21 @@ const CONDS: Record<Cond['t'], Spec> = {
   attackingBattleCard: { filter: 'F?' },
   prevMatches: { filter: 'F' },
   yourTurn: { yes: 'b' },
+  thisHasUnder: { yes: 'b' },
+  attacking: { filter: 'F' },
+  koedThisTurn: { filter: 'F?' },
+  playedByLeaderSkill: {},
+  leaderInBattle: {},
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
 };
 const FILTER: Spec = {
   costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
   names: 's[]?', notNames: 's[]?', traits: 's[]?', traitsAll: 's[]?', onlyTraits: 's[]?', colors: 'col[]?', type: 'Z:BATTLE|EXTRA?',
-  other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', notTraits: 's[]?', underNames: 's[]?',
+  other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', notTraits: 's[]?', underNames: 's[]?', anyOf: 'F[]?',
 };
 const TARGET: Spec = {
-  side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
+  side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
 };
 const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under', filter: 'F?' };
 
@@ -163,6 +175,7 @@ function checkField(v: unknown, type: string, path: string, errs: string[]) {
     case 'F': checkObj(v, FILTER, path, errs); return;
     case 'F[]': if (!Array.isArray(v)) bad('a list of filters'); else v.forEach((f, i) => checkObj(f, FILTER, `${path}[${i}]`, errs)); return;
     case 'C': checkObj(v, COUNT, path, errs); return;
+    case 'E[]': checkEffects(v, path, errs); return;
     case 'E[][]':
       if (!Array.isArray(v) || !v.length) bad('a list of effect lists');
       else v.forEach((list, i) => checkEffects(list, `${path}[${i}]`, errs));
@@ -231,6 +244,34 @@ export function validateScript(v: unknown): string[] {
   if (v.unparsed !== undefined && (!Array.isArray(v.unparsed) || !v.unparsed.every((x) => typeof x === 'string'))) errs.push('unparsed: list of text');
   if (v.needs !== undefined && (!Array.isArray(v.needs) || !v.needs.every((x) => typeof x === 'string'))) errs.push('needs: list of text');
   return errs;
+}
+
+/**
+ * Fill in what a hand-written script may leave out:
+ * abilities default to once:false, no cost/cond, and a Target defaults to
+ * "up to 1 of your opponent's Battle Cards" with any fields given overriding.
+ * Lets translations stay short; validation runs on the expanded form.
+ */
+export function expandScript<T>(v: T): T {
+  const walk = (x: unknown, key = ''): unknown => {
+    if (Array.isArray(x)) return x.map((y) => walk(y, key === 'options' ? 'options' : ''));
+    if (!isObj(x)) return x;
+    const o: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(x)) o[k] = walk(val, k);
+    if (key === 'target') {
+      const ref = o.ref as string | undefined;
+      return {
+        side: ref === 'oppLeader' || ref === 'oppBattler' ? 'opp' : ref ? 'self' : 'opp',
+        zones: ref === 'leader' || ref === 'oppLeader' ? ['leader'] : ['battle'],
+        count: 1, upTo: !ref && !o.all, filter: {}, ...o,
+      };
+    }
+    if ('timing' in o && 'effects' in o) return { once: false, cost: [], cond: [], text: '', unparsed: [], ...o };
+    return o;
+  };
+  const out = walk(v) as Record<string, unknown>;
+  if (isObj(out)) { out.keywords ??= []; out.abilities ??= []; }
+  return out as T;
 }
 
 /** Fill in the fields a hand-written ability may leave out. */

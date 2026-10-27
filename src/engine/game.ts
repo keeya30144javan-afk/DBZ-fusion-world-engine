@@ -128,6 +128,15 @@ function endTurn(s: GameState, ctl: Choosers) {
     if (s.stage === 'over') return;
     fireTriggers(s, u, 'endOfYourTurn', ctl);
   }
+  // "At the end of the turn" effects queued this turn.
+  for (const side of [s.active, other(s.active)] as Side[]) {
+    const pend = s.p[side].atEnd ?? [];
+    s.p[side].atEnd = undefined;
+    for (const job of pend) {
+      if (s.stage === 'over') return;
+      resolveAbility(s, job.src, { timing: 'auto', once: false, cost: [], cond: [], effects: job.effects, text: '', unparsed: [] }, -1, ctl, { costsPaid: true });
+    }
+  }
   // Expire "for the turn" effects that end now.
   for (const i of s.inst) {
     if (i.mods.length) i.mods = i.mods.filter((m) => m.until !== 'battle' && m.until > s.turn);
@@ -153,6 +162,11 @@ const turnOk = (s: GameState, side: Side, turn: 'your' | 'opp' | undefined) =>
 
 /** Cards on the field whose skills can be activated: Leader, Battle Cards and a [Field]. */
 const skillSources = (me: PlayerState) => [me.leader, ...me.battle, ...(me.field !== null ? [me.field] : [])];
+
+/** "You can't activate the [Activate:Main] of <X> for the turn." */
+function skillLocked(s: GameState, side: Side, uid: number, timing: 'activateMain' | 'activateBattle'): boolean {
+  return (s.p[side].mods ?? []).some((m) => m.kind === 'skillLock' && m.timing === timing && m.until >= s.turn && matchesFilter(s, uid, m.filter, uid));
+}
 
 /** Awaken can be used at Activate: Main and Activate: Battle timings (manual p.9, p.12). */
 function awakenOption(s: GameState, side: Side): Action[] {
@@ -341,6 +355,7 @@ export function legalActions(s: GameState): Action[] {
         }
       }
       for (const u of skillSources(me)) {
+        if (skillLocked(s, side, u, 'activateMain')) continue;
         abilitiesOf(s, u).forEach((ab, i) => {
           if (ab.timing !== 'activateMain' || !turnOk(s, side, ab.turn)) return;
           if ((ab.once || isFreeRepeatable(ab)) && me.usedOnce.includes(onceKey(s, u, i))) return;
@@ -428,7 +443,7 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       takeLife(s, defSide, n, crit, ctl);
     } else {
       log(s, `hit: ${atk} vs ${def}`);
-      koCard(s, b.target, ctl);
+      koCard(s, b.target, ctl, { src: b.attacker });
     }
   } else log(s, `blocked out: ${atk} vs ${def}`);
   endBattle(s, ctl);
