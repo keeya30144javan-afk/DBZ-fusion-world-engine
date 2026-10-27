@@ -345,7 +345,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
         };
         child = mutate(parent.deck, cards, rng, 1 + Math.floor(rng() * 4), weak, rules);
       }
-      child.name = `${cards[child.leader].name} counter`;
+      child.name = `${cards[child.leader].name} (${child.leader}) counter`;
       const k = deckKey(child);
       if (seen.has(k) || validateDeck(child, cards, rules).length) continue;
       const s = newScored(child, 'evolved');

@@ -53,7 +53,7 @@ const CURVE: [number, number, number][] = [
 export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng, rules: RulesConfig = DEFAULT_RULES, jitter = 0): Decklist {
   const pool = poolFor(cards, leaderId, rules);
   const val = (c: Card) => cardValue(c) + (jitter ? (rng() - 0.5) * jitter : 0);
-  const deck: Decklist = { name: `${cards[leaderId].name} (generated)`, leader: leaderId, main: {} };
+  const deck: Decklist = { name: `${cards[leaderId].name} (${leaderId})`, leader: leaderId, main: {} };
   const add = (c: Card, max: number) => {
     let added = 0;
     while (added < max && legalCount(deck, cards, c.id, (deck.main[c.id] ?? 0) + 1, rules)) {

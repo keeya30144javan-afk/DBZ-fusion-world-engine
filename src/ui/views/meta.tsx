@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
 import { MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
 import { store, MetaDeck } from '../store';
-import { ColorTag, CopyButton, Meter, deckSizeOf, getPool, pct, useStore } from '../components';
+import { ColorTag, CopyButton, Meter, deckSizeOf, getPool, leaderLabel, pct, useStore } from '../components';
 
 export function MetaView() {
   const st = useStore();
@@ -86,7 +86,7 @@ export function MetaView() {
               return (
                 <tr key={d.id}>
                   <td><span class="cardname">{d.name}</span>{d.example && <> <span class="tag">example</span></>}{errs.length > 0 && <div class="err">{errs[0]}</div>}</td>
-                  <td>{st.cards[d.leader]?.name ?? d.leader} <ColorTag card={st.cards[d.leader]} /></td>
+                  <td>{leaderLabel(st.cards, d.leader)} <ColorTag card={st.cards[d.leader]} /></td>
                   <td class="num">{deckSizeOf(d)}</td>
                   <td class="num">{pct((d.share ?? 0) / totalShare, 0)}</td>
                   <td style={{ width: '18%' }}><Meter value={(d.share ?? 0) / totalShare} /></td>
@@ -112,7 +112,7 @@ export function MetaView() {
           <label class="field">Decklist <span class="hint">Leader plus 50-60 cards. "4 FB01-012", "4x FB01-012" and "FB01-012 x4" all work.</span>
             <textarea id="deck-text" value={text} onInput={(e) => setText((e.target as HTMLTextAreaElement).value)} />
           </label>
-          {parsed && <div class="note">{parsed.deck.leader ? `Leader: ${st.cards[parsed.deck.leader]?.name}` : 'No leader yet'} · {deckSizeOf(parsed.deck)} cards</div>}
+          {parsed && <div class="note">{parsed.deck.leader ? `Leader: ${leaderLabel(st.cards, parsed.deck.leader)}` : 'No leader yet'} · {deckSizeOf(parsed.deck)} cards</div>}
           {problems.length > 0 && <div class="err">{problems.slice(0, 6).map((p) => <div key={p}>{p}</div>)}</div>}
           {msg && <div class="err">{msg}</div>}
           <div class="row">

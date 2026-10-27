@@ -63,11 +63,17 @@ export function CopyButton({ text, label = 'Copy' }: { text: string; label?: str
   );
 }
 
+/** Several leaders share a name (eight Red "Son Goku"s), so always show the card number too. */
+export function leaderLabel(cards: Record<string, Card>, id: string): string {
+  const c = cards[id];
+  return c ? `${c.name} · ${id}` : id;
+}
+
 export function DeckSelect({ id, value, onChange, decks, cards, allowNone }: { id: string; value: string; onChange: (v: string) => void; decks: MetaDeck[]; cards: Record<string, Card>; allowNone?: string }) {
   return (
     <select id={id} value={value} onChange={(e) => onChange((e.target as HTMLSelectElement).value)}>
       {allowNone && <option value="">{allowNone}</option>}
-      {decks.map((d) => <option key={d.id} value={d.id}>{d.name}{d.example ? ' (example)' : ''} · {cards[d.leader]?.name ?? d.leader}</option>)}
+      {decks.map((d) => <option key={d.id} value={d.id}>{d.name}{d.example ? ' (example)' : ''} · {leaderLabel(cards, d.leader)}</option>)}
     </select>
   );
 }

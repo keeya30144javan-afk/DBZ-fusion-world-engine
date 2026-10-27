@@ -173,7 +173,7 @@ export function ScouterView() {
             </div>
           </>
         )}
-        {leaderCard && <p class="note">Tracking {leaderCard.name} <ColorTag card={leaderCard} /></p>}
+        {leaderCard && <p class="note">Tracking {leaderCard.name} · {leaderCard.id} <ColorTag card={leaderCard} /></p>}
       </div>
     </div>
   );

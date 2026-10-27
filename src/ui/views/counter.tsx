@@ -4,7 +4,7 @@ import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
 import { CounterReport, Effort, Progress, findCounter } from '../../builder/counter';
 import { Level } from '../../builder/evaluate';
 import { store } from '../store';
-import { CIBar, ColorTag, CopyButton, DeckSelect, Meter, Seg, getPool, pct, safeStorage, useStore } from '../components';
+import { CIBar, ColorTag, CopyButton, DeckSelect, Meter, leaderLabel, Seg, getPool, pct, safeStorage, useStore } from '../components';
 
 const [loadLast, saveLast] = safeStorage<{ report: CounterReport; target: string; at: string; threshold: number } | null>('shenron.lastCounter', null);
 
@@ -90,6 +90,7 @@ export function CounterLab() {
               <textarea id="paste" value={paste} onInput={(e) => setPaste((e.target as HTMLTextAreaElement).value)} placeholder={'1 FS02-01\n4 FS02-05\n4 FS02-06\n...'} />
             </label>
           )}
+          {target.deck?.leader && st.cards[target.deck.leader] && <div class="note">Target leader: <b>{leaderLabel(st.cards, target.deck.leader)}</b> <ColorTag card={st.cards[target.deck.leader]} /></div>}
           {target.errors.length > 0 && <div class="err">{target.errors.slice(0, 4).map((e) => <div key={e}>{e}</div>)}</div>}
         </div>
 
@@ -177,7 +178,7 @@ function BestSoFar({ best }: { best: NonNullable<Progress['best']> }) {
         <div>
           <div class="eyebrow">{best.validated ? 'Best validated so far' : best.searched ? 'Best so far (checked with the searching AI, not yet validated)' : 'Best so far (screening, not yet validated)'}</div>
           <h2 style={{ margin: 0 }}>{best.deck.name}</h2>
-          <div class="note">{st.cards[best.deck.leader]?.name} <ColorTag card={st.cards[best.deck.leader]} /> · {best.validated ? `${pct(best.rate, 0)} over ${best.games.toLocaleString()} validation games` : best.searched ? `estimated ${pct(best.rate, 0)} (${best.games.toLocaleString()} searching-AI games)` : `estimated ${pct(best.rate, 0)} from fast-AI screening`}</div>
+          <div class="note">{leaderLabel(st.cards, best.deck.leader)} <ColorTag card={st.cards[best.deck.leader]} /> · {best.validated ? `${pct(best.rate, 0)} over ${best.games.toLocaleString()} validation games` : best.searched ? `estimated ${pct(best.rate, 0)} (${best.games.toLocaleString()} searching-AI games)` : `estimated ${pct(best.rate, 0)} from fast-AI screening`}</div>
         </div>
         <CopyButton text={text} label="Copy list" />
       </div>
@@ -209,7 +210,7 @@ function Report({ rec }: { rec: { report: CounterReport; target: string; at: str
             <div>
               <div class="eyebrow">{r.verdict === 'recommend' ? 'Recommended deck' : 'Best attempt'}</div>
               <h2 style={{ margin: 0 }}>{best.deck.name}</h2>
-              <div class="note">{st.cards[best.deck.leader]?.name} <ColorTag card={st.cards[best.deck.leader]} /> · {best.origin}</div>
+              <div class="note">{leaderLabel(st.cards, best.deck.leader)} <ColorTag card={st.cards[best.deck.leader]} /> · {best.origin}</div>
             </div>
             <div class="big">{pct(best.rate)} <small>win rate</small></div>
           </div>
