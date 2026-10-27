@@ -33,6 +33,8 @@ export type Timing =
   | 'gameStart'
   /** [Auto] "When this card inflicts damage with an attack". */
   | 'whenDealsDamage'
+  /** [Auto] "When this card KO's an opponent's Battle Card in battle". */
+  | 'whenKOsInBattle'
   /** [Auto] "When this card wins a battle". */
   | 'whenWinsBattle'
   /** [Auto] "When an opponent's Battle Card attacks" (on the defending player's cards). */
@@ -284,6 +286,12 @@ export type Cond =
   | { t: 'bouncedThisTurn' }
   /** A card left your energy this turn. */
   | { t: 'energyLeftThisTurn' }
+  /** You used an Extra with an original cost of 1 or more this turn. */
+  | { t: 'extraUsedThisTurn' }
+  /** The card with this skill matches the filter ("if this card has 30000 power or more"). */
+  | { t: 'thisMatches'; filter: Filter }
+  /** This card was played by a skill this turn. */
+  | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */
   | { t: 'battleTotalCost'; n: number; only?: Filter }
   /** This card has / hasn't attacked this turn. */

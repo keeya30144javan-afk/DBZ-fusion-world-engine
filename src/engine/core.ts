@@ -34,6 +34,8 @@ export interface Inst {
   playedByLeader?: boolean;
   /** Its skills are negated through this turn number ('onPlay': only its [On Play]). */
   negatedUntil?: number;
+  /** Played by a skill (not from hand by paying its cost). */
+  playedBySkill?: boolean;
   /** Last turn this card attacked. */
   attackedTurn?: number;
   negateScope?: 'all' | 'onPlay';
@@ -77,6 +79,8 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn this player used an Extra with an original cost of 1 or more. */
+  extraUsedTurn?: number;
   /** Last turn a card left this player's energy. */
   energyLeftTurn?: number;
   /** Last turn one of this player's Battle Cards was returned from the Battle Area to the hand. */
@@ -379,6 +383,9 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
     case 'bouncedThisTurn': return me.bouncedTurn === s.turn;
     case 'energyLeftThisTurn': return me.energyLeftTurn === s.turn;
+    case 'extraUsedThisTurn': return me.extraUsedTurn === s.turn;
+    case 'thisMatches': return matchesFilter(s, src, c.filter, src);
+    case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;
       if (c.only && !list.every((u) => matchesFilter(s, u, c.only!, src))) return false;

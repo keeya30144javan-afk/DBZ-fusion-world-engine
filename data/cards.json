@@ -1784,7 +1784,59 @@
    ],
    "text": "[Permanent][Opponent's Turn] Battle Cards with costs of 7 or more in your Battle Area can't be removed from the Battle Area by your opponent's skills.\n[On Play] Add up to 1 card from your life to your hand.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "opp",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "costGE": 7
+         },
+         "all": true
+        },
+        "kw": "removeImmune",
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "895df84f"
+   }
   },
   "FB08-032": {
    "id": "FB08-032",
@@ -4323,7 +4375,54 @@
    ],
    "text": "[On Play] Add 1 card from your life to your hand. Then, look at 10 cards from the top of your deck, reveal up to 1 <Demon's Egg> and add it to your hand. Place the rest at the bottom of your deck in a random order, then play up to 1 <Demon's Egg> from your hand.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": false
+       },
+       {
+        "t": "search",
+        "look": 10,
+        "options": [
+         {
+          "names": [
+           "Demon's Egg"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "bottom"
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Demon's Egg"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b7a08b3b"
+   }
   },
   "FB02-099": {
    "id": "FB02-099",
@@ -5063,7 +5162,57 @@
    ],
    "text": "[When KO'd] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -20000 power for the turn.\n[Activate:Main] KO this card: Draw 1 card.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -20000,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5f1e683d"
+   }
   },
   "FB07-021": {
    "id": "FB07-021",
@@ -5250,7 +5399,59 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] If attacking a Battle Card, this card gets +5000 power for the battle.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b1ac99e0"
+   }
   },
   "FP-060": {
    "id": "FP-060",
@@ -6725,7 +6926,49 @@
    ],
    "text": "[Activate:Battle][Your Turn] Your cards with ≪Android≫ in their special traits that are in a battle with your opponent's Battle Cards get +25000 power for the battle.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "traits": [
+           "Android"
+          ]
+         },
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "dc4e3b58"
+   }
   },
   "FS05-01": {
    "id": "FS05-01",
@@ -7549,6 +7792,66 @@
     "name": "King Gomah: DA",
     "power": 20000,
     "text": "[When Attacking] Place 1 [Field] that includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits in your Battle Area into its owner's Drop: Play up to 1 Battle Card with a cost of 3 or less and the same special trait as the [Field] placed into its owner's Drop by this skill from your hand."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Place 1 [Field] that includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits in your Battle Area into its owner's Drop: Play up to 1 Battle Card with a cost of 3 or less and the same special trait as the [Field] placed into its owner's Drop by this skill from your hand."
+      ],
+      "timing": "whenAttacking",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "traits shared with a chosen card"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ec886d06"
    }
   },
   "SB01-003": {
@@ -15908,7 +16211,58 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] If attacking a Battle Card, choose up to 1 Battle Card in your opponent's Battle Area and it gets -10000 power for the battle.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -10000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d23839d6"
+   }
   },
   "FP-048": {
    "id": "FP-048",
@@ -16437,7 +16791,46 @@
    ],
    "text": "[Field]\n[Permanent] Add 1 to the cost of cards with ≪Demon Clan≫ in their special traits in your Battle Area.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "traits": [
+           "Demon Clan"
+          ]
+         },
+         "all": true
+        },
+        "amount": 1,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "731e2578"
+   }
   },
   "FS06-09": {
    "id": "FS06-09",
@@ -17039,7 +17432,61 @@
    ],
    "text": "[Double Strike]\n[On Play] Switch this card to Active Mode. Then, add the top card of your deck to your life, choose all Battle Cards with costs of 2 or more in the Battle Areas other than this card and KO them.",
    "set": "FB06",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "keywords": [
+     "doubleStrike"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "lifeFromDeck",
+        "n": 1
+       },
+       {
+        "t": "ko",
+        "target": {
+         "side": "any",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "costGE": 2,
+          "other": true
+         },
+         "all": true
+        }
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8db98afc"
+   }
   },
   "FB02-076": {
    "id": "FB02-076",
@@ -17849,7 +18296,47 @@
    ],
    "text": "[Field]\n[On Play] Add up to 1 card from your life to your hand. Then, choose up to 1 Rest Mode Battle Card with a cost of 4 or less in your opponent's Battle Area and KO it.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 4
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8ed18f9d"
+   }
   },
   "FB08-116": {
    "id": "FB08-116",
@@ -18244,7 +18731,45 @@
    ],
    "text": "[On Play] If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, draw 1 card.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "73f23571"
+   }
   },
   "FB06-114": {
    "id": "FB06-114",
@@ -19389,7 +19914,48 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[End of Your Turn] If you use an Extra with an original cost of 1 or more during this turn, draw 1 card.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "extraUsedThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d5e1640a"
+   }
   },
   "FB09-106": {
    "id": "FB09-106",
@@ -21167,7 +21733,49 @@
    ],
    "text": "[Activate:Main] Return 1 blue Battle Card with a cost of 3 or less in your Battle Area to its owner's hand: Play up to 1 Battle Card with a cost of 3 or less and ≪World Tournament≫ in its special traits from your hand.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "bounceOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE",
+         "colors": [
+          "Blue"
+         ],
+         "costLE": 3
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 3,
+         "traits": [
+          "World Tournament"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "dbfc7587"
+   }
   },
   "FB02-063": {
    "id": "FB02-063",
@@ -21255,7 +21863,61 @@
    ],
    "text": "[Permanent] Your opponent's cards can't be switched to Active Mode by skills.\n[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and place it into its owner's Drop. Then, if you don't have an energy marker, you place 1 energy marker.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Your opponent's cards can't be switched to Active Mode by skills."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "toDrop",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       },
+       {
+        "t": "placeMarker",
+        "n": 1,
+        "cond": [
+         {
+          "t": "hasMarker",
+          "yes": false
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "block opponent's untap skills"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "21405c6d"
+   }
   },
   "FB05-100": {
    "id": "FB05-100",
@@ -23165,7 +23827,54 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] Discard 1 card from your hand: If you don't have an energy marker, you place 1 energy marker.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "placeMarker",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8a670e61"
+   }
   },
   "FB06-084": {
    "id": "FB06-084",
@@ -23187,7 +23896,63 @@
    ],
    "text": "[On Play] Choose up to 1 Rest Mode Battle Card with a cost of 3 or less in your opponent's Battle Area and KO it. Then, your Leader with <DA> in its card name gets +10000 power for the turn.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 3
+         }
+        }
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 10000,
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "leaderIs",
+          "names": [
+           ": DA"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "fd7fc7ec"
+   }
   },
   "FB06-060": {
    "id": "FB06-060",
@@ -23451,7 +24216,43 @@
    ],
    "text": "[Activate:Main][Once Per Turn] pay 1 energy, discard 1 card from your hand: If you don't have an energy marker, you place 1 energy marker.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "placeMarker",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a6e42242"
+   }
   },
   "SB02-025": {
    "id": "SB02-025",
@@ -23542,7 +24343,29 @@
    ],
    "text": "[On Play] If you have a total of 3 or more types of [Field] cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area and/or Drop, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode. Then, choose up to 1 card with a cost of 4 or less in your Battle Area and switch it to Active Mode.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If you have a total of 3 or more types of [Field] cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area and/or Drop, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode. Then, choose up to 1 card with a cost of 4 or less in your Battle Area and switch it to Active Mode."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "count distinct card names"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "35ed6268"
+   }
   },
   "FB08-119": {
    "id": "FB08-119",
@@ -24157,7 +24980,69 @@
    ],
    "text": "[Permanent] If you have <Piccolo Jr. : Youth> in your Battle Area, reduce the cost of this card in your hand by 3.\n[On Play] Place 1 <Piccolo Jr. : Youth> in your Battle Area into its owner's Drop.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Piccolo Jr.: Youth",
+          "Piccolo Jr. : Youth"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 3
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "toDrop",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "names": [
+           "Piccolo Jr.: Youth",
+           "Piccolo Jr. : Youth"
+          ]
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ea137acc"
+   }
   },
   "FB09-023": {
    "id": "FB09-023",
@@ -26158,6 +27043,99 @@
     "name": "Broly: BR",
     "power": 20000,
     "text": "[When Attacking] Choose 1 <Broly: BR> in your Battle Area and place it into its owner's Drop: If you have 4 energy, play up to 1 <Broly: BR> with a cost of 1 greater than the card chosen by this skill from your hand in Rest Mode.\n[Activate:Main][Once Per Turn] Draw 1 card. Then, discard 1 card from your hand."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": false
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Choose 1 <Broly: BR> in your Battle Area and place it into its owner's Drop: If you have 4 energy, play up to 1 <Broly: BR> with a cost of 1 greater than the card chosen by this skill from your hand in Rest Mode."
+      ],
+      "timing": "whenAttacking",
+      "effects": []
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost compared with a chosen card"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5d82cb39"
    }
   },
   "FB08-094": {
@@ -26706,6 +27684,90 @@
     "name": "Son Goku: Childhood",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main][Once Per Turn] Discard 1 card from your hand: During this turn, the next time you use an Extra with an original cost of 2 or less, you don't have to pay the cost."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "costLE": 2,
+         "originalCost": true
+        },
+        "amount": "free"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "1c8600a0"
    }
   },
   "FB02-054": {
@@ -26750,7 +27812,48 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Auto] When this card is used in a combo from the Battle Area, use up to 1 Battle Card in a combo from your Drop.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromField",
+      "effects": [
+       {
+        "t": "comboFrom",
+        "from": "drop",
+        "filter": {
+         "type": "BATTLE"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a42c3f36"
+   }
   },
   "FB02-126": {
    "id": "FB02-126",
@@ -27164,7 +28267,29 @@
    ],
    "text": "[Activate:Main] During this turn, if an opponent's Battle Card is KO'd in battle and your Leader is <Android 18>, draw 2 cards.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "During this turn, if an opponent's Battle Card is KO'd in battle and your Leader is <Android 18>, draw 2 cards."
+      ],
+      "timing": "activateMain",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "delayed trigger on KO"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d9076a1c"
+   }
   },
   "FB04-120": {
    "id": "FB04-120",
@@ -27575,7 +28700,61 @@
    ],
    "text": "[Critical]\n[Permanent] If your Leader is <Janemba> and you have 5 or more Active Mode energy, this card gets +15000 power.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "critical"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Janemba"
+        ]
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "energy",
+         "filter": {
+          "active": true
+         }
+        },
+        "op": "ge",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3fd7213c"
+   }
   },
   "FB08-074": {
    "id": "FB08-074",
@@ -27676,7 +28855,54 @@
    ],
    "text": "[Field]\n[Permanent] If your Leader is <Android 18>, your Battle Cards with ≪Android≫ in their special traits can attack Active Mode Battle Cards in your opponent's Battle Area.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Android 18"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Android"
+          ]
+         },
+         "all": true
+        },
+        "kw": "attackActive",
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bc18c889"
+   }
   },
   "FB04-044": {
    "id": "FB04-044",
@@ -27918,7 +29144,58 @@
    ],
    "text": "[Activate:Main] Draw 1 card. Then, if there is a Battle Card with a cost of 2 or less in your opponent's Battle Area, choose up to 1 Battle Card with a cost of 3 or less in your Battle Area and it gains [Critical] for the turn.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE",
+          "costLE": 3
+         }
+        },
+        "kw": "critical",
+        "dur": "turn",
+        "cond": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "opp",
+          "filter": {
+           "type": "BATTLE",
+           "costLE": 2
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3a4c2fb5"
+   }
   },
   "FB05-064": {
    "id": "FB05-064",
@@ -28343,7 +29620,47 @@
    ],
    "text": "[Activate:Main] If your Leader is <Vegito>, look at 3 cards from the top of your deck, reveal up to 1 card with a cost of 4 or less and ≪Saiyan≫ in its special traits and add it to your hand. Place the rest into its owner's Drop.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegito"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "costLE": 4,
+          "traits": [
+           "Saiyan"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "drop"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "98bbbfd4"
+   }
   },
   "ST01-004": {
    "id": "ST01-004",
@@ -28683,7 +30000,75 @@
    ],
    "text": "[Permanent] If you have a non-<King Piccolo> Battle Card with ≪Demon Clan≫ in its special traits in your Battle Area, this card gets +20000 power.\n[When Attacking] If you don't have an energy marker, you place 1 energy marker.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Demon Clan"
+         ],
+         "notNames": [
+          "King Piccolo"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 20000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "placeMarker",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "89316791"
+   }
   },
   "FB11-106": {
    "id": "FB11-106",
@@ -30253,6 +31638,68 @@
     "name": "King Piccolo",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main][Once Per Turn] Remove 1 of your energy markers: Play up to 1 <Demon's Egg> from your Drop."
+   },
+   "script": {
+    "keywords": [
+     "critical"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "lifeFromDeck",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Remove 1 of your energy markers: Play up to 1 <Demon's Egg> from your Drop."
+      ],
+      "timing": "activateMain",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "energy marker as a cost"
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7948ea46"
    }
   },
   "FB02-013": {
@@ -32434,7 +33881,56 @@
    ],
    "text": "[Blocker]\n[End of Your Turn] If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, switch this card to Active Mode.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "faf411f9"
+   }
   },
   "FB04-068": {
    "id": "FB04-068",
@@ -33613,7 +35109,62 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand. Then, if you have 2 or more Battle Cards with ≪Demon Clan≫ in their special traits in your Battle Area, this card can't be removed from the Battle Area by your opponent's skills until the end of your opponent's next turn.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "removeImmune",
+        "dur": "oppNextTurn",
+        "cond": [
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "BATTLE",
+            "traits": [
+             "Demon Clan"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "1baac2fa"
+   }
   },
   "FB08-080": {
    "id": "FB08-080",
@@ -33731,7 +35282,54 @@
    ],
    "text": "[When Attacking] Discard 1 card from your hand: Play up to 1 Battle Cadr with a cost of 1 from your hand. Then, add 3 to the cost of this card for the turn.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costEQ": 1
+        },
+        "n": 1
+       },
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 3,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "357d4da9"
+   }
   },
   "FP-065": {
    "id": "FP-065",
@@ -34425,7 +36023,50 @@
    ],
    "text": "[Activate:Battle] Your cards that are in a battle get +25000 power for the battle. Then, if you have 7 or fewer cards in your hand, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       },
+       {
+        "t": "draw",
+        "n": 1,
+        "cond": [
+         {
+          "t": "handLE",
+          "n": 7
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c07f7c09"
+   }
   },
   "ST01-055": {
    "id": "ST01-055",
@@ -34777,7 +36418,58 @@
    ],
    "text": "[Activate:Main] If your Leader is <Broly : BR> and you have a <Broly : BR> with a cost of 7 or more in your Battle Area, add up to 2 non-<First Friend> cards with ≪Planet Vampa≫ in their special traits from your Drop to your hand.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Broly: BR"
+        ]
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costGE": 7
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "traits": [
+           "Planet Vampa"
+          ],
+          "notNames": [
+           "First Friend"
+          ]
+         }
+        ],
+        "each": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "694e9f2e"
+   }
   },
   "FB04-075": {
    "id": "FB04-075",
@@ -35093,7 +36785,55 @@
    ],
    "text": "[On Play] If you have 2 or more Battle Cards with ≪Demon Clan≫ in their special traits in your Battle Area, choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Demon Clan"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 2
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "62611110"
+   }
   },
   "FB05-070": {
    "id": "FB05-070",
@@ -36371,7 +38111,29 @@
    ],
    "text": "[Permanent] this card can't be switched to Active Mode during a Charge Phase.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "this card can't be switched to Active Mode during a Charge Phase."
+      ],
+      "timing": "permanent",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "stays rested in the Charge Phase"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "557da7c5"
+   }
   },
   "FB01-061": {
    "id": "FB01-061",
@@ -36741,7 +38503,73 @@
    ],
    "text": "[On Play] If you have 5 or more cards with ≪Demon Clan≫ in their special traits in your Drop, draw 1 card.\n[When Attacking] If you have 5 or more cards with ≪Demon Clan≫ in their special traits in your Drop, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "traits": [
+           "Demon Clan"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "traits": [
+           "Demon Clan"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2beb0994"
+   }
   },
   "FB07-012": {
    "id": "FB07-012",
@@ -36871,7 +38699,53 @@
    ],
    "text": "[Field]\n[Activate:Battle] Discard 1 Extra from your hand and switch this card to Rest Mode: Your cards that are in a battle get +15000 power for the battle.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       },
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "226344f5"
+   }
   },
   "FB01-081": {
    "id": "FB01-081",
@@ -36937,7 +38811,46 @@
    ],
    "text": "[On Play] If your life is at 2 or less and you have a <Broly : BR> with a cost of 7 or more in your Battle Area, add the top card of your deck to your life.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 2
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costGE": 7
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeFromDeck",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "634ea5fb"
+   }
   },
   "FB04-054": {
    "id": "FB04-054",
@@ -37278,7 +39191,36 @@
    ],
    "text": "[Activate:Main] If your Leader is <King Piccolo>, reveal the top card of your opponent's deck, then choose up to 1 card in your opponent's Battle Area with a cost less than or equal to the revealed card and place it into its owner's Drop.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "King Piccolo"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "reveal the top card of your opponent's deck, then choose up to 1 card in your opponent's Battle Area with a cost less than or equal to the revealed card and place it into its owner's Drop."
+      ],
+      "timing": "activateMain",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "cost compared with a revealed card"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e6f52fbe"
+   }
   },
   "FB06-005": {
    "id": "FB06-005",
@@ -38409,7 +40351,48 @@
    ],
    "text": "[Field]\n[Activate:Main] Switch this card to Rest Mode: If you have a <Broly: BR> with a cost of 7 or more in your Battle Area, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costGE": 7
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "934617ba"
+   }
   },
   "SB01-048": {
    "id": "SB01-048",
@@ -38979,7 +40962,64 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Activate:Main][Once Per Turn] Discard 1 Extra from your hand: Choose up to 1 Battle Card with a cost of 4 or less in your opponent's Battle Area and it can't attack during your opponent's next turn.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        },
+        "kw": "cantAttack",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bbb36d1b"
+   }
   },
   "FB03-094": {
    "id": "FB03-094",
@@ -39667,7 +41707,41 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card with a cost of 4 or less in your opponent's Battle Area and it can't attack during your opponent's next turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 4
+         }
+        },
+        "kw": "cantAttack",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "52271845"
+   }
   },
   "FS12-17": {
    "id": "FS12-17",
@@ -39755,7 +41829,31 @@
    ],
    "text": "[Double Strike]\n[On Play] During this turn, the next time you use a non-[Field] Extra with an original cost of 2 or less, after activating the skill, activate that Extra's skill again.",
    "set": "FB06",
-   "rarity": "SCR"
+   "rarity": "SCR",
+   "script": {
+    "keywords": [
+     "doubleStrike"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "During this turn, the next time you use a non-[Field] Extra with an original cost of 2 or less, after activating the skill, activate that Extra's skill again."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "repeat a skill"
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a1690c84"
+   }
   },
   "FS11-15": {
    "id": "FS11-15",
@@ -39821,7 +41919,53 @@
    ],
    "text": "[Activate:Battle] If you have a <Broly : BR> with a cost of 7 or more in your Battle Area, your cards that are in a battle get +25000 power for the battle.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costGE": 7
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bae7eed6"
+   }
   },
   "FB05-058": {
    "id": "FB05-058",
@@ -41275,7 +43419,55 @@
    ],
    "text": "[Activate:Main] Switch this card to Rest Mode: If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, play up to 1 [Field] with a cost of 2 or less from your hand.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "keyword": "field",
+         "costLE": 2
+        },
+        "n": 1,
+        "extraType": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "38a1a447"
+   }
   },
   "FB07-010": {
    "id": "FB07-010",
@@ -42215,7 +44407,47 @@
    ],
    "text": "[Activate:Main][Once Per Turn] If your Leader is <Son Goku : Childhood>, choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 1 for the turn.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku: Childhood",
+         "Son Goku : Childhood"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -1,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "44d6d090"
+   }
   },
   "FB01-021": {
    "id": "FB01-021",
@@ -43027,7 +45259,39 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand. Then, if this card was played by a skill, draw 1 card.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "draw",
+        "n": 1,
+        "cond": [
+         {
+          "t": "playedBySkill"
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "31484e08"
+   }
   },
   "FB05-014": {
    "id": "FB05-014",
@@ -43247,7 +45511,45 @@
    ],
    "text": "[Permanent][Your Turn] Your Leader with ≪Android≫ in its special traits gets +10000 power.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "traits": [
+           "Android"
+          ]
+         },
+         "all": true
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ea05c0ea"
+   }
   },
   "FS10-09": {
    "id": "FS10-09",
@@ -43335,7 +45637,47 @@
    ],
    "text": "[Activate:Main] Draw 2 cards and discard 1 card from your hand. Then, choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 2 for the turn.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       },
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -2,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3baae9e7"
+   }
   },
   "FB03-082": {
    "id": "FB03-082",
@@ -44474,7 +46816,67 @@
    ],
    "text": "[Activate:Battle][Your Turn] Choose up to 1 Battle Card with a cost of 5 or less in your opponent's Battle Area and return it to its owner's hand. Then, if there is a Battle Card with a cost of 4 or more in your Battle Area, your cards that are in a battle get +10000 power for the battle.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "bounce",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5
+         }
+        }
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 10000,
+        "dur": "battle",
+        "cond": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "type": "BATTLE",
+           "costGE": 4
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "17d372a6"
+   }
   },
   "FB02-102": {
    "id": "FB02-102",
@@ -44565,7 +46967,63 @@
    ],
    "text": "[On Play] This card gets +25000 power for the turn.\n[Auto] When this card KO's an opponent's Battle Card in battle, switch this card to Active Mode.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 25000,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOsInBattle",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "05992935"
+   }
   },
   "FB10-095": {
    "id": "FB10-095",
@@ -45017,7 +47475,60 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Activate:Battle][Your Turn][Once Per Turn] If you use an Extra with an original cost of 1 or more during this turn, this card gets +10000 power for the turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "extraUsedThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a09485cc"
+   }
   },
   "FB10-097": {
    "id": "FB10-097",
@@ -46757,7 +49268,42 @@
    ],
    "text": "[When Attacking][Once Per Turn] If attacking a Battle Card, switch this card to Active Mode.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "53156dce"
+   }
   },
   "FB03-044": {
    "id": "FB03-044",
@@ -46955,7 +49501,44 @@
    ],
    "text": "[Blocker]\n[On Play] If you have an energy marker, add up to 1 card with a cost of 3 or less and ≪Demon Clan≫ in its special traits from your Drop to your hand.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "costLE": 3,
+          "traits": [
+           "Demon Clan"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d9cff3f2"
+   }
   },
   "SB02-028": {
    "id": "SB02-028",
@@ -47131,7 +49714,59 @@
    ],
    "text": "[When Attacking] Add up to 1 card from your life to your hand. Then, if you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "cond": [
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "traits": [
+             "Demon Realm",
+             "Demon World"
+            ]
+           }
+          },
+          "op": "ge",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0331dd1e"
+   }
   },
   "FB04-122": {
    "id": "FB04-122",
@@ -48494,7 +51129,50 @@
    ],
    "text": "[Permanent] This card can't be KO'd once per turn.\n[On Play] Switch this card to Active Mode. Then, if your life is at 2 or less, add the top of your deck to your life.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "koImmuneOnce"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       },
+       {
+        "t": "lifeFromDeck",
+        "n": 1,
+        "cond": [
+         {
+          "t": "lifeLE",
+          "n": 2
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "30eb72aa"
+   }
   },
   "FB01-045": {
    "id": "FB01-045",
@@ -48987,7 +51665,62 @@
    ],
    "text": "[On Play] Place 1 <Broly : BR> with a cost of 7 or more in your Battle Area into its owner's Drop: If you have <Planet Vampa> in your Battle Area, play up to 1 <Broly : BR> with a cost of 4 or less from your hand.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costGE": 7
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "names": [
+           "Planet Vampa"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Broly: BR"
+         ],
+         "costLE": 4
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "afcb5f53"
+   }
   },
   "FB05-037": {
    "id": "FB05-037",
@@ -49031,7 +51764,67 @@
    ],
    "text": "[On Play] During this turn, the next time you use <Majin Kuu: DA> or <Majin Duu: DA>, reduce the cost by 2.\n[Activate:Main][Once Per Turn] Switch 1 card in your Battle Area to Rest Mode: Draw 1 card. Then, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
    "set": "FB06",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "names": [
+          "Majin Kuu: DA",
+          "Majin Duu: DA"
+         ]
+        },
+        "amount": 2
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {}
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7759cdd1"
+   }
   },
   "FB08-003": {
    "id": "FB08-003",
@@ -49714,7 +52507,71 @@
    ],
    "text": "[Permanent] If your Leader is <Broly: BR>, add 3 to the cost of this card.\n[When Attacking] Choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Broly: BR"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costMod",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 3,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 1
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ae898e16"
+   }
   },
   "SB01-007": {
    "id": "SB01-007",
@@ -49986,7 +52843,53 @@
    ],
    "text": "[Activate:Main] If you have 2 or more Battle Cards with ≪Demon Clan≫ in their special traits in your Battle Area, choose up to 1 Battle Card in your opponent's Battle Area and KO it.",
    "set": "FB06",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Demon Clan"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7464b8e6"
+   }
   },
   "ST01-037": {
    "id": "ST01-037",
@@ -50501,7 +53404,60 @@
    ],
    "text": "[Activate:Main] Switch this card to Rest Mode: If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, choose up to 1 Rest Mode Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 2
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "baabb423"
+   }
   },
   "ST01-042": {
    "id": "ST01-042",
@@ -51437,6 +54393,101 @@
     "name": "Android 18",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Battle][Your Turn][Once Per Turn] Your Battle Cards with ≪Android≫ in their special traits that are in a battle with your opponent's Battle Cards get +20000 power for the battle."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "type": "BATTLE",
+          "traits": [
+           "Android"
+          ]
+         },
+         "ref": "battler"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "cf22523a"
    }
   },
   "FB01-028": {
@@ -51657,7 +54708,43 @@
    ],
    "text": "[Blocker]\n[On Play] If there is a <Babidi> in your Battle Area, draw 1 card.",
    "set": "FB06",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Babidi"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0a8c6b7d"
+   }
   },
   "FP-061": {
    "id": "FP-061",
@@ -51948,7 +55035,66 @@
    ],
    "text": "[Blocker]\n[Permanent] If there is a card with a cost of 7 or more in a Battle Area, this card can't be KO'd once per turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "blocker"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "costGE": 7
+          }
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "opp",
+          "filter": {
+           "costGE": 7
+          }
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "koImmuneOnce",
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "673b5c8a"
+   }
   },
   "FB07-059": {
    "id": "FB07-059",
@@ -53517,7 +56663,51 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta (Mini) : DA>, draw 3 cards. Then, choose up to 1 Battle Card in your opponent's Battle Area and reduce its cost by 5 for the turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta (Mini): DA",
+         "Vegeta (Mini) : DA"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 3
+       },
+       {
+        "t": "costMod",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -5,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bd27314e"
+   }
   },
   "FB10-010": {
    "id": "FB10-010",
@@ -53605,7 +56795,44 @@
    ],
    "text": "[On Play] Discard 1 Extra from your hand: If your Leader has ≪World Tournament≫ in its special traits, draw 2 cards.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c87fe87a"
+   }
   },
   "FB04-022": {
    "id": "FB04-022",
@@ -56112,7 +59339,65 @@
    ],
    "text": "[Activate:Main] Place this card into your Drop: If your Leader is <Son Gohan : Childhood> and you have <Android 16> in your Drop, play up to 1 <Son Gohan : Childhood> with a cost of 6 or 7 from your hand in Rest Mode.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Gohan: Childhood",
+         "Son Gohan : Childhood"
+        ]
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "names": [
+           "Android 16"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Son Gohan: Childhood",
+          "Son Gohan : Childhood"
+         ],
+         "costGE": 6,
+         "costLE": 7
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "16c198ec"
+   }
   },
   "FB06-096": {
    "id": "FB06-096",
@@ -56310,7 +59595,55 @@
    ],
    "text": "[When Attacking] If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, choose up to 1 Rest Mode Battle Card in your opponent's Battle Area and it can't switch to Active Mode during your opponent's next turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c00965de"
+   }
   },
   "FB03-092": {
    "id": "FB03-092",
@@ -59576,7 +62909,66 @@
    ],
    "text": "[Permanent][Your Turn] Your Leader with ≪Universe 7≫ in its special traits gets +10000 power.\n[Activate:Battle][Once Per Turn] If this card has 30000 power or more, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "traits": [
+           "Universe 7"
+          ]
+         },
+         "all": true
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "thisMatches",
+        "filter": {
+         "powerGE": 30000
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "75cfaa2b"
+   }
   },
   "FB03-038": {
    "id": "FB03-038",
@@ -60055,7 +63447,50 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand. Then, if your Leader has <DA> in its card name, play up to 1 Battle Card with a cost of 2 or less and <DA> in its card name from your hand.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2,
+         "names": [
+          ": DA"
+         ]
+        },
+        "n": 1,
+        "cond": [
+         {
+          "t": "leaderIs",
+          "names": [
+           ": DA"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ffe38d43"
+   }
   },
   "FB10-007": {
    "id": "FB10-007",
@@ -60945,7 +64380,33 @@
    ],
    "text": "[When Attacking] If attacking a Battle Card, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "attackingBattleCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ae26a026"
+   }
   },
   "FP-030": {
    "id": "FP-030",
@@ -63048,7 +66509,44 @@
    ],
    "text": "[Field]\n[On Play] If your Leader includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits, add up to 1 card from your life to your hand. Then, draw 1 card.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "keywords": [
+     "field"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Demon Realm",
+         "Demon World"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "525f8de1"
+   }
   },
   "FS08-13": {
    "id": "FS08-13",
@@ -63343,7 +66841,45 @@
    ],
    "text": "[When Attacking][Once Per Turn] If you have 2 or more cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area, switch up to 1 of your energy to Active Mode.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "traits": [
+           "Demon Realm",
+           "Demon World"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 2
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activateEnergy",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "eb1081b5"
+   }
   },
   "FB10-033": {
    "id": "FB10-033",
@@ -63843,7 +67379,39 @@
    ],
    "text": "[On Play] Choose up to 1 Rest Mode Battle Card in your opponent's Battle Area and it can't switch to Active Mode during your opponent's next turn.",
    "set": "FB06",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8a54107f"
+   }
   },
   "FB08-089": {
    "id": "FB08-089",

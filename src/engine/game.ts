@@ -452,7 +452,7 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       if (s.stage !== 'over') fireTriggers(s, b.attacker, 'whenDealsDamage', ctl);
     } else {
       log(s, `hit: ${atk} vs ${def}`);
-      koCard(s, b.target, ctl, { src: b.attacker });
+      if (koCard(s, b.target, ctl, { src: b.attacker }) && s.stage !== 'over' && s.p[b.atkSide].battle.includes(b.attacker)) fireTriggers(s, b.attacker, 'whenKOsInBattle', ctl);
     }
   } else log(s, `blocked out: ${atk} vs ${def}`);
   // "When this card wins a battle": the attacker on a hit, the defender otherwise.
@@ -492,6 +492,7 @@ function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers) {
   const plan = playCostPlan(s, uid);
   if (!plan) return;
   payPlan(s, side, plan);
+  if (cardOf(s, uid).cost >= 1) s.p[side].extraUsedTurn = s.turn;
   const ab = compiledOf(s, uid).abilities[abIdx];
   moveTo(s, uid, 'drop');
   emit(s, { t: 'activate', p: side, id: s.inst[uid].id, uid, fromHand: true });
@@ -532,7 +533,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       if (!plan) return;
       payPlan(s, side, plan);
       consumeDiscount(s, a.uid);
-      if (cardOf(s, a.uid).type === 'EXTRA') placeField(s, a.uid, ctl);
+      if (cardOf(s, a.uid).type === 'EXTRA') { if (cardOf(s, a.uid).cost >= 1) me.extraUsedTurn = s.turn; placeField(s, a.uid, ctl); }
       else playCard(s, a.uid, ctl);
       return;
     }
