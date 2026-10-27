@@ -438,10 +438,12 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   let baseline: Validated | null = null;
   const baselineIsFinalist = validated.find((v) => deckKey(v.deck) === baselineScored.key);
   if (baselineIsFinalist) baseline = baselineIsFinalist;
-  else if (!isCancelled() && validated.some((v) => v.hi >= opts.threshold)) {
-    // Only needed when a finalist could still be recommended: is it better than just playing a known deck?
+  else if (!isCancelled()) {
+    // The best known deck as it is: the bar evolved decks must beat, and a candidate in its own
+    // right (an unchanged starter or meta list can be the real answer).
     setStep({ phase: 'validate', message: `Validating baseline "${baselineScored.deck.name}"`, step: { label: 'Baseline', done: 0, total: validateGames * nT } });
     baseline = await validate(baselineScored, 'Baseline', { early: false });
+    validated.push(baseline);
   }
 
   validated.sort((a, b) => b.lo - a.lo || b.rate - a.rate);
