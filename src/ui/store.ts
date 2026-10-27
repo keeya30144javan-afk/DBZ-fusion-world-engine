@@ -3,6 +3,22 @@ import { DEFAULT_RULES, RulesConfig } from '../data/rules';
 import { normalizeCards } from '../data/normalize';
 import { clearCompileCache } from '../effects/parse';
 import { clearValueCache } from '../ai/heuristics';
+import { CardScript } from '../effects/types';
+import { textHash } from '../effects/script';
+
+/**
+ * One card's translation and its review, kept in the shared `scripts` collection.
+ * A doc may carry only a review (for a translation shipped with the app) or a new
+ * translation made in the app. It is ignored once the card's printed text changes.
+ */
+export interface ScriptDoc {
+  textHash: string;
+  script?: CardScript;
+  status: 'unreviewed' | 'verified' | 'rejected';
+  check?: { ok: boolean; issues: string };
+  note?: string;
+  updated: string;
+}
 
 declare const __BUNDLED_CARDS__: CardDB;
 declare const __BUNDLED_META__: Meta;
@@ -27,7 +43,11 @@ export interface State {
   rules: RulesConfig;
   db: 'connecting' | 'connected' | 'offline';
   canWrite: boolean | null;
+  /** Editors and the owner may save translations and reviews. */
+  canReview: boolean | null;
   error: string | null;
+  /** Reviews and in-app translations, by card id (only those matching the current text). */
+  reviews: Record<string, ScriptDoc>;
 }
 
 type Listener = () => void;
@@ -53,12 +73,15 @@ export class Store {
     rules: { ...DEFAULT_RULES },
     db: 'connecting',
     canWrite: null,
+    canReview: null,
     error: null,
+    reviews: {},
   };
   private listeners = new Set<Listener>();
   private db: any = null;
   private dbSets = new Map<string, { cards: Card[]; info: SetInfo }>();
   private dbMeta: MetaDeck[] | null = null;
+  private dbScripts: Record<string, ScriptDoc> = {};
 
   subscribe(fn: Listener) {
     this.listeners.add(fn);
@@ -84,7 +107,9 @@ export class Store {
       this.db = db;
       let canWrite: boolean | null = null;
       try { canWrite = user ? await user.can('data.write') : null; } catch { canWrite = null; }
-      this.set({ db: 'connected', canWrite });
+      let canReview: boolean | null = null;
+      try { canReview = user ? await user.canEdit() : null; } catch { canReview = null; }
+      this.set({ db: 'connected', canWrite, canReview });
       db.collection('carddb').onSnapshot((snap: any) => {
         this.dbSets.clear();
         for (const d of snap.docs) {
@@ -99,6 +124,17 @@ export class Store {
         this.dbMeta = snap.docs.map((d: any) => ({ ...(d.data() as Decklist), id: d.id }));
         this.set({ meta: this.dbMeta!.length ? this.dbMeta! : exampleMeta() });
       }, (e: any) => this.set({ error: `Meta decks: ${e.message}` }));
+      db.collection('scripts').onSnapshot((snap: any) => {
+        this.dbScripts = {};
+        for (const d of snap.docs) {
+          const b = d.data();
+          if (!b || typeof b.textHash !== 'string' || typeof b.status !== 'string') continue;
+          let script: CardScript | undefined;
+          try { script = typeof b.script === 'string' ? JSON.parse(b.script) : undefined; } catch { script = undefined; }
+          this.dbScripts[d.id] = { ...(b as ScriptDoc), script };
+        }
+        this.rebuildCards();
+      }, (e: any) => this.set({ error: `Translations: ${e.message}` }));
       db.doc('settings/rules').onSnapshot((snap: any) => {
         if (snap.exists) this.set({ rules: { ...DEFAULT_RULES, ...(snap.data() as Partial<RulesConfig>) } });
       }, () => {});
@@ -112,9 +148,18 @@ export class Store {
     for (const [k, v] of this.dbSets) merged.set(k, v);
     const cards: Record<string, Card> = {};
     for (const { cards: list } of merged.values()) for (const c of list) cards[c.id] = c;
+    const reviews: Record<string, ScriptDoc> = {};
+    for (const [id, doc] of Object.entries(this.dbScripts)) {
+      const c = cards[id];
+      if (!c || doc.textHash !== textHash(c)) continue;
+      reviews[id] = doc;
+      const base = doc.script ?? c.script;
+      if (doc.status === 'rejected' || !base) { const { script: _s, ...rest } = c; void _s; cards[id] = rest; continue; }
+      cards[id] = { ...c, script: { ...base, textHash: doc.textHash, source: doc.status === 'verified' ? 'verified' : 'claude' } };
+    }
     clearCompileCache();
     clearValueCache();
-    this.set({ cards, sets: [...merged.values()].map((m) => m.info).sort((a, b) => a.set.localeCompare(b.set)) });
+    this.set({ cards, reviews, sets: [...merged.values()].map((m) => m.info).sort((a, b) => a.set.localeCompare(b.set)) });
   }
 
   // ---- writes
@@ -142,6 +187,18 @@ export class Store {
   async deleteDeck(id: string): Promise<void> {
     if (!this.db || id.startsWith('example-')) return;
     await this.db.collection('meta').doc(id).delete();
+  }
+
+  /** Store a translation and/or its review. */
+  async saveScript(id: string, doc: ScriptDoc): Promise<void> {
+    if (!this.db) {
+      this.dbScripts[id] = doc;
+      this.rebuildCards();
+      return;
+    }
+    // The script travels as a JSON string: it nests lists inside lists, which the store may not keep.
+    const body = JSON.parse(JSON.stringify({ ...doc, script: doc.script ? JSON.stringify(doc.script) : undefined }));
+    await this.db.collection('scripts').doc(id).set(body);
   }
 
   async saveRules(rules: RulesConfig): Promise<void> {

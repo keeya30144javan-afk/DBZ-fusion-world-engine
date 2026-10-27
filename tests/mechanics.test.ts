@@ -44,7 +44,7 @@ const acts = (s: GameState, pred: (a: Action) => boolean) => legalActions(s).fil
 
 /** Give a card a translation for this test. */
 function withScript(id: string, sc: Omit<CardScript, 'textHash' | 'source' | 'unparsed'> & { unparsed?: string[] }) {
-  const script: CardScript = { textHash: textHash(cards[id]), source: 'claude', unparsed: [], ...sc };
+  const script: CardScript = { textHash: textHash(cards[id]), source: 'verified', unparsed: [], ...sc };
   assert.deepEqual(validateScript(script), []);
   cards[id] = { ...cards[id], script };
   clearCompileCache();
@@ -186,4 +186,17 @@ test('describe: the engine\'s reading of a card is readable English', () => {
   const r = describeCompiled(compileCard(cards['FB10-057']));
   assert.match(r, /\[On Play\] Your Leader gets \+1 Ki/);
   assert.match(r, /Reduce your Ki by 1: choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it/);
+});
+
+test('trust order: an unreviewed translation never overrides a card the parser reads in full', () => {
+  const id = 'FS01-07';
+  const sc: CardScript = { textHash: textHash(cards[id]), source: 'claude', unparsed: [], keywords: ['cantAttack'], abilities: [] };
+  const parsed = compileCard({ ...cards[id], id: 'tmp-a' });
+  clearCompileCache();
+  const withUnreviewed = compileCard({ ...cards[id], id: 'tmp-b', script: sc });
+  assert.equal(withUnreviewed.source, parsed.coverage >= 1 ? 'parser' : 'claude');
+  clearCompileCache();
+  const withVerified = compileCard({ ...cards[id], id: 'tmp-c', script: { ...sc, source: 'verified' } });
+  assert.equal(withVerified.source, 'verified');
+  clearCompileCache();
 });

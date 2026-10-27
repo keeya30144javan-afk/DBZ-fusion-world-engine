@@ -73,7 +73,7 @@ export interface CounterReport {
   alternatives: Validated[];
   baseline: Validated | null;
   keyCards: KeyCard[];
-  coverage: { deck: string; coverage: number; unparsedCards: string[] }[];
+  coverage: { deck: string; coverage: number; unparsedCards: string[]; unreviewed: string[] }[];
   warnings: string[];
   gamesPlayed: number;
   ms: number;
@@ -109,6 +109,7 @@ export function coverageOf(deck: Decklist, cards: Record<string, Card>) {
   const ids = [deck.leader, ...Object.keys(deck.main)];
   let total = 0, covered = 0;
   const bad: string[] = [];
+  const unreviewed: string[] = [];
   for (const id of ids) {
     const c = cards[id];
     if (!c) continue;
@@ -117,8 +118,9 @@ export function coverageOf(deck: Decklist, cards: Record<string, Card>) {
     total += copies;
     covered += copies * cc.coverage;
     if (cc.coverage < 1) bad.push(`${id} ${c.name}`);
+    if (cc.source === 'claude') unreviewed.push(`${id} ${c.name}`);
   }
-  return { coverage: total ? covered / total : 1, unparsedCards: bad };
+  return { coverage: total ? covered / total : 1, unparsedCards: bad, unreviewed };
 }
 
 // ------------------------------------------------------------------ main search
@@ -139,6 +141,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   // Coverage first: be honest about how much of the card text the engine understands.
   const coverage = [...targets.map((t) => t.deck), ...(opts.known ?? [])].map((d) => ({ deck: d.name, ...coverageOf(d, cards) }));
   for (const c of coverage) if (c.coverage < 0.9) warnings.push(`Only ${(c.coverage * 100).toFixed(0)}% of the card text in "${c.deck}" is understood by the engine; results for it are approximate.`);
+  for (const c of coverage) if (c.unreviewed.length) warnings.push(`"${c.deck}" relies on ${c.unreviewed.length} card${c.unreviewed.length === 1 ? '' : 's'} whose rules were translated by Claude and not yet reviewed (${c.unreviewed.slice(0, 4).join(', ')}${c.unreviewed.length > 4 ? ', …' : ''}). Check them in the Audit tab.`);
 
   const freshSeeds = (n: number) => Array.from({ length: n }, () => (seedCounter = (seedCounter * 48271 + 11) % 2147483647));
 
@@ -303,6 +306,10 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       reasons.push('Recommending something anyway would be guessing, so this is a real "no".');
     }
     if (!beatsBaseline && baseline) reasons.push(`It is not clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`);
+  }
+  if (best) {
+    const own = coverageOf(best.deck, cards);
+    if (own.unreviewed.length) warnings.push(`The recommended deck uses ${own.unreviewed.length} card${own.unreviewed.length === 1 ? '' : 's'} whose rules were translated by Claude and not yet reviewed (${own.unreviewed.slice(0, 4).join(', ')}${own.unreviewed.length > 4 ? ', …' : ''}). Verify them in the Audit tab before trusting the number.`);
   }
   if (warnings.length) reasons.push(...warnings);
 

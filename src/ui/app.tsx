@@ -7,6 +7,7 @@ import { MetaView } from './views/meta';
 import { ScouterView } from './views/scouter';
 import { MatchupView } from './views/matchup';
 import { CardsView } from './views/cards';
+import { AuditView } from './views/audit';
 
 const TABS = [
   ['counter', 'Counter Lab'],
@@ -14,6 +15,7 @@ const TABS = [
   ['scouter', 'Scouter'],
   ['matchup', 'Matchup'],
   ['cards', 'Cards & Rules'],
+  ['audit', 'Audit'],
 ] as const;
 type Tab = (typeof TABS)[number][0];
 
@@ -65,6 +67,7 @@ function App() {
         {tab === 'scouter' && <ScouterView />}
         {tab === 'matchup' && <MatchupView />}
         {tab === 'cards' && <CardsView />}
+        {tab === 'audit' && <AuditView />}
       </main>
     </>
   );

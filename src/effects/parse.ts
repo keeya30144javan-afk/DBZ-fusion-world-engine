@@ -428,11 +428,23 @@ function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability
 
 const cache = new Map<string, CompiledCard>();
 
+/**
+ * Trust order: a reviewed translation, then the parser when it reads the whole
+ * card, then an unreviewed translation, then the parser's partial reading.
+ */
 export function compileCard(card: Card): CompiledCard {
   const hit = cache.get(card.id);
   if (hit) return hit;
   const scripted = card.script && card.script.textHash === textHash(card) ? fromScript(card.script) : null;
-  if (scripted) { cache.set(card.id, scripted); return scripted; }
+  if (scripted && scripted.source === 'verified') { cache.set(card.id, scripted); return scripted; }
+  const parsed = parseCard(card);
+  const pick = scripted && parsed.coverage < 1 ? scripted : parsed;
+  cache.set(card.id, pick);
+  return pick;
+}
+
+/** The parser's own reading, ignoring any stored translation. */
+export function parseCard(card: Card): CompiledCard {
   const front = compileText(card.text);
   let total = front.total;
   const bad = [...front.bad];
@@ -445,7 +457,6 @@ export function compileCard(card: Card): CompiledCard {
     bad.push(...back.bad);
   }
   out.coverage = total === 0 ? 1 : Math.max(0, 1 - bad.length / total);
-  cache.set(card.id, out);
   return out;
 }
 
