@@ -1,0 +1,2067 @@
+{
+ "SB01-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "removedBySkillThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 20000,
+      "dur": "battle"
+     }
+    ],
+    "unparsed": [
+     "(the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
+    ]
+   }
+  ]
+ },
+ "SB01-002": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Android 17",
+        "Android 18"
+       ],
+       "costLE": 2
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-003": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Android"
+       ]
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-004": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "costLE": 5,
+        "traits": [
+         "Android"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     },
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-006": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -15000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-008": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Cell"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-009": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Android 17"
+       ]
+      }
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "powerEQ": 25000
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-010": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Android 18"
+       ]
+      }
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "powerEQ": 30000
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-011": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "costLE": 4,
+        "traits": [
+         "Android"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Android 18"
+       ],
+       "costLE": 2
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-012": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 10000
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "traits": [
+        "Android"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "count": 2
+      },
+      "amount": -20000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-013": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If your Leader is an ≪Android≫-only card and you have a <Cell> with an original power of 30000 power or more in your Battle Area, you can use this card from your hand without paying its cost."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "alternative play costs"
+  ]
+ },
+ "SB01-014": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -20000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-015": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Android"
+       ]
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 30000
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-016": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "powerGE": 30000,
+       "originalPower": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-017": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     },
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "EXTRA",
+          "costGE": 2
+         }
+        },
+        "op": "ge",
+        "n": 1
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "drop",
+         "filter": {
+          "type": "EXTRA",
+          "costGE": 2
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "costLE": 3
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-018": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     },
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-019": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1,
+      "filter": {
+       "type": "EXTRA"
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-020": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 25000,
+      "dur": "battle"
+     },
+     {
+      "t": "bottom",
+      "target": {
+       "all": true,
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-021": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-022": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "World Tournament"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {},
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-023": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "other": true
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-025": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 3
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "keyword": "field",
+        "names": [
+         "Full Moon"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Great Ape Vegeta"
+       ],
+       "costEQ": 6
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-026": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "onlyTraits": [
+        "Saiyan"
+       ],
+       "costEQ": 3,
+       "notNames": [
+        "Raditz"
+       ]
+      },
+      "n": 1
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Raditz"
+       ]
+      },
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-027": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Piccolo"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costEQ": 6
+      },
+      "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Piccolo"
+       ],
+       "costEQ": 6
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-028": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-029": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 4,
+       "traits": [
+        "Majin"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-030": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Babidi"
+        ]
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Babidi"
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-032": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     },
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 3,
+       "traits": [
+        "Wicked Soul"
+       ]
+      },
+      "amount": "free"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-033": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "names": [
+         "Babidi"
+        ]
+       },
+       {
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-034": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 5
+       }
+      }
+     }
+    ],
+    "unparsed": [
+     "Then, play up to 1 <Majin Buu : Evil> with a cost less than or equal to the card chosen by this skill and ≪Absorption≫ in its special traits from your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "cost compared with a chosen card"
+  ]
+ },
+ "SB01-035": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-036": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-037": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "If your Leader has ≪Majin≫ in its special traits, choose up to 1 of your opponent's Rest Mode energy, and that card can't switch to Active Mode during your opponent's next turn."
+    ]
+   }
+  ],
+  "needs": [
+   "lock opponent's energy"
+  ]
+ },
+ "SB01-038": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Majin Buu: Kid",
+        "Majin Buu : Kid"
+       ],
+       "costLE": 4
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-039": {
+  "keywords": [
+   "koImmuneSkills"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "rest",
+      "target": {
+       "all": true,
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 5
+       }
+      }
+     }
+    ],
+    "unparsed": [
+     "(also rests cards with a cost of 5 or less in your opponent's energy)"
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "rest",
+      "target": {
+       "all": true,
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 5
+       }
+      }
+     }
+    ],
+    "unparsed": [
+     "(also rests cards with a cost of 5 or less in your opponent's energy)"
+    ]
+   }
+  ],
+  "needs": [
+   "rest opponent's energy"
+  ]
+ },
+ "SB01-041": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 2,
+      "side": "opp",
+      "filter": {
+       "rested": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-042": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "rested": true,
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-044": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Majin Buu: Kid",
+        "Majin Buu : Kid"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2,
+       "filter": {
+        "rested": true,
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-045": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backKeywords": [
+   "cantAttack"
+  ],
+  "backAbilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 0,
+      "only": {
+       "traits": [
+        "Adventure"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "battler"
+      }
+     },
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-046": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "If you have 3 or more types of non-<Spike> cards with ≪Adventure≫ in their special traits in your Drop, choose up to 2 Battle Cards without <Son Goku> in their card names and with costs of 3 or less in your opponent's Battle Area and KO them."
+    ]
+   }
+  ],
+  "needs": [
+   "count distinct card names"
+  ]
+ },
+ "SB01-047": {
+  "abilities": [
+   {
+    "timing": "comboFromDrop",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-048": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Master Roshi"
+       ],
+       "costEQ": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-050": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboFromDropThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-051": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboAreaHasCard"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "critical",
+      "dur": "static"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-052": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboFromDropThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-053": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-054": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Reunion"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "self",
+      "to": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-055": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboAreaHasCard"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-056": {
+  "abilities": [
+   {
+    "timing": "comboFromDrop",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-057": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cond": [
+     {
+      "t": "comboFromDropThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "doubleStrike",
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-058": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboAreaHasCard"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-059": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboFromDropThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Adventure"
+       ],
+       "notNames": [
+        "Yamcha"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "SB01-060": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Gohan"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ }
+}

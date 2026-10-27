@@ -194,6 +194,8 @@ export function describeCond(c: Cond): string {
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
     case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
+    case 'comboFromDropThisTurn': return 'you used a card from your Drop in a combo during this turn';
+    case 'removedBySkillThisTurn': return 'your Battle Card was removed from your Battle Area by a skill during this turn';
     case 'markerUsedThisTurn': return 'your energy marker was removed during this turn';
     case 'oppHasMarker': return c.yes ? 'your opponent has an energy marker' : "your opponent doesn't have an energy marker";
     case 'markerPaid': return 'you removed an energy marker to use this card (or for this skill)';
@@ -244,7 +246,7 @@ const TIMING: Record<string, string> = {
   startOfYourTurn: 'Start of Your Turn', awaken: 'Awaken', comboFromHand: 'Auto: when used in a combo from your hand',
   comboFromField: 'Auto: when used in a combo from the Battle Area', whenDamaged: 'Auto: when you take damage',
   whenAllyPlayed: 'Auto: when your card is played', whenMilled: 'Auto: when placed from your deck into your Drop',
-  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle", whenAllyKOd: "Auto: when your card is KO'd",
+  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle", whenAllyKOd: "Auto: when your card is KO'd", comboFromDrop: 'Auto: when this card is used in a combo from your Drop',
   whenOppAttacks: "Auto: when an opponent's card attacks", whenAllyRemovedBySelf: 'Auto: when your card is removed from the Battle Area by one of your skills',
   whenAllyRemovedByOpp: 'Auto: when your card is removed from the Battle Area by your opponent', auto: 'Auto',
 };

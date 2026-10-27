@@ -33,6 +33,8 @@ export type Timing =
   | 'gameStart'
   /** [Auto] "When this card inflicts damage with an attack". */
   | 'whenDealsDamage'
+  /** [Auto] "When this card is used in a combo from your Drop". */
+  | 'comboFromDrop'
   /** [Auto] "When your <X> is KO'd" (filter in `trigger`). */
   | 'whenAllyKOd'
   /** [Auto] "When this card KO's an opponent's Battle Card in battle". */
@@ -306,6 +308,10 @@ export type Cond =
   | { t: 'oppHasMarker'; yes: boolean }
   /** One of your energy markers was removed this turn. */
   | { t: 'markerUsedThisTurn' }
+  /** You used a card from your Drop in a combo this turn. */
+  | { t: 'comboFromDropThisTurn' }
+  /** One of your Battle Cards was removed from the Battle Area by any skill this turn. */
+  | { t: 'removedBySkillThisTurn' }
   /** This card was played by a skill this turn. */
   | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */

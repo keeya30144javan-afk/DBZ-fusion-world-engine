@@ -7494,7 +7494,29 @@
    ],
    "text": "[On Play] If you have 3 or more types of non-<Spike> cards with ≪Adventure≫ in their special traits in your Drop, choose up to 2 Battle Cards without <Son Gokue> in their card names and with costs of 3 or less in your opponent's Battle Area and KO them.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If you have 3 or more types of non-<Spike> cards with ≪Adventure≫ in their special traits in your Drop, choose up to 2 Battle Cards without <Son Goku> in their card names and with costs of 3 or less in your opponent's Battle Area and KO them."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "count distinct card names"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c97a3dc1"
+   }
   },
   "ST01-015": {
    "id": "ST01-015",
@@ -7838,6 +7860,87 @@
     "name": "Cell",
     "power": 20000,
     "text": "[When Attacking] If a Battle Card with ≪Android≫ in its special traits is removed from your Battle Area by a skill during this turn, draw 1 card. Then, this card gets +20000 power for the battle."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "removedBySkillThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "(the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
+      ],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 20000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "df2744b5"
    }
   },
   "FB06-024": {
@@ -8937,7 +9040,48 @@
    ],
    "text": "[On Play] If your Leader is awakened, choose your <Cell> Leader or up to 1 <Cell> in your Battle Area and it gets +10000 power for the turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderAwakened"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader",
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Cell"
+          ]
+         }
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e861d048"
+   }
   },
   "FS10-17": {
    "id": "FS10-17",
@@ -9088,7 +9232,48 @@
    ],
    "text": "[On Play] Discard 1 Battle card with ≪Android≫ in its special traits from your hand: If your Leader is an ≪Android≫-only card, draw 2 cards.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Android"
+         ]
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9c671128"
+   }
   },
   "FB11-038": {
    "id": "FB11-038",
@@ -12259,18 +12444,35 @@
      {
       "once": false,
       "cost": [],
-      "cond": [],
-      "text": "",
-      "unparsed": [
-       "If your Leader has ≪Adventure≫ in its special traits, when you use this card in a combo from its owner's Drop, this card gets +10000 combo power."
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       }
       ],
-      "timing": "auto",
-      "effects": [],
-      "turn": "your"
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromDrop",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "comboPower",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000
+       }
+      ]
      }
-    ],
-    "needs": [
-     "trigger on combo from the Drop"
     ],
     "keywords": [],
     "source": "claude",
@@ -12477,7 +12679,63 @@
    ],
    "text": "[Activate:Battle][Your Turn] If your Leader has ≪World Tournament≫ in its special traits, your card that's in a battle gets +25000 power for the battle. Then, choose all Battle Cards with costs of 2 or less in your opponent's Battle area and place them at the bottom of their owner's deck in a random order.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 25000,
+        "dur": "battle"
+       },
+       {
+        "t": "bottom",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "costLE": 2
+         },
+         "all": true
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d9f98f8c"
+   }
   },
   "SB01-042": {
    "id": "SB01-042",
@@ -12499,7 +12757,63 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] If your Leader has ≪Majin≫ in its special traits, choose up to 1 Rest Mode card with a cost of 5 or less in your opponent's Battle Area and it can't switch to Active Mode during your opponent's next turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 5
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "780f6d5b"
+   }
   },
   "SB01-060": {
    "id": "SB01-060",
@@ -12521,7 +12835,57 @@
    ],
    "text": "[Activate:Battle] If your Leader has ≪Adventure≫ in its special traits, your card that's in a battle gets +15000 power for the battle. Then, use up to 1 <Son Gohan> from your Drop in a combo.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       },
+       {
+        "t": "comboFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Son Gohan"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6111f5f2"
+   }
   },
   "FB11-073": {
    "id": "FB11-073",
@@ -14052,7 +14416,69 @@
    ],
    "text": "[On Play] If your Leader has ≪World Tournament≫ in its special traits, choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area and place it at the bottom of its owner's deck. Then, draw 2 cards and discard 2 cards from your hand.\n[When Attacking] Add up to 1 card from your life to your hand.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "bottom",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 2
+         }
+        }
+       },
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8b3e3282"
+   }
   },
   "FB02-119": {
    "id": "FB02-119",
@@ -19368,7 +19794,62 @@
    ],
    "text": "[On Play] If your Leader is an ≪Android≫-only card, look at 3 cards from the top of your deck, reveal up to 1 card with a cost of 5 or less and ≪Android≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order. Then, choose up to 1 Battle Card in your opponent's Battle Area and it gets -5000 power for the turn.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "costLE": 5,
+          "traits": [
+           "Android"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "bottom"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -5000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5ce42e29"
+   }
   },
   "FB10-081": {
    "id": "FB10-081",
@@ -24017,7 +24498,47 @@
    ],
    "text": "[Activate:Main] If your Leader has ≪World Tournament≫ in its special traits, choose up to 1 card with a cost of 5 or less in your opponent's Battle Area and place it at the bottom of its owner's deck.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "bottom",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 5
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "6d210f5e"
+   }
   },
   "SB02-060": {
    "id": "SB02-060",
@@ -24784,7 +25305,73 @@
    ],
    "text": "[When Attacking] Choose up to 1 Battle Card with 10000 power or less in your opponent's Battle Area and KO it.\n[Activate:Main][Once Per Turn] Place 1 card with ≪Android≫ in its special traits from your Battle Area into its owner's Drop: Choose up to 2 Battle Cards in your opponent's Battle Area and they get -20000 power for the turn.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "powerLE": 10000
+         }
+        }
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "traits": [
+          "Android"
+         ]
+        }
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 2,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -20000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "be4e4fb7"
+   }
   },
   "FB09-041": {
    "id": "FB09-041",
@@ -25200,7 +25787,40 @@
    ],
    "text": "[Auto][Your Turn] When this card is used in a combo from your Drop, choose up to 1 Battle Card with a cost of 1 or less in your opponent's Battle Area and KO it.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromDrop",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "costLE": 1
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "705e0ab7"
+   }
   },
   "FS09-08": {
    "id": "FS09-08",
@@ -25906,7 +26526,85 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -10000 power for the turn.\n[Activate:Main] Place 1 <Android 18> and this card from your Battle Area into their owner's Drop: If your Leader is an ≪Android≫-only card, draw 1 card. Then, play up to 1 <Cell> with 30000 power from your hand.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -10000,
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Android 18"
+         ]
+        }
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Cell"
+         ],
+         "powerEQ": 30000
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "88080b2a"
+   }
   },
   "FB06-044": {
    "id": "FB06-044",
@@ -27032,7 +27730,49 @@
    ],
    "text": "[Activate:Main] Place this card into your Drop: Choose up to 1 Rest Mode Battle Card with a cost of 5 or less in your opponent's Battle Area and place it into its owner's Drop. Then, play up to 1 <Majin Buu : Evil> with a cost less than or equal to the card chosen by this skill and ≪Absorption≫ in its special traits from your hand.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "Then, play up to 1 <Majin Buu : Evil> with a cost less than or equal to the card chosen by this skill and ≪Absorption≫ in its special traits from your hand."
+      ],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "toDrop",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 5
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "cost compared with a chosen card"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "0cbe0702"
+   }
   },
   "FB07-056": {
    "id": "FB07-056",
@@ -28634,7 +29374,66 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Activate:Battle][Your Turn][Once Per Turn] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you use a card from your Drop in a combo during this turn, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboFromDropThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f370a7b9"
+   }
   },
   "FB07-089": {
    "id": "FB07-089",
@@ -28706,7 +29505,50 @@
    ],
    "text": "[On Play] Add up to 1 <Reunion> from your Drop to your hand.\n[End of Your Turn] Place this card into your Drop.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "names": [
+           "Reunion"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "self",
+        "to": "drop"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "43700a82"
+   }
   },
   "FB03-140": {
    "id": "FB03-140",
@@ -29682,7 +30524,81 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta>, draw 1 card.\n[Activate:Main] pay 3 energy, place this card into your Drop: If you have a [Field] with <Full Moon> in its card name in your battle Area, play up to 1 <Great Ape Vegeta> with a cost of 6 from your hand.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 3
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "keyword": "field",
+          "names": [
+           "Full Moon"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Great Ape Vegeta"
+         ],
+         "costEQ": 6
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3fb72a8f"
+   }
   },
   "FB04-079": {
    "id": "FB04-079",
@@ -30635,7 +31551,29 @@
    ],
    "text": "[On Play] If your Leader has ≪Majin≫ in its special traits, choose up to 1 of your opponent's Rest Mode energy, and that card can't switch to Active Mode during your opponent's next turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If your Leader has ≪Majin≫ in its special traits, choose up to 1 of your opponent's Rest Mode energy, and that card can't switch to Active Mode during your opponent's next turn."
+      ],
+      "timing": "onPlay",
+      "effects": []
+     }
+    ],
+    "needs": [
+     "lock opponent's energy"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "cbebcfec"
+   }
   },
   "FB10-089": {
    "id": "FB10-089",
@@ -30747,7 +31685,50 @@
    ],
    "text": "[Activate:Main] Place this card into your Drop: If your Leader is an ≪Android≫-only card, play up to 1 <Android 17> or <Android 18> with a cost of 2 or less from your Drop in Rest Mode.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Android 17",
+          "Android 18"
+         ],
+         "costLE": 2
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f8c0a865"
+   }
   },
   "FB09-014": {
    "id": "FB09-014",
@@ -30894,7 +31875,47 @@
    ],
    "text": "[On Play] If your Leader is an ≪Android≫-only card, choose up to 1 Battle Card in your opponent's Battle Area and it gets -15000 power for the turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -15000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3eaf2ad5"
+   }
   },
   "FB01-007": {
    "id": "FB01-007",
@@ -30938,7 +31959,59 @@
    ],
    "text": "[Activate:Main] If your Leader is <Piccolo>, add the top card of your deck to your energy in Rest Mode. Then, play up to 1 <Son Goku> and up to 1 <Piccolo> -- both with a cost of 6 -- from your hand.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Piccolo"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "energyFromDeck",
+        "n": 1,
+        "rested": true
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Son Goku"
+         ],
+         "costEQ": 6
+        },
+        "n": 1
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Piccolo"
+         ],
+         "costEQ": 6
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "b7f5a114"
+   }
   },
   "FB05-112": {
    "id": "FB05-112",
@@ -31641,7 +32714,74 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand. Then, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode.\n[When Attacking] If your Leader has ≪Majin≫ in its special traits, choose up to 1 Rest Mode Battle Card with a cost of 2 or less in your opponent's Battle Area and KO it.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 2
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "4363b22d"
+   }
   },
   "FB10-014": {
    "id": "FB10-014",
@@ -33161,7 +34301,58 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[Activate:Battle][Your Turn][Once Per Turn] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you use a card from your Drop in a combo during this turn, draw 1 card.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboFromDropThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "8a602e4c"
+   }
   },
   "FB06-014": {
    "id": "FB06-014",
@@ -34141,7 +35332,71 @@
    ],
    "text": "[On Play] If your Leader is <Vegeta>, play up to 1 ≪Saiyan≫-only non-<Raditz> Battle Card with a cost of 3 from your hand. Then, you can't play <Raditz> for the turn.\n[When Attacking] Add up to 1 card from your life to your hand.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Saiyan"
+         ],
+         "costEQ": 3,
+         "notNames": [
+          "Raditz"
+         ]
+        },
+        "n": 1
+       },
+       {
+        "t": "cantPlay",
+        "filter": {
+         "names": [
+          "Raditz"
+         ]
+        },
+        "dur": "turn"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "cb53a409"
+   }
   },
   "FB02-010": {
    "id": "FB02-010",
@@ -34356,7 +35611,50 @@
    ],
    "text": "[On Play] Switch 1 other card in your Battle Area to Rest Mode: If your Leader is <Vegeta>, add up to 1 card from your life to your hand. Then, add the top card of your deck to your energy in Rest Mode.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restOwn",
+        "n": 1,
+        "filter": {
+         "other": true
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       },
+       {
+        "t": "energyFromDeck",
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "de059a0e"
+   }
   },
   "FB07-103": {
    "id": "FB07-103",
@@ -35762,7 +37060,34 @@
    ],
    "text": "[Auto][Your Turn] When this card is used in a combo from your Drop, draw 1 card. Then, discard 1 card from your hand.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "comboFromDrop",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "79b7b9dc"
+   }
   },
   "FB01-110": {
    "id": "FB01-110",
@@ -36155,13 +37480,26 @@
      {
       "once": false,
       "cost": [],
-      "cond": [],
-      "text": "",
-      "unparsed": [
-       "If your Leader has ≪Adventure≫ in its special traits and you use a card from your Drop in a combo during this turn, reduce the cost of this card in your hand by 2."
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "comboFromDropThisTurn"
+       }
       ],
+      "text": "",
+      "unparsed": [],
       "timing": "permanent",
-      "effects": []
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
      },
      {
       "once": false,
@@ -36177,9 +37515,6 @@
        }
       ]
      }
-    ],
-    "needs": [
-     "combo history this turn"
     ],
     "keywords": [],
     "source": "claude",
@@ -44004,7 +45339,40 @@
    ],
    "text": "[When Attacking] If your Leader has ≪Adventure≫ in its special traits, use up to 1 Battle Card from your Drop in a combo.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "comboFrom",
+        "from": "drop",
+        "filter": {
+         "type": "BATTLE"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "07369ed2"
+   }
   },
   "FB05-083": {
    "id": "FB05-083",
@@ -46968,7 +48336,83 @@
    ],
    "text": "[Permanent] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you have a card in your Combo Area, this card gains [Critical] and +5000 power.\n[On Play] Add up to 1 card from your life to your hand.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboAreaHasCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "critical",
+        "dur": "static"
+       },
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c80d23a2"
+   }
   },
   "FS07-10": {
    "id": "FS07-10",
@@ -50509,7 +51953,51 @@
    ],
    "text": "[Activate:Main] pay 1 energy, switch this card to Rest Mode: If your Leader has ≪Adventure≫ in its special traits, play up to 1 <Master Roshi> with a cost of 3 from your hand.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restEnergy",
+        "n": 1
+       },
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Master Roshi"
+         ],
+         "costEQ": 3
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "bfc451d3"
+   }
   },
   "FB02-011": {
    "id": "FB02-011",
@@ -52506,7 +53994,54 @@
    ],
    "text": "[On Play] Add up to 1 card from your life to your hand.\n[When Attacking] If tehre are 2 or more Rest Mode cards in your opponent's Battle Area, draw 1 card.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 2,
+        "side": "opp",
+        "filter": {
+         "rested": true
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a7a2de8c"
+   }
   },
   "FB02-033": {
    "id": "FB02-033",
@@ -52948,7 +54483,66 @@
    ],
    "text": "[On Play] Add up to 1 card with a cost of 4 or less ≪Android≫ in its special traits from your Drop to your hand.\n[When KO'd] If your Leader is an ≪Android≫-only card, play up to 1 <Android 18> with a cost of 2 or less from your Drop.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "costLE": 4,
+          "traits": [
+           "Android"
+          ]
+         }
+        ],
+        "each": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Android 18"
+         ],
+         "costLE": 2
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "dc2121e1"
+   }
   },
   "FB04-036": {
    "id": "FB04-036",
@@ -54842,7 +56436,61 @@
    ],
    "text": "[End of Your Turn] Place 1 <Android 17> and this card from your Battle Area into their owner's Drop: If your Leader is an ≪Android≫-only card, draw 1 card. Then, play up to 1 <Cell> with 25000 power from your hand.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "dropOwn",
+        "n": 1,
+        "filter": {
+         "names": [
+          "Android 17"
+         ]
+        }
+       },
+       {
+        "t": "selfToDrop"
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "names": [
+          "Cell"
+         ],
+         "powerEQ": 25000
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "67cd3e83"
+   }
   },
   "FB02-028": {
    "id": "FB02-028",
@@ -56086,6 +57734,111 @@
     "name": "Bulma",
     "power": 20000,
     "text": "[Permanent] This card can't attack.\n[Activate:Battle][Your Turn] Switch this card to Rest Mode: If you only have cards with ≪Adventure≫ in their special traits in your Battle Area, switch your Battle Card that's in a battle to Active Mode. Then, use up to 1 Battle Card from your Drop in a combo."
+   },
+   "script": {
+    "keywords": [
+     "cantAttack"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 5
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backKeywords": [
+     "cantAttack"
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleTotalCost",
+        "n": 0,
+        "only": {
+         "traits": [
+          "Adventure"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        }
+       },
+       {
+        "t": "comboFrom",
+        "from": "drop",
+        "filter": {
+         "type": "BATTLE"
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c79b7399"
    }
   },
   "FB10-122": {
@@ -57966,7 +59719,52 @@
    ],
    "text": "[Activate:Main] KO this card: Choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode. Then, during this turn, the next time you use an Extra with a cost of 3 or less and ≪Wicked Soul≫ in its special traits from your hand, you don't have to pay the\ncost.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koSelf"
+       }
+      ],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        }
+       },
+       {
+        "t": "nextDiscount",
+        "filter": {
+         "type": "EXTRA",
+         "costLE": 3,
+         "traits": [
+          "Wicked Soul"
+         ]
+        },
+        "amount": "free"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "486e6571"
+   }
   },
   "ST01-053": {
    "id": "ST01-053",
@@ -58472,7 +60270,54 @@
    ],
    "text": "[Activate:Main] Place 1 of your energy into your Drop: If your Leader is <Vegeta>, choose up to 1 Rest Mode Battle Card with ≪Saiyan≫ in its special traits in your opponent's Battle Area and KO it.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "energyToDrop",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "traits": [
+           "Saiyan"
+          ]
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "47105b0e"
+   }
   },
   "FB10-030": {
    "id": "FB10-030",
@@ -60462,6 +62307,105 @@
     "name": "Majin Buu: Kid",
     "power": 20000,
     "text": "[When Attacking] Draw 1 card.\n[Activate:Main][Once Per Turn] If you have a Battle Card with a cost of 4 or more and ≪Majin≫ in its special traits in your Battle Area, choose up to 1 Rest Mode Card in your opponent's Battle Area, and it can't switch to Active Mode during your opponent's next turn."
+   },
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "awaken",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "flipLeader"
+       }
+      ]
+     }
+    ],
+    "backAbilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "costGE": 4,
+         "traits": [
+          "Majin"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "rested": true
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "e3f5b25a"
    }
   },
   "FS10-14": {
@@ -60939,7 +62883,52 @@
    ],
    "text": "[Critical]\n[When KO'd] Discard 1 card from your hand: If your Leader has ≪Majin≫ in its special traits, play up to 1 <Majin Buu : Kid> with a cost of 4 or less from your Drop in Rest Mode.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "keywords": [
+     "critical"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "drop",
+        "filter": {
+         "names": [
+          "Majin Buu: Kid",
+          "Majin Buu : Kid"
+         ],
+         "costLE": 4
+        },
+        "n": 1,
+        "rested": true
+       }
+      ]
+     }
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "010ecc67"
+   }
   },
   "FB05-056": {
    "id": "FB05-056",
@@ -63329,7 +65318,62 @@
    ],
    "text": "[Activate:Battle][Your Turn] If your Leader is an ≪Android≫-only card and you have a <Cell> with an original power of 30000 or more in your Battle Area, your card that's in a battle gets +15000 power for the battle.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Cell"
+         ],
+         "powerGE": 30000,
+         "originalPower": true
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "battler"
+        },
+        "amount": 15000,
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "32d7b167"
+   }
   },
   "FB04-001": {
    "id": "FB04-001",
@@ -63914,7 +65958,53 @@
    ],
    "text": "[Permanent] If your Leader is an ≪Android≫-only card and you have a <Cell> with an original power of 30000 power or more in your Battle Area, you can use this card from your hand without paying its cost.\n[On Play] Choose up to 1 Battle Card in your opponent's Battle Area and it gets -5000 power for the turn.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [
+       "If your Leader is an ≪Android≫-only card and you have a <Cell> with an original power of 30000 power or more in your Battle Area, you can use this card from your hand without paying its cost."
+      ],
+      "timing": "permanent",
+      "effects": []
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -5000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "alternative play costs"
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "f47a7563"
+   }
   },
   "FB09-079": {
    "id": "FB09-079",
@@ -64629,7 +66719,68 @@
    ],
    "text": "[Permanent] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you have a card in your Combo Area, this card gets +5000 power.\n[On Play] Add up to 1 card from your life to your hand.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboAreaHasCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 5000,
+        "dur": "static"
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3db3b6d1"
+   }
   },
   "FB03-097": {
    "id": "FB03-097",
@@ -66082,7 +68233,58 @@
    ],
    "text": "[Activate:Main] Discard 1 card from your hand: If you have <Majin Buu : Kid> in your Battle Area, choose up to 2 Rest Mode Battle Cards with costs of 4 or less in your opponent's Battle Area and KO them.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          "Majin Buu: Kid",
+          "Majin Buu : Kid"
+         ]
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 2,
+         "upTo": true,
+         "filter": {
+          "rested": true,
+          "costLE": 4
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "d943ad5f"
+   }
   },
   "FS09-07": {
    "id": "FS09-07",
@@ -67513,7 +69715,63 @@
    ],
    "text": "[On Play] Draw 2 cards. Then, discard 1 card from your hand.\n[Activate:Battle][Your Turn][Once Per Turn] If you use a card from your Drop in a combo during this turn, this card gains [Double Strike] for the battle.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       },
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "comboFromDropThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "kw": "doubleStrike",
+        "dur": "battle"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "14157cfe"
+   }
   },
   "SB01-043": {
    "id": "SB01-043",
@@ -67624,7 +69882,52 @@
    ],
    "text": "[Activate:Main] Add 1 card from your life to your hand: If your Leader is an ≪Android≫-only card, choose up to 1 Battle Card in your opponent's Battle Area and it gets -20000 power for the turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "lifeToHand",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "amount": -20000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c2e88456"
+   }
   },
   "FB06-074": {
    "id": "FB06-074",
@@ -67880,7 +70183,52 @@
    ],
    "text": "[Permanent] If your Leader has <Babidi> in its card name or if you have a card with <Babidi> in its card name in your Battle ARea, reduce the cost of this card in your hand by 2.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "leaderIs",
+          "names": [
+           "Babidi"
+          ]
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "names": [
+            "Babidi"
+           ]
+          }
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7f5e66e6"
+   }
   },
   "FB03-086": {
    "id": "FB03-086",
@@ -69742,7 +72090,51 @@
    ],
    "text": "[On Play] If your Leader has ≪Majin≫ in its special traits, look at 3 cards from the top of your deck, reveal up to 1 <Babidi> or up to 1 card with ≪Majin≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "names": [
+           "Babidi"
+          ]
+         },
+         {
+          "traits": [
+           "Majin"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "479da53c"
+   }
   },
   "FB05-016": {
    "id": "FB05-016",
@@ -71259,7 +73651,62 @@
    ],
    "text": "[Activate:Main] KO 1 Battle Card with ≪Android≫ in its special traits in your Battle Area: If your Leader is an ≪Android≫-only card, draw 1 card. Then, choose up to 1 Battle Card with 30000 power or less in your opponent's Battle Area and KO it.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "koOwn",
+        "n": 1,
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Android"
+         ]
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Android"
+        ],
+        "only": true
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "ko",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "powerLE": 30000
+         }
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "3205d22d"
+   }
   },
   "SB01-055": {
    "id": "SB01-055",
@@ -71281,7 +73728,54 @@
    ],
    "text": "[Permanent][Your Turn] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you have a card in your Combo Area, this card gets +10000 power.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboAreaHasCard"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "static"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7bc3c512"
+   }
   },
   "FB04-086": {
    "id": "FB04-086",
@@ -75052,7 +77546,87 @@
    ],
    "text": "[Permanent][Your Turn] If your Leader has ≪World Tournament≫ in its special traits and you have an Extra with a cost of 2 or more in your Battle Area or Drop, reduce the cost of this card in your hand by 2.\n[When KO'd] Add up to 1 card with a cost of 3 or less from your Drop to your hand.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       },
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "battle",
+           "filter": {
+            "type": "EXTRA",
+            "costGE": 2
+           }
+          },
+          "op": "ge",
+          "n": 1
+         },
+         {
+          "t": "count",
+          "what": {
+           "side": "self",
+           "zone": "drop",
+           "filter": {
+            "type": "EXTRA",
+            "costGE": 2
+           }
+          },
+          "op": "ge",
+          "n": 1
+         }
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "costReduce",
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "dropToHand",
+        "options": [
+         {
+          "costLE": 3
+         }
+        ],
+        "each": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9a2d0d07"
+   }
   },
   "FB06-099": {
    "id": "FB06-099",
@@ -76800,7 +79374,50 @@
    ],
    "text": "[When Attacking][Once Per Turn] Discard 1 card from your hand: If your Leader has ≪Majin≫ in its special traits, switch this card to Active Mode.",
    "set": "SB01",
-   "rarity": "UC"
+   "rarity": "UC",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        }
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "9d7aa3e7"
+   }
   },
   "FB05-111": {
    "id": "FB05-111",
@@ -78468,7 +81085,50 @@
    ],
    "text": "[Activate:Main] If your Leader has ≪World Tournament≫ in its special traits, draw 1 card. Then, choose up to 1 Battle Card in your opponent's Battle Area and it can't attack during your opponent's next turn.",
    "set": "SB01",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {}
+        },
+        "kw": "cantAttack",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "7ea3d79b"
+   }
   },
   "FB05-075": {
    "id": "FB05-075",
@@ -79307,7 +81967,44 @@
    ],
    "text": "[On Play] Discard 1 Extra from your hand: If your Leader has ≪World Tournament≫ in its special traits, draw 2 cards.",
    "set": "SB01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "type": "EXTRA"
+        }
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "World Tournament"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "c87fe87a"
+   }
   },
   "FB03-107": {
    "id": "FB03-107",
@@ -79957,7 +82654,53 @@
    ],
    "text": "[Activate:Battle][Your Turn][Once Per Turn] If your Leader has ≪Adventure≫ in its special traits, this card is in a battle, and you use a card from your Drop in a combo during this turn, play up to 1 non-<Yamcha> Battle Card with ≪Adventure≫ in its special traits from your hand.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "abilities": [
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Adventure"
+        ]
+       },
+       {
+        "t": "thisInBattle"
+       },
+       {
+        "t": "comboFromDropThisTurn"
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateBattle",
+      "turn": "your",
+      "effects": [
+       {
+        "t": "playFrom",
+        "from": "hand",
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Adventure"
+         ],
+         "notNames": [
+          "Yamcha"
+         ]
+        },
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "290fa0e8"
+   }
   },
   "FP-089": {
    "id": "FP-089",
@@ -84925,7 +87668,98 @@
    ],
    "text": "[Permanent] This card can't be KO'd by your opponent's skills.\n[On Play] If your Leader has ≪Majin≫ in its special traits, draw 1 card. Then, choose all cards with costs of 5 or less in your opponent's energy and Battle Area and switch them to Rest Mode.\n[When KO'd] If your Leader has ≪Majin≫ in its special traits, draw 1 card. Then, choose all cards with costs of 5 or less in your opponent's energy and Battle Area and switch them to Rest Mode.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "koImmuneSkills"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "(also rests cards with a cost of 5 or less in your opponent's energy)"
+      ],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "costLE": 5
+         },
+         "all": true
+        }
+       }
+      ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [
+       "(also rests cards with a cost of 5 or less in your opponent's energy)"
+      ],
+      "timing": "whenKOd",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle",
+          "field"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {
+          "costLE": 5
+         },
+         "all": true
+        }
+       }
+      ]
+     }
+    ],
+    "needs": [
+     "rest opponent's energy"
+    ],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "46b576b7"
+   }
   },
   "FB08-054": {
    "id": "FB08-054",

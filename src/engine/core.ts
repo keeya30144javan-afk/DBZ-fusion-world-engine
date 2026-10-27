@@ -81,6 +81,10 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn this player used a card from their Drop in a combo. */
+  comboDropTurn?: number;
+  /** Last turn one of this player's Battle Cards left a Battle Area through any skill. */
+  removedBySkillTurn?: number;
   /** Last turn one of this player's energy markers was removed. */
   markerUsedTurn?: number;
   /** Last turn this player used an Extra with an original cost of 1 or more. */
@@ -401,6 +405,8 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'markerPaid': return !!s.inst[src].markerPaid;
     case 'oppHasMarker': return (opp.markers > 0) === c.yes;
     case 'markerUsedThisTurn': return me.markerUsedTurn === s.turn;
+    case 'comboFromDropThisTurn': return me.comboDropTurn === s.turn;
+    case 'removedBySkillThisTurn': return me.removedBySkillTurn === s.turn;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;
@@ -669,6 +675,7 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
   if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
   if (from === 'battle' && s.skillBy !== undefined && cardOf(s, uid).type === 'BATTLE') {
     if (s.skillBy === inst.owner) s.p[inst.owner].removedOwnTurn = s.turn;
+    s.p[inst.owner].removedBySkillTurn = s.turn;
     (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy });
   }
   if (inst.under?.length && from === 'battle') {

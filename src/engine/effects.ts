@@ -725,7 +725,9 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       if (!s.battle) return;
       if (e.from === 'drop') {
         const cands = me.drop.filter((u) => cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src));
-        for (const u of pickFrom(s, owner, src, cands, e.n, ctl)) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; emit(s, { t: 'combo', p: owner, id: s.inst[u].id, uid: u, fromHand: false }); }
+        const used = pickFrom(s, owner, src, cands, e.n, ctl);
+        for (const u of used) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; me.comboDropTurn = s.turn; emit(s, { t: 'combo', p: owner, id: s.inst[u].id, uid: u, fromHand: false }); }
+        for (const u of used) { if (s.stage === 'over') break; fireTriggers(s, u, 'comboFromDrop', ctl); }
       } else {
         const u = me.deck[me.deck.length - 1];
         if (u !== undefined && cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src)) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; }

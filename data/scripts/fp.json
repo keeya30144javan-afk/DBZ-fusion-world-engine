@@ -865,16 +865,26 @@
     ]
    },
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "If your Leader has ≪Adventure≫ in its special traits, when you use this card in a combo from its owner's Drop, this card gets +10000 combo power."
+    "timing": "comboFromDrop",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     }
     ],
-    "turn": "your"
+    "effects": [
+     {
+      "t": "comboPower",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000
+     }
+    ]
    }
-  ],
-  "needs": [
-   "trigger on combo from the Drop"
   ]
  },
  "FP-050": {

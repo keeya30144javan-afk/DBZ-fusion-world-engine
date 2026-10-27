@@ -3139,9 +3139,22 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your Leader has ≪Adventure≫ in its special traits and you use a card from your Drop in a combo during this turn, reduce the cost of this card in your hand by 2."
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     },
+     {
+      "t": "comboFromDropThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
     ]
    },
    {
@@ -3153,9 +3166,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "combo history this turn"
   ]
  },
  "FB07-120": {
