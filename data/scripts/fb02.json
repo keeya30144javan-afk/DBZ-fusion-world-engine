@@ -1,0 +1,1832 @@
+{
+ "FB02-015": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "zones": [
+        "leader"
+       ],
+       "filter": {
+        "traits": [
+         "Universe 7"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "koImmuneSkills",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-021": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 7,
+      "options": [
+       {
+        "names": [
+         "Anilaza"
+        ],
+        "powerLE": 30000
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-025": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "traits": [
+         "Trio De Dangers"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-033": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "koImmune",
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "type": "BATTLE"
+        }
+       }
+      ]
+     }
+    ],
+    "unparsed": [
+     "(only KO in battle is prevented; skills can still KO it)"
+    ]
+   }
+  ]
+ },
+ "FB02-035": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 25000,
+      "dur": "battle"
+     },
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 4
+       }
+      ],
+      "each": 1,
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "powerGE": 30000
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-036": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-039": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "names": [
+         "Zamasu"
+        ],
+        "costEQ": 1
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-041": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Gotenks"
+       ],
+       "costEQ": 4
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-042": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "Goku Black"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "koImmune",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         "Goku Black"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-043": {
+  "keywords": [
+   "removeImmune"
+  ],
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-044": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "self",
+      "to": "play",
+      "rested": true
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Zamasu: Fused"
+       ]
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-046": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "auto",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "When your opponent plays a Battle Card, if your life is at 1, choose all of your opponent's Battle Cards and return them to their owner's hand."
+    ]
+   }
+  ],
+  "needs": [
+   "trigger on the opponent's play"
+  ]
+ },
+ "FB02-048": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at 3 cards from the top of your deck and place them at the top or bottom in any order"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-049": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "all": true,
+       "side": "any",
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "other": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-051": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 3,
+      "filter": {
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 25000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-055": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE",
+       "other": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-058": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Bulma"
+       ],
+       "costEQ": 1
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "turn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-059": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "look at the bottom card of your deck and play up to 1 blue Battle Card with a cost of 2 or less. Place the rest at the bottom of your deck."
+    ]
+   }
+  ],
+  "needs": [
+   "look at the bottom of the deck"
+  ]
+ },
+ "FB02-061": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "all": true,
+       "side": "opp",
+       "filter": {
+        "type": "BATTLE"
+       }
+      },
+      "amount": -1,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-062": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-064": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "Zamasu: Fused"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 30000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-065": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "traits": [
+         "Supreme Kai"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "traits": [
+         "Supreme Kai"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-066": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [],
+    "unparsed": [
+     "Place 1 <Goku Black> and 1 <Zamasu> card from your hand or your Battle Area at the bottom of your deck: Draw 2 cards. Then, play up to 1 <Zamasu: Fused> with a cost of 4 from your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "cost from hand or Battle Area"
+  ]
+ },
+ "FB02-067": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "all": true,
+       "side": "any",
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "traits": [
+         "Earthling"
+        ]
+       }
+      }
+     },
+     {
+      "t": "draw",
+      "n": 2,
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "prev"
+        },
+        "op": "ge",
+        "n": 3
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-069": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at 3 cards from the top of your deck and place them at the top or bottom in any order"
+     },
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-070": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 5
+     },
+     {
+      "t": "energyLE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "costGE": 3
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-072": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "Reduce the cost of Extras with ≪Korin Tower≫ in their special traits in your hand by (1)."
+    ]
+   }
+  ],
+  "needs": [
+   "cost changes for cards in hand"
+  ]
+ },
+ "FB02-077": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 2
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Android 17"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "traits": [
+        "Android"
+       ]
+      },
+      "n": 3,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-080": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "koSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Android 17"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-081": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "noop",
+      "note": "reveal 3 cards from your opponent's hand"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-082": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "Place 1 card with ≪Earthling≫ in its special traits from your energy into your Drop: This card gets +15000 power for the turn."
+    ]
+   }
+  ],
+  "needs": [
+   "filtered energy cost"
+  ]
+ },
+ "FB02-084": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2
+      }
+     },
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-085": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If you have a <Cell> Battle Card with a cost of 8 or more in your Battle Area, you can use and play this card from your hand without paying its cost."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "EXTRA"
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "alternative play costs"
+  ]
+ },
+ "FB02-086": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Gohan: Childhood"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "rested": true
+     },
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-087": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-088": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "doubleStrike",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-089": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "costEQ": 3
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "playFrom",
+         "from": "hand",
+         "filter": {
+          "type": "BATTLE",
+          "costLE": 3
+         },
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "ko",
+         "target": {
+          "filter": {
+           "costLE": 3
+          }
+         }
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-091": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAllyRemovedByOpp",
+    "once": true,
+    "trigger": {
+     "type": "BATTLE",
+     "costGE": 5
+    },
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-092": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-094": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Kami"
+        ]
+       }
+      },
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-096": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "side": "self",
+       "upTo": false,
+       "filter": {
+        "type": "BATTLE"
+       }
+      },
+      "rested": true
+     },
+     {
+      "t": "toEnergy",
+      "target": {
+       "upTo": false
+      },
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-099": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 6
+     },
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "your opponent can only attack <Yamcha> Battle Cards."
+    ]
+   }
+  ],
+  "needs": [
+   "attack restrictions on the opponent"
+  ]
+ },
+ "FB02-100": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "costEQ": 3
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "costEQ": 8
+      },
+      "n": 1
+     }
+    ],
+    "unparsed": [
+     "(the <Cell> may instead come from your energy)"
+    ]
+   }
+  ]
+ },
+ "FB02-101": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "traits": [
+         "Earthling"
+        ]
+       }
+      },
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-102": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "draw",
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "energyFromDeck",
+         "n": 1,
+         "rested": true
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-103": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-104": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 25000,
+      "dur": "battle"
+     },
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "draw",
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "energyFromDeck",
+         "n": 1,
+         "rested": true
+        }
+       ]
+      ],
+      "cond": [
+       {
+        "t": "energyGE",
+        "n": 6
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-105": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-109": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 20000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-111": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 3
+     },
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Cooler"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-118": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 3,
+      "side": "opp",
+      "filter": {
+       "type": "BATTLE",
+       "rested": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-127": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "Whis"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-128": {
+  "abilities": [
+   {
+    "timing": "auto",
+    "turn": "your",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "When this card is switched to Active Mode by a skill, choose up to 1 of your opponent's Rest Mode Battle Cards with a cost of 4 or less and it can't switch to Active Mode during your opponent's next turn."
+    ]
+   }
+  ],
+  "needs": [
+   "trigger on switching to Active Mode"
+  ]
+ },
+ "FB02-130": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "rest",
+         "target": {
+          "filter": {
+           "costLE": 4
+          }
+         }
+        }
+       ],
+       [
+        {
+         "t": "draw",
+         "n": 1,
+         "cond": [
+          {
+           "t": "battleCount",
+           "op": "ge",
+           "n": 1,
+           "side": "self",
+           "filter": {
+            "type": "BATTLE",
+            "rested": true,
+            "costGE": 3
+           }
+          }
+         ]
+        }
+       ]
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-132": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "Son Goku"
+       ],
+       "rested": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-133": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "rested": true
+       }
+      },
+      "kw": "koImmuneSkills",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 1
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB02-140": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "Your opponent's Battle Cards with a cost of 5 or more are played in Rest Mode."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "permanent rule on the opponent's plays"
+  ]
+ }
+}
