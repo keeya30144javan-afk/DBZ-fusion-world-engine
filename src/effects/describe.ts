@@ -72,7 +72,7 @@ const DUR: Record<string, string> = { battle: ' for the battle', turn: ' for the
 
 const KW: Record<string, string> = {
   cantAttack: "can't attack", cantAttackLeader: "can't attack your opponent's Leader", cantBlock: "can't activate [Blocker]",
-  koImmuneSkills: "can't be KO'd by your opponent's skills", koImmune: "can't be KO'd", koImmuneOnce: "can't be KO'd once per turn",
+  koImmuneSkills: "can't be KO'd by your opponent's skills", koImmune: "can't be KO'd", koImmuneOnce: "can't be KO'd once per turn", koImmuneBattle: "can't be KO'd in battle",
   removeImmune: "can't be removed from the Battle Area by your opponent's skills", cantBeRested: "can't be switched to Rest Mode by your opponent",
   attackActive: "can attack Active Mode Battle Cards",
 };

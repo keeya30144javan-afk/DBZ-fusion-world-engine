@@ -452,7 +452,7 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       if (s.stage !== 'over') fireTriggers(s, b.attacker, 'whenDealsDamage', ctl);
     } else {
       log(s, `hit: ${atk} vs ${def}`);
-      if (koCard(s, b.target, ctl, { src: b.attacker }) && s.stage !== 'over' && s.p[b.atkSide].battle.includes(b.attacker)) fireTriggers(s, b.attacker, 'whenKOsInBattle', ctl);
+      if (koCard(s, b.target, ctl, { src: b.attacker, battle: true }) && s.stage !== 'over' && s.p[b.atkSide].battle.includes(b.attacker)) fireTriggers(s, b.attacker, 'whenKOsInBattle', ctl);
     }
   } else log(s, `blocked out: ${atk} vs ${def}`);
   // "When this card wins a battle": the attacker on a hit, the defender otherwise.

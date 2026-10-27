@@ -107,12 +107,13 @@ export function checkZeroPower(s: GameState, ctl: Choosers) {
 }
 
 /** Who is trying to remove a card, for immunity checks. */
-export interface ByWhom { skillOf?: Side; src?: number }
+export interface ByWhom { skillOf?: Side; src?: number; battle?: boolean }
 
 export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}): boolean {
   const owner = s.inst[uid].owner;
   if (!s.p[owner].battle.includes(uid)) return false;
   if (hasKeyword(s, uid, 'indestructible') || hasKeyword(s, uid, 'koImmune')) return false;
+  if (by.battle && hasKeyword(s, uid, 'koImmuneBattle')) return false;
   const oppSkill = by.skillOf !== undefined && by.skillOf !== owner;
   if (oppSkill && (hasKeyword(s, uid, 'koImmuneSkills') || hasKeyword(s, uid, 'removeImmune'))) return false;
   if (hasKeyword(s, uid, 'koImmuneOnce') && s.inst[uid].koShieldTurn !== s.turn) {

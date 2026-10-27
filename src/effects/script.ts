@@ -24,7 +24,7 @@ export const TIMINGS: Timing[] = [
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
-  'cantAttack', 'cantAttackLeader', 'cantBlock', 'koImmuneSkills', 'koImmune', 'koImmuneOnce', 'removeImmune', 'cantBeRested', 'attackActive',
+  'cantAttack', 'cantAttackLeader', 'cantBlock', 'koImmuneSkills', 'koImmune', 'koImmuneOnce', 'koImmuneBattle', 'removeImmune', 'cantBeRested', 'attackActive',
 ];
 const DURATIONS = ['battle', 'turn', 'oppNextTurn', 'static', 'game'];
 const COLORS = ['Red', 'Blue', 'Green', 'Yellow', 'Black'];

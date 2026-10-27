@@ -9,7 +9,7 @@ Translate ONLY what the text says. Never invent effects. If a sentence cannot be
 SCRIPT = { "keywords": Keyword[], "abilities": Ability[], "backKeywords"?: Keyword[], "backAbilities"?: Ability[] (a Leader's awakened side), "evolve"?: Evolve, "unparsed"?: string[], "needs"?: string[] }
 
 Keyword: "blocker" | "critical" | "doubleStrike" | "tripleStrike" | "superCombo" | "barrier" | "field" (an Extra with [Field]) | "dragonBall"
- | "cantAttack" | "cantAttackLeader" | "cantBlock" | "koImmuneSkills" (can't be KO'd by opponent's skills) | "koImmune" | "koImmuneOnce" (can't be KO'd once per turn)
+ | "cantAttack" | "cantAttackLeader" | "cantBlock" | "koImmuneSkills" (can't be KO'd by opponent's skills) | "koImmune" | "koImmuneOnce" (can't be KO'd once per turn) | "koImmuneBattle" (can't be KO'd in battle)
  | "removeImmune" (can't be removed from the Battle Area by opponent's skills) | "cantBeRested" | "attackActive" (can attack Active Mode Battle Cards)
 Unconditional keywords go in "keywords". Conditional ones ("If X, this card gains [Blocker]") are a permanent ability with a grant effect on {"ref":"this"}.
 AURAS (grant, power and costMod): a [Permanent] that affects OTHER cards ("Your Battle Cards with a cost of 3 can't be removed...", "All your <X> get +5000 power") is a permanent ability whose grant/power target has "all": true, e.g. {"t":"grant","target":{"all":true,"side":"self","filter":{"costEQ":3}},"kw":"removeImmune","dur":"static"}.

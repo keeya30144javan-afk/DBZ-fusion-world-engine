@@ -324,6 +324,8 @@ export type Keyword =
   | 'koImmuneSkills'
   /** Can't be KO'd (by battle or skill). */
   | 'koImmune'
+  /** Can't be KO'd in battle. */
+  | 'koImmuneBattle'
   /** Can't be KO'd once per turn. */
   | 'koImmuneOnce'
   /** Can't be removed from the Battle Area by the opponent's skills. */

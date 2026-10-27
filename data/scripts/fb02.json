@@ -123,7 +123,7 @@
       "target": {
        "ref": "prev"
       },
-      "kw": "koImmune",
+      "kw": "koImmuneBattle",
       "dur": "turn",
       "cond": [
        {
@@ -134,9 +134,6 @@
        }
       ]
      }
-    ],
-    "unparsed": [
-     "(only KO in battle is prevented; skills can still KO it)"
     ]
    }
   ]
