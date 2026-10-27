@@ -20,7 +20,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS02-03": {
   "abilities": [
@@ -53,7 +57,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-01": {
   "abilities": [
@@ -121,7 +129,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the bottom of a deck; the reading doesn't"
+  }
  },
  "FS05-03": {
   "abilities": [
@@ -146,7 +158,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the bottom of a deck; the reading doesn't"
+  }
  },
  "FS05-06": {
   "abilities": [
@@ -171,7 +187,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-08": {
   "abilities": [
@@ -186,7 +206,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-09": {
   "abilities": [
@@ -211,7 +235,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-10": {
   "abilities": [
@@ -233,7 +261,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-11": {
   "keywords": [
@@ -263,7 +295,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-13": {
   "abilities": [
@@ -297,7 +333,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-15": {
   "abilities": [
@@ -327,7 +367,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS05-16": {
   "keywords": [
@@ -348,7 +392,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS06-02": {
   "abilities": [
@@ -377,7 +425,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS06-03": {
   "abilities": [
@@ -415,7 +467,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS06-11": {
   "abilities": [
@@ -444,7 +500,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS06-12": {
   "abilities": [
@@ -468,7 +528,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-02": {
   "abilities": [
@@ -489,7 +553,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-05": {
   "abilities": [
@@ -520,7 +588,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-06": {
   "abilities": [
@@ -539,7 +611,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-08": {
   "abilities": [
@@ -562,7 +638,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-09": {
   "abilities": [
@@ -580,7 +660,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-10": {
   "keywords": [
@@ -598,7 +682,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-11": {
   "abilities": [
@@ -625,7 +713,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS07-12": {
   "abilities": [
@@ -653,7 +745,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-01": {
   "abilities": [
@@ -718,7 +814,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-04": {
   "abilities": [
@@ -746,7 +846,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-06": {
   "abilities": [
@@ -784,7 +888,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-12": {
   "abilities": [
@@ -810,7 +918,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-13": {
   "abilities": [
@@ -835,7 +947,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-15": {
   "abilities": [
@@ -885,7 +1001,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS08-16": {
   "abilities": [
@@ -910,7 +1030,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-03": {
   "abilities": [
@@ -942,7 +1066,11 @@
      "(looks at 2 cards; the simulator only checks the top one)"
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (looks at 2 cards; the simulator only checks the top one)"
+  }
  },
  "FS09-05": {
   "abilities": [
@@ -984,7 +1112,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-07": {
   "abilities": [
@@ -1036,7 +1168,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-08": {
   "abilities": [
@@ -1090,7 +1226,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-09": {
   "abilities": [
@@ -1116,7 +1256,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-10": {
   "abilities": [
@@ -1147,7 +1291,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-11": {
   "abilities": [
@@ -1177,7 +1325,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-12": {
   "abilities": [
@@ -1204,7 +1356,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-13": {
   "keywords": [
@@ -1233,7 +1389,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-15": {
   "abilities": [
@@ -1256,7 +1416,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-16": {
   "abilities": [
@@ -1303,7 +1467,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (also while in the deck)"
+  }
  },
  "FS09-17": {
   "abilities": [
@@ -1333,7 +1501,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS09-18": {
   "abilities": [
@@ -1366,7 +1538,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-01": {
   "abilities": [
@@ -1442,7 +1618,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-02": {
   "keywords": [
@@ -1462,7 +1642,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-03": {
   "abilities": [
@@ -1507,7 +1691,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-07": {
   "abilities": [
@@ -1540,7 +1728,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-08": {
   "abilities": [
@@ -1594,7 +1786,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-10": {
   "abilities": [
@@ -1631,7 +1827,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-11": {
   "abilities": [
@@ -1670,7 +1870,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-12": {
   "abilities": [
@@ -1703,7 +1907,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-13": {
   "abilities": [
@@ -1735,7 +1943,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-15": {
   "abilities": [
@@ -1766,7 +1978,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS10-17": {
   "abilities": [
@@ -1802,7 +2018,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-01": {
   "abilities": [
@@ -1888,7 +2108,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-03": {
   "abilities": [
@@ -1934,7 +2158,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-07": {
   "evolve": {
@@ -1981,7 +2209,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-11": {
   "keywords": [
@@ -2013,7 +2245,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-14": {
   "evolve": {
@@ -2053,7 +2289,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-17": {
   "abilities": [
@@ -2093,7 +2333,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS11-18": {
   "abilities": [
@@ -2144,7 +2388,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-01": {
   "abilities": [
@@ -2227,7 +2475,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Removes all the Ki it can, where the card lets you choose 1 or more."
+  }
  },
  "FS12-04": {
   "abilities": [
@@ -2275,7 +2527,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-06": {
   "abilities": [
@@ -2306,7 +2562,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-07": {
   "keywords": [
@@ -2341,7 +2601,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-09": {
   "abilities": [
@@ -2387,7 +2651,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-10": {
   "abilities": [
@@ -2421,7 +2689,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-13": {
   "abilities": [
@@ -2482,7 +2754,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-14": {
   "abilities": [
@@ -2513,7 +2789,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FS12-18": {
   "abilities": [
@@ -2534,6 +2814,209 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FS08-05": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Kibito (Mini): DA"
+       ],
+       "costLE": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FS08-11": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Vegeta (Mini): DA"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FS10-18": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Giblet"
+        ]
+       }
+      ]
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Giblet"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FS13-13": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "battle"
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "totalCost"
+        }
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FS09-14": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 6,
+        "comboEQ": 10000
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  }
 }

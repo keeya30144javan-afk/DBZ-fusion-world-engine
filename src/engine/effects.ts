@@ -407,7 +407,7 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
         for (const u of pick.slice(0, c.n)) { moveTo(s, u, 'drop'); emit(s, { t: 'toDrop', p: owner, id: s.inst[u].id, uid: u }); }
         break;
       }
-      case 'restSelf': s.inst[uid].rested = true; break;
+      case 'restSelf': s.inst[uid].rested = true; fireTriggers(s, uid, 'whenRestedBySelf', ctl); break;
       case 'restEnergy': {
         const off = skillDiscountOf(s, uid);
         if (off) spendSkillDiscount(s, uid);
@@ -483,7 +483,9 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
         const pool = restPool(s, uid, c);
         const order = ctl[owner].choose(s, { kind: 'pick', player: owner, src: uid, options: pool, min: Math.min(c.n, pool.length), max: Math.min(c.n, pool.length), intent: 'lose' });
         let left = c.n;
-        for (const u of [...order, ...pool.filter((x) => !order.includes(x))]) { if (left <= 0) break; s.inst[u].rested = true; left -= restWeight(s, uid, u); }
+        const rested: number[] = [];
+        for (const u of [...order, ...pool.filter((x) => !order.includes(x))]) { if (left <= 0) break; s.inst[u].rested = true; rested.push(u); left -= restWeight(s, uid, u); }
+        for (const u of rested) fireTriggers(s, u, 'whenRestedBySelf', ctl);
         break;
       }
       case 'handToDeckTop': {
@@ -787,7 +789,12 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     }
     case 'rest': {
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
-      for (const u of ts) if (!(s.inst[u].owner !== owner && hasKeyword(s, u, 'cantBeRested'))) s.inst[u].rested = true;
+      for (const u of ts) {
+        if (s.inst[u].owner !== owner && hasKeyword(s, u, 'cantBeRested')) continue;
+        const was = s.inst[u].rested;
+        s.inst[u].rested = true;
+        if (!was && s.inst[u].owner === owner) fireTriggers(s, u, 'whenRestedBySelf', ctl);
+      }
       return;
     }
     case 'activate': {

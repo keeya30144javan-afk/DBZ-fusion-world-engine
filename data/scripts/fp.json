@@ -25,7 +25,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-011": {
   "abilities": [
@@ -48,7 +52,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-017": {
   "abilities": [
@@ -71,7 +79,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-018": {
   "abilities": [
@@ -94,7 +106,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-019": {
   "abilities": [
@@ -114,7 +130,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-020": {
   "keywords": [
@@ -141,7 +161,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-021": {
   "abilities": [
@@ -176,7 +200,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-022": {
   "abilities": [
@@ -203,7 +231,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-025": {
   "abilities": [
@@ -230,7 +262,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-027": {
   "keywords": [
@@ -251,7 +287,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the Drop; the reading doesn't"
+  }
  },
  "FP-029": {
   "abilities": [
@@ -274,7 +314,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-030": {
   "abilities": [
@@ -333,7 +377,11 @@
   ],
   "needs": [
    "event-only Leader with every name and trait"
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: This card has all card names and special traits, and all of your energy is treated as all colors. / This card has all card names and special; needs engine support for: event-only Leader with every name and trait"
+  }
  },
  "FP-031": {
   "abilities": [
@@ -362,7 +410,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-032": {
   "abilities": [
@@ -396,7 +448,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-033": {
   "abilities": [
@@ -419,7 +475,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-035": {
   "abilities": [
@@ -438,7 +498,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-036": {
   "abilities": [
@@ -480,7 +544,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-037": {
   "abilities": [
@@ -512,7 +580,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-038": {
   "abilities": [
@@ -536,7 +608,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-039": {
   "abilities": [
@@ -580,7 +656,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-041": {
   "abilities": [
@@ -623,7 +703,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-042": {
   "abilities": [
@@ -673,7 +757,11 @@
      "(counts only KOs in battle; the simulator also counts KOs by your skills)"
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (counts only KOs in battle; the simulator also counts KOs by your skills)"
+  }
  },
  "FP-043": {
   "abilities": [
@@ -699,7 +787,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-044": {
   "abilities": [
@@ -741,7 +833,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-045": {
   "abilities": [
@@ -778,7 +874,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-046": {
   "abilities": [
@@ -806,7 +906,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-047": {
   "abilities": [
@@ -850,7 +954,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-049": {
   "abilities": [
@@ -885,7 +993,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-050": {
   "evolve": {
@@ -938,7 +1050,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-051": {
   "abilities": [
@@ -965,7 +1081,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-053": {
   "abilities": [
@@ -996,7 +1116,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-054": {
   "abilities": [
@@ -1046,7 +1170,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-055": {
   "abilities": [
@@ -1083,7 +1211,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-056": {
   "abilities": [
@@ -1107,7 +1239,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-057": {
   "evolve": {
@@ -1161,7 +1297,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-058": {
   "abilities": [
@@ -1219,7 +1359,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-059": {
   "abilities": [
@@ -1259,7 +1403,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-060": {
   "abilities": [
@@ -1289,7 +1437,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-061": {
   "abilities": [
@@ -1345,7 +1497,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-062": {
   "abilities": [
@@ -1389,7 +1545,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-063": {
   "abilities": [
@@ -1432,7 +1592,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-064": {
   "aliases": [
@@ -1471,7 +1635,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-065": {
   "abilities": [
@@ -1507,7 +1675,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-066": {
   "abilities": [
@@ -1573,7 +1745,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-067": {
   "abilities": [
@@ -1605,7 +1781,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-069": {
   "abilities": [
@@ -1661,7 +1841,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-072": {
   "abilities": [
@@ -1707,7 +1891,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-073": {
   "abilities": [
@@ -1745,7 +1933,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-074": {
   "abilities": [
@@ -1771,7 +1963,6 @@
       "target": {
        "side": "self",
        "zones": [
-        "leader",
         "battle"
        ],
        "filter": {
@@ -1782,7 +1973,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Fixed on second read: only Battle Cards can be chosen, not your Leader."
+  }
  },
  "FP-075": {
   "abilities": [
@@ -1814,7 +2009,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-076": {
   "abilities": [
@@ -1859,7 +2058,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-077": {
   "evolve": {
@@ -1895,7 +2098,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-078": {
   "abilities": [
@@ -1950,7 +2157,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-079": {
   "evolve": {
@@ -1979,7 +2190,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-080": {
   "evolve": {
@@ -2016,7 +2231,11 @@
      "(modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
+  }
  },
  "FP-081": {
   "abilities": [
@@ -2061,7 +2280,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-082": {
   "abilities": [
@@ -2121,7 +2344,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-083": {
   "abilities": [
@@ -2164,7 +2391,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (the 3 Extras must have different card names)"
+  }
  },
  "FP-084": {
   "abilities": [
@@ -2201,7 +2432,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-085": {
   "abilities": [
@@ -2253,7 +2488,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-086": {
   "abilities": [
@@ -2286,7 +2525,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-087": {
   "abilities": [
@@ -2378,7 +2621,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-088": {
   "abilities": [
@@ -2409,7 +2656,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-089": {
   "abilities": [
@@ -2444,7 +2695,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-090": {
   "abilities": [
@@ -2497,7 +2752,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-091": {
   "evolve": {
@@ -2538,7 +2797,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-092": {
   "abilities": [
@@ -2591,7 +2854,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-095": {
   "abilities": [
@@ -2621,7 +2888,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-097": {
   "evolve": {
@@ -2657,7 +2928,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-098": {
   "abilities": [
@@ -2695,7 +2970,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-099": {
   "abilities": [
@@ -2734,7 +3013,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-101": {
   "abilities": [
@@ -2773,7 +3056,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FP-105": {
   "abilities": [
@@ -2808,6 +3095,49 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FP-052": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenKOsInBattle",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Android 18"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  }
 }

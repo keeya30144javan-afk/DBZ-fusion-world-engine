@@ -60,7 +60,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-003": {
   "abilities": [
@@ -109,7 +113,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-004": {
   "evolve": {
@@ -153,7 +161,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-005": {
   "abilities": [
@@ -189,7 +201,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-007": {
   "evolve": {
@@ -225,7 +241,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-009": {
   "abilities": [
@@ -257,7 +277,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-014": {
   "abilities": [
@@ -306,7 +330,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-015": {
   "evolve": {
@@ -352,7 +380,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-016": {
   "keywords": [
@@ -380,7 +412,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-017": {
   "abilities": [
@@ -453,7 +489,11 @@
      "(the simulator applies it if the Extra was already used when this activates)"
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+  }
  },
  "SB02-018": {
   "abilities": [
@@ -492,7 +532,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-020": {
   "abilities": [
@@ -556,7 +600,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-021": {
   "abilities": [
@@ -592,7 +640,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-022": {
   "abilities": [
@@ -623,7 +675,11 @@
      "(the simulator applies it if the Extra was already used when this activates)"
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+  }
  },
  "SB02-023": {
   "abilities": [
@@ -671,7 +727,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-024": {
   "abilities": [
@@ -744,7 +804,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-025": {
   "abilities": [
@@ -785,7 +849,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-026": {
   "abilities": [
@@ -836,7 +904,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-027": {
   "abilities": [
@@ -909,7 +981,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-029": {
   "abilities": [
@@ -961,7 +1037,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-030": {
   "abilities": [
@@ -1009,7 +1089,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-032": {
   "abilities": [
@@ -1062,7 +1146,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-033": {
   "abilities": [
@@ -1142,7 +1230,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-034": {
   "abilities": [
@@ -1189,7 +1281,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-035": {
   "keywords": [
@@ -1239,7 +1335,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-036": {
   "keywords": [
@@ -1266,7 +1366,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-037": {
   "abilities": [
@@ -1288,7 +1392,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the bottom of a deck; the reading doesn't"
+  }
  },
  "SB02-038": {
   "abilities": [
@@ -1325,7 +1433,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-039": {
   "abilities": [
@@ -1369,7 +1481,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the bottom of a deck; the reading doesn't"
+  }
  },
  "SB02-040": {
   "abilities": [
@@ -1403,7 +1519,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-041": {
   "abilities": [
@@ -1456,7 +1576,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-043": {
   "abilities": [
@@ -1487,7 +1611,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": false,
+   "note": "the card mentions the bottom of a deck; the reading doesn't"
+  }
  },
  "SB02-044": {
   "abilities": [
@@ -1514,7 +1642,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-045": {
   "abilities": [
@@ -1554,7 +1686,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-047": {
   "abilities": [
@@ -1577,7 +1713,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-048": {
   "abilities": [
@@ -1605,7 +1745,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-049": {
   "abilities": [
@@ -1654,7 +1798,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-050": {
   "abilities": [
@@ -1682,7 +1830,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-051": {
   "keywords": [
@@ -1704,7 +1856,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-052": {
   "abilities": [
@@ -1739,7 +1895,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-053": {
   "abilities": [
@@ -1771,7 +1931,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-054": {
   "abilities": [
@@ -1809,7 +1973,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-055": {
   "abilities": [
@@ -1860,7 +2028,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-056": {
   "abilities": [
@@ -1892,7 +2064,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-058": {
   "abilities": [
@@ -1953,7 +2129,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-059": {
   "abilities": [
@@ -1979,7 +2159,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "SB02-060": {
   "keywords": [
@@ -2011,6 +2195,64 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "SB02-019": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "EXTRA",
+        "costEQ": 3,
+        "traitsAll": [
+         "Saiyan",
+         "Earthling"
+        ]
+       }
+      ],
+      "each": 1,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gotenks"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  }
 }

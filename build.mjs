@@ -25,7 +25,8 @@ const app = await build({
 const css = readFileSync('src/ui/styles.css', 'utf8');
 const js = app.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 
-const html = `<title>Shenron Deck Lab</title>
+const html = `<meta charset="utf-8">
+<title>Shenron Deck Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

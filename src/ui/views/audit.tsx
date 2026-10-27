@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { Card } from '../../data/types';
 import { fromScript, parseCard } from '../../effects/parse';
 import { describeCompiled } from '../../effects/describe';
+import { autoCheck } from '../../effects/check';
 import { textHash } from '../../effects/script';
 import { store, ScriptDoc } from '../store';
 import { useStore } from '../components';
 import { Sampler, translateBatch, untranslated } from '../translate';
 
-type Filter = 'review' | 'flagged' | 'verified' | 'rejected';
+type Filter = 'review' | 'checked' | 'verified' | 'rejected';
 const BATCH = 20;
 const PAGE = 30;
 
@@ -16,6 +17,10 @@ interface Row {
   status: ScriptDoc['status'];
   doc?: ScriptDoc;
   reading: string;
+  /** Why a person should look at it: the checker's findings and any failed second read. Empty = checked. */
+  issues: string[];
+  /** A note from the check (approximations the engine makes). */
+  note?: string;
 }
 
 const ERR_COPY: Record<string, string> = {
@@ -49,7 +54,11 @@ export function AuditView() {
       const script = doc?.script ?? (c.script && c.script.textHash === textHash(c) ? c.script : undefined);
       if (!script && !doc) continue;
       const status = doc?.status ?? (script?.source === 'verified' ? 'verified' : 'unreviewed');
-      out.push({ c, doc, status, reading: script ? describeCompiled(fromScript(script)) : '' });
+      const cc = script ? fromScript(script) : null;
+      const check = doc?.check ? { ok: doc.check.ok, note: doc.check.issues } : script?.check;
+      const auto = cc ? autoCheck(c, cc) : { ok: false, issues: ['no translation yet'] };
+      const issues = [...auto.issues, ...(check && !check.ok && check.note && !auto.issues.length ? [check.note] : []), ...(!check ? ['not yet read a second time'] : [])];
+      out.push({ c, doc, status, reading: cc ? describeCompiled(cc) : '', issues: [...new Set(issues)], note: check?.ok ? check.note : undefined });
     }
     return out.sort((a, b) => b.c.id.localeCompare(a.c.id));
   }, [st.cards, st.reviews]);
@@ -58,7 +67,7 @@ export function AuditView() {
   const focus = st.auditFocus ? new Set(st.auditFocus) : null;
   const inFocus = (r: Row) => !focus || focus.has(r.c.id);
   const count = (f: Filter) => rows.filter((r) => inFocus(r) && match(r, f)).length;
-  const shown = rows.filter((r) => inFocus(r) && match(r, filter)).sort((a, b) => Number(a.doc?.check?.ok ?? true) - Number(b.doc?.check?.ok ?? true));
+  const shown = rows.filter((r) => inFocus(r) && match(r, filter));
   const pageRows = shown.slice(page * PAGE, page * PAGE + PAGE);
   const canWrite = st.db !== 'connected' || st.canReview !== false;
 
@@ -100,19 +109,19 @@ export function AuditView() {
     try { await store.saveScript(r.c.id, doc); } catch (e: any) { setLog([`Could not save the review of ${r.c.id}: ${e?.message ?? e}`]); }
   }
 
-  const tabs: [Filter, string][] = [['review', 'Needs review'], ['flagged', 'Flagged by check'], ['verified', 'Verified'], ['rejected', 'Rejected']];
+  const tabs: [Filter, string][] = [['review', 'Needs you'], ['checked', 'Checked by Claude'], ['verified', 'Verified'], ['rejected', 'Rejected']];
 
   return (
     <div class="stack">
-      <p class="intro">Every card translation the engine runs, next to the printed text. A card you mark correct is trusted first. Until then the engine uses its own parser wherever the parser reads the whole card, and any advice that leans on an unreviewed translation says so.</p>
+      <p class="intro">Every card translation the engine runs, next to the printed text. Each one goes through an automatic checker (every number, card name, special trait, timing and keyword on the card must appear in the engine's reading) and a second read by Claude. Only cards that fail one of those land in <b>Needs you</b>. A card you mark correct is trusted first.</p>
 
       <div class="grid2">
         <div class="panel raised stack">
           <div class="eyebrow">Trust</div>
           <div class="row" style={{ flexWrap: 'wrap', gap: '8px' }}>
-            <span class="chip ok"><b>{count('verified')}</b> verified</span>
-            <span class="chip"><b>{count('review')}</b> to review</span>
-            <span class="chip warn"><b>{count('flagged')}</b> flagged by check</span>
+            <span class="chip ok"><b>{count('verified')}</b> verified by you</span>
+            <span class="chip ok"><b>{count('checked')}</b> checked by Claude</span>
+            <span class="chip warn"><b>{count('review')}</b> need you</span>
             <span class="chip"><b>{count('rejected')}</b> rejected</span>
             <span class="chip"><b>{todo.length}</b> not yet translated</span>
           </div>
@@ -151,7 +160,7 @@ export function AuditView() {
               <div><span class="cardname">{r.c.name}</span> <span class="mono">{r.c.id} · {r.c.type.toLowerCase()}</span></div>
               <div class="row" style={{ gap: '6px' }}>
                 <span class={`chip ${r.status === 'verified' ? 'ok' : r.status === 'rejected' ? 'warn' : ''}`}>{r.status}</span>
-                {r.doc?.check && <span class={`chip ${r.doc.check.ok ? 'ok' : 'warn'}`}>{r.doc.check.ok ? 'check: matches' : 'check: mismatch'}</span>}
+                {r.status === 'unreviewed' && <span class={`chip ${r.issues.length ? 'warn' : 'ok'}`}>{r.issues.length ? 'needs you' : 'checked'}</span>}
                 {!r.doc?.script && <span class="chip">built in</span>}
               </div>
             </div>
@@ -159,7 +168,8 @@ export function AuditView() {
               <div><div class="eyebrow">Printed</div><div class="audit-text">{r.c.text}{r.c.back?.text && <><br /><b>Awakened:</b> {r.c.back.text}</>}</div></div>
               <div><div class="eyebrow">Engine reads</div><div class="audit-text">{r.reading || <span class="note">(no translation — parser: {Math.round(parseCard(r.c).coverage * 100)}% understood)</span>}</div></div>
             </div>
-            {r.doc?.check && !r.doc.check.ok && r.doc.check.issues && <p class="note warn">Check: {r.doc.check.issues}</p>}
+            {r.status === 'unreviewed' && r.issues.length > 0 && <p class="note warn">Why it's here: {r.issues.join(' · ')}</p>}
+            {r.note && <p class="note">Checked — note: {r.note}</p>}
             {r.doc?.note && <p class="note">Note: {r.doc.note}</p>}
             {canWrite && (
               <div class="row" style={{ flexWrap: 'wrap' }}>
@@ -184,7 +194,7 @@ export function AuditView() {
 }
 
 function match(r: Row, f: Filter): boolean {
-  if (f === 'review') return r.status === 'unreviewed';
-  if (f === 'flagged') return r.status === 'unreviewed' && r.doc?.check?.ok === false;
+  if (f === 'review') return r.status === 'unreviewed' && r.issues.length > 0;
+  if (f === 'checked') return r.status === 'unreviewed' && r.issues.length === 0;
   return r.status === f;
 }

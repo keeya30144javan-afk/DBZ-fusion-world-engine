@@ -68,6 +68,8 @@ export type Timing =
   /** [Auto] "When your card deals damage" / "KO's your opponent's Battle Card in battle" (any of your cards). */
   | 'whenAllyDealsDamage'
   | 'whenAllyKOsInBattle'
+  /** [Auto] "When this card is switched to Rest Mode by one of your skills". */
+  | 'whenRestedBySelf'
   /**
    * Replacement: "If <replace.what> would be <removed/KO'd> by <replace.by>, [you may] <cost> instead."
    * The costs are paid instead of the removal; effects then run (e.g. KO this card instead).
@@ -175,7 +177,9 @@ export interface Count {
    */
   zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev' | 'underMax'
     /** battleDrop = Battle Area and Drop together; event = how many cards the triggering event moved; thisKiRemovedBattle = Ki removed from this card during this battle. */
-    | 'battleDrop' | 'event' | 'thisKiRemovedBattle';
+    | 'battleDrop' | 'event' | 'thisKiRemovedBattle'
+    /** Your Leader and Battle Cards together ("among your Leader and Battle Cards"). */
+    | 'leaderBattle';
   filter?: Filter;
   /** Count different card names ("types of cards") instead of cards. */
   distinct?: boolean;
@@ -567,6 +571,8 @@ export interface CompiledCard {
   needs?: string[];
   /** "This card's name is also treated as <X> in all areas." */
   aliases?: string[];
+  /** A translation's check: passed the automatic checker and a second read (ok), or flagged for a person. */
+  check?: { ok: boolean; note?: string };
 }
 
 /** A stored translation of one card (JSON form of CompiledCard). */

@@ -51,8 +51,9 @@ export function describeFilter(f: Filter, noun = 'card', plural = false): string
   if (f.costEQv) post.push(`a cost equal to ${describeVal(f.costEQv)}`);
   if (f.powerLEv) post.push(`power less than or equal to ${describeVal(f.powerLEv)}`);
   if (f.sharesTraitWithPrev) post.push('a special trait shared with the card chosen by this skill');
-  if (f.playedFrom) post.push(`that was played from your ${f.playedFrom === 'drop' ? 'Drop' : f.playedFrom}`);
-  if (f.playedThisTurn) post.push('that was played during this turn');
+  const rel: string[] = [];
+  if (f.playedFrom) rel.push(`played from your ${f.playedFrom === 'drop' ? 'Drop' : f.playedFrom}`);
+  if (f.playedThisTurn) rel.push('played during this turn');
   if (f.anyOf?.length) {
     // "A or B -- both with ...": the alternatives, then whatever every option must also have.
     const rest: Filter = { ...f, anyOf: undefined };
@@ -62,6 +63,7 @@ export function describeFilter(f: Filter, noun = 'card', plural = false): string
   }
   let out = [...pre, base].join(' ');
   if (post.length) out += ` with ${list(post, 'and')}`;
+  if (rel.length) out += ` that ${plural ? 'were' : 'was'} ${list(rel, 'and')}`;
   if (f.other) out = `other ${out}`;
   return out;
 }
@@ -133,6 +135,7 @@ function describeCount(c: Count, plural = false): string {
   if (c.zone === 'event') return 'card moved by that event';
   if (c.zone === 'thisKiRemovedBattle') return 'Ki removed from this card during this battle';
   if (c.distinct) return `${plural ? 'types' : 'type'} of ${describeFilter(c.filter ?? {}, 'card', true)} in ${c.side === 'self' ? 'your' : "your opponent's"} ${c.zone === 'battleDrop' ? 'Battle Area and/or Drop' : c.zone === 'battle' ? 'Battle Area' : c.zone[0].toUpperCase() + c.zone.slice(1)}`;
+  if (c.zone === 'leaderBattle') return `${describeFilter(c.filter ?? {}, 'card', plural)} among your Leader and Battle Cards`;
   if (c.zone === 'battleDrop') return `${describeFilter(c.filter ?? {}, 'card', plural)} in your Battle Area and/or Drop`;
   const zone = c.zone === 'under' ? 'under your cards' : `in ${c.side === 'self' ? 'your' : "your opponent's"} ${c.zone === 'battle' ? 'Battle Area' : c.zone[0].toUpperCase() + c.zone.slice(1)}`;
   return `${describeFilter(c.filter ?? {}, 'card', plural)} ${zone}`;
@@ -143,7 +146,7 @@ export function describeEffect(e: Effect): string {
   const pick = 'target' in e && !e.target.ref && !e.target.all ? `choose ${tgt} and ` : '';
   const many = 'target' in e && !e.target.ref && (!!e.target.all || e.target.count > 1);
   const it = many ? 'them' : 'it';
-  const subj = 'target' in e && (e.target.ref || e.target.all) ? tgt : it;
+  const subj = 'target' in e && (e.target.ref || e.target.all) ? tgt : many ? 'they' : 'it';
   let out: string;
   switch (e.t) {
     case 'draw': out = `draw ${plural(e.n, 'card')}${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
@@ -191,7 +194,7 @@ export function describeEffect(e: Effect): string {
     case 'cantBlock': out = "your opponent can't activate [Blocker] during this battle"; break;
     case 'damageLeader': out = `deal ${e.n} damage to your opponent`; break;
     case 'flipLeader': out = 'flip this card over'; break;
-    case 'ki': out = `${pick}${subj} gets +${e.n} Ki${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
+    case 'ki': out = `${pick}${subj} ${many ? 'get' : 'gets'} +${e.n} Ki${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
     case 'placeMarker': out = `you place ${e.n} energy marker`; break;
     case 'lifeFromDeck': out = e.until !== undefined ? `add cards from the top of your deck to your life until you have ${e.until} life` : `add the top ${plural(e.n, 'card')} of your deck to your life`; break;
     case 'handToLife': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your hand to your life`; break;
@@ -200,7 +203,7 @@ export function describeEffect(e: Effect): string {
     case 'nextDiscount': out = `during this turn, the next time you use ${describeFilter(e.filter).replace(/^(?=[A-Z<])/, 'a ').replace(/^a (?=Extra)/, 'an ')} from your hand, ${e.amount === 'free' ? "you don't have to pay the cost" : `reduce the cost by ${e.amount}`}`; break;
     case 'cantPlay': out = `${e.opp ? "your opponent can't" : "you can't"} ${e.extras ? 'use' : 'play'} ${describeFilter(e.filter, e.extras ? 'Extra' : 'Battle Card')}${DUR[e.dur]}`; break;
     case 'oppTax': out = `add ${e.amount} to the cost of ${describeFilter(e.filter ?? {}, 'card', true)} your opponent uses ${e.dur === 'turn' ? 'for the turn' : 'until the end of their next turn'}`; break;
-    case 'oppPlayRested': out = `during your opponent's next turn, their ${describeFilter(e.filter, 'Battle Card', true)} are played in Rest Mode`; break;
+    case 'oppPlayRested': out = `until the end of your opponent's next turn, their ${describeFilter(e.filter, 'Battle Card', true)} are played in Rest Mode`; break;
     case 'placeUnder': out = e.untilUnder !== undefined
       ? `place any number of ${list(e.filters.map((f) => describeFilter(f)))} from your ${e.from === 'handOrBattle' ? 'hand or Battle Area' : e.from === 'drop' ? 'Drop' : e.from} under ${describeTarget(e.target)} until it has ${e.untilUnder} or fewer cards under it`
       : `place ${list(e.filters.map((f) => `up to ${e.n} ${describeFilter(f)}`), 'and')} from your ${e.from === 'drop' ? 'Drop' : e.from === 'handOrBattle' ? 'hand or Battle Area' : e.from} under ${describeTarget(e.target)}`; break;
@@ -260,6 +263,9 @@ export function describeEffect(e: Effect): string {
   return e.cond?.length ? `if ${e.cond.map(describeCond).join(' and ')}, ${out}` : out;
 }
 
+/** "a card with ...", "an Extra ...", "a <Son Goku> card". */
+const aCard = (d: string) => (/^(a|an|the|all|non-)\b/i.test(d) ? d : `${/^[AEIOU]/i.test(d.replace(/^[<≪[]/, '')) ? 'an' : 'a'} ${d}`);
+
 function describeAttackRule(e: Extract<Effect, { t: 'attackRule' }>): string {
   const parts: string[] = [];
   const who = e.attacker ? `using ${describeFilter(e.attacker, 'Battle Card', true)}` : '';
@@ -307,7 +313,7 @@ export function describeCond(c: Cond): string {
     case 'comboAreaHasCard': return 'you have a card in your Combo Area';
     case 'energyLessThanOpp': return 'you have less energy than your opponent';
     case 'attackingBattleCard': return `attacking ${c.filter ? describeFilter(c.filter, 'Battle Card') : 'a Battle Card'}`;
-    case 'prevMatches': return `the chosen card is ${describeFilter(c.filter)}`;
+    case 'prevMatches': return Object.keys(c.filter).length ? `the chosen card is ${aCard(describeFilter(c.filter))}` : 'a card was chosen';
     case 'yourTurn': return c.yes ? "it's your turn" : "it's your opponent's turn";
     case 'not': return `not (${describeCond(c.c)})`;
     case 'or': return c.any.map(describeCond).join(' or ');
@@ -324,7 +330,7 @@ export function describeCond(c: Cond): string {
     case 'markerUsedThisTurn': return 'your energy marker was removed during this turn';
     case 'oppHasMarker': return c.yes ? 'your opponent has an energy marker' : "your opponent doesn't have an energy marker";
     case 'markerPaid': return 'you removed an energy marker to use this card (or for this skill)';
-    case 'thisMatches': return `this card is a ${describeFilter(c.filter, 'card')}`;
+    case 'thisMatches': return `this card is ${aCard(describeFilter(c.filter, 'card'))}`;
     case 'extraUsedThisTurn': return c.filter ? `you used ${describeFilter(c.filter, 'Extra')} during this turn` : 'you used an Extra with an original cost of 1 or more during this turn';
     case 'lifeLeftThisTurn': return 'a card was removed from your life during this turn';
     case 'playedByEvolve': return 'this card was played by an [Evolve] skill';
@@ -335,7 +341,7 @@ export function describeCond(c: Cond): string {
     case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
     case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
     case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
-    case 'revealedMatches': return `the revealed card is ${describeFilter(c.filter)}`;
+    case 'revealedMatches': return `the revealed card is ${aCard(describeFilter(c.filter))}`;
     case 'causedByLeader': return `it was caused by your ${c.filter ? describeFilter(c.filter, 'Leader') : 'Leader'}'s skill`;
     case 'thisKiUpThisTurn': return "this card's Ki has increased during this turn";
   }
@@ -390,7 +396,8 @@ const TIMING: Record<string, string> = {
   whenActivated: 'Auto: when this card is switched to Active Mode by a skill', whenAllyActivated: 'Auto: when your Battle Card is switched to Active Mode by a skill',
   whenFieldComboInBattle: 'Auto: when a card is used in a combo from your Battle Area while this card is in a battle',
   whenDiscardBySkill: 'Auto: when you discard a card from your hand using a skill', whenAllyDealsDamage: 'Auto: when your card deals damage',
-  whenAllyKOsInBattle: "Auto: when your card KO's your opponent's Battle Card in battle", replace: 'Permanent', auto: 'Auto',
+  whenAllyKOsInBattle: "Auto: when your card KO's your opponent's Battle Card in battle", whenRestedBySelf: 'Auto: when this card is switched to Rest Mode by one of your skills',
+  replace: 'Permanent', auto: 'Auto',
 };
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -421,7 +428,10 @@ export function describeAbility(a: Ability): string {
   }
   if (a.cost.length) body += a.cost.map(describeCost).join(', ') + ': ';
   if (a.cond.length) body += `If ${a.cond.map(describeCond).join(' and ')}, `;
-  body += a.effects.map(describeEffect).join('. Then, ');
+  let effects = a.effects.map(describeEffect).join('. Then, ');
+  // A [Permanent] holds continuously, so "until the end of your opponent's next turn" doesn't apply.
+  if (a.timing === 'permanent') effects = effects.replace(/^until the end of your opponent's next turn, their/, "your opponent's");
+  body += effects;
   if (a.unparsed.length) body += ` [not understood: ${a.unparsed.join(' / ')}]`;
   return `${tags.join('')} ${cap(body.trim())}.`.replace(/\.\./g, '.');
 }

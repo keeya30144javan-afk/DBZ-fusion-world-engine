@@ -78,7 +78,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-002": {
   "abilities": [
@@ -100,7 +104,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-003": {
   "abilities": [
@@ -113,7 +121,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-004": {
   "abilities": [
@@ -139,7 +151,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-006": {
   "abilities": [
@@ -170,7 +186,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-008": {
   "abilities": [
@@ -203,7 +223,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-009": {
   "abilities": [
@@ -236,7 +260,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-011": {
   "abilities": [
@@ -288,7 +316,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-012": {
   "abilities": [
@@ -336,7 +368,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-013": {
   "keywords": [
@@ -356,7 +392,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-041": {
   "keywords": [
@@ -376,7 +416,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-052": {
   "keywords": [
@@ -396,7 +440,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-014": {
   "abilities": [
@@ -446,7 +494,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-015": {
   "abilities": [
@@ -487,7 +539,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-017": {
   "abilities": [
@@ -529,7 +585,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-019": {
   "keywords": [
@@ -560,7 +620,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-020": {
   "abilities": [
@@ -591,7 +655,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-021": {
   "abilities": [
@@ -633,7 +701,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-022": {
   "abilities": [
@@ -672,7 +744,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-023": {
   "abilities": [
@@ -709,7 +785,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-024": {
   "abilities": [
@@ -770,7 +850,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-025": {
   "abilities": [
@@ -827,7 +911,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-026": {
   "abilities": [
@@ -876,7 +964,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-029": {
   "evolve": {
@@ -925,7 +1017,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-030": {
   "abilities": [
@@ -1014,7 +1110,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-031": {
   "abilities": [
@@ -1109,7 +1209,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "May take two of the same card instead of one of each."
+  }
  },
  "FB10-032": {
   "evolve": {
@@ -1142,7 +1246,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-033": {
   "abilities": [
@@ -1159,7 +1267,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-034": {
   "evolve": {
@@ -1188,7 +1300,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-035": {
   "abilities": [
@@ -1242,7 +1358,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-037": {
   "abilities": [
@@ -1312,7 +1432,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-038": {
   "abilities": [
@@ -1407,7 +1531,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "May take two of the same card instead of one of each."
+  }
  },
  "FB10-040": {
   "evolve": {
@@ -1448,7 +1576,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-042": {
   "abilities": [
@@ -1472,7 +1604,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-043": {
   "abilities": [
@@ -1516,7 +1652,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-044": {
   "abilities": [
@@ -1535,7 +1675,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-045": {
   "abilities": [
@@ -1583,7 +1727,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-046": {
   "abilities": [
@@ -1623,7 +1771,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-048": {
   "abilities": [
@@ -1652,7 +1804,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-049": {
   "abilities": [
@@ -1737,7 +1893,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-051": {
   "abilities": [
@@ -1764,7 +1924,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-053": {
   "abilities": [
@@ -1809,7 +1973,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-055": {
   "abilities": [
@@ -1859,7 +2027,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-058": {
   "abilities": [
@@ -1915,7 +2087,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Removes all the Ki it can, where the card lets you choose 1 or more."
+  }
  },
  "FB10-059": {
   "abilities": [
@@ -1959,7 +2135,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-060": {
   "abilities": [
@@ -1995,7 +2175,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-061": {
   "abilities": [
@@ -2045,7 +2229,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-062": {
   "abilities": [
@@ -2100,7 +2288,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-063": {
   "abilities": [
@@ -2128,7 +2320,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-067": {
   "abilities": [
@@ -2172,7 +2368,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-068": {
   "abilities": [
@@ -2212,7 +2412,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-069": {
   "abilities": [
@@ -2245,7 +2449,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-070": {
   "abilities": [
@@ -2306,7 +2514,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-071": {
   "abilities": [
@@ -2344,7 +2556,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-072": {
   "abilities": [
@@ -2384,7 +2600,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-073": {
   "abilities": [
@@ -2458,7 +2678,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-079": {
   "keywords": [
@@ -2478,7 +2702,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-113": {
   "keywords": [
@@ -2498,7 +2726,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-082": {
   "abilities": [
@@ -2562,7 +2794,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-088": {
   "abilities": [
@@ -2597,7 +2833,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-089": {
   "abilities": [
@@ -2628,7 +2868,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-090": {
   "evolve": {
@@ -2679,7 +2923,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-091": {
   "abilities": [
@@ -2728,7 +2976,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-092": {
   "abilities": [
@@ -2780,7 +3032,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-094": {
   "abilities": [
@@ -2818,7 +3074,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-095": {
   "abilities": [
@@ -2862,7 +3122,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-096": {
   "abilities": [
@@ -2893,7 +3157,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-098": {
   "abilities": [
@@ -2930,7 +3198,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-101": {
   "abilities": [
@@ -2962,7 +3234,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-102": {
   "abilities": [
@@ -3012,7 +3288,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-103": {
   "abilities": [
@@ -3042,7 +3322,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-104": {
   "abilities": [
@@ -3070,7 +3354,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-105": {
   "abilities": [
@@ -3100,7 +3388,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-106": {
   "abilities": [
@@ -3155,7 +3447,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-108": {
   "abilities": [
@@ -3214,7 +3510,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-109": {
   "evolve": {
@@ -3252,7 +3552,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-110": {
   "evolve": {
@@ -3292,7 +3596,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-111": {
   "evolve": {
@@ -3324,7 +3632,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-112": {
   "evolve": {
@@ -3362,7 +3674,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-114": {
   "abilities": [
@@ -3401,7 +3717,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-115": {
   "abilities": [
@@ -3445,7 +3765,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-117": {
   "abilities": [
@@ -3474,7 +3798,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-118": {
   "abilities": [
@@ -3518,7 +3846,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-119": {
   "abilities": [
@@ -3545,7 +3877,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-121": {
   "evolve": {
@@ -3607,7 +3943,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-122": {
   "abilities": [
@@ -3663,7 +4003,11 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  },
  "FB10-123": {
   "keywords": [
@@ -3702,6 +4046,268 @@
      }
     ]
    }
-  ]
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB10-010": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ],
+      "only": true
+     },
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     },
+     {
+      "t": "kiTotalGE",
+      "n": 2,
+      "scope": "your"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB10-005": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     },
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "onlyTraits": [
+         "Saiyan"
+        ],
+        "costLE": 3
+       },
+       {
+        "onlyTraits": [
+         "Earthling"
+        ],
+        "costLE": 3
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB10-016": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         "Son Goku"
+        ],
+        "costLE": 3
+       },
+       {
+        "onlyTraits": [
+         "Earthling"
+        ],
+        "costLE": 3
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB10-018": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "onlyTraits": [
+         "Saiyan"
+        ],
+        "names": [
+         "Son Goku"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "kiTotalGE",
+        "n": 2,
+        "scope": "your"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB10-097": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "onlyTraits": [
+        "Android"
+       ]
+      },
+      "n": 2,
+      "totalCostLE": 2
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Passed the automatic checker and a second read by Claude."
+  }
  }
 }

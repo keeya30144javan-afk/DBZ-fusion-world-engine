@@ -513,6 +513,7 @@ export function countOf(s: GameState, owner: Side, src: number, w: Count, x: { p
   if (w.zone === 'prev') list = x.prev ?? [];
   else if (w.zone === 'under') list = p.battle.flatMap((u) => s.inst[u].under ?? []);
   else if (w.zone === 'battle') list = p.field !== null ? [...p.battle, p.field] : p.battle;
+  else if (w.zone === 'leaderBattle') list = [p.leader, ...p.battle];
   else if (w.zone === 'battleDrop') list = [...p.battle, ...(p.field !== null ? [p.field] : []), ...p.drop];
   else list = p[w.zone];
   if (w.filter) list = list.filter((u) => matchesFilter(s, u, w.filter!, src));
@@ -542,8 +543,9 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'comboAreaHasCard': return me.combo.length > 0;
     case 'energyLessThanOpp': return me.energy.length < opp.energy.length;
     case 'attackingBattleCard': {
+      // "If attacking a Battle Card": this card, or for a card outside the battle (an Extra), your attacking card.
       const b = s.battle;
-      if (!b || b.attacker !== src || isLeader(s, b.target)) return false;
+      if (!b || (b.attacker !== src && b.atkSide !== owner) || isLeader(s, b.target)) return false;
       return !c.filter || matchesFilter(s, b.target, c.filter, src);
     }
     case 'prevMatches': return prev.length > 0 && prev.every((u) => matchesFilter(s, u, c.filter, src));

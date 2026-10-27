@@ -51,17 +51,34 @@ const COLOR_WORDS: Record<string, Color> = { red: 'Red', blue: 'Blue', green: 'G
 export function parseFilter(s: string): Filter {
   const f: Filter = {};
   let m: RegExpMatchArray | null;
-  if ((m = s.match(/(?:energy )?cost of (\d+) or less/i))) f.costLE = +m[1];
-  else if ((m = s.match(/(?:energy )?cost of (\d+) or more/i))) f.costGE = +m[1];
-  else if ((m = s.match(/(?:energy )?cost of (\d+)\b/i))) f.costEQ = +m[1];
-  if ((m = s.match(/(\d+) power or less/i))) f.powerLE = +m[1];
-  else if ((m = s.match(/(\d+) power or more/i))) f.powerGE = +m[1];
+  // "a cost of 3 or less" / "costs of 3 or less" / "a cost of 2 to 6"
+  if ((m = s.match(/(?:energy )?costs? of (\d+) to (\d+)/i))) { f.costGE = +m[1]; f.costLE = +m[2]; }
+  else if ((m = s.match(/(?:energy )?costs? of (\d+) or less/i))) f.costLE = +m[1];
+  else if ((m = s.match(/(?:energy )?costs? of (\d+) or more/i))) f.costGE = +m[1];
+  else if ((m = s.match(/(?:energy )?costs? of (\d+)\b/i))) f.costEQ = +m[1];
+  if (f.costLE !== undefined || f.costGE !== undefined || f.costEQ !== undefined) if (/original (?:energy )?costs?/i.test(s)) f.originalCost = true;
+  if ((m = s.match(/(\d+) combo power or less/i))) f.comboLE = +m[1];
+  else if ((m = s.match(/(\d+) combo power\b/i))) f.comboEQ = +m[1];
+  const sp = s.replace(/\d+ combo power(?: or less)?/gi, ' ');
+  if ((m = sp.match(/(\d+) power or less/i))) f.powerLE = +m[1];
+  else if ((m = sp.match(/(\d+) power or more/i))) f.powerGE = +m[1];
+  else if ((m = sp.match(/(?<![+\-−\d])(\d{4,}) power\b/i))) f.powerEQ = +m[1];
+  if (f.powerLE !== undefined || f.powerGE !== undefined || f.powerEQ !== undefined) if (/original power/i.test(sp)) f.originalPower = true;
+  // "with [Evolve]", "with [Blocker]"
+  for (const t of s.matchAll(/\[([^\]]+)\]/g)) {
+    const k = t[1].toLowerCase();
+    if (k === 'evolve') f.keyword = 'evolve';
+    else if (k === 'fusion evolve') f.keyword = 'fusionEvolve';
+    else if (KEYWORD_TAGS[k]) f.keyword = KEYWORD_TAGS[k];
+  }
   if (/rest mode/i.test(s)) f.rested = true;
   if (/active mode/i.test(s)) f.active = true;
   const names = [...s.matchAll(/<([^>]+)>/g)].map((x) => x[1].trim());
   if (names.length) f.names = names;
   const traits = [...s.matchAll(/≪([^≫]+)≫/g)].map((x) => x[1].trim());
-  if (traits.length) f.traits = traits;
+  if (traits.length && /≫-only/i.test(s)) f.onlyTraits = traits;
+  else if (traits.length && /\bboth ≪/i.test(s)) f.traitsAll = traits;
+  else if (traits.length) f.traits = traits;
   const colors = [...s.matchAll(/\b(red|blue|green|yellow|black)\b/gi)].map((x) => COLOR_WORDS[x[1].toLowerCase()]);
   if (colors.length) f.colors = colors;
   if (/\bextras?\b/i.test(s)) f.type = 'EXTRA';
@@ -429,14 +446,15 @@ function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability
 const cache = new Map<string, CompiledCard>();
 
 /**
- * Trust order: a reviewed translation, then the parser when it reads the whole
- * card, then an unreviewed translation, then the parser's partial reading.
+ * Trust order: a translation you verified or that passed the checker and a second read,
+ * then the parser when it reads the whole card, then an unchecked translation, then the
+ * parser's partial reading.
  */
 export function compileCard(card: Card): CompiledCard {
   const hit = cache.get(card.id);
   if (hit) return hit;
   const scripted = card.script && card.script.textHash === textHash(card) ? fromScript(card.script) : null;
-  if (scripted && scripted.source === 'verified') { cache.set(card.id, scripted); return scripted; }
+  if (scripted && (scripted.source === 'verified' || scripted.check?.ok)) { cache.set(card.id, scripted); return scripted; }
   const parsed = parseCard(card);
   const pick = scripted && parsed.coverage < 1 ? scripted : parsed;
   cache.set(card.id, pick);
@@ -474,6 +492,7 @@ export function fromScript(sc: CardScript): CompiledCard {
     source: sc.source,
     ...(sc.needs?.length ? { needs: sc.needs } : {}),
     ...(sc.aliases?.length ? { aliases: sc.aliases } : {}),
+    ...(sc.check ? { check: sc.check } : {}),
     ...(sc.evolve ? { evolve: sc.evolve } : {}),
   };
   if (backAbilities) { out.backAbilities = backAbilities; out.backKeywords = new Set(sc.backKeywords ?? []); }

@@ -139,7 +139,8 @@ export function coverageOf(deck: Decklist, cards: Record<string, Card>) {
     total += copies;
     covered += copies * cc.coverage;
     if (cc.coverage < 1) bad.push(`${id} ${c.name}`);
-    if (cc.source === 'claude') unreviewed.push(`${id} ${c.name}`);
+    // Translations that passed the automatic checker and Claude's second read don't need a person first.
+    if (cc.source === 'claude' && !cc.check?.ok) unreviewed.push(`${id} ${c.name}`);
   }
   return { coverage: total ? covered / total : 1, unparsedCards: bad, unreviewed };
 }

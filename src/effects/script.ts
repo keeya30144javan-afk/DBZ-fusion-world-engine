@@ -22,7 +22,7 @@ export const TIMINGS: Timing[] = [
   'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart',
   'whenWinsBattle', 'whenDealsDamage', 'whenKOsInBattle', 'whenAllyKOd', 'comboFromDrop', 'whenAllyAttacks', 'whenComboInBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp',
   'whenOppBounced', 'whenEnergyToDrop', 'whenOppPlays', 'whenActivated', 'whenAllyActivated', 'whenFieldComboInBattle', 'whenDiscardBySkill',
-  'whenAllyDealsDamage', 'whenAllyKOsInBattle', 'replace', 'auto',
+  'whenAllyDealsDamage', 'whenAllyKOsInBattle', 'whenRestedBySelf', 'replace', 'auto',
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
@@ -215,7 +215,7 @@ const TARGET: Spec = {
   side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
   totalCostLE: 'n?', totalPowerLE: 'n?',
 };
-const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev|underMax|battleDrop|event|thisKiRemovedBattle', filter: 'F?', distinct: 'b?' };
+const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev|underMax|battleDrop|event|thisKiRemovedBattle|leaderBattle', filter: 'F?', distinct: 'b?' };
 const VAL: Spec = { of: 'Z:prevCost|prevPower|kiRemoved|revealedCost|thisCost|energy|count|totalCost|leaderKi', count: 'C?', filter: 'F?', plus: 'n?' };
 const REPLACE: Spec = { what: 'Z:this|ally', filter: 'F?', by: 'Z:opp|oppSkill|any', ko: 'b?', lose: 'b?' };
 
