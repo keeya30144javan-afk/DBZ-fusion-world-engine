@@ -31,12 +31,25 @@
   ],
   "backAbilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If a Battle Card with [Evolve] in your Battle Area would be KO'd, you may switch 1 [Field] in your Battle Area to Rest Mode instead."
-    ],
-    "turn": "opp"
+    "timing": "replace",
+    "turn": "opp",
+    "replace": {
+     "what": "ally",
+     "filter": {
+      "keyword": "evolve"
+     },
+     "by": "any",
+     "ko": true
+    },
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "keyword": "field"
+      }
+     }
+    ]
    },
    {
     "timing": "whenAttacking",
@@ -47,23 +60,55 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "SB02-003": {
   "abilities": [
    {
     "timing": "endOfYourTurn",
-    "effects": [],
-    "unparsed": [
-     "Return this card from a Battle Area to its owner's hand: Place any number of Battle Cards with ≪Saiyan≫ and ≪Lookout≫ in their special traits from your hand or Battle Area under <Hyperbolic Time Chamber> in your Battle Area until it has 2 or fewer cards under it. Then, draw 1 card for each card placed by this skill."
+    "cost": [
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeUnder",
+      "target": {
+       "side": "self",
+       "zones": [
+        "field"
+       ],
+       "upTo": false,
+       "filter": {
+        "names": [
+         "Hyperbolic Time Chamber"
+        ]
+       }
+      },
+      "from": "handOrBattle",
+      "filters": [
+       {
+        "type": "BATTLE",
+        "traitsAll": [
+         "Saiyan",
+         "Lookout"
+        ]
+       }
+      ],
+      "n": 2,
+      "untilUnder": 2
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "prev"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cards under a [Field]"
   ]
  },
  "SB02-004": {
@@ -218,14 +263,49 @@
   "abilities": [
    {
     "timing": "endOfYourTurn",
-    "effects": [],
-    "unparsed": [
-     "Return this card from a Battle Area to its owner's hand: Place any number of Battle Cards with ≪Saiyan≫ and ≪Lookout≫ in their special traits from your hand or Battle Area under <Hyperbolic Time Chamber> in your Battle Area until it has 2 or fewer cards under it. Then, draw 1 card for each card placed by this skill."
+    "cost": [
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeUnder",
+      "target": {
+       "side": "self",
+       "zones": [
+        "field"
+       ],
+       "upTo": false,
+       "filter": {
+        "names": [
+         "Hyperbolic Time Chamber"
+        ]
+       }
+      },
+      "from": "handOrBattle",
+      "filters": [
+       {
+        "type": "BATTLE",
+        "traitsAll": [
+         "Saiyan",
+         "Lookout"
+        ]
+       }
+      ],
+      "n": 2,
+      "untilUnder": 2
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "prev"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cards under a [Field]"
   ]
  },
  "SB02-015": {
@@ -281,14 +361,25 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your Leader is <Trunks: Future> and [Evolve] would activate on a Battle Card with ≪Saiyan≫ in its special traits from your hand, you can choose a card from under this card."
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "evolveFromUnder",
+      "filter": {
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cards under a [Field]"
   ]
  },
  "SB02-017": {
@@ -905,14 +996,19 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card in your opponent's Battle Area with a cost less than or equal to the total cost of the Battle Cards in your Battle Area and place it at the bottom of its owner's deck."
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "totalCost"
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a counted total"
   ]
  },
  "SB02-032": {
@@ -1052,22 +1148,47 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If this card is in Rest Mode, your opponent can't attack Leaders."
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "attackRule",
+      "againstZone": "leader",
+      "dur": "static"
+     }
     ]
    },
    {
     "timing": "whenKOd",
-    "effects": [],
-    "unparsed": [
-     "If your Leader has ≪Planet Namek≫ in its special traits, look through your life and play up to 1 <Son Goku> with a cost of 7 or less and ≪Planet Namek≫ in its special traits. Shuffle your life."
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "life",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costLE": 7,
+       "traits": [
+        "Planet Namek"
+       ]
+      },
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent",
-   "play from life"
   ]
  },
  "SB02-035": {
@@ -1655,10 +1776,28 @@
  "SB02-054": {
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your Leader is <Frieza> and your non-<Frieza> Battle Card would be removed from a Battle Area by an opponent's skill, you may switch this card to Rest Mode instead."
+    "timing": "replace",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Frieza"
+      ]
+     }
+    ],
+    "replace": {
+     "what": "ally",
+     "filter": {
+      "notNames": [
+       "Frieza"
+      ]
+     },
+     "by": "oppSkill"
+    },
+    "cost": [
+     {
+      "t": "restSelf"
+     }
     ]
    },
    {
@@ -1670,9 +1809,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "SB02-055": {
@@ -1823,9 +1959,15 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card can't be attacked by Leaders or Battle Cards with costs of 3 or less."
+    "effects": [
+     {
+      "t": "attackRule",
+      "againstThis": true,
+      "attacker": {
+       "costLE": 3
+      },
+      "dur": "static"
+     }
     ]
    },
    {
@@ -1837,9 +1979,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent"
   ]
  },
  "SB02-060": {

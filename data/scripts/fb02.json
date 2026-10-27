@@ -415,16 +415,27 @@
   ],
   "abilities": [
    {
-    "timing": "auto",
+    "timing": "whenOppPlays",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When your opponent plays a Battle Card, if your life is at 1, choose all of your opponent's Battle Cards and return them to their owner's hand."
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 1
+     },
+     {
+      "t": "lifeGE",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "all": true
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on the opponent's play"
   ]
  },
  "FB02-048": {
@@ -584,14 +595,27 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "look at the bottom card of your deck and play up to 1 blue Battle Card with a cost of 2 or less. Place the rest at the bottom of your deck."
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "fromBottom": true,
+      "options": [
+       {
+        "colors": [
+         "Blue"
+        ],
+        "type": "BATTLE",
+        "costLE": 2
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
     ]
    }
-  ],
-  "needs": [
-   "look at the bottom of the deck"
   ]
  },
  "FB02-061": {
@@ -731,14 +755,41 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Place 1 <Goku Black> and 1 <Zamasu> card from your hand or your Battle Area at the bottom of your deck: Draw 2 cards. Then, play up to 1 <Zamasu: Fused> with a cost of 4 from your hand."
+    "cost": [
+     {
+      "t": "handOrBattleToBottom",
+      "filters": [
+       {
+        "names": [
+         "Goku Black"
+        ]
+       },
+       {
+        "names": [
+         "Zamasu"
+        ]
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Zamasu: Fused"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost from hand or Battle Area"
   ]
  },
  "FB02-067": {
@@ -868,14 +919,19 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "Reduce the cost of Extras with ≪Korin Tower≫ in their special traits in your hand by (1)."
+    "effects": [
+     {
+      "t": "handCostMod",
+      "filter": {
+       "type": "EXTRA",
+       "traits": [
+        "Korin Tower"
+       ]
+      },
+      "amount": -1
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost changes for cards in hand"
   ]
  },
  "FB02-077": {
@@ -963,14 +1019,28 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Place 1 card with ≪Earthling≫ in its special traits from your energy into your Drop: This card gets +15000 power for the turn."
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1,
+      "filter": {
+       "traits": [
+        "Earthling"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "turn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "filtered energy cost"
   ]
  },
  "FB02-084": {
@@ -1002,9 +1072,26 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If you have a <Cell> Battle Card with a cost of 8 or more in your Battle Area, you can use and play this card from your hand without paying its cost."
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "type": "BATTLE",
+       "costGE": 8
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 99
+     }
     ]
    },
    {
@@ -1021,9 +1108,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "FB02-086": {
@@ -1286,14 +1370,19 @@
       "yes": true
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "your opponent can only attack <Yamcha> Battle Cards."
+    "effects": [
+     {
+      "t": "attackRule",
+      "onlyAgainst": {
+       "names": [
+        "Yamcha"
+       ],
+       "type": "BATTLE"
+      },
+      "dur": "static"
+     }
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent"
   ]
  },
  "FB02-100": {
@@ -1663,17 +1752,21 @@
  "FB02-128": {
   "abilities": [
    {
-    "timing": "auto",
+    "timing": "whenActivated",
     "turn": "your",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When this card is switched to Active Mode by a skill, choose up to 1 of your opponent's Rest Mode Battle Cards with a cost of 4 or less and it can't switch to Active Mode during your opponent's next turn."
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 4
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on switching to Active Mode"
   ]
  },
  "FB02-130": {
@@ -1803,9 +1896,13 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "Your opponent's Battle Cards with a cost of 5 or more are played in Rest Mode."
+    "effects": [
+     {
+      "t": "oppPlayRested",
+      "filter": {
+       "costGE": 5
+      }
+     }
     ]
    },
    {
@@ -1821,9 +1918,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "permanent rule on the opponent's plays"
   ]
  }
 }

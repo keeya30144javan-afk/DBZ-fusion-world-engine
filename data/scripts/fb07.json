@@ -48,14 +48,18 @@
       "n": 1
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "During this turn, the next time you activate a skill on a card with <DA> in its card name from your hand or Battle Area, reduce the skill cost by (2)."
+    "effects": [
+     {
+      "t": "skillDiscount",
+      "filter": {
+       "names": [
+        "DA"
+       ]
+      },
+      "amount": 2
+     }
     ]
    }
-  ],
-  "needs": [
-   "discount on skill costs"
   ]
  },
  "FB07-002": {
@@ -536,18 +540,35 @@
      {
       "t": "leaderIs",
       "names": [
-       ": DA"
+       "DA"
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "choose up to 1 card with <DA> in its card name and [Evolve] in your Battle Area. Then, choose up to 1 Battle Card in your opponent's Battle Area with power less than or equal to the card chosen by this skill and KO it."
+    "effects": [
+     {
+      "t": "pick",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "DA"
+        ],
+        "keyword": "evolve"
+       }
+      }
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLEv": {
+         "of": "prevPower"
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "power compared with a chosen card"
   ]
  },
  "FB07-025": {
@@ -594,9 +615,29 @@
    {
     "timing": "permanent",
     "turn": "your",
-    "effects": [],
-    "unparsed": [
-     "When you would pay the cost of an Extra with ≪Shadow Dragon≫ in its special traits from your hand, once per turn, you may place the same number of cards with ≪Shadow Dragon≫ in their special traits as that card's cost from your Drop at the bottom of your deck in a random order instead."
+    "effects": [
+     {
+      "t": "altCost",
+      "filter": {
+       "type": "EXTRA",
+       "traits": [
+        "Shadow Dragon"
+       ]
+      },
+      "costs": [
+       {
+        "t": "dropToDeck",
+        "n": 1,
+        "filter": {
+         "traits": [
+          "Shadow Dragon"
+         ]
+        }
+       }
+      ],
+      "scaleN": true,
+      "once": true
+     }
     ]
    },
    {
@@ -608,9 +649,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "FB07-027": {
@@ -1085,9 +1123,21 @@
    {
     "timing": "permanent",
     "turn": "opp",
-    "effects": [],
-    "unparsed": [
-     "When you would pay the cost of this card in your hand, you may discard 1 card with ≪Shadow Dragon≫ in its special traits other than this card from your hand instead."
+    "effects": [
+     {
+      "t": "altCost",
+      "costs": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "traits": [
+          "Shadow Dragon"
+         ]
+        }
+       }
+      ]
+     }
     ]
    },
    {
@@ -1112,23 +1162,36 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "FB07-046": {
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "During this turn, when your card with ≪Shadow Dragon≫ in its special traits attacks an opponent's Battle Card with a cost of 5 or less, place the attacked card at the bottom of its owner's deck."
+    "effects": [
+     {
+      "t": "delayed",
+      "on": "attacks",
+      "filter": {
+       "traits": [
+        "Shadow Dragon"
+       ]
+      },
+      "targetFilter": {
+       "costLE": 5
+      },
+      "once": false,
+      "effects": [
+       {
+        "t": "bottom",
+        "target": {
+         "ref": "oppBattler"
+        }
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "delayed trigger on attack"
   ]
  },
  "FB07-047": {
@@ -1193,15 +1256,21 @@
      {
       "t": "draw",
       "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "traits": [
+        "Saiyan"
+       ]
+      },
+      "n": 2,
+      "distinctNames": true,
+      "totalCostLE": 6
      }
-    ],
-    "unparsed": [
-     "Then, play up to 2 Battle Cards with different card names, ≪Saiyan≫ in their special traits, and a total cost of 6 or less from your Drop."
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  },
  "FB07-049": {
@@ -1923,14 +1992,25 @@
       "n": 1
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "Reveal the top card of your life, and if the revealed card is a Battle Card with a cost of 6 or less and ≪Frieza Clan≫ in its special traits, you may play it."
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "lifeTop"
+     },
+     {
+      "t": "playFrom",
+      "from": "lifeTop",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 6,
+       "traits": [
+        "Frieza Clan"
+       ]
+      },
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "play from life"
   ]
  },
  "FB07-074": {
@@ -2081,14 +2161,10 @@
   ]
  },
  "FB07-081": {
+  "aliases": [
+   "King Gomah: DA"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card's name is also treated as <King Gomah: DA> in all areas."
-    ]
-   },
    {
     "timing": "onPlay",
     "cond": [
@@ -2121,9 +2197,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "name aliases"
   ]
  },
  "FB07-082": {
@@ -2148,14 +2221,10 @@
   ]
  },
  "FB07-083": {
+  "aliases": [
+   "King Gomah: DA"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card's name is also treated as <King Gomah: DA> in all areas."
-    ]
-   },
    {
     "timing": "onPlay",
     "cost": [
@@ -2164,9 +2233,23 @@
       "n": 2
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "Draw 1 card for each type of card with [Field] that includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits in your Drop."
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "keyword": "field",
+        "traits": [
+         "Demon Realm",
+         "Demon World"
+        ]
+       },
+       "distinct": true
+      }
+     }
     ]
    },
    {
@@ -2190,10 +2273,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "name aliases",
-   "count distinct card names"
   ]
  },
  "FB07-084": {
@@ -2427,14 +2506,21 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "If this card was played from your life, add the top card of your deck to your life."
+    "cond": [
+     {
+      "t": "thisMatches",
+      "filter": {
+       "playedFrom": "life"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "play from life"
   ]
  },
  "FB07-093": {
@@ -2565,15 +2651,17 @@
       },
       "amount": 10000,
       "dur": "battle"
+     },
+     {
+      "t": "attackRule",
+      "attacker": {
+       "type": "BATTLE",
+       "costGE": 5
+      },
+      "dur": "turn"
      }
-    ],
-    "unparsed": [
-     "Then, your opponent can't attack using Battle Cards with costs of 5 or more for the turn."
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent"
   ]
  },
  "FB07-097": {
@@ -2659,22 +2747,18 @@
       "t": "playFrom",
       "from": "drop",
       "filter": {
-       "type": "BATTLE",
        "costLE": 7
       },
       "n": 1
      },
      {
+      "t": "unflipLeader"
+     },
+     {
       "t": "dropToDeck"
      }
-    ],
-    "unparsed": [
-     "and flip this card to its front side."
     ]
    }
-  ],
-  "needs": [
-   "flip a Leader back"
   ]
  },
  "FB07-098": {
@@ -3228,14 +3312,16 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Choose any number of Battle Cards whose total costs add up to 7 or less in your opponent's Battle Area and KO them."
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 99,
+       "totalCostLE": 7
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  }
 }

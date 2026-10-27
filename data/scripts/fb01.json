@@ -261,14 +261,16 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose any number of your opponent's Battle Cards that add up to a total power of 35000 or less and KO them."
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 99,
+       "totalPowerLE": 35000
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "combined power of several targets"
   ]
  },
  "FB01-035": {
@@ -475,7 +477,7 @@
     ]
    },
    {
-    "timing": "auto",
+    "timing": "whenOppBounced",
     "once": true,
     "cond": [
      {
@@ -483,14 +485,13 @@
       "n": 7
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "when an opponent's Battle Card is returned to their hand by one of your skills, draw 1 card."
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on bouncing an opponent's card"
   ]
  },
  "FB01-064": {
@@ -538,14 +539,26 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Look at the bottom card of your deck and play up to 1 <Trunks: Future> with a cost of 2. Place any remaining cards at the bottom of your deck."
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "fromBottom": true,
+      "options": [
+       {
+        "names": [
+         "Trunks: Future"
+        ],
+        "costEQ": 2
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     }
     ]
    }
-  ],
-  "needs": [
-   "look at the bottom of the deck"
   ]
  },
  "FB01-067": {
@@ -578,14 +591,18 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "Your opponent can't attack <Android 18> in your Battle Area."
+    "effects": [
+     {
+      "t": "attackRule",
+      "against": {
+       "names": [
+        "Android 18"
+       ]
+      },
+      "dur": "static"
+     }
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent"
   ]
  },
  "FB01-073": {
@@ -735,15 +752,15 @@
     ]
    },
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "When a card is placed in your Drop from your energy, add the top card of your deck to your energy in Rest Mode."
+    "timing": "whenEnergyToDrop",
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on energy leaving"
   ]
  },
  "FB01-090": {
@@ -813,14 +830,10 @@
   ]
  },
  "FB01-097": {
+  "keywords": [
+   "mustAttack"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card must attack whenever possible."
-    ]
-   },
    {
     "timing": "whenAttacking",
     "effects": [
@@ -834,9 +847,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "forced attacks"
   ]
  },
  "FB01-104": {
@@ -1233,18 +1243,10 @@
   ]
  },
  "FB01-129": {
-  "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card can't be switched to Active Mode during your Charge Phase."
-    ]
-   }
+  "keywords": [
+   "noUntap"
   ],
-  "needs": [
-   "stays rested in the Charge Phase"
-  ]
+  "abilities": []
  },
  "FB01-131": {
   "abilities": [

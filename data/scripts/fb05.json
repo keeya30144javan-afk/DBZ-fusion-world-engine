@@ -362,14 +362,17 @@
       "n": 20
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "your opponent can't attack using Battle Cards with costs of 3 or less during your opponent's next turn."
+    "effects": [
+     {
+      "t": "attackRule",
+      "attacker": {
+       "type": "BATTLE",
+       "costLE": 3
+      },
+      "dur": "oppNextTurn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "attack restrictions on the opponent"
   ]
  },
  "FB05-041": {
@@ -1398,16 +1401,19 @@
  "FB05-098": {
   "abilities": [
    {
-    "timing": "auto",
+    "timing": "whenFieldComboInBattle",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When a card is used in a combo from your Battle Area while this card is in a battle, draw 2 cards. Then, discard 1 card from your hand."
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on combo from the Battle Area"
   ]
  },
  "FB05-099": {

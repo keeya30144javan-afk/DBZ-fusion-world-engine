@@ -45,6 +45,8 @@ if (cmd === 'apply') {
     const errs = validateScript(script);
     if (errs.length) { bad++; console.log(`${id} (${file}):\n  ${errs.join('\n  ')}`); continue; }
     card.script = script;
+    // "This card's name is also treated as <X> in all areas": name checks read card.characters.
+    for (const a of script.aliases ?? []) if (!card.characters.includes(a)) card.characters.push(a);
     ok++;
   }
   writeFileSync(DB, JSON.stringify(db, null, 1));

@@ -370,14 +370,28 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "During this turn, if an opponent's Battle Card is KO'd in battle and your Leader is <Android 18>, draw 2 cards."
+    "effects": [
+     {
+      "t": "delayed",
+      "on": "koInBattle",
+      "once": true,
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2,
+        "cond": [
+         {
+          "t": "leaderIs",
+          "names": [
+           "Android 18"
+          ]
+         }
+        ]
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "delayed trigger on KO"
   ]
  },
  "FB06-024": {
@@ -944,9 +958,43 @@
   "backAbilities": [
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Choose 1 <Broly: BR> in your Battle Area and place it into its owner's Drop: If you have 4 energy, play up to 1 <Broly: BR> with a cost of 1 greater than the card chosen by this skill from your hand in Rest Mode."
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Broly: BR"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Broly: BR"
+       ],
+       "costEQv": {
+        "of": "prevCost",
+        "plus": 1
+       }
+      },
+      "n": 1,
+      "rested": true,
+      "cond": [
+       {
+        "t": "energyGE",
+        "n": 4
+       },
+       {
+        "t": "energyLE",
+        "n": 4
+       }
+      ]
+     }
     ]
    },
    {
@@ -963,9 +1011,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a chosen card"
   ]
  },
  "FB06-051": {
@@ -1416,14 +1461,32 @@
   "backAbilities": [
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Place 1 [Field] that includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits in your Battle Area into its owner's Drop: Play up to 1 Battle Card with a cost of 3 or less and the same special trait as the [Field] placed into its owner's Drop by this skill from your hand."
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "keyword": "field",
+       "traits": [
+        "Demon Realm",
+        "Demon World"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 3,
+       "sharesTraitWithPrev": true
+      },
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "traits shared with a chosen card"
   ]
  },
  "FB06-072": {
@@ -1545,14 +1608,41 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "If you have a total of 3 or more types of [Field] cards that include ≪Demon Realm≫ or ≪Demon World≫ in their special traits in your Battle Area and/or Drop, choose up to 1 Battle Card in your opponent's Battle Area and switch it to Rest Mode. Then, choose up to 1 card with a cost of 4 or less in your Battle Area and switch it to Active Mode."
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battleDrop",
+       "filter": {
+        "keyword": "field",
+        "traits": [
+         "Demon Realm",
+         "Demon World"
+        ]
+       },
+       "distinct": true
+      },
+      "op": "ge",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     },
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "count distinct card names"
   ]
  },
  "FB06-077": {
@@ -1795,18 +1885,10 @@
   ]
  },
  "FB06-087": {
-  "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "this card can't be switched to Active Mode during a Charge Phase."
-    ]
-   }
+  "keywords": [
+   "noUntap"
   ],
-  "needs": [
-   "stays rested in the Charge Phase"
-  ]
+  "abilities": []
  },
  "FB06-089": {
   "keywords": [
@@ -1953,23 +2035,35 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Remove 1 of your energy markers: Play up to 1 <Demon's Egg> from your Drop."
+    "cost": [
+     {
+      "t": "removeMarker",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Demon's Egg"
+       ]
+      },
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "energy marker as a cost"
   ]
  },
  "FB06-097": {
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "Your opponent's cards can't be switched to Active Mode by skills."
+    "effects": [
+     {
+      "t": "oppNoActivate"
+     }
     ]
    },
    {
@@ -1991,9 +2085,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "block opponent's untap skills"
   ]
  },
  "FB06-098": {
@@ -2464,14 +2555,23 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reveal the top card of your opponent's deck, then choose up to 1 card in your opponent's Battle Area with a cost less than or equal to the revealed card and place it into its owner's Drop."
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "oppDeckTop"
+     },
+     {
+      "t": "toDrop",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "revealedCost"
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a revealed card"
   ]
  },
  "FB06-119": {
@@ -2481,14 +2581,17 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "During this turn, the next time you use a non-[Field] Extra with an original cost of 2 or less, after activating the skill, activate that Extra's skill again."
+    "effects": [
+     {
+      "t": "repeatExtra",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 2,
+       "originalCost": true
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "repeat a skill"
   ]
  },
  "FB06-120": {

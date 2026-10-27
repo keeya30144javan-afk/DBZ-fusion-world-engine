@@ -170,14 +170,10 @@
   ]
  },
  "FB08-009": {
+  "keywords": [
+   "doubleForRest"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If this card is switched to Rest Mode by your Leader's skill, it can be treated as 2 copies."
-    ]
-   },
    {
     "timing": "onPlay",
     "effects": [
@@ -196,9 +192,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "counts as 2 cards"
   ]
  },
  "FB08-011": {
@@ -661,14 +654,25 @@
    },
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Add 1 card from your life to your hand: Choose up to 1 Battle Card with a cost less than or equal to this card in your opponent's Battle Area and place it at the bottom of its owner's deck."
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "thisCost"
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a chosen card"
   ]
  },
  "FB08-030": {
@@ -1045,14 +1049,26 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Look at the bottom card of your deck, reveal up to 1 <Magetta> with a cost of 3 and add it to your hand. Place the rest at the bottom of your deck."
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "fromBottom": true,
+      "options": [
+       {
+        "names": [
+         "Magetta"
+        ],
+        "costEQ": 3
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
     ]
    }
-  ],
-  "needs": [
-   "look at the bottom of the deck"
   ]
  },
  "FB08-045": {
@@ -1188,9 +1204,17 @@
       "n": 5
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "once per turn you can use <Fruit of the Tree of Might> without paying its cost."
+    "effects": [
+     {
+      "t": "handCostMod",
+      "filter": {
+       "names": [
+        "Fruit of the Tree of Might"
+       ]
+      },
+      "amount": "free",
+      "once": true
+     }
     ]
    },
    {
@@ -1202,9 +1226,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "FB08-050": {
@@ -1364,21 +1385,39 @@
    {
     "timing": "permanent",
     "turn": "your",
-    "effects": [],
-    "unparsed": [
-     "During this turn, if a card is removed from your energy, this card gets +10000 power."
+    "cond": [
+     {
+      "t": "energyLeftThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
     ]
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Add 1 Extra from your energy to your hand: Your opponent can't activate [Blocker] for the battle."
+    "cost": [
+     {
+      "t": "energyToHand",
+      "n": 1,
+      "filter": {
+       "type": "EXTRA"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "cantBlock"
+     }
     ]
    }
-  ],
-  "needs": [
-   "energy card to hand as a cost"
   ]
  },
  "FB08-057": {
@@ -1804,22 +1843,26 @@
       "t": "restSelf"
      }
     ],
-    "cond": [
+    "effects": [
      {
-      "t": "leaderIs",
-      "names": [
-       "Turles"
+      "t": "energyToHand",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Fruit of the Tree of Might"
+       ]
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Turles"
+        ]
+       }
       ]
      }
-    ],
-    "effects": [],
-    "unparsed": [
-     "add up to 1 <Fruit of the Tree of Might> from your energy to your hand."
     ]
    }
-  ],
-  "needs": [
-   "energy card to hand"
   ]
  },
  "FB08-072": {
@@ -1904,9 +1947,15 @@
       }
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "your opponent can't attack with a Battle Card unless they switch 1 of their Active Mode cards to Rest Mode."
+    "effects": [
+     {
+      "t": "attackRule",
+      "attacker": {
+       "type": "BATTLE"
+      },
+      "restTax": 1,
+      "dur": "static"
+     }
     ]
    },
    {
@@ -1934,9 +1983,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "attack tax"
   ]
  },
  "FB08-077": {
@@ -2046,14 +2092,25 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Switch your Leader or 1 card in your Battle Area -- both including <Broly> in their card names -- to Rest Mode: Draw 1 card."
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Broly"
+       ]
+      },
+      "orLeader": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "rest your Leader as a cost"
   ]
  },
  "FB08-084": {

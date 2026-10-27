@@ -173,7 +173,7 @@ export function normalizeCard(row: any): Card | null {
   const backPlain = pick(row, ['card_back_skill_unstyled']);
   const backText = backPlain !== undefined ? canonSkillText(cleanText(backPlain)) : pick(row, ['back.text', 'back.skill', 'card_back_skill']);
   const backPower = pick(row, ['back.power', 'card_back_power']);
-  const traits = splitList(pick(row, ['traits', 'card_features', 'features', 'trait', 'special_traits']));
+  const traits = splitList(pick(row, ['traits', 'card_traits', 'card_features', 'features', 'trait', 'special_traits']));
   const characters = splitList(pick(row, ['characters', 'card_character', 'character']));
   const card: Card = {
     id: String(id).trim(),

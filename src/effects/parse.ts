@@ -473,6 +473,7 @@ export function fromScript(sc: CardScript): CompiledCard {
     unparsed: holes,
     source: sc.source,
     ...(sc.needs?.length ? { needs: sc.needs } : {}),
+    ...(sc.aliases?.length ? { aliases: sc.aliases } : {}),
     ...(sc.evolve ? { evolve: sc.evolve } : {}),
   };
   if (backAbilities) { out.backAbilities = backAbilities; out.backKeywords = new Set(sc.backKeywords ?? []); }

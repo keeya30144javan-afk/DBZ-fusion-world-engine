@@ -37,10 +37,20 @@
      {
       "t": "draw",
       "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "thisKiUpThisTurn"
+       }
+      ]
      }
-    ],
-    "unparsed": [
-     "Then, if this card's Ki has increased during this turn, it gets +10000 power for the battle."
     ]
    },
    {
@@ -68,9 +78,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "Ki increased this turn"
   ]
  },
  "FB10-002": {
@@ -1129,19 +1136,12 @@
      {
       "t": "bottom",
       "target": {
-       "filter": {
-        "costLE": 2
-       }
+       "count": 2,
+       "totalCostLE": 2
       }
      }
-    ],
-    "unparsed": [
-     "(or up to 2 Battle Cards whose costs total 2 or less)"
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  },
  "FB10-033": {
@@ -1429,6 +1429,16 @@
     "timing": "onPlay",
     "effects": [
      {
+      "t": "copyOnPlay",
+      "filter": {
+       "colors": [
+        "Blue"
+       ],
+       "costLE": 4
+      },
+      "n": 2
+     },
+     {
       "t": "power",
       "target": {
        "ref": "leader"
@@ -1436,14 +1446,8 @@
       "amount": 5000,
       "dur": "oppNextTurn"
      }
-    ],
-    "unparsed": [
-     "Choose up to 2 blue cards under this card with a cost of 4 or less and activate the [On Play] skills with no skill cost of those chosen cards in the order of your choice as though this card has those skills."
     ]
    }
-  ],
-  "needs": [
-   "copy another card's skills"
   ]
  },
  "FB10-042": {
@@ -2035,33 +2039,67 @@
      {
       "t": "ko",
       "target": {
-       "filter": {
-        "costLE": 2
-       }
+       "count": 2,
+       "totalCostLE": 2
       }
      }
-    ],
-    "unparsed": [
-     "(or up to 2 Battle Cards whose costs total 2 or less)"
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  },
  "FB10-062": {
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Add 1 <Fruit of the Tree of Might> from your energy to your hand, and place this card into your Drop: If your Leader has ≪Greatest Showdown≫ in its special traits, play up to 1 <Turles> with a cost of 5 from your hand. Then, add the top card of your deck to your energy."
+    "cost": [
+     {
+      "t": "energyToHand",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Fruit of the Tree of Might"
+       ]
+      }
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Turles"
+       ],
+       "costEQ": 5
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Greatest Showdown"
+        ]
+       }
+      ]
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": false,
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Greatest Showdown"
+        ]
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "energy card to hand as a cost"
   ]
  },
  "FB10-063": {
@@ -2095,10 +2133,23 @@
  "FB10-067": {
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your card with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name is removed from a Battle Area by your opponent, you may KO this card instead."
+    "timing": "replace",
+    "replace": {
+     "what": "ally",
+     "filter": {
+      "traits": [
+       "Master's Teachings"
+      ],
+      "names": [
+       "Son Gohan"
+      ]
+     },
+     "by": "opp"
+    },
+    "cost": [
+     {
+      "t": "koSelf"
+     }
     ]
    },
    {
@@ -2121,9 +2172,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB10-068": {
@@ -2685,11 +2733,25 @@
  "FB10-092": {
   "abilities": [
    {
-    "timing": "permanent",
+    "timing": "replace",
     "turn": "opp",
-    "effects": [],
-    "unparsed": [
-     "If this card would be removed from your Battle Area by your opponent, you may reduce the Ki of your Leader by 1 and KO 1 Battle Card in your Battle Area instead."
+    "replace": {
+     "what": "this",
+     "by": "opp"
+    },
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "leader"
+     },
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "other": true
+      }
+     }
     ]
    },
    {
@@ -2699,7 +2761,6 @@
       "t": "playFrom",
       "from": "hand",
       "filter": {
-       "type": "BATTLE",
        "costLE": 2
       },
       "n": 1
@@ -2713,16 +2774,12 @@
       "t": "playFrom",
       "from": "hand",
       "filter": {
-       "type": "BATTLE",
        "costLE": 2
       },
       "n": 1
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB10-094": {
@@ -2920,9 +2977,15 @@
       "only": true
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "this card can be used in a combo even while in Rest Mode."
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "comboRested",
+      "dur": "static"
+     }
     ]
    },
    {
@@ -2949,9 +3012,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "combo while in Rest Mode"
   ]
  },
  "FB10-103": {
@@ -2997,14 +3057,19 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reduce the cost of the next [Evolve] skill you activate this turn for a <Cell> with a cost of 6 in your hand by (2)."
+    "effects": [
+     {
+      "t": "evolveDiscount",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "costEQ": 6
+      },
+      "amount": 2
+     }
     ]
    }
-  ],
-  "needs": [
-   "discount on Evolve costs"
   ]
  },
  "FB10-105": {
@@ -3106,14 +3171,49 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Place 1 ≪Earthling≫-only Battle Card with a cost of 2 or less or 1 ≪Android≫-only Battle Card with a cost of 2 or less other than <Cell> from your Battle Area in your Combo Area: Switch this card to Active Mode. Then, this card can't attack for the turn."
+    "cost": [
+     {
+      "t": "toComboOwn",
+      "filter": {
+       "anyOf": [
+        {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Earthling"
+         ],
+         "costLE": 2
+        },
+        {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Android"
+         ],
+         "costLE": 2,
+         "notNames": [
+          "Cell"
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "cantAttack",
+      "dur": "turn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "own card to Combo Area as a cost"
   ]
  },
  "FB10-109": {
@@ -3400,14 +3500,24 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card in your opponent's Battle Area with a cost less than or equal to the combined cost of the <Cell> in your Battle Area and KO it."
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "totalCost",
+         "filter": {
+          "names": [
+           "Cell"
+          ]
+         }
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a counted total"
   ]
  },
  "FB10-119": {
@@ -3468,15 +3578,35 @@
     ]
    },
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "When your card deals damage or KO's your opponent's Battle Card in battle, if your opponent's life is at 2 or less, place the top 15 cards of your opponent's deck into their owner's Drop."
+    "timing": "whenAllyDealsDamage",
+    "cond": [
+     {
+      "t": "oppLifeLE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "oppMill",
+      "n": 15
+     }
+    ]
+   },
+   {
+    "timing": "whenAllyKOsInBattle",
+    "cond": [
+     {
+      "t": "oppLifeLE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "oppMill",
+      "n": 15
+     }
     ]
    }
-  ],
-  "needs": [
-   "mill the opponent's deck"
   ]
  },
  "FB10-122": {
@@ -3510,17 +3640,35 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Reduce your total Ki by 7: If your card inflicts damage to your opponent in battle during this turn, add 1 of your opponent's life to its owner's energy in Rest Mode."
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 7,
+      "scope": "your"
+     }
+    ],
+    "effects": [
+     {
+      "t": "delayed",
+      "on": "dealsDamage",
+      "once": true,
+      "effects": [
+       {
+        "t": "oppLife",
+        "n": 1,
+        "to": "energy",
+        "rested": true
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "delayed trigger on damage"
   ]
  },
  "FB10-123": {
+  "keywords": [
+   "doubleStrike"
+  ],
   "evolve": {
    "from": [
     {
@@ -3532,9 +3680,6 @@
    ],
    "cost": 3
   },
-  "keywords": [
-   "doubleStrike"
-  ],
   "abilities": [
    {
     "timing": "activateBattle",
@@ -3544,14 +3689,19 @@
       "t": "thisInBattle"
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "For each card in your Combo Area, use up to 1 Battle Card from your Drop in a combo."
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {},
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "combo"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "count-based combo from the Drop"
   ]
  }
 }

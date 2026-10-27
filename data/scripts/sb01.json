@@ -418,9 +418,33 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your Leader is an ≪Android≫-only card and you have a <Cell> with an original power of 30000 power or more in your Battle Area, you can use this card from your hand without paying its cost."
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Cell"
+       ],
+       "originalPower": true,
+       "powerGE": 30000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 99
+     }
     ]
    },
    {
@@ -434,9 +458,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "SB01-014": {
@@ -1205,15 +1226,25 @@
         "costLE": 5
        }
       }
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Majin Buu: Evil"
+       ],
+       "traits": [
+        "Absorption"
+       ],
+       "costLEv": {
+        "of": "prevCost"
+       }
+      },
+      "n": 1
      }
-    ],
-    "unparsed": [
-     "Then, play up to 1 <Majin Buu : Evil> with a cost less than or equal to the card chosen by this skill and ≪Absorption≫ in its special traits from your hand."
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a chosen card"
   ]
  },
  "SB01-035": {
@@ -1290,14 +1321,21 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "If your Leader has ≪Majin≫ in its special traits, choose up to 1 of your opponent's Rest Mode energy, and that card can't switch to Active Mode during your opponent's next turn."
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Majin"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lockEnergy",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "lock opponent's energy"
   ]
  },
  "SB01-038": {
@@ -1363,18 +1401,17 @@
       "t": "rest",
       "target": {
        "all": true,
-       "zones": [
-        "battle",
-        "field"
-       ],
        "filter": {
         "costLE": 5
        }
       }
+     },
+     {
+      "t": "restOppEnergy",
+      "filter": {
+       "costLE": 5
+      }
      }
-    ],
-    "unparsed": [
-     "(also rests cards with a cost of 5 or less in your opponent's energy)"
     ]
    },
    {
@@ -1396,23 +1433,19 @@
       "t": "rest",
       "target": {
        "all": true,
-       "zones": [
-        "battle",
-        "field"
-       ],
        "filter": {
         "costLE": 5
        }
       }
+     },
+     {
+      "t": "restOppEnergy",
+      "filter": {
+       "costLE": 5
+      }
      }
-    ],
-    "unparsed": [
-     "(also rests cards with a cost of 5 or less in your opponent's energy)"
     ]
    }
-  ],
-  "needs": [
-   "rest opponent's energy"
   ]
  },
  "SB01-041": {
@@ -1616,14 +1649,41 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "If you have 3 or more types of non-<Spike> cards with ≪Adventure≫ in their special traits in your Drop, choose up to 2 Battle Cards without <Son Goku> in their card names and with costs of 3 or less in your opponent's Battle Area and KO them."
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "traits": [
+         "Adventure"
+        ],
+        "notNames": [
+         "Spike"
+        ]
+       },
+       "distinct": true
+      },
+      "op": "ge",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2,
+       "filter": {
+        "notNames": [
+         "Son Goku"
+        ],
+        "costLE": 3
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "count distinct card names"
   ]
  },
  "SB01-047": {

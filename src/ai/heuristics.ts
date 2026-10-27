@@ -282,7 +282,8 @@ export class FastPolicy implements Policy {
         if (isLeader(s, att) || ap >= lp || rand(s) < this.noise) return face;
       }
     }
-    return { k: 'end' };
+    // A card that must attack whenever possible removes the option to end the turn.
+    return actions.some((a) => a.k === 'end') ? { k: 'end' } : attacks[0] ?? actions[0];
   }
 
   private abOf(s: GameState, uid: number, i: number) {

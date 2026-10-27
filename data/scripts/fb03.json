@@ -44,9 +44,11 @@
       }
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "you only take up to 1 damage in each battle."
+    "effects": [
+     {
+      "t": "damageCap",
+      "n": 1
+     }
     ]
    },
    {
@@ -58,9 +60,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "damage cap"
   ]
  },
  "FB03-005": {
@@ -221,10 +220,16 @@
  "FB03-014": {
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If this card would be removed from your Battle Area by your opponent, you may place 1 card from your life in its owner's Drop instead."
+    "timing": "replace",
+    "replace": {
+     "what": "this",
+     "by": "opp"
+    },
+    "cost": [
+     {
+      "t": "lifeToDrop",
+      "n": 1
+     }
     ]
    },
    {
@@ -240,9 +245,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB03-017": {
@@ -650,14 +652,30 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, during this turn, the next time you use an Extra from your hand, reduce the cost by (1)."
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "deckTop"
+     },
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA"
+      },
+      "amount": 1,
+      "cond": [
+       {
+        "t": "revealedMatches",
+        "filter": {
+         "traits": [
+          "Satan City"
+         ]
+        }
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "condition on a revealed card"
   ]
  },
  "FB03-034": {
@@ -787,31 +805,39 @@
   ]
  },
  "FB03-048": {
-  "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card's name is also treated as <Son Goten> and <Trunks: Youth> in all areas."
-    ]
-   }
+  "aliases": [
+   "Son Goten",
+   "Trunks: Youth"
   ],
-  "needs": [
-   "name aliases"
-  ]
+  "abilities": []
  },
  "FB03-049": {
   "abilities": [
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, choose up to 1 of your opponent's Battle Cards and reduce its cost by 2 for the turn."
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "deckTop"
+     },
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -2,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "revealedMatches",
+        "filter": {
+         "traits": [
+          "Satan City"
+         ]
+        }
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "condition on a revealed card"
   ]
  },
  "FB03-050": {
@@ -949,14 +975,23 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Return 1 Extra from your energy to your hand: Add the top card of your deck to your energy in Rest Mode."
+    "cost": [
+     {
+      "t": "energyToHand",
+      "n": 1,
+      "filter": {
+       "type": "EXTRA"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
     ]
    }
-  ],
-  "needs": [
-   "energy card to hand as a cost"
   ]
  },
  "FB03-059": {
@@ -1186,14 +1221,28 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose 1 card from your opponent's hand and reveal it. If the revealed card's cost is less than or equal to your energy, add the top card of your deck to your energy in Rest Mode."
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "oppHand"
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true,
+      "cond": [
+       {
+        "t": "revealedMatches",
+        "filter": {
+         "costLEv": {
+          "of": "energy"
+         }
+        }
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "condition on a revealed card"
   ]
  },
  "FB03-083": {
@@ -1204,14 +1253,17 @@
    {
     "timing": "whenOppAttacks",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "(only when the attacker is a Battle Card with a cost of 3) draw 1 card."
+    "trigger": {
+     "type": "BATTLE",
+     "costEQ": 3
+    },
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "filter on the attacking card"
   ]
  },
  "FB03-086": {

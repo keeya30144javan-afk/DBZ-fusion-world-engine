@@ -1,7 +1,7 @@
 import { Card, Color } from '../data/types';
 import { RulesConfig } from '../data/rules';
 import { compileCard, compileGeneration } from '../effects/parse';
-import { Ability, CompiledCard, Cond, Count, Effect, Filter, Keyword } from '../effects/types';
+import { Ability, CompiledCard, Cond, Count, Effect, Filter, Keyword, Val } from '../effects/types';
 
 export type Side = 0 | 1;
 
@@ -43,11 +43,24 @@ export interface Inst {
   /** Last turn this card attacked. */
   attackedTurn?: number;
   negateScope?: 'all' | 'onPlay';
+  /** Zone it was last played from. */
+  playedFrom?: 'hand' | 'drop' | 'deck' | 'life' | 'energy';
+  /** Last turn its Ki went up. */
+  kiUpTurn?: number;
+  /** Ki removed from it during the current battle. */
+  kiRemovedBattle?: number;
+  /** "Its original power becomes N" until then. */
+  basePowerSet?: { value: number; until: 'battle' | number };
 }
 
 /** A lasting rule change on one player: discounts, play bans, taxes. */
 export interface PlayerMod {
-  kind: 'discount' | 'cantPlay' | 'tax' | 'playRested' | 'skillLock';
+  kind: 'discount' | 'cantPlay' | 'tax' | 'playRested' | 'skillLock'
+    | 'attackRule' | 'shield' | 'cantLose' | 'delayed' | 'evolveDiscount' | 'repeatExtra' | 'skillDiscount' | 'energyRedirect';
+  /** The effect behind an attackRule / delayed mod. */
+  effect?: Effect;
+  /** Source card of a delayed effect. */
+  src?: number;
   timing?: 'activateMain' | 'activateBattle';
   filter: Filter;
   amount?: number | 'free';
@@ -154,7 +167,17 @@ export interface GameState {
   /** Bumped whenever cards in play or their active abilities change (cache key for auras). */
   zoneRev?: number;
   /** Battle Cards that left a Battle Area during the current skill, for removal triggers. */
-  removals?: { uid: number; owner: Side; by: Side }[];
+  removals?: { uid: number; owner: Side; by: Side; to?: Zone; kind?: 'battle' | 'energyDrop'; bySrc?: number }[];
+  /** The card whose skill is resolving right now. */
+  skillSrc?: number;
+  /** The card whose skill caused the trigger now firing (for "by your Leader's skill"). */
+  causeSrc?: number;
+  /** How many cards the event now triggering moved (Count zone 'event'). */
+  trigN?: number;
+  /** This player takes the next turn again. */
+  extraTurn?: Side;
+  /** Discards made by skills during the current skill, for "when you discard using the skill of ..." triggers. */
+  discardEvents?: { owner: Side; src: number; n: number }[];
 }
 
 // ------------------------------------------------------------------ rng
@@ -209,6 +232,7 @@ export function cloneState(s: GameState): GameState {
     battle: s.battle ? { ...s.battle, comboCount: [s.battle.comboCount[0], s.battle.comboCount[1]] } : null,
     battleEnd: s.battleEnd ? s.battleEnd.slice() : undefined,
     removals: s.removals ? s.removals.slice() : undefined,
+    discardEvents: s.discardEvents ? s.discardEvents.slice() : undefined,
     log: null,
     events: null,
   };
@@ -253,15 +277,18 @@ interface StaticSummary {
   /** Keywords it can grant to itself through a [Permanent]. */
   selfGrants: Set<Keyword>;
   selfPower: boolean;
+  /** Rule-changing effect types it has in a [Permanent] (see staticRules). */
+  rules: Set<string>;
 }
 const summaries = new WeakMap<Ability[], StaticSummary>();
 function summaryOf(abs: Ability[]): StaticSummary {
   let v = summaries.get(abs);
   if (!v) {
-    v = { aura: false, selfGrants: new Set(), selfPower: false };
+    v = { aura: false, selfGrants: new Set(), selfPower: false, rules: new Set() };
     for (const a of abs) {
       if (a.timing !== 'permanent') continue;
       for (const e of a.effects) {
+        v.rules.add(e.t);
         if ((e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && (e.target.all || e.target.ref === 'leader')) v.aura = true;
         if (e.t === 'grant' && e.target.ref === 'this') v.selfGrants.add(e.kw);
         if (e.t === 'power') v.selfPower = true;
@@ -410,11 +437,75 @@ export const nameOf = (s: GameState, uid: number) => {
   return isLeader(s, uid) && s.p[s.inst[uid].owner].awakened && c.back ? c.back.name : c.name;
 };
 
+// ------------------------------------------------------------------ values worked out during a skill
+
+/** What the resolving skill has chosen / revealed / paid so far; filters with a Val read it. */
+export interface EvalCtx { prev: number[]; kiRemoved?: number; revealed?: number; paid?: number[] }
+let curCtx: EvalCtx | null = null;
+export function withCtx<T>(ctx: EvalCtx | null, f: () => T): T {
+  const outer = curCtx;
+  curCtx = ctx;
+  try { return f(); } finally { curCtx = outer; }
+}
+export const currentCtx = () => curCtx;
+
+/** The card a "the card chosen by this skill" refers to: the previous choice, else what the cost picked. */
+function chosenCard(ctx: EvalCtx | null): number | undefined {
+  return ctx?.prev[0] ?? ctx?.paid?.[0];
+}
+
+export function valOf(s: GameState, owner: Side, src: number, v: Val): number {
+  const ctx = curCtx;
+  let n = 0;
+  switch (v.of) {
+    case 'prevCost': { const u = chosenCard(ctx); n = u === undefined ? -1 : inPlay(s, u) ? costOf(s, u) : cardOf(s, u).cost; break; }
+    case 'prevPower': { const u = chosenCard(ctx); n = u === undefined ? -1 : inPlay(s, u) ? powerOf(s, u) : cardOf(s, u).power; break; }
+    case 'kiRemoved': n = ctx?.kiRemoved ?? 0; break;
+    case 'revealedCost': n = ctx?.revealed === undefined ? -1 : cardOf(s, ctx.revealed).cost; break;
+    case 'thisCost': n = inPlay(s, src) ? costOf(s, src) : cardOf(s, src).cost; break;
+    case 'energy': n = s.p[owner].energy.length; break;
+    case 'leaderKi': n = s.inst[s.p[owner].leader].ki; break;
+    case 'count': n = v.count ? countOf(s, owner, src, v.count, ctx ?? {}) : 0; break;
+    case 'totalCost': {
+      const me = s.p[owner];
+      for (const u of me.battle) if (!v.filter || matchesFilter(s, u, v.filter, src)) n += costOf(s, u);
+      break;
+    }
+  }
+  return n + (v.plus ?? 0);
+}
+
+// ------------------------------------------------------------------ static rules
+// [Permanent] effects that change the rules rather than a card's numbers: attack bans, damage caps,
+// hand/Drop cost changes, alternative costs. Each is read from the cards in play when it matters.
+
+export interface StaticHit<E extends Effect = Effect> { e: E; src: number; idx: number; ab: Ability }
+
+/** Every effect of type t in the [Permanent] abilities of `side`'s cards in play whose conditions hold. */
+export function staticRules<T extends Effect['t']>(s: GameState, side: Side, t: T): StaticHit<Extract<Effect, { t: T }>>[] {
+  const out: StaticHit<Extract<Effect, { t: T }>>[] = [];
+  const p = s.p[side];
+  const srcs = p.field !== null ? [p.leader, ...p.battle, p.field] : [p.leader, ...p.battle];
+  for (const src of srcs) {
+    const abs = abilitiesOf(s, src);
+    if (!summaryOf(abs).rules.has(t)) continue;
+    abs.forEach((ab, idx) => {
+      if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) return;
+      if (!ab.effects.some((e) => e.t === t)) return;
+      if (!condsHold(s, side, src, ab.cond)) return;
+      for (const e of ab.effects) if (e.t === t && condsHold(s, side, src, e.cond)) out.push({ e: e as Extract<Effect, { t: T }>, src, idx, ab });
+    });
+  }
+  return out;
+}
+
 // ------------------------------------------------------------------ conditions & filters
 
 export function countOf(s: GameState, owner: Side, src: number, w: Count, x: { prev?: number[]; kiRemoved?: number } = {}): number {
   const p = s.p[w.side === 'self' ? owner : other(owner)];
   if (w.zone === 'thisKi') return s.inst[src].ki;
+  if (w.zone === 'event') return s.trigN ?? 0;
+  if (w.zone === 'thisKiRemovedBattle') return s.inst[src].kiRemovedBattle ?? 0;
   if (w.zone === 'kiTotal') return [p.leader, ...p.battle].reduce((a, u) => a + s.inst[u].ki, 0);
   if (w.zone === 'kiRemoved') return x.kiRemoved ?? 0;
   if (w.zone === 'underMax') return Math.max(0, ...p.battle.filter((u) => !w.filter || matchesFilter(s, u, w.filter, src)).map((u) => s.inst[u].under?.length ?? 0));
@@ -422,8 +513,10 @@ export function countOf(s: GameState, owner: Side, src: number, w: Count, x: { p
   if (w.zone === 'prev') list = x.prev ?? [];
   else if (w.zone === 'under') list = p.battle.flatMap((u) => s.inst[u].under ?? []);
   else if (w.zone === 'battle') list = p.field !== null ? [...p.battle, p.field] : p.battle;
+  else if (w.zone === 'battleDrop') list = [...p.battle, ...(p.field !== null ? [p.field] : []), ...p.drop];
   else list = p[w.zone];
-  return w.filter ? list.filter((u) => matchesFilter(s, u, w.filter!, src)).length : list.length;
+  if (w.filter) list = list.filter((u) => matchesFilter(s, u, w.filter!, src));
+  return w.distinct ? new Set(list.map((u) => cardOf(s, u).name)).size : list.length;
 }
 
 export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev: number[] = [], x: { kiRemoved?: number } = {}): boolean {
@@ -486,6 +579,12 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
       return list.reduce((a, u) => a + costOf(s, u), 0) >= c.n;
     }
     case 'attackedThisTurn': return (s.inst[src].attackedTurn === s.turn) === c.yes;
+    case 'revealedMatches': { const r = curCtx?.revealed; return r !== undefined && matchesFilter(s, r, c.filter, src); }
+    case 'causedByLeader': {
+      const c0 = s.causeSrc;
+      return c0 !== undefined && isLeader(s, c0) && s.inst[c0].owner === owner && (!c.filter || matchesFilter(s, c0, c.filter, src));
+    }
+    case 'thisKiUpThisTurn': return s.inst[src].kiUpTurn === s.turn;
     case 'inBattleWith': {
       const b = s.battle;
       if (!b || (b.attacker !== src && b.target !== src)) return false;
@@ -550,7 +649,7 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   const leader = isLeader(s, uid);
   if (f.type && !leader && card.type !== f.type) return false;
   const here = inPlay(s, uid);
-  const cost = f.originalCost || !here ? card.cost : costOf(s, uid);
+  const cost = f.originalCost ? card.cost : here ? costOf(s, uid) : costInDrop(s, uid);
   if (f.costLE !== undefined && cost > f.costLE) return false;
   if (f.costGE !== undefined && cost < f.costGE) return false;
   if (f.costEQ !== undefined && cost !== f.costEQ) return false;
@@ -567,6 +666,18 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   if (f.notTraits && card.traits.some((ct) => f.notTraits!.some((t) => ct.toLowerCase() === t.toLowerCase()))) return false;
   if (f.underNames && !(inst.under ?? []).some((u) => nameMatches(cardOf(s, u), f.underNames!))) return false;
   if (f.anyOf && !f.anyOf.some((x) => matchesFilter(s, uid, x, src))) return false;
+  if (f.costLEv || f.costEQv || f.powerLEv) {
+    const owner = s.inst[src].owner;
+    if (f.costLEv && cost > valOf(s, owner, src, f.costLEv)) return false;
+    if (f.costEQv && cost !== valOf(s, owner, src, f.costEQv)) return false;
+    if (f.powerLEv && pw > valOf(s, owner, src, f.powerLEv)) return false;
+  }
+  if (f.playedFrom && inst.playedFrom !== f.playedFrom) return false;
+  if (f.playedThisTurn !== undefined && (inst.playedTurn === s.turn) !== f.playedThisTurn) return false;
+  if (f.sharesTraitWithPrev) {
+    const c0 = chosenCard(curCtx);
+    if (c0 === undefined || !cardOf(s, c0).traits.some((t) => card.traits.some((ct) => ct.toLowerCase() === t.toLowerCase()))) return false;
+  }
   if (f.noSkill && card.text.trim() !== '' && card.text.trim() !== '-') return false;
   if (f.keyword) {
     const cc = compiledOf(s, uid);
@@ -612,6 +723,8 @@ export function staticPower(s: GameState, uid: number): number {
 }
 
 export function basePower(s: GameState, uid: number): number {
+  const set = s.inst[uid].basePowerSet;
+  if (set && (set.until === 'battle' || set.until >= s.turn)) return set.value;
   const c = cardOf(s, uid);
   if (isLeader(s, uid) && s.p[s.inst[uid].owner].awakened && c.back) return c.back.power;
   return c.power;
@@ -638,9 +751,52 @@ export function costInHand(s: GameState, uid: number): number {
     for (const e of ab.effects) if (e.t === 'costReduce' && condsHold(s, owner, uid, e.cond)) cost -= e.per ? e.n * countOf(s, owner, uid, e.per) : e.n;
   }
   for (const m of activeMods(s, owner)) {
+    if (m.kind !== 'tax' && m.kind !== 'discount') continue;
     if (!matchesFilter(s, uid, m.filter, uid)) continue;
     if (m.kind === 'tax') cost += m.amount as number;
     if (m.kind === 'discount') cost = m.amount === 'free' ? 0 : cost - (m.amount as number);
+  }
+  // "Reduce the skill cost by N" also covers using an Extra from your hand.
+  if (card.type === 'EXTRA') {
+    const sd = activeMods(s, owner).find((m) => m.kind === 'skillDiscount' && matchesFilter(s, uid, m.filter, uid));
+    if (sd) cost -= sd.amount as number;
+  }
+  for (const h of handCostMods(s, uid)) cost = h.e.amount === 'free' ? 0 : cost + h.e.amount;
+  return Math.max(0, cost);
+}
+
+const handKey = (h: StaticHit) => `hc:${h.src}:${h.idx}`;
+
+/** [Permanent] cost changes your cards in play give to a card in your hand. */
+export function handCostMods(s: GameState, uid: number): StaticHit<Extract<Effect, { t: 'handCostMod' }>>[] {
+  const owner = s.inst[uid].owner;
+  return staticRules(s, owner, 'handCostMod').filter((h) => matchesFilter(s, uid, h.e.filter, h.src) && !(h.e.once && s.p[owner].usedOnce.includes(handKey(h))));
+}
+
+/** Mark once-per-turn hand cost changes as used when the card is paid for. */
+export function spendHandCostMods(s: GameState, uid: number) {
+  const owner = s.inst[uid].owner;
+  for (const h of handCostMods(s, uid)) if (h.e.once) s.p[owner].usedOnce.push(handKey(h));
+}
+
+/** Cost of a card outside play: in the Drop, [Permanent] "reduce the cost of this card in its owner's Drop" applies. */
+export function costInDrop(s: GameState, uid: number): number {
+  const card = cardOf(s, uid);
+  const owner = s.inst[uid].owner;
+  const p = s.p[owner];
+  const own = summaryOf(compiledOf(s, uid).abilities).rules.has('dropCost');
+  let others = false;
+  for (const u of p.battle) if (summaryOf(abilitiesOf(s, u)).rules.has('dropCost')) { others = true; break; }
+  if ((!own && !others) || !p.drop.includes(uid)) return card.cost;
+  let cost = card.cost;
+  if (own) {
+    for (const ab of compiledOf(s, uid).abilities) {
+      if (ab.timing !== 'permanent' || !condsHold(s, owner, uid, ab.cond)) continue;
+      for (const e of ab.effects) if (e.t === 'dropCost' && !e.filter && condsHold(s, owner, uid, e.cond)) cost = e.set ?? cost + (e.amount ?? 0);
+    }
+  }
+  if (others) {
+    for (const h of staticRules(s, owner, 'dropCost')) if (h.e.filter && matchesFilter(s, uid, h.e.filter, h.src)) cost = h.e.set ?? cost + (h.e.amount ?? 0);
   }
   return Math.max(0, cost);
 }
@@ -747,17 +903,23 @@ export function resetInst(i: Inst) {
   i.costMods = undefined;
   i.negatedUntil = undefined;
   i.negateScope = undefined;
+  i.basePowerSet = undefined;
+  i.kiRemovedBattle = undefined;
+  i.playedFrom = undefined;
 }
 
 export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
   const from = removeFrom(s, uid);
   const inst = s.inst[uid];
+  // "If you would add a card to its owner's energy during this turn, place that card into its owner's Drop instead."
+  if (zone === 'energy' && (s.p[inst.owner].mods ?? []).some((m) => m.kind === 'energyRedirect' && m.until >= s.turn)) zone = 'drop';
   if (from === 'battle' && zone === 'hand') s.p[inst.owner].bouncedTurn = s.turn;
   if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
+  if (from === 'energy' && zone === 'drop') (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy ?? inst.owner, kind: 'energyDrop', bySrc: s.skillSrc });
   if (from === 'battle' && s.skillBy !== undefined && cardOf(s, uid).type === 'BATTLE') {
     if (s.skillBy === inst.owner) s.p[inst.owner].removedOwnTurn = s.turn;
     s.p[inst.owner].removedBySkillTurn = s.turn;
-    (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy });
+    (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy, to: zone });
   }
   if (inst.under?.length && from === 'battle') {
     for (const u of inst.under) { resetInst(s.inst[u]); s.p[s.inst[u].owner].drop.push(u); }

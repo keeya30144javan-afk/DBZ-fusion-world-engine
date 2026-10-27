@@ -43,14 +43,34 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "If your Battle Card with <BR> in its card name and [Fusion Evolve] was played during this turn, choose any number of Battle Cards in your opponent's Battle Area that add up to a total power of 15000 or less and KO them."
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "names": [
+         "BR"
+        ],
+        "keyword": "fusionEvolve",
+        "playedThisTurn": true
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 99,
+       "totalPowerLE": 15000
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "combined power of several targets"
   ]
  },
  "FB09-002": {
@@ -586,18 +606,7 @@
        "zone": "drop",
        "filter": {
         "traits": [
-         "Universe 1",
-         "Universe 2",
-         "Universe 3",
-         "Universe 4",
-         "Universe 5",
-         "Universe 6",
-         "Universe 7",
-         "Universe 8",
-         "Universe 9",
-         "Universe 10",
-         "Universe 11",
-         "Universe 12"
+         "Universe"
         ]
        }
       },
@@ -623,15 +632,30 @@
     ]
    },
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "When you discard a card from your hand using the skill of a card with [Evolve] or with ≪Tournament of Power≫ in its special traits, draw 1 card for each card discarded."
+    "timing": "whenDiscardBySkill",
+    "trigger": {
+     "anyOf": [
+      {
+       "keyword": "evolve"
+      },
+      {
+       "traits": [
+        "Tournament of Power"
+       ]
+      }
+     ]
+    },
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "event"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on discarding"
   ]
  },
  "FB09-026": {
@@ -911,9 +935,25 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "When you would pay the cost of this card in your hand, you may discard 1 card with ≪Tournament of Power≫ in its special traits other than this card from your hand and switch 2 of your energy to Rest Mode instead."
+    "effects": [
+     {
+      "t": "altCost",
+      "costs": [
+       {
+        "t": "discard",
+        "n": 1,
+        "filter": {
+         "traits": [
+          "Tournament of Power"
+         ]
+        }
+       },
+       {
+        "t": "restEnergy",
+        "n": 2
+       }
+      ]
+     }
     ]
    },
    {
@@ -936,9 +976,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "FB09-036": {
@@ -1001,14 +1038,15 @@
       "n": 4
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "Switch your card in battle to this card."
+    "effects": [
+     {
+      "t": "swapBattler",
+      "target": {
+       "ref": "this"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "swap the card in a battle"
   ]
  },
  "FB09-039": {
@@ -1064,9 +1102,12 @@
       "n": 20
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "your opponent can't activate [Blocker]."
+    "effects": [
+     {
+      "t": "attackRule",
+      "noBlock": true,
+      "dur": "static"
+     }
     ]
    },
    {
@@ -1077,14 +1118,6 @@
       "n": 3
      }
     ],
-    "cond": [
-     {
-      "t": "leaderIs",
-      "names": [
-       "Vegito"
-      ]
-     }
-    ],
     "effects": [
      {
       "t": "bottom",
@@ -1092,13 +1125,18 @@
        "filter": {
         "costLE": 1
        }
-      }
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegito"
+        ]
+       }
+      ]
      }
     ]
    }
-  ],
-  "needs": [
-   "opponent can't block (permanent)"
   ]
  },
  "FB09-043": {
@@ -2111,14 +2149,47 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Place this card into your Drop: Play up to 1 <Son Goku> and up to 1 <Vegeta> -- both with ≪Another World≫ in their special traits -- and with a combined cost of 3 or less from your Drop in Rest Mode. Then, you can't play <Veku> for the turn."
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "traits": [
+        "Another World"
+       ]
+      },
+      "each": [
+       {
+        "names": [
+         "Son Goku"
+        ]
+       },
+       {
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ],
+      "n": 2,
+      "totalCostLE": 3,
+      "rested": true
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Veku"
+       ]
+      },
+      "dur": "turn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  },
  "FB09-092": {
@@ -2443,14 +2514,40 @@
    {
     "timing": "activateMain",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Remove 1 or more of your Ki: Choose all Battle Cards in your opponent's Battle Area with a cost less than or equal to the Ki removed by this skill and KO them. Then, this card gets +10000 power for the turn for each card KO'd by this skill."
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "your",
+      "max": 99
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "all": true,
+       "filter": {
+        "costLEv": {
+         "of": "kiRemoved"
+        }
+       }
+      }
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn",
+      "per": {
+       "side": "self",
+       "zone": "prev"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a counted total"
   ]
  },
  "FB09-103": {
@@ -2904,22 +3001,46 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "When you would pay the cost of this card in your hand, you may remove a total of 2 of your Ki instead."
+    "effects": [
+     {
+      "t": "altCost",
+      "costs": [
+       {
+        "t": "reduceKi",
+        "n": 2,
+        "scope": "your"
+       }
+      ]
+     }
     ]
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card with <GT> in its card name in your Battle Area and choose up to 1 Battle Card with a cost less than or equal to the chosen card in your opponent's Battle Area and KO it."
+    "effects": [
+     {
+      "t": "pick",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "names": [
+         "GT"
+        ]
+       }
+      }
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "prevCost"
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs",
-   "cost compared with a chosen card"
   ]
  },
  "FB09-121": {
@@ -2991,10 +3112,18 @@
   },
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If you would lose the game due to your life becoming 0 or if this card would be KO'd by your opponent's skill, you may add this card from your Battle Area to your life instead."
+    "timing": "replace",
+    "replace": {
+     "what": "this",
+     "by": "oppSkill",
+     "ko": true,
+     "lose": true
+    },
+    "effects": [
+     {
+      "t": "self",
+      "to": "life"
+     }
     ]
    },
    {
@@ -3003,8 +3132,7 @@
      {
       "t": "rest",
       "target": {
-       "all": true,
-       "side": "opp"
+       "all": true
       }
      },
      {
@@ -3013,9 +3141,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB09-123": {
@@ -3042,14 +3167,39 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Remove a total of 4 Ki in your Battle Area and place all Battle Cards in your Battle Area other than this card, and 6 of your energy, at the bottom of their owner's deck in a random order: If your Leader has ≪Saiyan≫ in its special traits, take an extra turn after this one."
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 4,
+      "scope": "battle"
+     },
+     {
+      "t": "bottomOwn",
+      "n": 0,
+      "all": true,
+      "filter": {
+       "other": true
+      }
+     },
+     {
+      "t": "energyToDeckBottom",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "extraTurn",
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "extra turn"
   ]
  }
 }

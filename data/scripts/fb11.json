@@ -81,17 +81,17 @@
     "timing": "onPlay",
     "cond": [
      {
-      "t": "leaderIs",
-      "names": [
-       "Son Goku"
-      ]
-     },
-     {
       "t": "leaderTrait",
       "traits": [
        "Saiyan"
       ],
       "only": true
+     },
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
      }
     ],
     "effects": [
@@ -99,7 +99,6 @@
       "t": "playFrom",
       "from": "hand",
       "filter": {
-       "type": "BATTLE",
        "costEQ": 1,
        "traits": [
         "Saiyan",
@@ -107,10 +106,12 @@
        ]
       },
       "n": 1
+     },
+     {
+      "t": "evolveDiscount",
+      "filter": {},
+      "amount": 2
      }
-    ],
-    "unparsed": [
-     "Then, during this turn, reduce the cost of the next [Evolve] skill you activate from your hand by (2)."
     ]
    },
    {
@@ -126,9 +127,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "discount on Evolve costs"
   ]
  },
  "FB11-003": {
@@ -537,14 +535,28 @@
    },
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Choose 1 of your awakened <Gogeta: BR> Leaders and its original power becomes 25000 until the end of your opponent's next turn."
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gogeta: BR"
+      ]
+     },
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "setBasePower",
+      "target": {
+       "ref": "leader"
+      },
+      "value": 25000,
+      "dur": "oppNextTurn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "set original power"
   ]
  },
  "FB11-024": {
@@ -834,15 +846,23 @@
      {
       "t": "draw",
       "n": 1
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Trunks: Future"
+       ],
+       "costEQv": {
+        "of": "kiRemoved",
+        "plus": 1
+       }
+      },
+      "n": 1
      }
-    ],
-    "unparsed": [
-     "and play up to 1 <Trunks: Future> with a cost of 1 greater than the number of Ki removed by this skill from your hand."
     ]
    }
-  ],
-  "needs": [
-   "cost equal to a counted number"
   ]
  },
  "FB11-036": {
@@ -1036,14 +1056,25 @@
       "t": "removedOwnThisTurn"
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "look at the bottom card of your deck, reveal up to 1 <Trunks: Future> and add it to your hand. Place the rest at the bottom of your deck."
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "fromBottom": true,
+      "options": [
+       {
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
     ]
    }
-  ],
-  "needs": [
-   "look at the bottom of the deck"
   ]
  },
  "FB11-043": {
@@ -1080,15 +1111,18 @@
  "FB11-047": {
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If this card would be removed from a Battle Area by your opponent's skill, return this card to its owner's hand instead."
+    "timing": "replace",
+    "replace": {
+     "what": "this",
+     "by": "oppSkill"
+    },
+    "effects": [
+     {
+      "t": "self",
+      "to": "hand"
+     }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB11-048": {
@@ -1665,10 +1699,23 @@
  "FB11-069": {
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "If your card with ≪Master's Teachings≫ in its special traits and <Son Gohan> in its card name is removed from a Battle Area by your opponent, you may KO this card instead."
+    "timing": "replace",
+    "replace": {
+     "what": "ally",
+     "filter": {
+      "traits": [
+       "Master's Teachings"
+      ],
+      "names": [
+       "Son Gohan"
+      ]
+     },
+     "by": "opp"
+    },
+    "cost": [
+     {
+      "t": "koSelf"
+     }
     ]
    },
    {
@@ -1694,9 +1741,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "replacement effects"
   ]
  },
  "FB11-071": {
@@ -2355,7 +2399,7 @@
     "timing": "awaken",
     "cond": [
      {
-      "t": "kiLeaderGE",
+      "t": "thisKiGE",
       "n": 2
      }
     ],
@@ -2387,17 +2431,22 @@
      {
       "t": "reduceKi",
       "n": 1,
-      "scope": "leader"
+      "scope": "this"
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 card with a cost of 2 and ≪Bardock's Crew≫ in its special traits in your Drop, and activate its [When KO'd] skill. Then, place that card at the bottom of its owner's deck."
+    "effects": [
+     {
+      "t": "useDropSkill",
+      "filter": {
+       "costEQ": 2,
+       "traits": [
+        "Bardock's Crew"
+       ]
+      },
+      "timing": "whenKOd"
+     }
     ]
    }
-  ],
-  "needs": [
-   "activate a skill of a card in the Drop"
   ]
  },
  "FB11-098": {
@@ -2445,9 +2494,11 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reduce the cost of this card in its owner's Drop by 1."
+    "effects": [
+     {
+      "t": "dropCost",
+      "amount": -1
+     }
     ]
    },
    {
@@ -2466,9 +2517,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "cost changes in the Drop"
   ]
  },
  "FB11-107": {
@@ -2483,21 +2531,15 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reduce the cost of this card in its owner's Drop by 1."
+    "effects": [
+     {
+      "t": "dropCost",
+      "amount": -1
+     }
     ]
    },
    {
     "timing": "whenKOd",
-    "cond": [
-     {
-      "t": "leaderIs",
-      "names": [
-       "Bardock"
-      ]
-     }
-    ],
     "effects": [
      {
       "t": "power",
@@ -2505,13 +2547,18 @@
        "ref": "leader"
       },
       "amount": 10000,
-      "dur": "turn"
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Bardock"
+        ]
+       }
+      ]
      }
     ]
    }
-  ],
-  "needs": [
-   "cost changes in the Drop"
   ]
  },
  "FB11-109": {
@@ -2526,9 +2573,11 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reduce the cost of this card in its owner's Drop by 1."
+    "effects": [
+     {
+      "t": "dropCost",
+      "amount": -1
+     }
     ]
    },
    {
@@ -2551,9 +2600,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "cost changes in the Drop"
   ]
  },
  "FB11-117": {
@@ -2568,9 +2614,11 @@
       ]
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "reduce the cost of this card in its owner's Drop by 1."
+    "effects": [
+     {
+      "t": "dropCost",
+      "amount": -1
+     }
     ]
    },
    {
@@ -2597,9 +2645,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "cost changes in the Drop"
   ]
  },
  "FB11-101": {
@@ -2624,14 +2669,26 @@
       "n": 1
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "If you used a card from your Battle Area in a combo during this turn, play up to 1 Battle Card with a cost of 1 or less and ≪Android≫ in its special traits from your Drop."
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 1,
+       "traits": [
+        "Android"
+       ]
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "comboFromFieldThisTurn"
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "combo history this turn"
   ]
  },
  "FB11-102": {
@@ -2840,9 +2897,18 @@
       "yes": true
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "the cost of <Bardock> with an original power of 25000 in your Drop becomes 2."
+    "effects": [
+     {
+      "t": "dropCost",
+      "filter": {
+       "names": [
+        "Bardock"
+       ],
+       "originalPower": true,
+       "powerEQ": 25000
+      },
+      "set": 2
+     }
     ]
    },
    {
@@ -2854,9 +2920,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "cost changes in the Drop"
   ]
  },
  "FB11-114": {
@@ -3028,6 +3091,22 @@
   ]
  },
  "FB11-121": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku"
+     ]
+    }
+   ],
+   "cost": 3,
+   "extraCost": [
+    {
+     "t": "discard",
+     "n": 1
+    }
+   ]
+  },
   "abilities": [
    {
     "timing": "onPlay",
@@ -3063,17 +3142,15 @@
        {
         "t": "oppLifeLE",
         "n": 1
+       },
+       {
+        "t": "oppLifeGE",
+        "n": 1
        }
       ]
      }
     ]
    }
-  ],
-  "unparsed": [
-   "[Evolve] pay 3 energy, discard 1 card from your hand: <Son Goku>"
-  ],
-  "needs": [
-   "Evolve with an extra cost"
   ]
  },
  "FB11-122": {
@@ -3153,9 +3230,17 @@
       "yes": true
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "your opponent can't attack a <Bardock> Leader."
+    "effects": [
+     {
+      "t": "attackRule",
+      "againstZone": "leader",
+      "against": {
+       "names": [
+        "Bardock"
+       ]
+      },
+      "dur": "static"
+     }
     ]
    },
    {
@@ -3178,15 +3263,24 @@
       "n": 3
      }
     ],
-    "effects": [],
-    "unparsed": [
-     "look at the top card of your deck, and play up to 1 Battle Card with a cost of 3 or less with its [On Play] skills negated for the turn. Add the rest to your hand."
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 3
+       }
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "play",
+      "negate": "onPlay",
+      "rest": "hand"
+     }
     ]
    }
-  ],
-  "needs": [
-   "Leader can't be attacked",
-   "search: play with skills negated, rest to hand"
   ]
  }
 }

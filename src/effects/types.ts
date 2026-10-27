@@ -51,9 +51,44 @@ export type Timing =
   | 'whenAllyRemovedBySelf'
   /** [Auto] "When your <X> is removed from the Battle Area by your opponent" (filter in `trigger`). */
   | 'whenAllyRemovedByOpp'
+  /** [Auto] "When an opponent's Battle Card is returned to their hand by one of your skills". */
+  | 'whenOppBounced'
+  /** [Auto] "When a card is placed in your Drop from your energy" (cond causedByLeader for "by your Leader's skill"). */
+  | 'whenEnergyToDrop'
+  /** [Auto] "When your opponent plays a Battle Card" (filter in `trigger`). */
+  | 'whenOppPlays'
+  /** [Auto] "When this card is switched to Active Mode by a skill". */
+  | 'whenActivated'
+  /** [Auto] "When one of your Battle Cards is switched to Active Mode by a skill" (filter in `trigger`). */
+  | 'whenAllyActivated'
+  /** [Auto] "When a card is used in a combo from your Battle Area while this card is in a battle". */
+  | 'whenFieldComboInBattle'
+  /** [Auto] "When you discard a card from your hand using the skill of <trigger>"; count with zone 'event'. */
+  | 'whenDiscardBySkill'
+  /** [Auto] "When your card deals damage" / "KO's your opponent's Battle Card in battle" (any of your cards). */
+  | 'whenAllyDealsDamage'
+  | 'whenAllyKOsInBattle'
+  /**
+   * Replacement: "If <replace.what> would be <removed/KO'd> by <replace.by>, [you may] <cost> instead."
+   * The costs are paid instead of the removal; effects then run (e.g. KO this card instead).
+   */
+  | 'replace'
   | 'auto';
 
 export type Duration = 'battle' | 'turn' | 'oppNextTurn' | 'static' | 'game';
+
+/** A number worked out while a skill resolves ("a cost less than or equal to the card chosen by this skill"). */
+export interface Val {
+  /**
+   * prevCost/prevPower = the card the previous step chose (or the cost paid with); kiRemoved = Ki removed by this skill's cost;
+   * revealedCost = the card revealed by this skill; thisCost = the card with the skill; energy = your energy count;
+   * count = a Count; totalCost = combined cost of your Battle Area cards matching `filter`.
+   */
+  of: 'prevCost' | 'prevPower' | 'kiRemoved' | 'revealedCost' | 'thisCost' | 'energy' | 'count' | 'totalCost' | 'leaderKi';
+  count?: Count;
+  filter?: Filter;
+  plus?: number;
+}
 
 export interface Filter {
   costLE?: number;
@@ -96,6 +131,16 @@ export interface Filter {
   underNames?: string[];
   /** Matches if any of these filters match ("<Sorbet> or a Battle Card with a cost of 1"). */
   anyOf?: Filter[];
+  /** Cost / power compared with a value worked out during the skill. */
+  costLEv?: Val;
+  costEQv?: Val;
+  powerLEv?: Val;
+  /** Was played from this zone (this turn or earlier, while it stays in play). */
+  playedFrom?: 'hand' | 'drop' | 'deck' | 'life' | 'energy';
+  /** Was played this turn. */
+  playedThisTurn?: boolean;
+  /** Shares a special trait with the card the previous step chose. */
+  sharesTraitWithPrev?: boolean;
 }
 
 export interface Target {
@@ -115,6 +160,9 @@ export interface Target {
   /** Who makes the choice: 'opp' for "your opponent KO's 1 Battle Card in their Battle Area". */
   chooser?: 'opp';
   filter: Filter;
+  /** "Battle Cards whose costs add up to N or less" / "a total power of N or less". */
+  totalCostLE?: number;
+  totalPowerLE?: number;
 }
 
 /** Something to count, for "for each ..." and count conditions. */
@@ -125,8 +173,12 @@ export interface Count {
    * kiRemoved = Ki removed by this skill's cost; prev = cards the previous effect affected;
    * underMax = cards under the one of your Battle Cards (matching filter) with the most ("choose 1 ... for each card under that card").
    */
-  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev' | 'underMax';
+  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev' | 'underMax'
+    /** battleDrop = Battle Area and Drop together; event = how many cards the triggering event moved; thisKiRemovedBattle = Ki removed from this card during this battle. */
+    | 'battleDrop' | 'event' | 'thisKiRemovedBattle';
   filter?: Filter;
+  /** Count different card names ("types of cards") instead of cards. */
+  distinct?: boolean;
 }
 
 type E<T> = T & { cond?: Cond[] };
@@ -153,9 +205,14 @@ export type Effect = E<
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
-  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay' }
-  | { t: 'dropToHand'; options: Filter[]; each: number }
-  | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy'; filter: Filter; n: number; rested?: boolean; extraType?: boolean; negate?: 'all' | 'onPlay' }
+  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean }
+  /** `per`: take up to `each` for each counted thing; distinctCosts: all with different costs. */
+  | { t: 'dropToHand'; options: Filter[]; each: number; per?: Count; distinctCosts?: boolean }
+  /**
+   * 'life' = look through your life (then shuffle it); 'lifeTop' = the top card of your life.
+   * each: up to 1 card per filter ("up to 1 <A> and up to 1 <B>"); totalCostLE: combined cost cap; distinctNames: different card names.
+   */
+  | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy' | 'life' | 'lifeTop'; filter: Filter; n: number; rested?: boolean; extraType?: boolean; negate?: 'all' | 'onPlay'; each?: Filter[]; totalCostLE?: number; distinctNames?: boolean }
   | { t: 'energyFromDeck'; n: number; rested: boolean }
   | { t: 'energyFromDrop'; filter: Filter; n: number; rested: boolean }
   | { t: 'energyFromLife'; n: number; rested: boolean }
@@ -173,22 +230,22 @@ export type Effect = E<
   /** "you place 1 energy marker". */
   | { t: 'placeMarker'; n: number }
   /** Top card(s) of your deck to your life. */
-  | { t: 'lifeFromDeck'; n: number }
+  | { t: 'lifeFromDeck'; n: number; until?: number }
   /** Card(s) from your hand to your life. */
   | { t: 'handToLife'; n: number; upTo: boolean }
   /** Card(s) from your hand on top of (or under) your deck. */
   | { t: 'handToDeck'; n: number; bottom?: boolean }
   /** Move the card with this skill. */
-  | { t: 'self'; to: 'hand' | 'drop' | 'energy' | 'deckBottom' | 'play'; rested?: boolean }
+  | { t: 'self'; to: 'hand' | 'drop' | 'energy' | 'deckBottom' | 'play' | 'life'; rested?: boolean }
   /** "During this turn, the next time you use <filter>, reduce its cost by N / you don't pay the cost." */
   | { t: 'nextDiscount'; filter: Filter; amount: number | 'free' }
   /** "You can't play <filter> for the turn" (applies to the skill's owner). */
-  | { t: 'cantPlay'; filter: Filter; dur: Duration; extras?: boolean }
+  | { t: 'cantPlay'; filter: Filter; dur: Duration; extras?: boolean; opp?: boolean }
   /** Your opponent's cards cost more / their Battle Cards enter rested, until their next turn ends. */
   | { t: 'oppTax'; amount: number; filter?: Filter; dur?: 'turn' | 'oppNextTurn' }
   | { t: 'oppPlayRested'; filter: Filter }
   /** Place cards under a card in play (evolve stacks, Potara, Majin absorption). */
-  | { t: 'placeUnder'; target: Target; from: 'drop' | 'hand' | 'deck' | 'battle'; filters: Filter[]; n: number }
+  | { t: 'placeUnder'; target: Target; from: 'drop' | 'hand' | 'deck' | 'battle' | 'handOrBattle'; filters: Filter[]; n: number; untilUnder?: number }
   /** Choose one of several effect lists. */
   | { t: 'choose'; options: Effect[][] }
   /** Use cards from a zone in the current battle's combo. */
@@ -215,30 +272,117 @@ export type Effect = E<
   | { t: 'energyToDrop'; n: number }
   /** "You win the game." */
   | { t: 'winGame' }
+  /** Reveal a card; later steps read it (revealedMatches, Val revealedCost). */
+  | { t: 'reveal'; from: 'deckTop' | 'oppDeckTop' | 'oppHand' | 'lifeTop' }
+  /** Just choose cards, for later steps that compare with "the card chosen by this skill". */
+  | { t: 'pick'; target: Target }
+  /**
+   * Attack rules on the opponent. attacker: which of their cards the rule covers (all if absent); against / againstZone / againstThis:
+   * what those can't attack (with none of the three: they can't attack at all); onlyAgainst: they may only attack these;
+   * restTax: each attack also rests N of their other Active cards; noBlock: they can't [Blocker].
+   * In a [Permanent] it holds while its conditions do; otherwise for `dur`.
+   */
+  | { t: 'attackRule'; attacker?: Filter; against?: Filter; againstZone?: 'leader' | 'battle'; againstThis?: boolean; onlyAgainst?: Filter; restTax?: number; noBlock?: boolean; dur: Duration }
+  /** [Permanent] "you only take up to N damage in each battle". */
+  | { t: 'damageCap'; n: number }
+  /** "Negate the next damage you take" until the duration ends. */
+  | { t: 'shield'; dur: Duration }
+  /** "You will not lose the game for the turn." */
+  | { t: 'cantLose'; dur: Duration }
+  /** Move N of your opponent's life to their Drop / energy. */
+  | { t: 'oppLife'; n: number; to: 'drop' | 'energy'; rested?: boolean }
+  /** Top N of the opponent's deck into their Drop. */
+  | { t: 'oppMill'; n: number }
+  /**
+   * "During this turn, when/if <on> ..., <effects>". on: dealsDamage (your card damages the opponent), koInBattle (your card KO's in battle),
+   * attacks (your card matching `filter` attacks a card matching `targetFilter`). once: only the next time.
+   */
+  | { t: 'delayed'; on: 'dealsDamage' | 'koInBattle' | 'attacks'; filter?: Filter; targetFilter?: Filter; once: boolean; effects: Effect[] }
+  /** [Permanent] cost change for your cards in hand matching filter ('free' = no cost); once: once per turn. */
+  | { t: 'handCostMod'; filter: Filter; amount: number | 'free'; once?: boolean }
+  /**
+   * [Permanent] "When you would pay the cost of <filter> (this card without a filter) from your hand, you may <costs> instead."
+   * scaleN: each cost's n is multiplied by the card's cost; costLEv: only cards with a cost up to this value; inBattle: only during a battle.
+   */
+  | { t: 'altCost'; filter?: Filter; costs: Cost[]; scaleN?: boolean; once?: boolean; inBattle?: boolean; costLEv?: Val }
+  /** [Permanent] cost of this card (or of `filter` cards) in the Drop: +amount, or becomes `set`. */
+  | { t: 'dropCost'; amount?: number; set?: number; filter?: Filter }
+  /** "Its original power becomes N" (value: a number or a Val such as the chosen card's power). */
+  | { t: 'setBasePower'; target: Target; value: number | Val; dur: Duration }
+  /** "Reduce the cost of the next [Evolve] skill you activate this turn for <filter> by N." */
+  | { t: 'evolveDiscount'; filter: Filter; amount: number }
+  /** [Permanent] on a [Field]: [Evolve] of <filter> from your hand may use a card under this card. */
+  | { t: 'evolveFromUnder'; filter: Filter }
+  /** Place a Battle Card into its owner's Combo Area (counts in the current battle's combo). */
+  | { t: 'toCombo'; target: Target }
+  /** [Permanent] your opponent's cards can't be switched to Active Mode by skills. */
+  | { t: 'oppNoActivate' }
+  /** "The next time you use <filter> Extra this turn, activate its skill again." */
+  | { t: 'repeatExtra'; filter: Filter }
+  /** "The next time you activate a skill on <filter> this turn, reduce the skill cost by N." */
+  | { t: 'skillDiscount'; filter: Filter; amount: number }
+  /** Flip your Leader to its front side. */
+  | { t: 'unflipLeader' }
+  /** Change your card that's in a battle to the chosen card. */
+  | { t: 'swapBattler'; target: Target }
+  /** Take an extra turn after this one. */
+  | { t: 'extraTurn' }
+  /** Activate the costless [On Play] skills of up to n cards under this card as though this card had them. */
+  | { t: 'copyOnPlay'; filter: Filter; n: number }
+  /** Activate the <timing> skill of up to 1 card in your Drop, then place it at the bottom of your deck. */
+  | { t: 'useDropSkill'; filter: Filter; timing: Timing }
+  /** Add up to N cards from your energy to your hand. */
+  | { t: 'energyToHand'; n: number; filter: Filter }
+  /** "If you would add a card to its owner's energy during this turn, place it into its owner's Drop instead." */
+  | { t: 'energyRedirect' }
+  /** Choose up to N of your opponent's Rest Mode energy; they can't switch to Active Mode during their next turn. */
+  | { t: 'lockEnergy'; n: number }
+  /** Switch all of your opponent's energy matching filter to Rest Mode. */
+  | { t: 'restOppEnergy'; filter: Filter }
+  /** "You may <costs>. If you do, <effects>." */
+  | { t: 'optionalCost'; costs: Cost[]; effects: Effect[] }
+  /** Several steps under one condition ("If X, A. Then, B."), checked once before A. */
+  | { t: 'group'; effects: Effect[] }
+  /** Play the card chosen by this skill's cost (from under a card) on top of this card. */
+  | { t: 'evolveOnto' }
   /** Reveal/rearrange deck or shuffle: no effect the simulator models. */
   | { t: 'noop'; note: string }
 >;
 
 export type Cost =
   | { t: 'discard'; n: number; filter?: Filter }
-  | { t: 'energyToDrop'; n: number }
+  | { t: 'energyToDrop'; n: number; filter?: Filter }
   | { t: 'restSelf' }
   | { t: 'restEnergy'; n: number }
   | { t: 'selfToDrop' }
   | { t: 'selfToHand' }
   | { t: 'selfToDeckBottom' }
   | { t: 'koSelf' }
-  | { t: 'lifeToHand'; n: number }
+  /** all: every card in your life ("add all of your life to your hand"). */
+  | { t: 'lifeToHand'; n: number; all?: boolean }
   | { t: 'lifeToDrop'; n: number }
   /** Remove N Ki. 'your' = leader and Battle Cards, 'battle' = Battle Cards only (manual p.12). */
   /** `max`: "remove N or more" / "remove all" — removes up to max (99 = all); the amount is countable as kiRemoved. */
   | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle'; max?: number }
   /** KO / rest / drop / bounce N of your own cards in play matching filter. */
   | { t: 'koOwn'; n: number; filter: Filter }
-  | { t: 'restOwn'; n: number; filter: Filter }
+  /** orLeader: your Leader may be the card rested ("your Leader or 1 card in your Battle Area"). */
+  | { t: 'restOwn'; n: number; filter: Filter; orLeader?: boolean }
   | { t: 'dropOwn'; n: number; filter: Filter }
   | { t: 'bounceOwn'; n: number; filter: Filter }
-  | { t: 'bottomOwn'; n: number; filter: Filter }
+  /** all: every matching card (n is the minimum). */
+  | { t: 'bottomOwn'; n: number; filter: Filter; all?: boolean }
+  | { t: 'removeMarker'; n: number }
+  /** Return N cards matching filter from your energy to your hand. */
+  | { t: 'energyToHand'; n: number; filter: Filter }
+  /** Place 1 card per filter from your hand or Battle Area at the bottom of your deck. */
+  | { t: 'handOrBattleToBottom'; filters: Filter[] }
+  /** Place N of your energy at the bottom of your deck. */
+  | { t: 'energyToDeckBottom'; n: number }
+  /** Choose a card matching filter under one of your cards matching onto (the skill then refers to it). */
+  | { t: 'pickUnder'; filter: Filter; onto: Filter }
+  /** Place 1 of your Battle Cards matching filter into your Combo Area. */
+  | { t: 'toComboOwn'; filter: Filter }
   /** N cards from your hand on top of your deck. */
   | { t: 'handToDeckTop'; n: number }
   | { t: 'mill'; n: number }
@@ -328,6 +472,12 @@ export type Cond =
   | { t: 'attackedThisTurn'; yes: boolean }
   /** This card is in a battle with an opponent's card matching the filter. */
   | { t: 'inBattleWith'; filter: Filter }
+  /** The card revealed by this skill matches. */
+  | { t: 'revealedMatches'; filter: Filter }
+  /** The skill that caused this trigger is your Leader's (optionally a Leader matching filter). */
+  | { t: 'causedByLeader'; filter?: Filter }
+  /** This card's Ki increased during this turn. */
+  | { t: 'thisKiUpThisTurn' }
   | { t: 'not'; c: Cond }
   | { t: 'or'; any: Cond[] }
   | { t: 'and'; all: Cond[] };
@@ -347,7 +497,15 @@ export type Keyword =
   | 'removeImmune'
   | 'cantBeRested'
   /** May attack the opponent's Active Mode Battle Cards. */
-  | 'attackActive';
+  | 'attackActive'
+  /** Can be used in a combo while in Rest Mode. */
+  | 'comboRested'
+  /** Can't be switched to Active Mode during your Charge Phase. */
+  | 'noUntap'
+  /** Must attack whenever possible. */
+  | 'mustAttack'
+  /** Counts as 2 cards when rested to pay your Leader's skill cost. */
+  | 'doubleForRest';
 
 /** [Evolve] / [Fusion Evolve]: play on top of the specified card(s) for `cost` energy. */
 export interface EvolveSpec {
@@ -360,6 +518,8 @@ export interface EvolveSpec {
   orFrom?: Filter[];
   /** Fusion Evolve: the two cards must be in Rest Mode / Active Mode. */
   baseMode?: 'rested' | 'active';
+  /** Costs paid besides energy ("pay 3 energy, discard 1 card from your hand"). */
+  extraCost?: Cost[];
 }
 
 export interface Ability {
@@ -376,6 +536,20 @@ export interface Ability {
   trigger?: Filter;
   /** Sentences of this ability we could not translate. */
   unparsed: string[];
+  /** For 'replace': what the replacement protects and from what. */
+  replace?: Replace;
+}
+
+export interface Replace {
+  /** 'this' = this card; 'ally' = your card matching filter (not this one). */
+  what: 'this' | 'ally';
+  filter?: Filter;
+  /** Who is removing it: 'opp' (skill or battle), 'oppSkill', 'any'. */
+  by: 'opp' | 'oppSkill' | 'any';
+  /** Only a KO (not other removal). */
+  ko?: boolean;
+  /** Also replaces losing the game through 0 life. */
+  lose?: boolean;
 }
 
 export interface CompiledCard {
@@ -391,6 +565,8 @@ export interface CompiledCard {
   source?: 'parser' | 'claude' | 'verified';
   /** Mechanics the engine still lacks for this card. */
   needs?: string[];
+  /** "This card's name is also treated as <X> in all areas." */
+  aliases?: string[];
 }
 
 /** A stored translation of one card (JSON form of CompiledCard). */
@@ -405,6 +581,7 @@ export interface CardScript {
   /** Sentences that could not be expressed. */
   unparsed: string[];
   needs?: string[];
+  aliases?: string[];
   source: 'claude' | 'verified';
   /** Plain-English reading of the script, for review. */
   reading?: string;

@@ -1001,10 +1001,26 @@
  "FP-054": {
   "abilities": [
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "When your energy is placed in your Drop by your <Son Gohan : Childhood> Leader's skill, add up to 1 card with a cost of 3 or more from your Drop to your energy."
+    "timing": "whenEnergyToDrop",
+    "cond": [
+     {
+      "t": "causedByLeader",
+      "filter": {
+       "names": [
+        "Son Gohan"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "costGE": 3
+      },
+      "n": 1,
+      "rested": false
+     }
     ]
    },
    {
@@ -1023,17 +1039,13 @@
        "side": "self",
        "filter": {
         "names": [
-         "Son Gohan: Childhood",
-         "Son Gohan : Childhood"
+         "Son Gohan: Childhood"
         ]
        }
       }
      }
     ]
    }
-  ],
-  "needs": [
-   "trigger on energy leaving"
   ]
  },
  "FP-055": {
@@ -1056,17 +1068,21 @@
     ]
    },
    {
-    "timing": "auto",
-    "effects": [],
-    "unparsed": [
-     "When this card is switched to Active Mode by your Leader's skill, draw 1 card."
-    ],
+    "timing": "whenActivated",
     "turn": "your",
-    "once": true
+    "once": true,
+    "cond": [
+     {
+      "t": "causedByLeader"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
    }
-  ],
-  "needs": [
-   "trigger on switching to Active Mode"
   ]
  },
  "FP-056": {
@@ -1419,14 +1435,11 @@
   ]
  },
  "FP-064": {
+  "aliases": [
+   "Son Goten",
+   "Trunks: Youth"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card's name is also treated as <Son Goten> and <Trunks : Youth> in all areas."
-    ]
-   },
    {
     "timing": "permanent",
     "cond": [
@@ -1436,10 +1449,17 @@
       "n": 1,
       "side": "self",
       "filter": {
-       "names": [
-        "Son Goten",
-        "Trunks: Youth",
-        "Trunks : Youth"
+       "anyOf": [
+        {
+         "names": [
+          "Son Goten"
+         ]
+        },
+        {
+         "names": [
+          "Trunks: Youth"
+         ]
+        }
        ]
       }
      }
@@ -1451,9 +1471,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "name aliases"
   ]
  },
  "FP-065": {
@@ -1575,15 +1592,19 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "During this turn, the next time you activate a skill on your <Gogeta> Leader, reduce the skill cost by (1)."
-    ],
-    "once": true
+    "once": true,
+    "effects": [
+     {
+      "t": "skillDiscount",
+      "filter": {
+       "names": [
+        "Gogeta"
+       ]
+      },
+      "amount": 1
+     }
+    ]
    }
-  ],
-  "needs": [
-   "discount on skill costs"
   ]
  },
  "FP-069": {
@@ -2017,15 +2038,29 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "If this card was played this turn, add a number of Extras up to the number of Ki under this card, with different costs, from your Drop to your hand."
+    "once": true,
+    "cond": [
+     {
+      "t": "playedThisTurn"
+     }
     ],
-    "once": true
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "type": "EXTRA"
+       }
+      ],
+      "each": 1,
+      "per": {
+       "side": "self",
+       "zone": "thisKi"
+      },
+      "distinctCosts": true
+     }
+    ]
    }
-  ],
-  "needs": [
-   "count-based picks with different costs"
   ]
  },
  "FP-082": {
@@ -2139,7 +2174,7 @@
      {
       "t": "leaderIs",
       "names": [
-       ": DA"
+       "DA"
       ]
      }
     ],
@@ -2148,15 +2183,24 @@
       "t": "lifeToHand",
       "n": 1,
       "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "DA"
+       ],
+       "notNames": [
+        "Glorio: DA"
+       ]
+      },
+      "n": 2,
+      "totalCostLE": 4
      }
-    ],
-    "unparsed": [
-     "Then, play up to 2 Battle Cards other than <Glorio: DA> with <DA> in their card name and a combined cost of 4 or less from your hand."
     ]
    }
-  ],
-  "needs": [
-   "combined cost of several targets"
   ]
  },
  "FP-085": {
@@ -2406,16 +2450,53 @@
   "abilities": [
    {
     "timing": "activateBattle",
-    "effects": [],
-    "unparsed": [
-     "Place 1 ≪Earthling≫-only Battle Card with a cost of 2 or less or 1 ≪Android≫-only Battle Card with a cost of 2 or less other than <Cell> from your Battle Area in your Combo Area: If your Leader is <Cell>, choose up to 1 Battle Card with a cost of 2 or less in your opponent's Battle Area and return it to its owner's hand."
-    ],
     "turn": "your",
-    "once": true
+    "once": true,
+    "cost": [
+     {
+      "t": "toComboOwn",
+      "filter": {
+       "anyOf": [
+        {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Earthling"
+         ],
+         "costLE": 2
+        },
+        {
+         "type": "BATTLE",
+         "onlyTraits": [
+          "Android"
+         ],
+         "costLE": 2,
+         "notNames": [
+          "Cell"
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Cell"
+        ]
+       }
+      ]
+     }
+    ]
    }
-  ],
-  "needs": [
-   "own card to Combo Area as a cost"
   ]
  },
  "FP-091": {
@@ -2475,14 +2556,41 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Reduce your Ki by 1: If your Leader has <Son Gohan> in its card name and this card was played this turn, choose up to 1 Battle Card with a cost less than or equal to your total Ki in your opponent's Battle Area and KO it."
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "your"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "count",
+         "count": {
+          "side": "self",
+          "zone": "kiTotal"
+         }
+        }
+       }
+      },
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Gohan"
+        ]
+       },
+       {
+        "t": "playedThisTurn"
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "cost compared with a counted total"
   ]
  },
  "FP-095": {
@@ -2683,14 +2791,23 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "If this card was played from your energy this turn, add the top card of your deck to your energy in Rest Mode."
+    "cond": [
+     {
+      "t": "thisMatches",
+      "filter": {
+       "playedFrom": "energy",
+       "playedThisTurn": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true
+     }
     ]
    }
-  ],
-  "needs": [
-   "remember where a card was played from"
   ]
  }
 }

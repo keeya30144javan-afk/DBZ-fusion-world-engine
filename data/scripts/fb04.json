@@ -20,10 +20,6 @@
     ],
     "effects": [
      {
-      "t": "draw",
-      "n": 1
-     },
-     {
       "t": "flipLeader"
      }
     ]
@@ -33,14 +29,25 @@
    {
     "timing": "activateBattle",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card in a Battle Area and this card's original power becomes the same as that card's power for the battle."
+    "effects": [
+     {
+      "t": "pick",
+      "target": {
+       "side": "any"
+      }
+     },
+     {
+      "t": "setBasePower",
+      "target": {
+       "ref": "this"
+      },
+      "value": {
+       "of": "prevPower"
+      },
+      "dur": "battle"
+     }
     ]
    }
-  ],
-  "needs": [
-   "set original power"
   ]
  },
  "FB04-003": {
@@ -541,30 +548,68 @@
  "FB04-037": {
   "abilities": [
    {
-    "timing": "auto",
+    "timing": "whenAllyPlayed",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When a Battle Card is played from your Drop, choose up to 1 of your opponent's Battle Cards and reduce its cost by 1 for the turn."
+    "trigger": {
+     "playedFrom": "drop"
+    },
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on play from the Drop"
   ]
  },
  "FB04-041": {
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Return this card to its owner's hand: Reveal the top card of your deck, and if the revealed card has ≪Satan City≫ in its special traits, play up to 1 <Videl> with a cost of 2 from your hand. Then, you can't play <Videl> for the turn."
+    "cost": [
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "effects": [
+     {
+      "t": "reveal",
+      "from": "deckTop"
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Videl"
+       ],
+       "costEQ": 2
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "revealedMatches",
+        "filter": {
+         "traits": [
+          "Satan City"
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Videl"
+       ]
+      },
+      "dur": "turn"
+     }
     ]
    }
-  ],
-  "needs": [
-   "condition on a revealed card"
   ]
  },
  "FB04-044": {
@@ -836,12 +881,6 @@
       "n": 1
      }
     ],
-    "cond": [
-     {
-      "t": "energyLE",
-      "n": 5
-     }
-    ],
     "effects": [
      {
       "t": "playFrom",
@@ -853,11 +892,14 @@
        ],
        "costLE": 3
       },
-      "n": 1
+      "n": 1,
+      "cond": [
+       {
+        "t": "energyLE",
+        "n": 4
+       }
+      ]
      }
-    ],
-    "unparsed": [
-     "(checked before paying: 4 or less energy after placing 1 into the Drop)"
     ]
    }
   ]
@@ -1475,16 +1517,28 @@
     ]
    },
    {
-    "timing": "auto",
+    "timing": "whenAllyActivated",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When one of your Battle Cards other than this card is switched to Active Mode by your <Cooler> Leader's skill, draw 1 card."
+    "trigger": {
+     "other": true
+    },
+    "cond": [
+     {
+      "t": "causedByLeader",
+      "filter": {
+       "names": [
+        "Cooler"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on switching to Active Mode"
   ]
  },
  "FB04-085": {
@@ -1643,14 +1697,10 @@
   ]
  },
  "FB04-095": {
+  "keywords": [
+   "noUntap"
+  ],
   "abilities": [
-   {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card can't be switched to Active Mode during your Charge Phase."
-    ]
-   },
    {
     "timing": "activateMain",
     "once": true,
@@ -1659,16 +1709,8 @@
       "t": "koOwn",
       "n": 1,
       "filter": {
-       "type": "BATTLE"
+       "other": true
       }
-     }
-    ],
-    "cond": [
-     {
-      "t": "leaderTrait",
-      "traits": [
-       "Majin"
-      ]
      }
     ],
     "effects": [
@@ -1676,13 +1718,18 @@
       "t": "activate",
       "target": {
        "ref": "this"
-      }
+      },
+      "cond": [
+       {
+        "t": "leaderTrait",
+        "traits": [
+         "Majin"
+        ]
+       }
+      ]
      }
     ]
    }
-  ],
-  "needs": [
-   "stays rested in the Charge Phase"
   ]
  },
  "FB04-096": {
@@ -1867,9 +1914,22 @@
   "backAbilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "You can also use Rest Mode Battle Cards with ≪Brainwashed≫ or ≪Machine Mutant≫ in their special traits in combos."
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "all": true,
+       "filter": {
+        "traits": [
+         "Brainwashed",
+         "Machine Mutant"
+        ]
+       }
+      },
+      "kw": "comboRested",
+      "dur": "static"
+     }
     ]
    },
    {
@@ -1881,9 +1941,6 @@
      }
     ]
    }
-  ],
-  "needs": [
-   "combo while in Rest Mode"
   ]
  },
  "FB04-104": {
@@ -1895,7 +1952,6 @@
       "t": "playFrom",
       "from": "hand",
       "filter": {
-       "type": "BATTLE",
        "costLE": 2
       },
       "n": 1
@@ -1904,14 +1960,18 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card with a cost of 3 or less and place it into its owner's Combo Area."
+    "effects": [
+     {
+      "t": "toCombo",
+      "target": {
+       "side": "any",
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "move a card to the Combo Area"
   ]
  },
  "FB04-105": {
@@ -2025,7 +2085,6 @@
       "t": "playFrom",
       "from": "hand",
       "filter": {
-       "type": "BATTLE",
        "costLE": 2,
        "traits": [
         "Brainwashed",
@@ -2037,16 +2096,15 @@
     ]
    },
    {
-    "timing": "auto",
+    "timing": "whenFieldComboInBattle",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When a card is used in a combo from your Battle Area while this card is in a battle, draw 1 card."
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on combo from the Battle Area"
   ]
  },
  "FB04-109": {
@@ -2623,9 +2681,11 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Until the end of the your opponent's next turn, negate the next damage you take."
+    "effects": [
+     {
+      "t": "shield",
+      "dur": "oppNextTurn"
+     }
     ]
    },
    {
@@ -2634,17 +2694,13 @@
      {
       "t": "power",
       "target": {
-       "all": true,
-       "side": "opp"
+       "all": true
       },
       "amount": -20000,
       "dur": "turn"
      }
     ]
    }
-  ],
-  "needs": [
-   "prevent damage"
   ]
  },
  "FB04-130": {

@@ -20,11 +20,14 @@ export function textHash(card: Pick<Card, 'text' | 'back'>): string {
 export const TIMINGS: Timing[] = [
   'onPlay', 'whenAttacking', 'whenAttacked', 'whenKOd', 'whenBlocking', 'activateMain', 'activateBattle', 'counter', 'permanent',
   'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart',
-  'whenWinsBattle', 'whenDealsDamage', 'whenKOsInBattle', 'whenAllyKOd', 'comboFromDrop', 'whenAllyAttacks', 'whenComboInBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
+  'whenWinsBattle', 'whenDealsDamage', 'whenKOsInBattle', 'whenAllyKOd', 'comboFromDrop', 'whenAllyAttacks', 'whenComboInBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp',
+  'whenOppBounced', 'whenEnergyToDrop', 'whenOppPlays', 'whenActivated', 'whenAllyActivated', 'whenFieldComboInBattle', 'whenDiscardBySkill',
+  'whenAllyDealsDamage', 'whenAllyKOsInBattle', 'replace', 'auto',
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
   'cantAttack', 'cantAttackLeader', 'cantBlock', 'koImmuneSkills', 'koImmune', 'koImmuneOnce', 'koImmuneBattle', 'removeImmune', 'cantBeRested', 'attackActive',
+  'comboRested', 'noUntap', 'mustAttack', 'doubleForRest',
 ];
 const DURATIONS = ['battle', 'turn', 'oppNextTurn', 'static', 'game'];
 const COLORS = ['Red', 'Blue', 'Green', 'Yellow', 'Black'];
@@ -49,9 +52,9 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   lockActive: { target: 'T' },
   grant: { target: 'T', kw: 'K', dur: 'D' },
   costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
-  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?' },
-  dropToHand: { options: 'F[]', each: 'n' },
-  playFrom: { from: 'Z:drop|hand|deck|energy', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?' },
+  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?', fromBottom: 'b?' },
+  dropToHand: { options: 'F[]', each: 'n', per: 'C?', distinctCosts: 'b?' },
+  playFrom: { from: 'Z:drop|hand|deck|energy|life|lifeTop', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?', each: 'F[]?', totalCostLE: 'n?', distinctNames: 'b?' },
   energyFromDeck: { n: 'n', rested: 'b' },
   energyFromDrop: { filter: 'F', n: 'n', rested: 'b' },
   energyFromLife: { n: 'n', rested: 'b' },
@@ -66,15 +69,15 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   flipLeader: {},
   ki: { target: 'T', n: 'n', per: 'C?' },
   placeMarker: { n: 'n' },
-  lifeFromDeck: { n: 'n' },
+  lifeFromDeck: { n: 'n', until: 'n?' },
   handToLife: { n: 'n', upTo: 'b' },
   handToDeck: { n: 'n', bottom: 'b?' },
-  self: { to: 'Z:hand|drop|energy|deckBottom|play', rested: 'b?' },
+  self: { to: 'Z:hand|drop|energy|deckBottom|play|life', rested: 'b?' },
   nextDiscount: { filter: 'F', amount: 'n|free' },
-  cantPlay: { filter: 'F', dur: 'D', extras: 'b?' },
+  cantPlay: { filter: 'F', dur: 'D', extras: 'b?', opp: 'b?' },
   oppTax: { amount: 'n', filter: 'F?', dur: 'Z:turn|oppNextTurn?' },
   oppPlayRested: { filter: 'F' },
-  placeUnder: { target: 'T', from: 'Z:drop|hand|deck|battle', filters: 'F[]', n: 'n' },
+  placeUnder: { target: 'T', from: 'Z:drop|hand|deck|battle|handOrBattle', filters: 'F[]', n: 'n', untilUnder: 'n?' },
   choose: { options: 'E[][]' },
   comboFrom: { from: 'Z:drop|deckTop', filter: 'F', n: 'n', per: 'C?' },
   atEndOfTurn: { effects: 'E[]' },
@@ -88,25 +91,62 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   atEndOfBattle: { effects: 'E[]' },
   oppMarker: { n: 'n' },
   energyToDrop: { n: 'n' },
+  reveal: { from: 'Z:deckTop|oppDeckTop|oppHand|lifeTop' },
+  pick: { target: 'T' },
+  attackRule: { attacker: 'F?', against: 'F?', againstZone: 'Z:leader|battle?', againstThis: 'b?', onlyAgainst: 'F?', restTax: 'n?', noBlock: 'b?', dur: 'D' },
+  damageCap: { n: 'n' },
+  shield: { dur: 'D' },
+  cantLose: { dur: 'D' },
+  oppLife: { n: 'n', to: 'Z:drop|energy', rested: 'b?' },
+  oppMill: { n: 'n' },
+  delayed: { on: 'Z:dealsDamage|koInBattle|attacks', filter: 'F?', targetFilter: 'F?', once: 'b', effects: 'E[]' },
+  handCostMod: { filter: 'F', amount: 'n|free', once: 'b?' },
+  altCost: { filter: 'F?', costs: 'Co[]', scaleN: 'b?', once: 'b?', inBattle: 'b?', costLEv: 'V?' },
+  dropCost: { amount: 'n?', set: 'n?', filter: 'F?' },
+  setBasePower: { target: 'T', value: 'n|V', dur: 'D' },
+  evolveDiscount: { filter: 'F', amount: 'n' },
+  evolveFromUnder: { filter: 'F' },
+  toCombo: { target: 'T' },
+  oppNoActivate: {},
+  repeatExtra: { filter: 'F' },
+  skillDiscount: { filter: 'F', amount: 'n' },
+  unflipLeader: {},
+  swapBattler: { target: 'T' },
+  extraTurn: {},
+  copyOnPlay: { filter: 'F', n: 'n' },
+  useDropSkill: { filter: 'F', timing: 'Tm' },
+  energyToHand: { n: 'n', filter: 'F' },
+  energyRedirect: {},
+  lockEnergy: { n: 'n' },
+  restOppEnergy: { filter: 'F' },
+  optionalCost: { costs: 'Co[]', effects: 'E[]' },
+  evolveOnto: {},
+  group: { effects: 'E[]' },
   noop: { note: 's' },
 };
 const COSTS: Record<Cost['t'], Spec> = {
   discard: { n: 'n', filter: 'F?' },
-  energyToDrop: { n: 'n' },
+  energyToDrop: { n: 'n', filter: 'F?' },
   restSelf: {},
   restEnergy: { n: 'n' },
   selfToDrop: {},
   selfToHand: {},
   selfToDeckBottom: {},
   koSelf: {},
-  lifeToHand: { n: 'n' },
+  lifeToHand: { n: 'n', all: 'b?' },
   lifeToDrop: { n: 'n' },
   reduceKi: { n: 'n', scope: 'Z:this|leader|your|battle', max: 'n?' },
   koOwn: { n: 'n', filter: 'F' },
-  restOwn: { n: 'n', filter: 'F' },
+  restOwn: { n: 'n', filter: 'F', orLeader: 'b?' },
   dropOwn: { n: 'n', filter: 'F' },
   bounceOwn: { n: 'n', filter: 'F' },
-  bottomOwn: { n: 'n', filter: 'F' },
+  bottomOwn: { n: 'n', filter: 'F', all: 'b?' },
+  removeMarker: { n: 'n' },
+  energyToHand: { n: 'n', filter: 'F' },
+  handOrBattleToBottom: { filters: 'F[]' },
+  energyToDeckBottom: { n: 'n' },
+  pickUnder: { filter: 'F', onto: 'F' },
+  toComboOwn: { filter: 'F' },
   handToDeckTop: { n: 'n' },
   mill: { n: 'n' },
   reveal: { filter: 'F' },
@@ -158,6 +198,9 @@ const CONDS: Record<Cond['t'], Spec> = {
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },
   inBattleWith: { filter: 'F' },
+  revealedMatches: { filter: 'F' },
+  causedByLeader: { filter: 'F?' },
+  thisKiUpThisTurn: {},
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
   and: { all: 'Cond[]' },
@@ -166,11 +209,15 @@ const FILTER: Spec = {
   costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', originalPower: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
   names: 's[]?', notNames: 's[]?', traits: 's[]?', traitsAll: 's[]?', onlyTraits: 's[]?', colors: 'col[]?', type: 'Z:BATTLE|EXTRA?',
   other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', comboLE: 'n?', comboEQ: 'n?', notTraits: 's[]?', underNames: 's[]?', anyOf: 'F[]?',
+  costLEv: 'V?', costEQv: 'V?', powerLEv: 'V?', playedFrom: 'Z:hand|drop|deck|life|energy?', playedThisTurn: 'b?', sharesTraitWithPrev: 'b?',
 };
 const TARGET: Spec = {
   side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
+  totalCostLE: 'n?', totalPowerLE: 'n?',
 };
-const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev|underMax', filter: 'F?' };
+const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev|underMax|battleDrop|event|thisKiRemovedBattle', filter: 'F?', distinct: 'b?' };
+const VAL: Spec = { of: 'Z:prevCost|prevPower|kiRemoved|revealedCost|thisCost|energy|count|totalCost|leaderKi', count: 'C?', filter: 'F?', plus: 'n?' };
+const REPLACE: Spec = { what: 'Z:this|ally', filter: 'F?', by: 'Z:opp|oppSkill|any', ko: 'b?', lose: 'b?' };
 
 // ------------------------------------------------------------------ validation
 
@@ -193,6 +240,10 @@ function checkField(v: unknown, type: string, path: string, errs: string[]) {
     case 'b': if (typeof v !== 'boolean') bad('true/false'); return;
     case 's': if (typeof v !== 'string') bad('text'); return;
     case 'n|free': if (v !== 'free' && typeof v !== 'number') bad('a number or "free"'); return;
+    case 'n|V': if (typeof v !== 'number') checkObj(v, VAL, path, errs); return;
+    case 'V': checkObj(v, VAL, path, errs); return;
+    case 'Tm': if (!TIMINGS.includes(v as Timing)) bad('a timing'); return;
+    case 'Co[]': if (!Array.isArray(v)) bad('a list of costs'); else v.forEach((c, i) => checkTagged(c, COSTS, `${path}[${i}]`, errs, 'cost')); return;
     case 's[]': if (!Array.isArray(v) || !v.every((x) => typeof x === 'string')) bad('a list of text'); return;
     case 'col[]': if (!Array.isArray(v) || !v.every((x) => COLORS.includes(x as string))) bad(`colours from ${COLORS.join('/')}`); return;
     case 'zones': if (!Array.isArray(v) || !v.length || !v.every((x) => ['leader', 'battle', 'field'].includes(x as string))) bad('zones from leader/battle/field'); return;
@@ -242,6 +293,8 @@ function checkAbility(v: unknown, path: string, errs: string[]) {
   checkConds(v.cond, `${path}.cond`, errs);
   checkEffects(v.effects, `${path}.effects`, errs);
   if (v.trigger !== undefined) checkObj(v.trigger, FILTER, `${path}.trigger`, errs);
+  if (v.replace !== undefined) checkObj(v.replace, REPLACE, `${path}.replace`, errs);
+  if (v.timing === 'replace' && v.replace === undefined) errs.push(`${path}.replace: missing for a replacement`);
   if (v.unparsed !== undefined && (!Array.isArray(v.unparsed) || !v.unparsed.every((x) => typeof x === 'string'))) errs.push(`${path}.unparsed: list of text`);
 }
 
@@ -267,10 +320,12 @@ export function validateScript(v: unknown): string[] {
       if (ev.orFrom !== undefined) checkField(ev.orFrom, 'F[]', 'evolve.orFrom', errs);
       if (ev.equalPowerGE !== undefined && typeof ev.equalPowerGE !== 'number') errs.push('evolve.equalPowerGE: number');
       if (ev.baseMode !== undefined && ev.baseMode !== 'rested' && ev.baseMode !== 'active') errs.push('evolve.baseMode: rested|active');
+      if (ev.extraCost !== undefined) checkField(ev.extraCost, 'Co[]', 'evolve.extraCost', errs);
     }
   }
   if (v.unparsed !== undefined && (!Array.isArray(v.unparsed) || !v.unparsed.every((x) => typeof x === 'string'))) errs.push('unparsed: list of text');
   if (v.needs !== undefined && (!Array.isArray(v.needs) || !v.needs.every((x) => typeof x === 'string'))) errs.push('needs: list of text');
+  if (v.aliases !== undefined && (!Array.isArray(v.aliases) || !v.aliases.every((x) => typeof x === 'string'))) errs.push('aliases: list of text');
   return errs;
 }
 
@@ -295,6 +350,7 @@ export function expandScript<T>(v: T): T {
       };
     }
     if ('timing' in o && 'effects' in o) return { once: false, cost: [], cond: [], text: '', unparsed: [], ...o };
+    if ('timing' in o && 'replace' in o) return { once: false, cost: [], cond: [], effects: [], text: '', unparsed: [], ...o };
     return o;
   };
   const out = walk(v) as Record<string, unknown>;
@@ -307,6 +363,7 @@ export function normalizeAbility(a: Partial<Ability>): Ability {
   return {
     timing: a.timing ?? 'permanent', turn: a.turn, once: a.once ?? false, cost: a.cost ?? [], cond: a.cond ?? [],
     effects: a.effects ?? [], text: a.text ?? '', unparsed: a.unparsed ?? [], ...(a.trigger ? { trigger: a.trigger } : {}),
+    ...(a.replace ? { replace: a.replace } : {}),
   };
 }
 

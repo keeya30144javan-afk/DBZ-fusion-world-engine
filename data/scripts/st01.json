@@ -475,14 +475,6 @@
    {
     "timing": "activateBattle",
     "turn": "your",
-    "cost": [
-     {
-      "t": "reduceKi",
-      "n": 5,
-      "scope": "leader",
-      "max": 99
-     }
-    ],
     "cond": [
      {
       "t": "leaderIs",
@@ -491,15 +483,32 @@
       ]
      }
     ],
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 5,
+      "scope": "leader",
+      "max": 99
+     }
+    ],
     "effects": [
      {
       "t": "power",
       "target": {
        "ref": "battler",
        "filter": {
-        "names": [
-         "Son Goten",
-         "Son Gohan: Adolescence"
+        "type": "BATTLE",
+        "anyOf": [
+         {
+          "names": [
+           "Son Goten"
+          ]
+         },
+         {
+          "names": [
+           "Son Gohan: Adolescence"
+          ]
+         }
         ]
        }
       },
@@ -509,15 +518,20 @@
        "side": "self",
        "zone": "kiRemoved"
       }
+     },
+     {
+      "t": "delayed",
+      "on": "koInBattle",
+      "once": true,
+      "effects": [
+       {
+        "t": "damageLeader",
+        "n": 2
+       }
+      ]
      }
-    ],
-    "unparsed": [
-     "Then, during this turn, the next time your card KO's your opponent's Battle Card in battle, deal 2 damage to your opponent."
     ]
    }
-  ],
-  "needs": [
-   "delayed trigger on KO"
   ]
  },
  "ST01-016": {
@@ -569,14 +583,27 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "During a battle, when you would pay the cost of an Extra with <Kamehameha> in its card name from your hand with a cost less than or equal to the Ki under your Leader, you may switch this card to Rest Mode instead."
+    "effects": [
+     {
+      "t": "altCost",
+      "filter": {
+       "type": "EXTRA",
+       "names": [
+        "Kamehameha"
+       ]
+      },
+      "costs": [
+       {
+        "t": "restSelf"
+       }
+      ],
+      "inBattle": true,
+      "costLEv": {
+       "of": "leaderKi"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "alternative play costs"
   ]
  },
  "ST01-018": {
@@ -1064,15 +1091,26 @@
    },
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "If you have 5 or less energy, during this turn, reduce the cost of the next [Evolve] skill you activate on a card with ≪Majin≫ in its special traits and a cost of 6 or less in your hand by (1)."
+    "once": true,
+    "cond": [
+     {
+      "t": "energyLE",
+      "n": 5
+     }
     ],
-    "once": true
+    "effects": [
+     {
+      "t": "evolveDiscount",
+      "filter": {
+       "traits": [
+        "Majin"
+       ],
+       "costLE": 6
+      },
+      "amount": 1
+     }
+    ]
    }
-  ],
-  "needs": [
-   "discount on Evolve costs"
   ]
  },
  "ST01-029": {
@@ -1182,15 +1220,35 @@
   "abilities": [
    {
     "timing": "activateMain",
-    "effects": [],
-    "unparsed": [
-     "Choose 1 <Majin Buu: Evil> with a cost of 3 under a <Demonic Gaze> in your Battle Area: Switch this card to Active Mode. Then, play the card chosen by this skill on top of this card."
+    "once": true,
+    "cost": [
+     {
+      "t": "pickUnder",
+      "filter": {
+       "names": [
+        "Majin Buu: Evil"
+       ],
+       "costEQ": 3
+      },
+      "onto": {
+       "names": [
+        "Demonic Gaze"
+       ]
+      }
+     }
     ],
-    "once": true
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "evolveOnto"
+     }
+    ]
    }
-  ],
-  "needs": [
-   "cards under a [Field]"
   ]
  },
  "ST01-036": {
@@ -1304,14 +1362,44 @@
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Add cards from the top of your deck to your life until you have 3 life. Then, you may place a total of 3 cards from under cards with ≪Majin≫ in their special traits in your Battle Area into their owner's Drop. If you do, switch this card to Active Mode and it gets +15000 power for the turn."
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 0,
+      "until": 3
+     },
+     {
+      "t": "optionalCost",
+      "costs": [
+       {
+        "t": "underToDrop",
+        "n": 3,
+        "filter": {
+         "traits": [
+          "Majin"
+         ]
+        }
+       }
+      ],
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "ref": "this"
+        }
+       },
+       {
+        "t": "power",
+        "target": {
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "turn"
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "fill life up to a number"
   ]
  },
  "ST01-039": {
@@ -1501,14 +1589,31 @@
   "abilities": [
    {
     "timing": "whenOppAttacks",
-    "effects": [],
-    "unparsed": [
-     "When an opponent's Battle Card with a cost of 3 or less attacks, you may switch this Rest Mode card in a Battle Area to Active Mode. If you do, change the target of the attack to this card."
+    "trigger": {
+     "type": "BATTLE",
+     "costLE": 3
+    },
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "redirect",
+      "target": {
+       "ref": "this"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "filter on the attacking card"
   ]
  },
  "ST01-045": {
@@ -1700,16 +1805,23 @@
    },
    {
     "timing": "activateBattle",
-    "effects": [],
-    "unparsed": [
-     "For each Ki removed from this card by the skills of your cards with ≪Wicked Soul≫ in their special traits during this battle, this card gets +10000 power for the turn."
-    ],
     "turn": "your",
-    "once": true
+    "once": true,
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn",
+      "per": {
+       "side": "self",
+       "zone": "thisKiRemovedBattle"
+      }
+     }
+    ]
    }
-  ],
-  "needs": [
-   "count Ki removed during a battle"
   ]
  },
  "ST01-056": {
@@ -1910,14 +2022,27 @@
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "If your Leader is <Vegeta>, your opponent can't use Extras with a cost of 1 or less for the turn."
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "cantPlay",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 1
+      },
+      "dur": "turn",
+      "extras": true,
+      "opp": true
+     }
     ]
    }
-  ],
-  "needs": [
-   "play bans on the opponent"
   ]
  },
  "ST01-065": {
@@ -2067,47 +2192,116 @@
   ]
  },
  "ST01-070": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku/Vegeta"
+     ],
+     "costEQ": 3
+    }
+   ],
+   "orFrom": [
+    {
+     "names": [
+      "Son Goku",
+      "Vegeta"
+     ],
+     "underNames": [
+      "Potara"
+     ]
+    }
+   ],
+   "cost": 1,
+   "extraCost": [
+    {
+     "t": "dropToDeck",
+     "n": 5
+    }
+   ]
+  },
   "abilities": [
    {
-    "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "[Evolve] pay 1 energy, place 5 cards from your Drop at the bottom of their owner's deck in a random order: <Son Goku/Vegeta> with a cost of 3, or <Son Goku> or <Vegeta> with a <Potara> under them."
-    ]
-   },
-   {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "Choose up to 1 Battle Card in your opponent's Battle Area with a cost less than or equal to the number of cards in your Drop, and place it at the bottom of its owner's deck."
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLEv": {
+         "of": "count",
+         "count": {
+          "side": "self",
+          "zone": "drop"
+         }
+        }
+       }
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "Evolve with an extra cost",
-   "cost compared with a counted total"
   ]
  },
  "ST01-071": {
   "abilities": [
    {
     "timing": "onPlay",
-    "effects": [],
-    "unparsed": [
-     "You will not lose the game for the turn."
+    "effects": [
+     {
+      "t": "cantLose",
+      "dur": "turn"
+     }
     ]
    },
    {
     "timing": "whenAttacking",
-    "effects": [],
-    "unparsed": [
-     "Remove all 3 or more Ki from your <Vegeta> Leader and add all of your life to your hand: This card gets +10000 power for the battle for each Ki removed by this skill. Then, if your opponent's life is at 2 or more, place 1 of your opponent's life into its owner's Drop."
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 3,
+      "scope": "leader",
+      "max": 99
+     },
+     {
+      "t": "lifeToHand",
+      "n": 0,
+      "all": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "per": {
+       "side": "self",
+       "zone": "kiRemoved"
+      }
+     },
+     {
+      "t": "oppLife",
+      "n": 1,
+      "to": "drop",
+      "cond": [
+       {
+        "t": "oppLifeGE",
+        "n": 2
+       }
+      ]
+     }
     ]
    }
-  ],
-  "needs": [
-   "can't lose this turn",
-   "cost: all life"
   ]
  }
 }

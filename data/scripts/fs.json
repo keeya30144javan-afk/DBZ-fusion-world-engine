@@ -1417,29 +1417,31 @@
       "n": 1
      }
     ],
-    "cond": [
-     {
-      "t": "energyLE",
-      "n": 3
-     }
-    ],
     "effects": [
      {
-      "t": "energyFromDrop",
-      "filter": {
-       "type": "BATTLE"
-      },
-      "n": 2,
-      "rested": false
+      "t": "group",
+      "cond": [
+       {
+        "t": "energyLE",
+        "n": 2
+       }
+      ],
+      "effects": [
+       {
+        "t": "energyFromDrop",
+        "filter": {
+         "type": "BATTLE"
+        },
+        "n": 2,
+        "rested": false
+       },
+       {
+        "t": "energyRedirect"
+       }
+      ]
      }
-    ],
-    "unparsed": [
-     "Then, if you would add a card to its owner's energy during this turn, place that card into its owner's Drop instead."
     ]
    }
-  ],
-  "needs": [
-   "energy replacement for the turn"
   ]
  },
  "FS10-02": {
