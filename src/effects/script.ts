@@ -49,7 +49,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   lockActive: { target: 'T' },
   grant: { target: 'T', kw: 'K', dur: 'D' },
   costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
-  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top?', rested: 'b?', negate: 'Z:all|onPlay?' },
+  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?' },
   dropToHand: { options: 'F[]', each: 'n' },
   playFrom: { from: 'Z:drop|hand|deck|energy', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?' },
   energyFromDeck: { n: 'n', rested: 'b' },
@@ -83,6 +83,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   lifeToDeck: { n: 'n' },
   negate: { target: 'T', dur: 'D', scope: 'Z:all|onPlay?' },
   redirect: { target: 'T' },
+  winGame: {},
   noop: { note: 's' },
 };
 const COSTS: Record<Cost['t'], Spec> = {
@@ -137,6 +138,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   removedOwnThisTurn: {},
   kiRemovedThisTurn: {},
   comboFromFieldThisTurn: {},
+  attackedThisTurn: { yes: 'b' },
   inBattleWith: { filter: 'F' },
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
@@ -144,7 +146,7 @@ const CONDS: Record<Cond['t'], Spec> = {
 const FILTER: Spec = {
   costLE: 'n?', costGE: 'n?', costEQ: 'n?', originalCost: 'b?', originalPower: 'b?', powerLE: 'n?', powerGE: 'n?', powerEQ: 'n?', rested: 'b?', active: 'b?',
   names: 's[]?', notNames: 's[]?', traits: 's[]?', traitsAll: 's[]?', onlyTraits: 's[]?', colors: 'col[]?', type: 'Z:BATTLE|EXTRA?',
-  other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', notTraits: 's[]?', underNames: 's[]?', anyOf: 'F[]?',
+  other: 'b?', keyword: 'kwx?', noSkill: 'b?', kiGE: 'n?', comboLE: 'n?', comboEQ: 'n?', notTraits: 's[]?', underNames: 's[]?', anyOf: 'F[]?',
 };
 const TARGET: Spec = {
   side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',

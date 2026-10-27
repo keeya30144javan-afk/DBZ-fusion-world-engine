@@ -30,7 +30,7 @@ Target (for effects that choose) — every field optional, defaults to up to 1 o
  { "side": "opp"|"self"|"any", "zones": ["battle"] | ["leader","battle"] | ["field"], "count": n, "upTo": bool, "all": bool ("choose all ..."), "filter": Filter,
    "ref": "this" | "leader" (your Leader) | "oppLeader" | "prev" (the card(s) the previous effect chose: "it", "that card") | "battler" (your card that's in a battle) | "oppBattler",
    "chooser": "opp" ("Your opponent KO's 1 of their ..." — the opponent picks; use "upTo": false) }
-Filter (all optional): costLE, costGE, costEQ, originalCost (bool), originalPower (bool: power filters use printed power), powerLE, powerGE, powerEQ, rested, active, names: ["Son Goku"] (card name contains), notNames, traits: ["Saiyan"] (any of),
+Filter (all optional): comboLE, comboEQ (printed combo power), costLE, costGE, costEQ, originalCost (bool), originalPower (bool: power filters use printed power), powerLE, powerGE, powerEQ, rested, active, names: ["Son Goku"] (card name contains), notNames, traits: ["Saiyan"] (any of),
  traitsAll (all of), onlyTraits ("≪Saiyan≫-only"), notTraits, colors: ["Red"], type: "BATTLE"|"EXTRA", other (not this card), keyword: e.g. "blocker"|"evolve"|"fusionEvolve", noSkill, kiGE, underNames,
  anyOf: [Filter, Filter] ("a <Sorbet> or a card with a cost of 1")
 
@@ -54,6 +54,7 @@ Effect (each may carry "cond": Cond[] for a mid-skill "Then, if ...,"):
  {"t":"choose","options":[[Effect...],[Effect...]]} ("Choose one —")  {"t":"noop","note"} (look/rearrange/shuffle with no game effect)
  {"t":"negate","target","dur","scope"?: "all"|"onPlay"} ("negate its skills for the turn")  {"t":"redirect","target":{"side":"self",...}} ("switch the attack target to the chosen card")
  playFrom also takes "negate": "onPlay"|"all" ("play it with its [On Play] skills negated for the turn")
+ {"t":"winGame"}
  {"t":"atEndOfTurn","effects":[Effect...]} ("At the end of the turn, ...")  {"t":"lockSkill","names","timing","dur"} ("you can't activate the [Activate:Main] of <X> for the turn")
  {"t":"dropToDeck"} (return all cards from your Drop to your deck, shuffled)  {"t":"lifeToDeck","n"} (n life cards to the bottom of your deck)
 Count = {"side":"self"|"opp","zone":"battle"|"drop"|"hand"|"energy"|"life"|"deck"|"combo"|"under"|"thisKi"|"kiTotal"|"kiRemoved"|"prev","filter"?}
@@ -71,7 +72,7 @@ Cond: {"t":"handLE"|"handGE"|"energyGE"|"energyLE"|"lifeLE"|"lifeGE"|"oppLifeLE"
  {"t":"attackingBattleCard","filter"?} {"t":"prevMatches","filter"} ("if that card has ...") {"t":"yourTurn","yes"} {"t":"not","c"} {"t":"or","any":[Cond...]}
  {"t":"thisHasUnder","yes"} {"t":"attacking","filter"} (this card is attacking a card matching filter) {"t":"koedThisTurn","filter"} (your matching card KO'd an opponent's card this turn)
  {"t":"playedByLeaderSkill"} {"t":"leaderInBattle"} {"t":"removedOwnThisTurn"} ("if your Battle Card was removed from a Battle Area by one of your skills during this turn")
- {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"inBattleWith","filter"} ("while this card is in a battle with an opponent's card with ...")
+ {"t":"kiRemovedThisTurn"} {"t":"comboFromFieldThisTurn"} {"t":"attackedThisTurn","yes"} {"t":"inBattleWith","filter"} ("while this card is in a battle with an opponent's card with ...")
 
 EXAMPLES
 "[On Play] Choose up to 1 of your opponent's Battle Cards with a cost of 2 or less and KO it."

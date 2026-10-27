@@ -34,6 +34,8 @@ export function describeFilter(f: Filter, noun = 'card'): string {
   if (f.keyword) post.push(`[${f.keyword}]`);
   if (f.noSkill) pre.unshift('skill-less');
   if (f.kiGE !== undefined) post.push(`${f.kiGE} or more Ki`);
+  if (f.comboEQ !== undefined) post.push(`${f.comboEQ} combo power`);
+  if (f.comboLE !== undefined) post.push(`${f.comboLE} combo power or less`);
   if (f.underNames?.length) post.push(`a ${list(f.underNames.map((n) => `<${n}>`))} under it`);
   if (f.anyOf?.length) return `${f.anyOf.map((x) => describeFilter(x, noun)).join(' or ')}`;
   let out = [...pre, base].join(' ');
@@ -103,7 +105,7 @@ export function describeEffect(e: Effect): string {
     case 'costMod': out = `${pick}${e.amount < 0 ? `reduce its cost by ${-e.amount}` : `increase its cost by ${e.amount}`}${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`; break;
     case 'search': {
       const dest = e.dest ?? 'hand';
-      out = `look at ${plural(e.look, 'card')} from the top of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : 'at the bottom of your deck in a random order'}`;
+      out = `look at ${plural(e.look, 'card')} from the top of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : e.rest === 'hand' ? 'into your hand' : 'at the bottom of your deck in a random order'}`;
       break;
     }
     case 'dropToHand': out = `add ${list(e.options.map((f) => `up to ${e.each} ${describeFilter(f)}`), 'and')} from your Drop to your hand`; break;
@@ -138,6 +140,7 @@ export function describeEffect(e: Effect): string {
     case 'dropToDeck': out = "return all cards from your Drop to your deck in a random order"; break;
     case 'lifeToDeck': out = `look through your life and place ${plural(e.n, 'card')} on top of your deck`; break;
     case 'negate': out = `${pick}negate ${e.target.ref === 'this' ? "this card's" : 'its'} ${e.scope === 'onPlay' ? '[On Play] skills' : 'skills'}${DUR[e.dur]}`; break;
+    case 'winGame': out = 'you win the game'; break;
     case 'redirect': out = `${pick}switch the attack target to ${e.target.ref || e.target.all ? tgt : 'it'}`; break;
     case 'noop': out = e.note; break;
   }
@@ -181,6 +184,7 @@ export function describeCond(c: Cond): string {
     case 'playedByLeaderSkill': return "this card was played by your Leader's skill";
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
+    case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
     case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
     case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
     case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;

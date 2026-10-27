@@ -51,6 +51,9 @@ function effectValue(e: Effect): number {
     case 'choose': return Math.max(...e.options.map((l) => l.reduce((a, x) => a + effectValue(x), 0)));
     case 'comboFrom': return 0.8 * e.n;
     case 'noop': return 0;
+    case 'negate': return 1.0;
+    case 'redirect': return 1.0;
+    case 'winGame': return 50;
     default: return 0.2;
   }
 }

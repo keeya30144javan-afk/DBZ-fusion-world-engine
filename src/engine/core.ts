@@ -34,6 +34,8 @@ export interface Inst {
   playedByLeader?: boolean;
   /** Its skills are negated through this turn number ('onPlay': only its [On Play]). */
   negatedUntil?: number;
+  /** Last turn this card attacked. */
+  attackedTurn?: number;
   negateScope?: 'all' | 'onPlay';
 }
 
@@ -370,6 +372,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'removedOwnThisTurn': return me.removedOwnTurn === s.turn;
     case 'kiRemovedThisTurn': return me.kiRemovedTurn === s.turn;
     case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
+    case 'attackedThisTurn': return (s.inst[src].attackedTurn === s.turn) === c.yes;
     case 'inBattleWith': {
       const b = s.battle;
       if (!b || (b.attacker !== src && b.target !== src)) return false;
@@ -446,6 +449,8 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   if (f.traitsAll && !f.traitsAll.every((t) => card.traits.some((ct) => ct.toLowerCase() === t.toLowerCase()))) return false;
   if (f.onlyTraits && !(card.traits.length > 0 && card.traits.every((ct) => f.onlyTraits!.some((t) => ct.toLowerCase() === t.toLowerCase())))) return false;
   if (f.kiGE !== undefined && inst.ki < f.kiGE) return false;
+  if (f.comboLE !== undefined && card.comboPower > f.comboLE) return false;
+  if (f.comboEQ !== undefined && card.comboPower !== f.comboEQ) return false;
   if (f.notTraits && card.traits.some((ct) => f.notTraits!.some((t) => ct.toLowerCase() === t.toLowerCase()))) return false;
   if (f.underNames && !(inst.under ?? []).some((u) => nameMatches(cardOf(s, u), f.underNames!))) return false;
   if (f.anyOf && !f.anyOf.some((x) => matchesFilter(s, uid, x, src))) return false;

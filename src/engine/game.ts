@@ -387,6 +387,7 @@ export function legalActions(s: GameState): Action[] {
 function declareAttack(s: GameState, attacker: number, target: number, ctl: Choosers) {
   const side = s.active;
   s.inst[attacker].rested = true;
+  s.inst[attacker].attackedTurn = s.turn;
   s.battle = { attacker, atkSide: side, target, blocked: false, cantBlock: false, comboCount: [0, 0] };
   log(s, `P${side} attacks with ${nameOf(s, attacker)} (${powerOf(s, attacker)}) -> ${nameOf(s, target)} (${powerOf(s, target)})`);
   emit(s, { t: 'attack', p: side, attacker, target });

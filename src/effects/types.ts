@@ -75,6 +75,9 @@ export interface Filter {
   noSkill?: boolean;
   /** Has at least N Ki. */
   kiGE?: number;
+  /** Printed combo power at most / exactly N. */
+  comboLE?: number;
+  comboEQ?: number;
   /** Lacks all of these special traits ("without Special Trait ≪X≫"). */
   notTraits?: string[];
   /** Has a card with one of these names under it ("with a <Potara> under them"). */
@@ -138,7 +141,7 @@ export type Effect = E<
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
-  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top'; rested?: boolean; negate?: 'all' | 'onPlay' }
+  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay' }
   | { t: 'dropToHand'; options: Filter[]; each: number }
   | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy'; filter: Filter; n: number; rested?: boolean; extraType?: boolean; negate?: 'all' | 'onPlay' }
   | { t: 'energyFromDeck'; n: number; rested: boolean }
@@ -190,6 +193,8 @@ export type Effect = E<
   | { t: 'negate'; target: Target; dur: Duration; scope?: 'all' | 'onPlay' }
   /** "Switch the attack target to the chosen card" (choose among your own cards). */
   | { t: 'redirect'; target: Target }
+  /** "You win the game." */
+  | { t: 'winGame' }
   /** Reveal/rearrange deck or shuffle: no effect the simulator models. */
   | { t: 'noop'; note: string }
 >;
@@ -273,6 +278,8 @@ export type Cond =
   | { t: 'kiRemovedThisTurn' }
   /** You used a card from your Battle Area in a combo this turn. */
   | { t: 'comboFromFieldThisTurn' }
+  /** This card has / hasn't attacked this turn. */
+  | { t: 'attackedThisTurn'; yes: boolean }
   /** This card is in a battle with an opponent's card matching the filter. */
   | { t: 'inBattleWith'; filter: Filter }
   | { t: 'not'; c: Cond }

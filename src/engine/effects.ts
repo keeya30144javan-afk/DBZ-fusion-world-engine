@@ -551,6 +551,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       const rest = top.filter((u) => !pick.includes(u));
       // Return the rest first so a play from the look sees a consistent deck.
       if ((e.rest ?? 'bottom') === 'drop') { for (const u of rest) me.drop.push(u); }
+      else if (e.rest === 'hand') me.hand.push(...rest);
       else if (e.rest === 'top') me.deck.push(...rest);
       else me.deck.unshift(...shuffle(s, rest));
       ctx.prev = pick;
@@ -728,6 +729,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       for (const u of ts) { s.inst[u].negatedUntil = until; s.inst[u].negateScope = e.scope ?? 'all'; }
       return;
     }
+    case 'winGame': s.stage = 'over'; s.winner = owner; s.reason = `${nameOf(s, src)}'s skill`; return;
     case 'redirect': {
       if (!s.battle) return;
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
