@@ -475,7 +475,7 @@ export type Cond =
   /** This card has / hasn't attacked this turn. */
   | { t: 'attackedThisTurn'; yes: boolean }
   /** This card is in a battle with an opponent's card matching the filter. */
-  | { t: 'inBattleWith'; filter: Filter }
+  | { t: 'inBattleWith'; filter: Filter; /** Your Leader is the one in the battle, not this card. */ leader?: boolean }
   /** The card revealed by this skill matches. */
   | { t: 'revealedMatches'; filter: Filter }
   /** The skill that caused this trigger is your Leader's (optionally a Leader matching filter). */

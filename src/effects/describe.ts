@@ -341,7 +341,7 @@ export function describeCond(c: Cond): string {
     case 'bouncedThisTurn': return "a Battle Card in your Battle Area was returned to its owner's hand during this turn";
     case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
     case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
-    case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
+    case 'inBattleWith': return `${c.leader ? 'your Leader' : 'this card'} is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
     case 'revealedMatches': return `the revealed card is ${aCard(describeFilter(c.filter))}`;
     case 'causedByLeader': return `it was caused by your ${c.filter ? describeFilter(c.filter, 'Leader') : 'Leader'}'s skill`;
     case 'thisKiUpThisTurn': return "this card's Ki has increased during this turn";

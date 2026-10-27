@@ -594,8 +594,9 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'thisKiUpThisTurn': return s.inst[src].kiUpTurn === s.turn;
     case 'inBattleWith': {
       const b = s.battle;
-      if (!b || (b.attacker !== src && b.target !== src)) return false;
-      return matchesFilter(s, b.attacker === src ? b.target : b.attacker, c.filter, src);
+      const who = c.leader ? me.leader : src;
+      if (!b || (b.attacker !== who && b.target !== who)) return false;
+      return matchesFilter(s, b.attacker === who ? b.target : b.attacker, c.filter, src);
     }
     case 'handLE': return me.hand.length <= c.n;
     case 'handGE': return me.hand.length >= c.n;

@@ -5989,9 +5989,7 @@
        }
       ],
       "text": "",
-      "unparsed": [
-       "(your <Gogeta: BR> Leader also gets +15000 power while it is in a battle with an opponent's card with an original power of 30000)"
-      ],
+      "unparsed": [],
       "timing": "permanent",
       "effects": [
        {
@@ -6010,11 +6008,51 @@
         "dur": "static"
        }
       ]
+     },
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gogeta: BR"
+        ]
+       },
+       {
+        "t": "inBattleWith",
+        "leader": true,
+        "filter": {
+         "powerEQ": 30000,
+         "originalPower": true
+        }
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "permanent",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "leader"
+        },
+        "amount": 15000,
+        "dur": "static"
+       }
+      ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (your <Gogeta: BR> Leader also gets +15000 power while it is in a battle with an opponent's card with an original power of 30000)"
+     "ok": true,
+     "note": "reviewed by the user: this card and your <Gogeta: BR> Leader each get +15000 while in a battle with a card of original power 30000"
     },
     "keywords": [],
     "source": "claude",

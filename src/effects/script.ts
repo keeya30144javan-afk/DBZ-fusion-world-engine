@@ -197,7 +197,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   playedByEvolve: {},
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },
-  inBattleWith: { filter: 'F' },
+  inBattleWith: { filter: 'F', leader: 'b?' },
   revealedMatches: { filter: 'F' },
   causedByLeader: { filter: 'F?' },
   thisKiUpThisTurn: {},

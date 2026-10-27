@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { newGame, legalActions, step, Action } from '../src/engine/game';
-import { GameState, Side, condHolds, costInDrop, matchesFilter, moveTo } from '../src/engine/core';
+import { GameState, Side, condHolds, costInDrop, matchesFilter, moveTo, powerOf } from '../src/engine/core';
 import { koCard, playCard, resolveAbility, setWinner, takeLife } from '../src/engine/effects';
 import { defaultChooser } from '../src/ai/heuristics';
 import { Card } from '../src/data/types';
@@ -269,4 +269,15 @@ test('Cell (SB01-001): only a removed ≪Android≫ counts', () => {
   const b = spawn(s, 0, and.id, 'battle');
   s.skillBy = 1; moveTo(s, b, 'drop'); s.skillBy = undefined;
   assert.equal(condHolds(s, 0, s.p[0].leader, cond), true);
+});
+
+test('Gogeta: BR (FB11-005): your Gogeta: BR Leader gets +15000 in a battle with an original-30000 card', () => {
+  const s = fresh();
+  const leader = spawn(s, 0, Object.values(cards).find((c) => c.type === 'LEADER' && c.name === 'Gogeta: BR')!.id, 'leader');
+  spawn(s, 0, 'FB11-005', 'battle');
+  const foe = Object.values(cards).find((c) => c.type === 'BATTLE' && c.power === 30000)!;
+  const t = spawn(s, 1, foe.id, 'battle');
+  const before = powerOf(s, leader);
+  s.battle = { attacker: leader, target: t, atkSide: 0, comboCount: [0, 0] } as any;
+  assert.equal(powerOf(s, leader), before + 15000);
 });
