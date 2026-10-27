@@ -33,6 +33,10 @@ export type Timing =
   | 'gameStart'
   /** [Auto] "When this card inflicts damage with an attack". */
   | 'whenDealsDamage'
+  /** [Auto] "When your <X> attacks" (filter in `trigger`; not this card). */
+  | 'whenAllyAttacks'
+  /** [Auto] "When you use a card in a combo while this card is in a battle". */
+  | 'whenComboInBattle'
   /** [Auto] "When this card is used in a combo from your Drop". */
   | 'comboFromDrop'
   /** [Auto] "When your <X> is KO'd" (filter in `trigger`). */
@@ -188,7 +192,7 @@ export type Effect = E<
   /** Choose one of several effect lists. */
   | { t: 'choose'; options: Effect[][] }
   /** Use cards from a zone in the current battle's combo. */
-  | { t: 'comboFrom'; from: 'drop' | 'deckTop'; filter: Filter; n: number }
+  | { t: 'comboFrom'; from: 'drop' | 'deckTop'; filter: Filter; n: number; per?: Count }
   /** Run these effects at the end of the current turn ("at the end of the turn, switch this card to Active Mode"). */
   | { t: 'atEndOfTurn'; effects: Effect[] }
   /** "You can't activate the [Activate:Main] of <X> for the turn." */

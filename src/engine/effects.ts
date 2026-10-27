@@ -196,7 +196,7 @@ export function fireTriggers(s: GameState, uid: number, timing: Ability['timing'
     const owner = s.inst[uid].owner;
     if (!turnMatches(s, owner, ab.turn)) continue;
     if (ab.once && s.p[owner].usedOnce.includes(onceKey(s, uid, i))) continue;
-    if ((timing === 'whenAllyPlayed' || timing === 'whenAllyKOd' || timing === 'whenAllyRemovedBySelf' || timing === 'whenAllyRemovedByOpp') && (subject === undefined || (ab.trigger && !matchesFilter(s, subject, ab.trigger, uid)))) continue;
+    if ((timing === 'whenAllyPlayed' || timing === 'whenAllyKOd' || timing === 'whenAllyAttacks' || timing === 'whenAllyRemovedBySelf' || timing === 'whenAllyRemovedByOpp') && (subject === undefined || (ab.trigger && !matchesFilter(s, subject, ab.trigger, uid)))) continue;
     resolveAbility(s, uid, ab, i, ctl);
   }
 }
@@ -728,13 +728,17 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       if (!s.battle) return;
       if (e.from === 'drop') {
         const cands = me.drop.filter((u) => cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src));
-        const used = pickFrom(s, owner, src, cands, e.n, ctl);
+        const used = pickFrom(s, owner, src, cands, e.per ? e.n * countOf(s, owner, src, e.per, ctx) : e.n, ctl);
         for (const u of used) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; me.comboDropTurn = s.turn; emit(s, { t: 'combo', p: owner, id: s.inst[u].id, uid: u, fromHand: false }); }
         for (const u of used) { if (s.stage === 'over') break; fireTriggers(s, u, 'comboFromDrop', ctl); }
       } else {
         const u = me.deck[me.deck.length - 1];
         if (u !== undefined && cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src)) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; }
         checkDeckOut(s);
+      }
+      if (s.battle && s.stage !== 'over') {
+        const mine = s.battle.atkSide === owner ? s.battle.attacker : s.battle.target;
+        if (s.inst[mine]?.owner === owner) fireTriggers(s, mine, 'whenComboInBattle', ctl);
       }
       return;
     }

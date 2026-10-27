@@ -1,0 +1,2537 @@
+{
+ "FS01-12": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "filter": {
+        "other": true
+       }
+      },
+      "amount": 5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS02-03": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Son Goten"
+        ],
+        "costLE": 2
+       },
+       {
+        "names": [
+         "Trunks: Youth"
+        ],
+        "costLE": 2
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-01": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "battle"
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "deckTop",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Bardock's Crew"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-03": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-06": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": false,
+      "dest": "drop",
+      "rest": "top"
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-08": {
+  "abilities": [
+   {
+    "timing": "whenComboInBattle",
+    "turn": "your",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-09": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "thisInBattle"
+     },
+     {
+      "t": "comboAreaHasCard"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-10": {
+  "abilities": [
+   {
+    "timing": "whenComboInBattle",
+    "once": true,
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 2,
+       "traits": [
+        "Bardock's Crew"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-11": {
+  "keywords": [
+   "doubleStrike"
+  ],
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "combo",
+       "filter": {}
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-13": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3,
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      }
+     },
+     {
+      "t": "toDrop",
+      "target": {
+       "zones": [
+        "field"
+       ]
+      },
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-15": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ]
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "comboAreaHasCard"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS05-16": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at 2 cards from the top of your deck and place them at the top or bottom in any order"
+     }
+    ]
+   }
+  ]
+ },
+ "FS06-02": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "powerGE": 25000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FS06-03": {
+  "abilities": [
+   {
+    "timing": "whenAllyAttacks",
+    "trigger": {
+     "type": "BATTLE",
+     "powerGE": 25000
+    },
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "thisMatches",
+      "filter": {
+       "powerGE": 25000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS06-11": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS06-12": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {},
+      "amount": -10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-02": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-05": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "opp",
+        "filter": {
+         "type": "BATTLE",
+         "costLE": 2
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-06": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 2,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-08": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "handLE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "noop",
+      "note": "look at the top card of your deck and place it at the top or bottom"
+     },
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-09": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "noop",
+      "note": "look at the top card of your deck and place it at the top or bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-10": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-11": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {},
+      "amount": -1,
+      "dur": "turn"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Vegeta"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS07-12": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "handLE",
+        "n": 7
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-01": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      },
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "rested": true,
+         "costGE": 2,
+         "names": [
+          ": DA"
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-04": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-06": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 2,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "rested": true,
+       "costGE": 2
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-12": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 2,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "rested": true,
+       "costGE": 2
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-13": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 4
+       }
+      }
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-15": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "or",
+        "any": [
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "self",
+          "filter": {
+           "type": "BATTLE",
+           "rested": true,
+           "costGE": 3
+          }
+         },
+         {
+          "t": "battleCount",
+          "op": "ge",
+          "n": 1,
+          "side": "opp",
+          "filter": {
+           "type": "BATTLE",
+           "rested": true,
+           "costGE": 3
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS08-16": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 1,
+      "filter": {
+       "costGE": 2,
+       "names": [
+        ": DA"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-03": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 6
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "deckTop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1
+     }
+    ],
+    "unparsed": [
+     "(looks at 2 cards; the simulator only checks the top one)"
+    ]
+   }
+  ]
+ },
+ "FS09-05": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 6
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "doubleStrike",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-07": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "costEQ": 6
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-08": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      },
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "costEQ": 6
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-09": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-10": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {}
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     },
+     {
+      "t": "ko",
+      "target": {},
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "costEQ": 6
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-11": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-12": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot",
+       "Shallo"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "noop",
+      "note": "look at 3 cards from the top of your deck and put them back in any order"
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-13": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "noop",
+      "note": "look at 3 cards from the top of your deck and put them back in any order"
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-15": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-16": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 4,
+      "dur": "static"
+     }
+    ],
+    "unparsed": [
+     "(also while in the deck)"
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "handToDeckTop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Shallot"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-17": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 6
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS09-18": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "costEQ": 6
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-01": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "energyLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 2,
+      "rested": false
+     }
+    ],
+    "unparsed": [
+     "Then, if you would add a card to its owner's energy during this turn, place that card into its owner's Drop instead."
+    ]
+   }
+  ],
+  "needs": [
+   "energy replacement for the turn"
+  ]
+ },
+ "FS10-02": {
+  "keywords": [
+   "superCombo"
+  ],
+  "abilities": [
+   {
+    "timing": "comboFromHand",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "comboPower",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-03": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Giblet"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-07": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-08": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 500,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 2
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Giblet"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-10": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "toEnergy",
+      "target": {
+       "zones": [
+        "battle",
+        "field"
+       ],
+       "filter": {
+        "costLE": 4
+       }
+      },
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-11": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "doubleStrike",
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Giblet"
+        ]
+       }
+      ]
+     },
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-12": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "all": true,
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-13": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "energyLessThanOpp"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-15": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "energyToDrop",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 1
+     },
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "type": "BATTLE"
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FS10-17": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Giblet"
+        ]
+       },
+       {
+        "t": "energyLessThanOpp"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-01": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAllyPlayed",
+    "once": true,
+    "trigger": {
+     "keyword": "evolve",
+     "powerGE": 20000,
+     "powerLE": 30000
+    },
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "rested": true
+       }
+      },
+      "op": "ge",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-03": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "costGE": 4,
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     },
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-07": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku"
+     ]
+    }
+   ],
+   "cost": 2
+  },
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "atEndOfTurn",
+      "effects": [
+       {
+        "t": "self",
+        "to": "drop"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-11": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-14": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Vegeta"
+     ],
+     "notTraits": [
+      "Wicked Soul"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "koSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-17": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "keyword": "evolve"
+       }
+      },
+      "kw": "doubleStrike",
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "keyword": "evolve"
+       }
+      },
+      "amount": 25000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FS11-18": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "type": "BATTLE",
+         "rested": true,
+         "costGE": 4
+        }
+       },
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "opp",
+        "filter": {
+         "type": "BATTLE",
+         "rested": true,
+         "costGE": 4
+        }
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 4,
+       "traits": [
+        "Saiyan"
+       ]
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-01": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "or",
+      "any": [
+       {
+        "t": "lifeLE",
+        "n": 4
+       },
+       {
+        "t": "kiLeaderGE",
+        "n": 2
+       }
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "once": true,
+    "cost": [
+     {
+      "t": "reduceKi",
+      "n": 1,
+      "scope": "your",
+      "max": 99
+     }
+    ],
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Planet Namek"
+       ]
+      },
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "kiRemoved"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-04": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "traits": [
+         "Planet Namek"
+        ],
+        "other": true
+       }
+      },
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "ref": "prev"
+      },
+      "n": 1,
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "traits": [
+          "Earthling"
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-06": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "comboFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE",
+       "comboLE": 5000
+      },
+      "n": 1,
+      "per": {
+       "side": "self",
+       "zone": "kiTotal"
+      }
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "self",
+      "to": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-07": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "kiTotalGE",
+      "n": 3,
+      "scope": "your"
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "costEQ": 7
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 4
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-09": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "kiTotalGE",
+      "n": 4,
+      "scope": "your"
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ]
+       }
+      },
+      "kw": "doubleStrike",
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-10": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "kiGE": 1,
+        "traits": [
+         "Planet Namek"
+        ],
+        "notNames": [
+         "Vegeta"
+        ]
+       }
+      }
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Dende"
+       ]
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-13": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Nail"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {
+       "side": "self",
+       "upTo": false,
+       "filter": {
+        "names": [
+         "Nail"
+        ]
+       }
+      }
+     },
+     {
+      "t": "ki",
+      "target": {
+       "ref": "leader"
+      },
+      "n": 1
+     },
+     {
+      "t": "ki",
+      "target": {
+       "ref": "this"
+      },
+      "n": 1
+     },
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-14": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Planet Namek"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "traits": [
+         "Planet Namek"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FS12-18": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 5000,
+      "dur": "battle",
+      "per": {
+       "side": "self",
+       "zone": "kiTotal"
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

@@ -138,7 +138,7 @@ export function describeEffect(e: Effect): string {
     case 'oppPlayRested': out = `during your opponent's next turn, their ${describeFilter(e.filter, 'Battle Card')}s are played in Rest Mode`; break;
     case 'placeUnder': out = `place ${list(e.filters.map((f) => `up to ${e.n} ${describeFilter(f)}`), 'and')} from your ${e.from === 'drop' ? 'Drop' : e.from} under ${describeTarget(e.target)}`; break;
     case 'choose': out = `choose one — ${e.options.map((o, i) => `(${i + 1}) ${o.map(describeEffect).join('. Then, ')}`).join(' ')}`; break;
-    case 'comboFrom': out = `use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
+    case 'comboFrom': out = `${e.per ? `for each ${describeCount(e.per)}, ` : ''}use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
     case 'atEndOfTurn': out = `at the end of the turn, ${e.effects.map(describeEffect).join(', then ')}`; break;
     case 'lockSkill': out = `you can't activate the [${e.timing === 'activateMain' ? 'Activate: Main' : 'Activate: Battle'}] of ${list(e.names.map((n) => `<${n}>`))}${DUR[e.dur]}`; break;
     case 'dropToDeck': out = "return all cards from your Drop to your deck in a random order"; break;
@@ -248,7 +248,7 @@ const TIMING: Record<string, string> = {
   startOfYourTurn: 'Start of Your Turn', awaken: 'Awaken', comboFromHand: 'Auto: when used in a combo from your hand',
   comboFromField: 'Auto: when used in a combo from the Battle Area', whenDamaged: 'Auto: when you take damage',
   whenAllyPlayed: 'Auto: when your card is played', whenMilled: 'Auto: when placed from your deck into your Drop',
-  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle", whenAllyKOd: "Auto: when your card is KO'd", comboFromDrop: 'Auto: when this card is used in a combo from your Drop',
+  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack', whenKOsInBattle: "Auto: when this card KO's an opponent's Battle Card in battle", whenAllyKOd: "Auto: when your card is KO'd", comboFromDrop: 'Auto: when this card is used in a combo from your Drop', whenAllyAttacks: 'Auto: when your card attacks', whenComboInBattle: 'Auto: when you use a card in a combo while this card is in a battle',
   whenOppAttacks: "Auto: when an opponent's card attacks", whenAllyRemovedBySelf: 'Auto: when your card is removed from the Battle Area by one of your skills',
   whenAllyRemovedByOpp: 'Auto: when your card is removed from the Battle Area by your opponent', auto: 'Auto',
 };
@@ -260,6 +260,7 @@ export function describeAbility(a: Ability): string {
   if (a.turn) tags.push(a.turn === 'your' ? '[Your Turn]' : "[Opponent's Turn]");
   if (a.once) tags.push('[Once per turn]');
   let body = '';
+  if (a.timing === 'whenAllyAttacks' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} attacks, `;
   if (a.timing === 'whenAllyKOd' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is KO'd, `;
   if (a.timing === 'whenAllyPlayed' && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is played, `;
   if ((a.timing === 'whenAllyRemovedBySelf' || a.timing === 'whenAllyRemovedByOpp') && a.trigger) body += `When your ${describeFilter(a.trigger, 'Battle Card')} is removed, `;

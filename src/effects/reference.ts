@@ -20,7 +20,8 @@ Ability = { "timing": Timing, "turn"?: "your"|"opp", "once"?: true ([Once per tu
 Timing: "onPlay" | "whenAttacking" | "whenBlocking" | "whenKOd" | "activateMain" | "activateBattle" | "permanent" | "endOfYourTurn" | "awaken" (Leader; the effects end with {"t":"flipLeader"})
  | "comboFromHand" ("When you use this card in a combo from your hand") | "comboFromField" ("...from the Battle Area") | "whenDamaged" ("When you take damage")
  | "whenAllyPlayed" ("When your <X> is played", filter in "trigger") | "whenMilled" ("When this card is placed from your deck into your Drop") | "gameStart" ("When this card is placed in your Leader Area")
- | "whenWinsBattle" ("When this card wins a battle") | "whenDealsDamage" ("When this card inflicts damage with an attack") | "whenKOsInBattle" ("When this card KO's an opponent's Battle Card in battle") | "whenAllyKOd" ("When your <X> is KO'd", filter in "trigger") | "comboFromDrop" ("When this card is used in a combo from your Drop") | "whenOppAttacks" ("When an opponent's Battle Card attacks")
+ | "whenWinsBattle" ("When this card wins a battle") | "whenDealsDamage" ("When this card inflicts damage with an attack") | "whenKOsInBattle" ("When this card KO's an opponent's Battle Card in battle") | "whenAllyKOd" ("When your <X> is KO'd", filter in "trigger") | "comboFromDrop" ("When this card is used in a combo from your Drop")
+ | "whenAllyAttacks" ("When your <X> attacks", filter in "trigger") | "whenComboInBattle" ("When you use a card in a combo while this card is in a battle") | "whenOppAttacks" ("When an opponent's Battle Card attacks")
  | "whenAllyRemovedBySelf" / "whenAllyRemovedByOpp" ("When your <X> is removed from the Battle Area by one of your skills / by your opponent", filter in "trigger")
  | "startOfYourTurn" | "whenAttacked" | "counter" ([Counter] skills)
 A skill with two tags like [On Play/When Attacking] is two abilities with the same body.

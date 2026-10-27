@@ -293,6 +293,7 @@ export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
   const base = isLeader(s, uid) && s.p[inst.owner].awakened && c.backKeywords ? c.backKeywords : c.keywords;
   if (base.has(kw) && !negatedAll(s, uid)) return true;
   if (auraEffects(s, uid).some((e) => e.t === 'grant' && e.kw === kw)) return true;
+  if (staticDepth >= MAX_STATIC_DEPTH) return false;
   // [Permanent] "this card gains [X]" / "this card can't attack" with conditions.
   for (const ab of abilitiesOf(s, uid)) {
     if (ab.timing !== 'permanent') continue;
@@ -307,18 +308,31 @@ export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
 export const turnMatches = (s: GameState, owner: Side, turn: 'your' | 'opp' | undefined) =>
   !turn || (turn === 'your') === (s.active === owner);
 
+/**
+ * Cards whose conditions read other cards' cost or power can refer to each other
+ * (A's cost depends on counting cards by cost, which includes B, whose cost depends
+ * on A...). Below this depth, continuous changes are ignored and printed values used.
+ */
+const MAX_STATIC_DEPTH = 3;
+let staticDepth = 0;
+
 /** Cost of a card where it is, with any cost changes on it. */
 export function costOf(s: GameState, uid: number): number {
   const base = cardOf(s, uid).cost;
   const mods = s.inst[uid].costMods;
   let c = base;
   if (mods) for (const m of mods) c += m.amount;
-  for (const ab of abilitiesOf(s, uid)) {
-    if (ab.timing !== 'permanent' || !turnMatches(s, s.inst[uid].owner, ab.turn)) continue;
-    if (!condsHold(s, s.inst[uid].owner, uid, ab.cond)) continue;
-    for (const e of ab.effects) if (e.t === 'costMod' && e.target.ref === 'this' && inPlay(s, uid)) c += e.per ? e.amount * countOf(s, s.inst[uid].owner, uid, e.per) : e.amount;
-  }
-  if (inPlay(s, uid)) for (const e of auraEffects(s, uid)) if (e.t === 'costMod') c += e.amount;
+  if (!inPlay(s, uid) || staticDepth >= MAX_STATIC_DEPTH) return Math.max(0, c);
+  staticDepth++;
+  try {
+    for (const ab of abilitiesOf(s, uid)) {
+      if (ab.timing !== 'permanent' || !turnMatches(s, s.inst[uid].owner, ab.turn)) continue;
+      if (!ab.effects.some((e) => e.t === 'costMod' && e.target.ref === 'this')) continue;
+      if (!condsHold(s, s.inst[uid].owner, uid, ab.cond)) continue;
+      for (const e of ab.effects) if (e.t === 'costMod' && e.target.ref === 'this' && condsHold(s, s.inst[uid].owner, uid, e.cond)) c += e.per ? e.amount * countOf(s, s.inst[uid].owner, uid, e.per) : e.amount;
+    }
+    for (const e of auraEffects(s, uid)) if (e.t === 'costMod') c += e.amount;
+  } finally { staticDepth--; }
   return Math.max(0, c);
 }
 
@@ -528,10 +542,14 @@ export function staticPower(s: GameState, uid: number): number {
   const owner = s.inst[uid].owner;
   let add = 0;
   const yourTurn = s.active === owner;
+  if (staticDepth >= MAX_STATIC_DEPTH) return 0;
+  staticDepth++;
+  try {
   for (const ab of abilitiesOf(s, uid)) {
     if (ab.timing !== 'permanent') continue;
     if (ab.turn === 'your' && !yourTurn) continue;
     if (ab.turn === 'opp' && yourTurn) continue;
+    if (!ab.effects.some((e) => e.t === 'power')) continue;
     if (!condsHold(s, owner, uid, ab.cond)) continue;
     for (const e of ab.effects) {
       if (e.t === 'power' && (e.target.ref === 'this' || (e.target.ref === 'leader' && isLeader(s, uid))) && condsHold(s, owner, uid, (e as any).cond))
@@ -539,6 +557,7 @@ export function staticPower(s: GameState, uid: number): number {
     }
   }
   for (const e of auraEffects(s, uid)) if (e.t === 'power') add += e.amount;
+  } finally { staticDepth--; }
   return add;
 }
 

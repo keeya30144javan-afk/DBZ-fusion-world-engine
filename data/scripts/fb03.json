@@ -1872,16 +1872,21 @@
  "FB03-121": {
   "abilities": [
    {
-    "timing": "auto",
+    "timing": "whenComboInBattle",
     "once": true,
-    "effects": [],
-    "unparsed": [
-     "When you use a card in a combo while this card is in a battle, draw 1 card. Then, switch this card to Active Mode."
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
     ]
    }
-  ],
-  "needs": [
-   "trigger on combo"
   ]
  },
  "FB03-122": {

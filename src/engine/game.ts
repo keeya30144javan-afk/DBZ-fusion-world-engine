@@ -394,6 +394,11 @@ function declareAttack(s: GameState, attacker: number, target: number, ctl: Choo
   emit(s, { t: 'attack', p: side, attacker, target });
   fireTriggers(s, attacker, 'whenAttacking', ctl);
   if (s.stage === 'over') return;
+  for (const u of [s.p[side].leader, ...s.p[side].battle]) {
+    if (u === attacker || (s.stage as string) === 'over' || !battleStillValid(s)) continue;
+    fireTriggers(s, u, 'whenAllyAttacks', ctl, attacker);
+  }
+  if ((s.stage as string) === 'over') return;
   if (!battleStillValid(s)) return endBattle(s, ctl);
   const def = other(side);
   for (const u of [s.p[def].leader, ...s.p[def].battle]) {
@@ -492,6 +497,15 @@ function addCombo(s: GameState, uid: number, side: Side, ctl: Choosers) {
   emit(s, { t: 'combo', p: side, id: s.inst[uid].id, uid, fromHand });
   log(s, `P${side} combos ${nameOf(s, uid)}${fromHand ? '' : ' from the field'}`);
   fireTriggers(s, uid, fromHand ? 'comboFromHand' : 'comboFromField', ctl);
+  fireComboWatchers(s, side, ctl);
+}
+
+/** "When you use a card in a combo while this card is in a battle." */
+export function fireComboWatchers(s: GameState, side: Side, ctl: Choosers) {
+  const b = s.battle;
+  if (!b || s.stage === 'over') return;
+  const mine = b.atkSide === side ? b.attacker : b.target;
+  if (s.inst[mine]?.owner === side) fireTriggers(s, mine, 'whenComboInBattle', ctl);
 }
 
 function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers) {
