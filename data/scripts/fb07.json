@@ -1,0 +1,3231 @@
+{
+ "FB07-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "During this turn, the next time you activate a skill on a card with <DA> in its card name from your hand or Battle Area, reduce the skill cost by (2)."
+    ]
+   }
+  ],
+  "needs": [
+   "discount on skill costs"
+  ]
+ },
+ "FB07-002": {
+  "abilities": [
+   {
+    "timing": "whenAllyPlayed",
+    "once": true,
+    "trigger": {
+     "names": [
+      ": DA"
+     ],
+     "keyword": "evolve"
+    },
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-004": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA",
+       "costLE": 3,
+       "traits": [
+        "Android"
+       ]
+      },
+      "amount": "free",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Android 18"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-005": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan",
+       "Universe 7"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Frieza"
+       ],
+       "costEQ": 5,
+       "traits": [
+        "Universe 7"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-006": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan",
+       "Universe 7"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-007": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Android"
+      ],
+      "only": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 15000
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-008": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderAwakened"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Tournament of Power"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-010": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Goku: DA",
+      "Son Goku (Mini): DA"
+     ],
+     "powerGE": 25000
+    }
+   ],
+   "cost": 3
+  },
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-013": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         ": DA"
+        ],
+        "keyword": "evolve"
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-017": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        ": DA"
+       ],
+       "costLE": 2
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        ": DA"
+       ],
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-018": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        ": DA"
+       ],
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "type": "EXTRA"
+      },
+      "amount": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-020": {
+  "keywords": [
+   "cantAttackLeader"
+  ]
+ },
+ "FB07-021": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Vegeta: DA",
+      "Vegeta (Mini): DA"
+     ]
+    }
+   ],
+   "cost": 2
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "removeImmune",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-022": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        ": DA"
+       ],
+       "keyword": "evolve"
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {},
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-023": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 10000,
+      "dur": "battle",
+      "cond": [
+       {
+        "t": "battleCount",
+        "op": "ge",
+        "n": 1,
+        "side": "self",
+        "filter": {
+         "names": [
+          ": DA"
+         ],
+         "keyword": "evolve"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-024": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": DA"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "choose up to 1 card with <DA> in its card name and [Evolve] in your Battle Area. Then, choose up to 1 Battle Card in your opponent's Battle Area with power less than or equal to the card chosen by this skill and KO it."
+    ]
+   }
+  ],
+  "needs": [
+   "power compared with a chosen card"
+  ]
+ },
+ "FB07-025": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 6
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "traits": [
+         "Shadow Dragon"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [],
+    "unparsed": [
+     "When you would pay the cost of an Extra with ≪Shadow Dragon≫ in its special traits from your hand, once per turn, you may place the same number of cards with ≪Shadow Dragon≫ in their special traits as that card's cost from your Drop at the bottom of your deck in a random order instead."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "alternative play costs"
+  ]
+ },
+ "FB07-027": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "dropToDeck",
+      "n": 7,
+      "filter": {
+       "traits": [
+        "Shadow Dragon"
+       ]
+      }
+     },
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Omega Shenron"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-028": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Rage Shenron"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-030": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "costLE": 5,
+        "traits": [
+         "Shadow Dragon"
+        ],
+        "notNames": [
+         "Black Smoke Dragon"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-032": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     },
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-033": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     },
+     {
+      "t": "bounce",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-034": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "mill",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-035": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "dropGE",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "search",
+      "look": 7,
+      "options": [
+       {
+        "type": "EXTRA",
+        "traits": [
+         "Shadow Dragon"
+        ]
+       }
+      ],
+      "take": 7,
+      "toHand": true,
+      "rest": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-037": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Naturon Shenron"
+       ],
+       "costEQ": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-039": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 1
+      },
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "all": true,
+       "side": "opp"
+      },
+      "amount": -2,
+      "dur": "turn"
+     },
+     {
+      "t": "bounce",
+      "target": {
+       "side": "any",
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-041": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "search",
+      "look": 2,
+      "options": [
+       {
+        "traits": [
+         "Shadow Dragon"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "drop"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-042": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "bottom",
+      "target": {
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Shadow Dragon"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Oceanus Shenron"
+       ],
+       "costEQ": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-043": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "cantAttack",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-044": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "effects": [],
+    "unparsed": [
+     "When you would pay the cost of this card in your hand, you may discard 1 card with ≪Shadow Dragon≫ in its special traits other than this card from your hand instead."
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "bottom",
+      "target": {
+       "all": true,
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "alternative play costs"
+  ]
+ },
+ "FB07-046": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [],
+    "unparsed": [
+     "During this turn, when your card with ≪Shadow Dragon≫ in its special traits attacks an opponent's Battle Card with a cost of 5 or less, place the attacked card at the bottom of its owner's deck."
+    ]
+   }
+  ],
+  "needs": [
+   "delayed trigger on attack"
+  ]
+ },
+ "FB07-047": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Omega Shenron"
+        ]
+       }
+      }
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "doubleStrike",
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 7
+       }
+      ]
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "prev"
+      },
+      "amount": 20000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "dropGE",
+        "n": 7
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-048": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "mill",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ],
+    "unparsed": [
+     "Then, play up to 2 Battle Cards with different card names, ≪Saiyan≫ in their special traits, and a total cost of 6 or less from your Drop."
+    ]
+   }
+  ],
+  "needs": [
+   "combined cost of several targets"
+  ]
+ },
+ "FB07-049": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenOppAttacks",
+    "once": true,
+    "effects": [
+     {
+      "t": "redirect",
+      "target": {
+       "side": "self",
+       "filter": {
+        "type": "BATTLE",
+        "costGE": 3,
+        "names": [
+         ": SH"
+        ]
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-050": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1,
+      "filter": {
+       "names": [
+        ": SH"
+       ]
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-051": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      }
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "leader"
+      },
+      "amount": 5000,
+      "dur": "oppNextTurn",
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         ": SH"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-052": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         ": SH"
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-053": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     },
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-054": {
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-055": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     },
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "colors": [
+         "Green"
+        ],
+        "costLE": 3,
+        "names": [
+         ": SH"
+        ],
+        "notNames": [
+         "Android 18: SH"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-056": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     },
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-058": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "costGE": 3,
+       "names": [
+        ": SH"
+       ]
+      },
+      "n": 2,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-060": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly: BR"
+      ]
+     },
+     {
+      "t": "energyGE",
+      "n": 4
+     },
+     {
+      "t": "energyLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Broly: BR"
+       ],
+       "costEQ": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-061": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Piccolo: SH"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-065": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "costGE": 3
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "costLE": 5,
+        "names": [
+         ": SH"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-066": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "removeImmune",
+      "dur": "oppNextTurn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-068": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Paragus"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 4
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "all": true,
+       "side": "any",
+       "filter": {
+        "names": [
+         "Paragus"
+        ]
+       }
+      }
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 2,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-069": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly: BR"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 3,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Broly: BR"
+       ],
+       "other": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-070": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 5,
+       "names": [
+        ": SH"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 30000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-071": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       ": SH"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Gohan: SH"
+        ]
+       }
+      },
+      "kw": "doubleStrike",
+      "dur": "turn"
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "prev"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-072": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Piccolo: SH"
+        ],
+        "costEQ": 5
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-073": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "Reveal the top card of your life, and if the revealed card is a Battle Card with a cost of 6 or less and ≪Frieza Clan≫ in its special traits, you may play it."
+    ]
+   }
+  ],
+  "needs": [
+   "play from life"
+  ]
+ },
+ "FB07-074": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-075": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Chilled"
+       ],
+       "rested": true
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-076": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-077": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza Clan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-080": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza Clan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "costLE": 5,
+        "traits": [
+         "Frieza Clan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-081": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "This card's name is also treated as <King Gomah: DA> in all areas."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "King Gomah: DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "keyword": "field",
+       "costLE": 2,
+       "traits": [
+        "Demon Realm",
+        "Demon World"
+       ]
+      },
+      "n": 1,
+      "extraType": true
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "name aliases"
+  ]
+ },
+ "FB07-082": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Frieza"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-083": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "This card's name is also treated as <King Gomah: DA> in all areas."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 2
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "Draw 1 card for each type of card with [Field] that includes ≪Demon Realm≫ or ≪Demon World≫ in its special traits in your Drop."
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "King Gomah: DA"
+       ],
+       "costLE": 4
+      },
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "name aliases",
+   "count distinct card names"
+  ]
+ },
+ "FB07-084": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Frieza"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-085": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza Clan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 1
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-087": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "thisRested",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-088": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Frieza"
+      ]
+     },
+     {
+      "t": "thisRested",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-089": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-090": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-091": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Demon Realm",
+         "Demon World"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "King Gomah: DA"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-092": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "If this card was played from your life, add the top card of your deck to your life."
+    ]
+   }
+  ],
+  "needs": [
+   "play from life"
+  ]
+ },
+ "FB07-093": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-094": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Golden Frieza"
+       ],
+       "costGE": 5
+      }
+     },
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Frieza Clan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "leader"
+      }
+     },
+     {
+      "t": "cantPlay",
+      "filter": {},
+      "extras": true,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-095": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "lifeToHand",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "handToLife",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-096": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "opp",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 10000,
+      "dur": "battle"
+     }
+    ],
+    "unparsed": [
+     "Then, your opponent can't attack using Battle Cards with costs of 5 or more for the turn."
+    ]
+   }
+  ],
+  "needs": [
+   "attack restrictions on the opponent"
+  ]
+ },
+ "FB07-097": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 5000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "traits": [
+         "Dragon Ball"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 7
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backKeywords": [
+   "cantAttack"
+  ],
+  "backAbilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 7
+      },
+      "n": 1
+     },
+     {
+      "t": "dropToDeck"
+     }
+    ],
+    "unparsed": [
+     "and flip this card to its front side."
+    ]
+   }
+  ],
+  "needs": [
+   "flip a Leader back"
+  ]
+ },
+ "FB07-098": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Beerus"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "blocker",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-099": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-100": {
+  "abilities": [
+   {
+    "timing": "whenMilled",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-101": {
+  "abilities": [
+   {
+    "timing": "whenMilled",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ],
+      "each": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-103": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenMilled",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "play"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-104": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "choose",
+      "options": [
+       [
+        {
+         "t": "mill",
+         "n": 5
+        }
+       ],
+       [
+        {
+         "t": "noop",
+         "note": "don't mill"
+        }
+       ]
+      ]
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [
+     {
+      "t": "noop",
+      "note": "place up to 3 cards with costs 6 or less and different names from your Drop at the top or bottom of your deck"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-106": {
+  "abilities": [
+   {
+    "timing": "whenMilled",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "none",
+      "n": 0,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Gohan: Youth"
+       ],
+       "costEQ": 2
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "play"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "mill",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-107": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "mill",
+      "n": 5
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-108": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku: GT"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-109": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 2
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Bardock"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "costLE": 4,
+       "traits": [
+        "Bardock's Crew"
+       ]
+      },
+      "amount": "free"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-110": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToHand"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku: GT"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Pan: GT"
+       ],
+       "costEQ": 2
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-113": {
+  "keywords": [
+   "superCombo"
+  ],
+  "abilities": [
+   {
+    "timing": "comboFromHand",
+    "turn": "opp",
+    "effects": [
+     {
+      "t": "comboPower",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-114": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     },
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeFromDeck",
+      "n": 2
+     },
+     {
+      "t": "lifeToHand",
+      "n": 2,
+      "upTo": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-115": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Adventure"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "traits": [
+         "Adventure"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-116": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Dragon Ball"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "mill",
+      "n": 3
+     },
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 1
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-117": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If your Leader has ≪Adventure≫ in its special traits and you use a card from your Drop in a combo during this turn, reduce the cost of this card in your hand by 2."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "combo history this turn"
+  ]
+ },
+ "FB07-120": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "search",
+      "look": 99,
+      "options": [
+       {
+        "traits": [
+         "Dragon Ball"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ],
+    "unparsed": [
+     "(also looks through your life)"
+    ]
+   }
+  ]
+ },
+ "FB07-121": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cost": [
+     {
+      "t": "energyToDrop",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {}
+     },
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "costGE": 3
+      },
+      "n": 5,
+      "rested": false
+     }
+    ]
+   }
+  ]
+ },
+ "FB07-122": {
+  "keywords": [
+   "tripleStrike"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "Choose any number of Battle Cards whose total costs add up to 7 or less in your opponent's Battle Area and KO them."
+    ]
+   }
+  ],
+  "needs": [
+   "combined cost of several targets"
+  ]
+ }
+}
