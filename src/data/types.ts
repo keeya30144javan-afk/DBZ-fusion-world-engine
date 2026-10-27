@@ -31,6 +31,8 @@ export interface Card {
   back?: CardFace;
   set: string;
   rarity?: string;
+  /** A translation of the skill text (by Claude, possibly verified by a person). */
+  script?: import('../effects/types').CardScript;
 }
 
 export interface CardDB {

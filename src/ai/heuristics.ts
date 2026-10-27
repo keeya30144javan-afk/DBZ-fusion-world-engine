@@ -37,6 +37,20 @@ function effectValue(e: Effect): number {
     case 'discard': return -0.8 * e.n;
     case 'mill': return 0;
     case 'ki': return 0.4 * e.n;
+    case 'toDrop': return 2.1;
+    case 'toEnergy': return 2.0;
+    case 'costMod': return 0.3;
+    case 'placeMarker': return 0.7 * e.n;
+    case 'lifeFromDeck': return 0.6 * e.n;
+    case 'handToLife': return 0.1;
+    case 'nextDiscount': return 0.6;
+    case 'cantPlay': return -0.3;
+    case 'oppTax': return 0.8;
+    case 'oppPlayRested': return 0.6;
+    case 'placeUnder': return 0.3;
+    case 'choose': return Math.max(...e.options.map((l) => l.reduce((a, x) => a + effectValue(x), 0)));
+    case 'comboFrom': return 0.8 * e.n;
+    case 'noop': return 0;
     default: return 0.2;
   }
 }
@@ -125,6 +139,13 @@ export class HeuristicChooser implements Chooser {
         return opts.sort((a, b) => key(b) - key(a)).slice(0, req.max);
       }
       case 'target': return this.targets(s, req);
+      case 'mode': {
+        const e = req.effect;
+        if (!e || e.t !== 'choose') return [0];
+        let best = 0, bestV = -Infinity;
+        e.options.forEach((list, i) => { const v = list.reduce((a, x) => a + effectValue(x), 0); if (v > bestV) { bestV = v; best = i; } });
+        return [best];
+      }
     }
   }
 

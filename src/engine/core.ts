@@ -1,7 +1,7 @@
 import { Card, Color } from '../data/types';
 import { RulesConfig } from '../data/rules';
 import { compileCard } from '../effects/parse';
-import { Ability, CompiledCard, Cond, Filter, Keyword } from '../effects/types';
+import { Ability, CompiledCard, Cond, Count, Filter, Keyword } from '../effects/types';
 
 export type Side = 0 | 1;
 
@@ -24,6 +24,22 @@ export interface Inst {
   playedTurn: number;
   /** Ki under this card (manual p.12). Lost when a Battle Card leaves the Battle Area; kept on a Leader. */
   ki: number;
+  /** Cost changes on a card in play ("reduce its cost by 1 for the turn"). */
+  costMods?: Mod[];
+  /** Cards placed under this card (Evolve stacks, Potara, absorption). */
+  under?: number[];
+  /** Turn on which a "can't be KO'd once per turn" shield was used. */
+  koShieldTurn?: number;
+}
+
+/** A lasting rule change on one player: discounts, play bans, taxes. */
+export interface PlayerMod {
+  kind: 'discount' | 'cantPlay' | 'tax' | 'playRested';
+  filter: Filter;
+  amount?: number | 'free';
+  extras?: boolean;
+  /** Last turn number this applies on. */
+  until: number;
 }
 
 export type Zone = 'deck' | 'hand' | 'battle' | 'field' | 'energy' | 'drop' | 'life' | 'combo' | 'leader' | 'removed';
@@ -44,6 +60,7 @@ export interface PlayerState {
   markers: number;
   usedOnce: string[];
   mulliganed: boolean;
+  mods?: PlayerMod[];
 }
 
 export type Stage = 'mulligan' | 'charge' | 'main' | 'counter' | 'block' | 'offCombo' | 'defCombo' | 'over';
@@ -125,11 +142,18 @@ export function cloneState(s: GameState): GameState {
     field: p.field,
     markers: p.markers,
     usedOnce: p.usedOnce.slice(),
+    mods: p.mods ? p.mods.slice() : undefined,
     mulliganed: p.mulliganed,
   });
   return {
     ...s,
-    inst: s.inst.map((i) => ({ ...i, mods: i.mods.length ? i.mods.slice() : [], grants: i.grants.length ? i.grants.slice() : [] })),
+    inst: s.inst.map((i) => ({
+      ...i,
+      mods: i.mods.length ? i.mods.slice() : [],
+      grants: i.grants.length ? i.grants.slice() : [],
+      costMods: i.costMods?.length ? i.costMods.slice() : undefined,
+      under: i.under?.length ? i.under.slice() : undefined,
+    })),
     p: [clonePlayer(s.p[0]), clonePlayer(s.p[1])],
     battle: s.battle ? { ...s.battle, comboCount: [s.battle.comboCount[0], s.battle.comboCount[1]] } : null,
     log: null,
@@ -158,8 +182,39 @@ export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
   const inst = s.inst[uid];
   if (inst.grants.some((g) => g.kw === kw)) return true;
   const c = compiledOf(s, uid);
-  if (isLeader(s, uid) && s.p[inst.owner].awakened && c.backKeywords) return c.backKeywords.has(kw);
-  return c.keywords.has(kw);
+  const base = isLeader(s, uid) && s.p[inst.owner].awakened && c.backKeywords ? c.backKeywords : c.keywords;
+  if (base.has(kw)) return true;
+  // [Permanent] "this card gains [X]" / "this card can't attack" with conditions.
+  for (const ab of abilitiesOf(s, uid)) {
+    if (ab.timing !== 'permanent') continue;
+    if (!ab.effects.some((e) => e.t === 'grant' && e.kw === kw && e.target.ref === 'this')) continue;
+    if (!turnMatches(s, inst.owner, ab.turn)) continue;
+    if (!condsHold(s, inst.owner, uid, ab.cond)) continue;
+    for (const e of ab.effects) if (e.t === 'grant' && e.kw === kw && e.target.ref === 'this' && condsHold(s, inst.owner, uid, e.cond)) return true;
+  }
+  return false;
+}
+
+export const turnMatches = (s: GameState, owner: Side, turn: 'your' | 'opp' | undefined) =>
+  !turn || (turn === 'your') === (s.active === owner);
+
+/** Cost of a card where it is, with any cost changes on it. */
+export function costOf(s: GameState, uid: number): number {
+  const base = cardOf(s, uid).cost;
+  const mods = s.inst[uid].costMods;
+  let c = base;
+  if (mods) for (const m of mods) c += m.amount;
+  for (const ab of abilitiesOf(s, uid)) {
+    if (ab.timing !== 'permanent' || !turnMatches(s, s.inst[uid].owner, ab.turn)) continue;
+    if (!condsHold(s, s.inst[uid].owner, uid, ab.cond)) continue;
+    for (const e of ab.effects) if (e.t === 'costMod' && e.target.ref === 'this' && inPlay(s, uid)) c += e.amount;
+  }
+  return Math.max(0, c);
+}
+
+export function inPlay(s: GameState, uid: number): boolean {
+  const p = s.p[s.inst[uid].owner];
+  return p.leader === uid || p.field === uid || p.battle.includes(uid);
 }
 
 export function zoneOf(s: GameState, uid: number): Zone {
@@ -185,9 +240,45 @@ export const nameOf = (s: GameState, uid: number) => {
 
 // ------------------------------------------------------------------ conditions & filters
 
-export function condHolds(s: GameState, owner: Side, src: number, c: Cond): boolean {
+export function countOf(s: GameState, owner: Side, src: number, w: Count): number {
+  const p = s.p[w.side === 'self' ? owner : other(owner)];
+  let list: number[];
+  if (w.zone === 'under') list = p.battle.flatMap((u) => s.inst[u].under ?? []);
+  else list = p[w.zone];
+  return w.filter ? list.filter((u) => matchesFilter(s, u, w.filter!, src)).length : list.length;
+}
+
+export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev: number[] = []): boolean {
   const me = s.p[owner];
+  const opp = s.p[other(owner)];
   switch (c.t) {
+    case 'oppLifeGE': return opp.life.length >= c.n;
+    case 'oppHandGE': return opp.hand.length >= c.n;
+    case 'count': {
+      const k = countOf(s, owner, src, c.what);
+      return c.op === 'none' ? k === 0 : c.op === 'ge' ? k >= c.n : c.op === 'le' ? k <= c.n : k === c.n;
+    }
+    case 'leaderTrait': {
+      const tr = leaderTraits(s, owner);
+      if (c.only) return tr.length > 0 && tr.every((t) => c.traits.some((x) => sameTrait(t, x)));
+      return c.traits.some((x) => tr.some((t) => sameTrait(t, x)));
+    }
+    case 'thisKiGE': return s.inst[src].ki >= c.n;
+    case 'hasMarker': return (me.markers > 0) === c.yes;
+    case 'thisRested': return s.inst[src].rested === c.yes;
+    case 'thisInBattle': return !!s.battle && (s.battle.attacker === src || s.battle.target === src);
+    case 'playedThisTurn': return s.inst[src].playedTurn === s.turn;
+    case 'comboAreaHasCard': return me.combo.length > 0;
+    case 'energyLessThanOpp': return me.energy.length < opp.energy.length;
+    case 'attackingBattleCard': {
+      const b = s.battle;
+      if (!b || b.attacker !== src || isLeader(s, b.target)) return false;
+      return !c.filter || matchesFilter(s, b.target, c.filter, src);
+    }
+    case 'prevMatches': return prev.length > 0 && prev.every((u) => matchesFilter(s, u, c.filter, src));
+    case 'yourTurn': return (s.active === owner) === c.yes;
+    case 'not': return !condHolds(s, owner, src, c.c, prev);
+    case 'or': return c.any.some((x) => condHolds(s, owner, src, x, prev));
     case 'handLE': return me.hand.length <= c.n;
     case 'handGE': return me.hand.length >= c.n;
     case 'energyGE': return me.energy.length >= c.n;
@@ -219,10 +310,19 @@ export function kiTotal(s: GameState, owner: Side, scope: 'your' | 'battle'): nu
   return k;
 }
 
-export function condsHold(s: GameState, owner: Side, src: number, conds: Cond[] | undefined): boolean {
+export function condsHold(s: GameState, owner: Side, src: number, conds: Cond[] | undefined, prev: number[] = []): boolean {
   if (!conds) return true;
-  for (const c of conds) if (!condHolds(s, owner, src, c)) return false;
+  for (const c of conds) if (!condHolds(s, owner, src, c, prev)) return false;
   return true;
+}
+
+const sameTrait = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+
+function leaderTraits(s: GameState, owner: Side): string[] {
+  const p = s.p[owner];
+  const c = cardOf(s, p.leader);
+  // Leaders list front traits; the back side normally shares them.
+  return c.traits;
 }
 
 export function nameMatches(card: Card, names: string[]): boolean {
@@ -237,13 +337,29 @@ export function matchesFilter(s: GameState, uid: number, f: Filter, src: number)
   const inst = s.inst[uid];
   const leader = isLeader(s, uid);
   if (f.type && !leader && card.type !== f.type) return false;
-  if (f.costLE !== undefined && card.cost > f.costLE) return false;
-  if (f.costGE !== undefined && card.cost < f.costGE) return false;
-  if (f.costEQ !== undefined && card.cost !== f.costEQ) return false;
-  const inPlay = leader || s.p[inst.owner].battle.includes(uid);
-  const pw = inPlay ? powerOf(s, uid) : card.power;
+  const here = inPlay(s, uid);
+  const cost = f.originalCost || !here ? card.cost : costOf(s, uid);
+  if (f.costLE !== undefined && cost > f.costLE) return false;
+  if (f.costGE !== undefined && cost < f.costGE) return false;
+  if (f.costEQ !== undefined && cost !== f.costEQ) return false;
+  const pw = here && (leader || s.p[inst.owner].battle.includes(uid)) ? powerOf(s, uid) : card.power;
   if (f.powerLE !== undefined && pw > f.powerLE) return false;
   if (f.powerGE !== undefined && pw < f.powerGE) return false;
+  if (f.powerEQ !== undefined && pw !== f.powerEQ) return false;
+  if (f.notNames && nameMatches(card, f.notNames)) return false;
+  if (f.traitsAll && !f.traitsAll.every((t) => card.traits.some((ct) => ct.toLowerCase() === t.toLowerCase()))) return false;
+  if (f.onlyTraits && !(card.traits.length > 0 && card.traits.every((ct) => f.onlyTraits!.some((t) => ct.toLowerCase() === t.toLowerCase())))) return false;
+  if (f.kiGE !== undefined && inst.ki < f.kiGE) return false;
+  if (f.notTraits && card.traits.some((ct) => f.notTraits!.some((t) => ct.toLowerCase() === t.toLowerCase()))) return false;
+  if (f.underNames && !(inst.under ?? []).some((u) => nameMatches(cardOf(s, u), f.underNames!))) return false;
+  if (f.noSkill && card.text.trim() !== '' && card.text.trim() !== '-') return false;
+  if (f.keyword) {
+    const cc = compiledOf(s, uid);
+    const ok = f.keyword === 'evolve' ? !!cc.evolve && cc.evolve.from.length === 1
+      : f.keyword === 'fusionEvolve' ? !!cc.evolve && cc.evolve.from.length === 2
+      : here ? hasKeyword(s, uid, f.keyword) : cc.keywords.has(f.keyword);
+    if (!ok) return false;
+  }
   if (f.rested && !inst.rested) return false;
   if (f.active && inst.rested) return false;
   if (f.names && !nameMatches(card, f.names)) return false;
@@ -295,10 +411,32 @@ export function costInHand(s: GameState, uid: number): number {
   const owner = s.inst[uid].owner;
   let cost = card.cost;
   for (const ab of compiledOf(s, uid).abilities) {
-    if (ab.timing !== 'permanent' || !condsHold(s, owner, uid, ab.cond)) continue;
-    for (const e of ab.effects) if (e.t === 'costReduce') cost -= e.n;
+    if (ab.timing !== 'permanent' || !turnMatches(s, owner, ab.turn) || !condsHold(s, owner, uid, ab.cond)) continue;
+    for (const e of ab.effects) if (e.t === 'costReduce' && condsHold(s, owner, uid, e.cond)) cost -= e.n;
+  }
+  for (const m of activeMods(s, owner)) {
+    if (!matchesFilter(s, uid, m.filter, uid)) continue;
+    if (m.kind === 'tax') cost += m.amount as number;
+    if (m.kind === 'discount') cost = m.amount === 'free' ? 0 : cost - (m.amount as number);
   }
   return Math.max(0, cost);
+}
+
+export const activeMods = (s: GameState, p: Side) => (s.p[p].mods ?? []).filter((m) => m.until >= s.turn);
+
+/** Spend the first discount that applied to this card. */
+export function consumeDiscount(s: GameState, uid: number) {
+  const p = s.p[s.inst[uid].owner];
+  if (!p.mods) return;
+  const i = p.mods.findIndex((m) => m.kind === 'discount' && m.until >= s.turn && matchesFilter(s, uid, m.filter, uid));
+  if (i >= 0) p.mods.splice(i, 1);
+}
+
+/** "You can't play X for the turn". */
+export function playBanned(s: GameState, uid: number): boolean {
+  const owner = s.inst[uid].owner;
+  const isExtra = cardOf(s, uid).type === 'EXTRA';
+  return activeMods(s, owner).some((m) => m.kind === 'cantPlay' && !!m.extras === isExtra && matchesFilter(s, uid, m.filter, uid));
 }
 
 export const activeEnergy = (s: GameState, p: Side) => s.p[p].energy.filter((u) => !s.inst[u].rested);
@@ -380,11 +518,16 @@ export function resetInst(i: Inst) {
   i.comboBonus = 0;
   i.lockedUntil = 0;
   i.ki = 0;
+  i.costMods = undefined;
 }
 
 export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
-  removeFrom(s, uid);
+  const from = removeFrom(s, uid);
   const inst = s.inst[uid];
+  if (inst.under?.length && from === 'battle') {
+    for (const u of inst.under) { resetInst(s.inst[u]); s.p[s.inst[u].owner].drop.push(u); }
+  }
+  inst.under = undefined;
   resetInst(inst);
   if (opts.rested) inst.rested = true;
   const arr = s.p[inst.owner][zone];

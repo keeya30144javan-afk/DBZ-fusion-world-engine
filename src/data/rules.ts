@@ -22,6 +22,8 @@ export interface RulesConfig {
   firstPlayerDraws: boolean;
   /** Lose the moment your deck reaches 0 cards (manual p.6), not only on an empty draw. */
   deckOutAtZero: boolean;
+  /** An evolved card keeps the Rest/Active mode of the card it was played on. (uncertain: the manual does not say) */
+  evolveKeepsMode: boolean;
   /** Safety cap so a stalled simulation cannot loop forever. */
   maxTurns: number;
 }
@@ -40,6 +42,7 @@ export const DEFAULT_RULES: RulesConfig = {
   colorRule: 'any',
   firstPlayerDraws: true,
   deckOutAtZero: true,
+  evolveKeepsMode: true,
   maxTurns: 40,
 };
 
@@ -49,5 +52,6 @@ export const RULE_NOTES: Record<string, string> = {
   loseAtZeroLife: 'Manual p.6: you win when your opponent\'s life is reduced to zero cards.',
   colorRule: 'Manual p.4: a deck can only include cards that have one of the same colors as your Leader.',
   firstPlayerDraws: 'Manual p.7: the Charge Phase draws 1 card; the only first-turn exception (p.9) is that the first player cannot attack.',
+  evolveKeepsMode: 'Not in the manual (v1.20). Assumed: evolving onto a Rest Mode card gives a Rest Mode card; switch off to play evolved cards in Active Mode.',
   deckOutAtZero: 'Manual p.6: you win when your opponent\'s deck is reduced to zero cards.',
 };

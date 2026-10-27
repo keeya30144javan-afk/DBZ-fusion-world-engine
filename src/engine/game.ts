@@ -2,10 +2,10 @@ import { Card, Decklist } from '../data/types';
 import { DEFAULT_RULES, RulesConfig } from '../data/rules';
 import { expandDeck } from '../data/decks';
 import {
-  GameState, Inst, PlayerState, Side, abilitiesOf, activeEnergy, cardOf, compiledOf, comboPowerOf, condsHold, costInHand,
-  emit, hasKeyword, isLeader, log, moveTo, nameOf, other, payPlan, planPayment, powerOf, shuffle, specFor,
+  GameState, Inst, PlayerState, Side, abilitiesOf, activeEnergy, cardOf, compiledOf, comboPowerOf, condsHold, costInHand, consumeDiscount, playBanned,
+  emit, hasKeyword, isLeader, log, matchesFilter, moveTo, resetInst, nameOf, other, payPlan, planPayment, powerOf, shuffle, specFor,
 } from './core';
-import { Choosers, isFreeRepeatable, canPayCosts, checkZeroPower, drawCards, placeField, fireTriggers, koCard, onceKey, playCard, resolveAbility, setWinner, takeLife } from './effects';
+import { Choosers, afterPlayed, isFreeRepeatable, canPayCosts, checkZeroPower, drawCards, placeField, fireTriggers, koCard, onceKey, playCard, resolveAbility, setWinner, takeLife } from './effects';
 
 export type Action =
   | { k: 'keep' }
@@ -13,6 +13,7 @@ export type Action =
   | { k: 'charge'; uid: number }
   | { k: 'noCharge' }
   | { k: 'play'; uid: number }
+  | { k: 'evolve'; uid: number; bases: number[] }
   | { k: 'activate'; uid: number; ab: number }
   | { k: 'awaken' }
   | { k: 'attack'; uid: number; target: number }
@@ -92,6 +93,8 @@ function finishSetup(s: GameState) {
     }
   }
   s.p[other(s.first)].markers = 1;
+  // "When this card is placed in your Leader Area" skills.
+  for (const side of [s.first, other(s.first)] as Side[]) fireTriggers(s, s.p[side].leader, 'gameStart', NO_CHOICE);
   s.active = other(s.first);
   startTurn(s);
 }
@@ -159,10 +162,71 @@ function awakenOption(s: GameState, side: Side): Action[] {
   return aw && condsHold(s, side, me.leader, aw.cond) ? [{ k: 'awaken' }] : [];
 }
 
+/** Game-start skills run before anyone acts; they take the first legal options. */
+const firstPick = { choose: (_s: GameState, req: { options: number[]; max: number; min: number }) => req.options.slice(0, req.max) };
+const NO_CHOICE: Choosers = [firstPick, firstPick];
+
+/** [Evolve] / [Fusion Evolve]: pay the skill cost and play on top of the specified card(s). */
+export function evolveOptions(s: GameState, uid: number): Action[] {
+  const ev = compiledOf(s, uid).evolve;
+  if (!ev) return [];
+  const side = s.inst[uid].owner;
+  const me = s.p[side];
+  const color = cardOf(s, uid).colors[0];
+  if (!planPayment(s, side, ev.cost, ev.cost > 0 && color ? { [color]: ev.cost } : {})) return [];
+  const out: Action[] = [];
+  const fits = (u: number, i: number) => matchesFilter(s, u, ev.from[i], uid) || (i === 0 && ev.from.length === 1 && (ev.orFrom ?? []).some((f) => matchesFilter(s, u, f, uid)));
+  // Fusion Evolve plays on cards in Active Mode unless the card says otherwise (FB09-006 reminder text).
+  const modeOk = (u: number) => (ev.baseMode ?? 'active') === 'rested' ? s.inst[u].rested : !s.inst[u].rested;
+  if (ev.from.length === 1) {
+    for (const b of me.battle) if (b !== uid && fits(b, 0)) out.push({ k: 'evolve', uid, bases: [b] });
+  } else {
+    for (const a of me.battle) {
+      if (!modeOk(a) || !fits(a, 0)) continue;
+      for (const b of me.battle) {
+        if (b === a || !modeOk(b) || !fits(b, 1)) continue;
+        const pa = powerOf(s, a), pb = powerOf(s, b);
+        if (pa !== pb || (ev.equalPowerGE !== undefined && pa < ev.equalPowerGE)) continue;
+        out.push({ k: 'evolve', uid, bases: [a, b] });
+      }
+    }
+  }
+  return out.slice(0, 4);
+}
+
+function doEvolve(s: GameState, uid: number, bases: number[], ctl: Choosers) {
+  const ev = compiledOf(s, uid).evolve!;
+  const side = s.inst[uid].owner;
+  const me = s.p[side];
+  const color = cardOf(s, uid).colors[0];
+  const plan = planPayment(s, side, ev.cost, ev.cost > 0 && color ? { [color]: ev.cost } : {});
+  if (!plan || bases.some((b) => !me.battle.includes(b))) return;
+  payPlan(s, side, plan);
+  const rested = s.rules.evolveKeepsMode && bases.some((b) => s.inst[b].rested);
+  const at = me.battle.indexOf(bases[0]);
+  const under: number[] = [];
+  for (const b of bases) {
+    under.push(...(s.inst[b].under ?? []), b);
+    s.inst[b].under = undefined;
+    me.battle.splice(me.battle.indexOf(b), 1);
+    resetInst(s.inst[b]);
+  }
+  me.hand.splice(me.hand.indexOf(uid), 1);
+  resetInst(s.inst[uid]);
+  s.inst[uid].rested = rested;
+  s.inst[uid].under = under;
+  s.inst[uid].playedTurn = s.turn;
+  me.battle.splice(Math.min(at, me.battle.length), 0, uid);
+  log(s, `P${side} evolves ${bases.map((b) => nameOf(s, b)).join(' + ')} into ${nameOf(s, uid)}`);
+  emit(s, { t: 'play', p: side, id: s.inst[uid].id, uid });
+  afterPlayed(s, uid, ctl);
+}
+
 function canAttack(s: GameState, uid: number): boolean {
   if (s.turn === 1) return false;
   const inst = s.inst[uid];
   if (inst.rested) return false;
+  if (hasKeyword(s, uid, 'cantAttack')) return false;
   if (!isLeader(s, uid) && !s.rules.attackOnPlayTurn && inst.playedTurn === s.turn) return false;
   return true;
 }
@@ -235,7 +299,7 @@ function blockerOptions(s: GameState, side: Side): Action[] {
   const b = s.battle!;
   if (b.cantBlock || b.blocked) return [];
   return s.p[side].battle
-    .filter((u) => u !== b.target && !s.inst[u].rested && hasKeyword(s, u, 'blocker'))
+    .filter((u) => u !== b.target && !s.inst[u].rested && hasKeyword(s, u, 'blocker') && !hasKeyword(s, u, 'cantBlock'))
     .map((u) => ({ k: 'block', uid: u }) as Action);
 }
 
@@ -265,8 +329,10 @@ export function legalActions(s: GameState): Action[] {
         const card = cardOf(s, u);
         if (seen.has(card.id)) continue;
         seen.add(card.id);
+        if (playBanned(s, u)) continue;
         if (card.type === 'BATTLE' && playCostPlan(s, u)) out.push({ k: 'play', uid: u });
-        if (card.type === 'EXTRA' && isField(s, u)) { if (playCostPlan(s, u)) out.push({ k: 'play', uid: u }); }
+        if (card.type === 'BATTLE') out.push(...evolveOptions(s, u));
+        if (card.type === 'EXTRA' && isField(s, u)) { if (!playBanned(s, u) && playCostPlan(s, u)) out.push({ k: 'play', uid: u }); }
         else if (card.type === 'EXTRA') {
           compiledOf(s, u).abilities.forEach((ab, i) => {
             if (ab.timing !== 'activateMain' || !turnOk(s, side, ab.turn)) return;
@@ -284,10 +350,11 @@ export function legalActions(s: GameState): Action[] {
       }
       out.push(...awakenOption(s, side));
       const opp = s.p[other(side)];
-      const targets = [opp.leader, ...opp.battle.filter((u) => s.inst[u].rested)];
       for (const a of [me.leader, ...me.battle]) {
         if (!canAttack(s, a)) continue;
-        for (const t of targets) out.push({ k: 'attack', uid: a, target: t });
+        const anyMode = hasKeyword(s, a, 'attackActive');
+        if (!hasKeyword(s, a, 'cantAttackLeader')) out.push({ k: 'attack', uid: a, target: opp.leader });
+        for (const t of opp.battle) if (s.inst[t].rested || anyMode) out.push({ k: 'attack', uid: a, target: t });
       }
       out.push({ k: 'end' });
       return out;
@@ -358,7 +425,7 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       const crit = hasKeyword(s, b.attacker, 'critical');
       log(s, `hit: ${atk} vs ${def}, P${defSide} takes ${n}${crit ? ' (critical)' : ''}`);
       emit(s, { t: 'damage', p: defSide, n });
-      takeLife(s, defSide, n, crit);
+      takeLife(s, defSide, n, crit, ctl);
     } else {
       log(s, `hit: ${atk} vs ${def}`);
       koCard(s, b.target, ctl);
@@ -388,7 +455,7 @@ function addCombo(s: GameState, uid: number, side: Side, ctl: Choosers) {
   s.battle!.comboCount[side]++;
   emit(s, { t: 'combo', p: side, id: s.inst[uid].id, uid, fromHand });
   log(s, `P${side} combos ${nameOf(s, uid)}${fromHand ? '' : ' from the field'}`);
-  if (fromHand) fireTriggers(s, uid, 'comboFromHand', ctl);
+  fireTriggers(s, uid, fromHand ? 'comboFromHand' : 'comboFromField', ctl);
 }
 
 function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers) {
@@ -435,10 +502,12 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       const plan = playCostPlan(s, a.uid);
       if (!plan) return;
       payPlan(s, side, plan);
+      consumeDiscount(s, a.uid);
       if (cardOf(s, a.uid).type === 'EXTRA') placeField(s, a.uid, ctl);
       else playCard(s, a.uid, ctl);
       return;
     }
+    case 'evolve': return doEvolve(s, a.uid, a.bases, ctl);
     case 'activate': {
       if (me.hand.includes(a.uid)) return useExtra(s, a.uid, a.ab, ctl);
       const ab = abilitiesOf(s, a.uid)[a.ab];

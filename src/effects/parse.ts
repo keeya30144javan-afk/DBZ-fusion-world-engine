@@ -1,5 +1,6 @@
 import { Card, Color } from '../data/types';
-import { Ability, CompiledCard, Cond, Cost, Duration, Effect, Filter, Keyword, Target, Timing } from './types';
+import { normalizeAbility, textHash } from './script';
+import { Ability, CardScript, CompiledCard, EvolveSpec, Cond, Cost, Duration, Effect, Filter, Keyword, Target, Timing } from './types';
 
 /**
  * Skill text -> Ability list. Each sentence is matched against templates of
@@ -7,7 +8,7 @@ import { Ability, CompiledCard, Cond, Cost, Duration, Effect, Filter, Keyword, T
  * `unparsed`, so coverage is always measured, never assumed.
  */
 
-const NUM_WORDS: Record<string, number> = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6 };
+const NUM_WORDS: Record<string, number> = { all: NaN, a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6 };
 const n = (s: string) => (NUM_WORDS[s?.toLowerCase()] ?? parseInt(s, 10));
 
 const KEYWORD_TAGS: Record<string, Keyword> = {
@@ -73,6 +74,15 @@ export function parseFilter(s: string): Filter {
 
 /** "up to 1 of your opponent's Rest Mode Battle Cards with a cost of 3 or less" */
 function parseChoice(s: string): Target | null {
+  const t = parseChoice0(s);
+  if (t && Number.isNaN(t.count)) {
+    if (/^(?:choose )?all\b/i.test(s) || /\ball of\b/i.test(s)) return { ...t, count: 99, upTo: false, all: true };
+    return null;
+  }
+  return t;
+}
+
+function parseChoice0(s: string): Target | null {
   let m: RegExpMatchArray | null;
   if ((m = s.match(/^(?:choose )?your leader or up to (\w+) of your (.*)$/i))) {
     return { side: 'self', zones: ['leader', 'battle'], count: n(m[1]), upTo: true, filter: parseFilter(m[2]) };
@@ -134,6 +144,7 @@ function parseSentence(s: string, ctx: { staticDur: Duration }): Effect[] | null
   if (!t) return [];
 
   if ((m = t.match(/^draw (\w+) cards?$/i))) return [{ t: 'draw', n: n(m[1]) }];
+  if (/^ko (?:it|them|that card)$/i.test(t)) return [{ t: 'ko', target: PREV }];
   if ((m = t.match(/^(?:add|place) (up to )?(\w+) cards? from your life (?:area )?(?:to|in|into) your hand$/i)))
     return [{ t: 'lifeToHand', n: n(m[2]), upTo: !!m[1] }];
   if ((m = t.match(/^(?:add|place) (up to )?(\w+) cards? from your life (?:area )?(?:to|in|into) your energy(?: in (rest|active) mode)?$/i)))
@@ -208,6 +219,7 @@ function parseCond(s: string): Cond[] | null {
     let m: RegExpMatchArray | null;
     if ((m = p.match(/^you have (\d+) or (?:fewer|less) cards in your hand$/i))) out.push({ t: 'handLE', n: +m[1] });
     else if ((m = p.match(/^you have (\d+) or more cards in your hand$/i))) out.push({ t: 'handGE', n: +m[1] });
+    else if ((m = p.match(/^(?:that|the chosen) card (?:has|is) (.*)$/i))) out.push({ t: 'prevMatches', filter: parseFilter(m[1]) });
     else if ((m = p.match(/^you have (\d+) or more energy$/i))) out.push({ t: 'energyGE', n: +m[1] });
     else if ((m = p.match(/^you have (\d+) or less energy$/i))) out.push({ t: 'energyLE', n: +m[1] });
     else if ((m = p.match(/^your life is (?:at )?(\d+) or less$/i))) out.push({ t: 'lifeLE', n: +m[1] });
@@ -350,12 +362,58 @@ function parseLine(line: string, keywords: Set<Keyword>): Ability | null {
   return ab;
 }
 
-function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability[]; total: number; bad: string[] } {
+/** "[Evolve] pay 2 energy: <Majin Buu: Evil> with a cost of 3 or 4." -> spec, or null when unreadable. */
+export function parseEvolve(line: string): EvolveSpec | null {
+  const m = line.match(/^\[(fusion )?evolve\]\s*pay (\d+) energy:\s*(.*?)\.?$/i);
+  if (!m) return null;
+  const body = m[3].trim();
+  const one = (t: string): Filter | null => {
+    let x = t.trim().replace(/\.$/, '');
+    const f: Filter = {};
+    let mm: RegExpMatchArray | null;
+    if ((mm = x.match(/^special trait ≪([^≫]+)≫\s*(.*)$/i))) { f.traits = [mm[1]]; x = mm[2]; }
+    if ((mm = x.match(/^(.*?)\s+with an? <([^>]+)> under (?:them|it)$/i))) { f.underNames = [mm[2]]; x = mm[1]; }
+    if ((mm = x.match(/^(.*?)\s+without special trait ≪([^≫]+)≫$/i))) { f.notTraits = [mm[2]]; x = mm[1]; }
+    if ((mm = x.match(/^(.*?)\s+with ≪([^≫]+)≫ in its special traits$/i))) { f.traits = [mm[2]]; x = mm[1]; }
+    if ((mm = x.match(/^(.*?)\s+with an? (original )?cost of (\d+) or (\d+)$/i))) { f.costGE = +mm[3]; f.costLE = +mm[4]; if (mm[2]) f.originalCost = true; x = mm[1]; }
+    else if ((mm = x.match(/^(.*?)\s+with an? (original )?cost of (\d+)( or less| or more)?$/i))) {
+      if (mm[4] === ' or less') f.costLE = +mm[3]; else if (mm[4] === ' or more') f.costGE = +mm[3]; else f.costEQ = +mm[3];
+      if (mm[2]) f.originalCost = true;
+      x = mm[1];
+    }
+    if ((mm = x.match(/^(.*?)\s+with (\d+) power or more$/i))) { f.powerGE = +mm[2]; x = mm[1]; }
+    const names = [...x.matchAll(/<([^>]+)>/g)].map((n) => n[1].trim());
+    if (!names.length || x.replace(/<[^>]+>/g, '').replace(/,|\bor\b/gi, '').trim()) return null;
+    f.names = names;
+    return f;
+  };
+  if (m[1]) {
+    const fm = body.match(/^(<[^>]+>) and (<[^>]+>)(?: (in rest mode))?(?: and)? with equal power(?: of (\d+) or more)?$/i);
+    if (!fm) return null;
+    const spec: EvolveSpec = { from: [{ names: [fm[1].slice(1, -1)] }, { names: [fm[2].slice(1, -1)] }], cost: +m[2] };
+    if (fm[4]) spec.equalPowerGE = +fm[4];
+    if (fm[3]) spec.baseMode = 'rested';
+    return spec;
+  }
+  // "<A> with a cost of 3, or <B> or <C> with a <Potara> under them"
+  const alts = body.split(/,\s*or\s+(?=<)/i).map(one);
+  if (alts.some((f) => !f)) return null;
+  return { from: [alts[0]!], cost: +m[2], ...(alts.length > 1 ? { orFrom: alts.slice(1) as Filter[] } : {}) };
+}
+
+function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability[]; total: number; bad: string[]; evolve?: EvolveSpec } {
   const keywords = new Set<Keyword>();
   const abilities: Ability[] = [];
   let total = 0;
   const bad: string[] = [];
-  for (const line of splitLines(text)) {
+  let evolve: EvolveSpec | undefined;
+  for (const line of splitLines(text.replace(/(\S)(\[(?:On Play|When Attacking|Activate|Permanent|Auto)\b)/g, '$1\n$2'))) {
+    if (/^\[(fusion )?evolve\]/i.test(line)) {
+      total++;
+      const ev = parseEvolve(line);
+      if (ev) evolve = ev; else bad.push(line);
+      continue;
+    }
     const ab = parseLine(line, keywords);
     if (!ab) continue;
     const sentenceCount = Math.max(1, ab.text.replace(/\([^)]*\)/g, '').split(/(?<=\.)\s+/).length);
@@ -365,7 +423,7 @@ function compileText(text: string): { keywords: Set<Keyword>; abilities: Ability
     // The same skill under each extra timing tag, sharing its parsed body.
     for (const t of ab.alsoTimings ?? []) abilities.push({ ...ab, timing: t, alsoTimings: undefined });
   }
-  return { keywords, abilities, total, bad };
+  return { keywords, abilities, total, bad, evolve };
 }
 
 const cache = new Map<string, CompiledCard>();
@@ -373,10 +431,12 @@ const cache = new Map<string, CompiledCard>();
 export function compileCard(card: Card): CompiledCard {
   const hit = cache.get(card.id);
   if (hit) return hit;
+  const scripted = card.script && card.script.textHash === textHash(card) ? fromScript(card.script) : null;
+  if (scripted) { cache.set(card.id, scripted); return scripted; }
   const front = compileText(card.text);
   let total = front.total;
   const bad = [...front.bad];
-  const out: CompiledCard = { keywords: front.keywords, abilities: front.abilities, coverage: 1, unparsed: bad };
+  const out: CompiledCard = { keywords: front.keywords, abilities: front.abilities, coverage: 1, unparsed: bad, source: 'parser', ...(front.evolve ? { evolve: front.evolve } : {}) };
   if (card.back) {
     const back = compileText(card.back.text);
     out.backKeywords = back.keywords;
@@ -386,6 +446,25 @@ export function compileCard(card: Card): CompiledCard {
   }
   out.coverage = total === 0 ? 1 : Math.max(0, 1 - bad.length / total);
   cache.set(card.id, out);
+  return out;
+}
+
+/** A stored translation, as the engine's compiled form. */
+export function fromScript(sc: CardScript): CompiledCard {
+  const abilities = sc.abilities.map(normalizeAbility);
+  const backAbilities = sc.backAbilities?.map(normalizeAbility);
+  const holes = [...sc.unparsed, ...abilities.flatMap((a) => a.unparsed), ...(backAbilities ?? []).flatMap((a) => a.unparsed)];
+  const parts = abilities.length + (backAbilities?.length ?? 0) + holes.length;
+  const out: CompiledCard = {
+    keywords: new Set(sc.keywords),
+    abilities,
+    coverage: parts === 0 ? 1 : 1 - holes.length / parts,
+    unparsed: holes,
+    source: sc.source,
+    ...(sc.needs?.length ? { needs: sc.needs } : {}),
+    ...(sc.evolve ? { evolve: sc.evolve } : {}),
+  };
+  if (backAbilities) { out.backAbilities = backAbilities; out.backKeywords = new Set(sc.backKeywords ?? []); }
   return out;
 }
 
