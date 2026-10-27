@@ -1,0 +1,3215 @@
+{
+ "FB08-001": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "once": true,
+    "cost": [
+     {
+      "t": "restOwn",
+      "n": 2,
+      "filter": {
+       "type": "BATTLE",
+       "names": [
+        "Son "
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 30000,
+      "dur": "battle"
+     },
+     {
+      "t": "damageLeader",
+      "n": 1,
+      "cond": [
+       {
+        "t": "oppLifeGE",
+        "n": 4
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-002": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Son Gohan: Adolescence"
+       ],
+       "powerGE": 20000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-003": {
+  "abilities": [
+   {
+    "timing": "whenDealsDamage",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {},
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-006": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "type": "BATTLE",
+        "rested": true
+       }
+      },
+      "op": "ge",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 20000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-009": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "effects": [],
+    "unparsed": [
+     "If this card is switched to Rest Mode by your Leader's skill, it can be treated as 2 copies."
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "power",
+      "target": {
+       "count": 2
+      },
+      "amount": -5000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "counts as 2 cards"
+  ]
+ },
+ "FB08-011": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenDealsDamage",
+    "effects": [
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "type": "BATTLE",
+        "costLE": 4,
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-012": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 2,
+       "names": [
+        "Son "
+       ]
+      },
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "cantAttack",
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenDealsDamage",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-013": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "keyword": "blocker"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Trunks: Future"
+        ],
+        "keyword": "evolve"
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-014": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Vegeta"
+       ],
+       "powerGE": 20000
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-015": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "filter": {
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      },
+      "kw": "critical",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-019": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "search",
+      "look": 1,
+      "options": [
+       {
+        "type": "BATTLE",
+        "traits": [
+         "Saiyan",
+         "Earthling"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-020": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ]
+     },
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Earthling"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 1
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-021": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenDealsDamage",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "powerLE": 15000
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-022": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Vegeta"
+     ],
+     "traits": [
+      "Lookout"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "names": [
+         "Hyperbolic Time Chamber"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-024": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Saiyan"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-027": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "dropOwn",
+      "n": 1,
+      "filter": {
+       "names": [
+        "Kale"
+       ],
+       "costEQ": 4
+      }
+     },
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Caulifla"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Kefla"
+       ],
+       "costEQ": 5
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-029": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Tournament of Power"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 2,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "Add 1 card from your life to your hand: Choose up to 1 Battle Card with a cost less than or equal to this card in your opponent's Battle Area and place it at the bottom of its owner's deck."
+    ]
+   }
+  ],
+  "needs": [
+   "cost compared with a chosen card"
+  ]
+ },
+ "FB08-030": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "bouncedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "filter": {
+        "names": [
+         "Caulifla"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-031": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "atEndOfTurn",
+      "effects": [
+       {
+        "t": "self",
+        "to": "deckBottom"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-032": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 3,
+       "traits": [
+        "Tournament of Power"
+       ]
+      },
+      "n": 1
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Kale"
+       ],
+       "costEQ": 4
+      },
+      "dur": "turn"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "bouncedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-033": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Universe 6"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "costLE": 4,
+        "traits": [
+         "Universe 6"
+        ]
+       }
+      ],
+      "take": 2,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-034": {
+  "keywords": [
+   "doubleStrike"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "dropToHand",
+      "options": [
+       {
+        "colors": [
+         "Blue"
+        ],
+        "costLE": 4
+       }
+      ],
+      "each": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "turn",
+      "cond": [
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "battle",
+         "filter": {
+          "type": "BATTLE"
+         }
+        },
+        "op": "eq",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-036": {
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Universe 6"
+      ]
+     },
+     {
+      "t": "bouncedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-038": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Universe 6"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "side": "self",
+       "filter": {
+        "costEQ": 3,
+        "traits": [
+         "Universe 6"
+        ]
+       }
+      },
+      "amount": 2,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-039": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "drop",
+       "filter": {
+        "type": "EXTRA",
+        "costEQ": 3,
+        "traitsAll": [
+         "Saiyan",
+         "Earthling"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "blocker",
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-040": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Tournament of Power"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 2,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-041": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "bouncedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-042": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "once": true,
+    "cond": [
+     {
+      "t": "bouncedThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "critical",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-044": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [],
+    "unparsed": [
+     "Look at the bottom card of your deck, reveal up to 1 <Magetta> with a cost of 3 and add it to your hand. Place the rest at the bottom of your deck."
+    ]
+   }
+  ],
+  "needs": [
+   "look at the bottom of the deck"
+  ]
+ },
+ "FB08-045": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDeckBottom"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Universe 6"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "bounce",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-047": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Universe 6"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "traits": [
+         "Universe 6"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-048": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler",
+       "filter": {
+        "traits": [
+         "Universe 6"
+        ]
+       }
+      },
+      "amount": 20000,
+      "dur": "battle"
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "bouncedThisTurn"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-049": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 4
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "energyLE",
+      "n": 5
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "once per turn you can use <Fruit of the Tree of Might> without paying its cost."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "alternative play costs"
+  ]
+ },
+ "FB08-050": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 15000,
+      "dur": "static"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-051": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Greatest Showdown"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenKOd",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "names": [
+        "Son Gohan: Youth",
+        "Son Gohan : Youth"
+       ],
+       "costLE": 2
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-052": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "energyFromDeck",
+      "n": 1,
+      "rested": true,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Turles"
+        ]
+       },
+       {
+        "t": "count",
+        "what": {
+         "side": "self",
+         "zone": "energy",
+         "filter": {
+          "names": [
+           "Fruit of the Tree of Might"
+          ]
+         }
+        },
+        "op": "ge",
+        "n": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-054": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     },
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-055": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "effects": [],
+    "unparsed": [
+     "During this turn, if a card is removed from your energy, this card gets +10000 power."
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [],
+    "unparsed": [
+     "Add 1 Extra from your energy to your hand: Your opponent can't activate [Blocker] for the battle."
+    ]
+   }
+  ],
+  "needs": [
+   "energy card to hand as a cost"
+  ]
+ },
+ "FB08-057": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "selfToDrop"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Turles"
+       ],
+       "costEQ": 5
+      },
+      "n": 1,
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-059": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "lifeToDrop",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "costLE": 3,
+       "traits": [
+        "Greatest Showdown"
+       ],
+       "anyOf": [
+        {
+         "type": "BATTLE",
+         "notNames": [
+          "Turles"
+         ]
+        },
+        {
+         "keyword": "field"
+        }
+       ]
+      },
+      "n": 1,
+      "extraType": true
+     }
+    ],
+    "unparsed": [
+     "(the cost may instead be 1 of your energy placed into your Drop)"
+    ]
+   }
+  ]
+ },
+ "FB08-060": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-061": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Greatest Showdown"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {},
+      "kw": "cantAttack",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-062": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Greatest Showdown"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "traits": [
+         "Greatest Showdown"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "count": 2,
+       "filter": {
+        "costLE": 3
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-063": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Greatest Showdown"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-066": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Greatest Showdown"
+      ]
+     },
+     {
+      "t": "energyLeftThisTurn"
+     }
+    ],
+    "effects": [
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-067": {
+  "keywords": [
+   "critical"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "names": [
+        "Rasin"
+       ],
+       "costEQ": 3
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-068": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-069": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Cell"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "search",
+      "look": 2,
+      "options": [
+       {
+        "traits": [
+         "Android"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-070": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "names": [
+         "Fruit of the Tree of Might"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-071": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Turles"
+      ]
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "add up to 1 <Fruit of the Tree of Might> from your energy to your hand."
+    ]
+   }
+  ],
+  "needs": [
+   "energy card to hand"
+  ]
+ },
+ "FB08-072": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     },
+     {
+      "t": "self",
+      "to": "energy",
+      "rested": true,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Turles"
+        ]
+       },
+       {
+        "t": "energyLE",
+        "n": 5
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-073": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 3
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 5,
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
+    ],
+    "effects": [],
+    "unparsed": [
+     "your opponent can't attack with a Battle Card unless they switch 1 of their Active Mode cards to Rest Mode."
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 4,
+       "names": [
+        "Broly"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   }
+  ],
+  "needs": [
+   "attack tax"
+  ]
+ },
+ "FB08-077": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {
+       "count": 2
+      }
+     }
+    ]
+   },
+   {
+    "timing": "endOfYourTurn",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Vegeta"
+      ]
+     },
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "energy",
+       "filter": {
+        "active": true
+       }
+      },
+      "op": "ge",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 5,
+      "options": [
+       {
+        "names": [
+         "Vegeta"
+        ]
+       },
+       {
+        "type": "EXTRA"
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "rest": "bottom"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-078": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "negate",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Bio-Broly"
+        ]
+       }
+      },
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-081": {
+  "keywords": [
+   "cantAttack"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 3
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-083": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "effects": [],
+    "unparsed": [
+     "Switch your Leader or 1 card in your Battle Area -- both including <Broly> in their card names -- to Rest Mode: Draw 1 card."
+    ]
+   }
+  ],
+  "needs": [
+   "rest your Leader as a cost"
+  ]
+ },
+ "FB08-084": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "side": "self",
+       "filter": {
+        "names": [
+         "Broly"
+        ]
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "oppNextTurn"
+     },
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "prev"
+      },
+      "amount": 1,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-085": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     },
+     {
+      "t": "thisRested",
+      "yes": true
+     }
+    ],
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 4,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     },
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-087": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "filter": {
+        "rested": true
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-089": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "koOwn",
+      "n": 1,
+      "filter": {
+       "type": "BATTLE"
+      }
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "activateEnergy",
+      "n": 1
+     },
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-091": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 5,
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-092": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {
+       "filter": {
+        "costLE": 4
+       }
+      }
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 5,
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-094": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {}
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "rested": true,
+        "costLE": 3
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-096": {
+  "abilities": [
+   {
+    "timing": "activateBattle",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Broly"
+      ]
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "type": "BATTLE",
+       "costGE": 5,
+       "traits": [
+        "Saiyan"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "battler"
+      },
+      "amount": 15000,
+      "dur": "battle"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-097": {
+  "abilities": [
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   },
+   {
+    "timing": "awaken",
+    "cond": [
+     {
+      "t": "lifeLE",
+      "n": 5
+     }
+    ],
+    "effects": [
+     {
+      "t": "flipLeader"
+     }
+    ]
+   }
+  ],
+  "backAbilities": [
+   {
+    "timing": "permanent",
+    "effects": [
+     {
+      "t": "costMod",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "traits": [
+         "Goku's Lineage"
+        ]
+       }
+      },
+      "amount": 1,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-098": {
+  "keywords": [
+   "blocker"
+  ],
+  "abilities": [
+   {
+    "timing": "whenKOd",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Goku's Lineage"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-099": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-100": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cost": [
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "costGE": 5,
+        "traits": [
+         "Goku's Lineage"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "drop",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Goku's Lineage"
+       ],
+       "notNames": [
+        "Son Goku"
+       ]
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-101": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "cantAttack",
+      "dur": "turn"
+     },
+     {
+      "t": "placeMarker",
+      "n": 1,
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-103": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Goku's Lineage"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "costLE": 2,
+       "traits": [
+        "Goku's Lineage"
+       ],
+       "anyOf": [
+        {
+         "type": "BATTLE"
+        },
+        {
+         "keyword": "field"
+        }
+       ]
+      },
+      "n": 1,
+      "extraType": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-104": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "filter": {
+        "costLE": 5
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-105": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Goku's Lineage"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costEQ": 1
+      },
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-106": {
+  "keywords": [
+   "doubleStrike"
+  ],
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "toDrop",
+      "target": {
+       "filter": {
+        "costLE": 3
+       }
+      }
+     },
+     {
+      "t": "placeMarker",
+      "n": 1,
+      "cond": [
+       {
+        "t": "hasMarker",
+        "yes": false
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-107": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "once": true,
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "ref": "this"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-108": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "ko",
+      "target": {
+       "filter": {
+        "costLE": 2
+       }
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-109": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "turn": "your",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-112": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "count",
+      "what": {
+       "side": "self",
+       "zone": "battle",
+       "filter": {
+        "costGE": 3,
+        "traits": [
+         "Goku's Lineage",
+         "Bardock's Crew"
+        ]
+       }
+      },
+      "op": "ge",
+      "n": 1
+     }
+    ],
+    "effects": [
+     {
+      "t": "costReduce",
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenAttacking",
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     },
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "zones": [
+        "leader"
+       ],
+       "filter": {
+        "powerLE": 20000
+       }
+      },
+      "amount": 5000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-113": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Son Goku"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true
+     },
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "handToDeck",
+      "n": 2
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-114": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 10,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "draw",
+      "n": 2
+     },
+     {
+      "t": "handToDeck",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-116": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gogeta"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": false
+     },
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-117": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "hasMarker",
+      "yes": true
+     },
+     {
+      "t": "battleCount",
+      "op": "ge",
+      "n": 1,
+      "side": "self",
+      "filter": {
+       "names": [
+        "Vegeta"
+       ]
+      }
+     },
+     {
+      "t": "not",
+      "c": {
+       "t": "battleCount",
+       "op": "ge",
+       "n": 2,
+       "side": "self",
+       "filter": {
+        "names": [
+         "Vegeta"
+        ]
+       }
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ],
+        "traits": [
+         "Another World"
+        ]
+       }
+      },
+      "kw": "removeImmune",
+      "dur": "static"
+     },
+     {
+      "t": "power",
+      "target": {
+       "all": true,
+       "side": "self",
+       "filter": {
+        "names": [
+         "Son Goku"
+        ],
+        "traits": [
+         "Another World"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gogeta"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "nextDiscount",
+      "filter": {
+       "names": [
+        "Son Goku"
+       ],
+       "traits": [
+        "Another World"
+       ]
+      },
+      "amount": 3
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-119": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cond": [
+     {
+      "t": "battleTotalCost",
+      "n": 20,
+      "only": {
+       "traits": [
+        "Goku's Lineage"
+       ]
+      }
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 4,
+      "options": [
+       {
+        "type": "BATTLE",
+        "traits": [
+         "Goku's Lineage"
+        ]
+       }
+      ],
+      "take": 4,
+      "toHand": false,
+      "dest": "play",
+      "rest": "bottom"
+     },
+     {
+      "t": "cantPlay",
+      "filter": {
+       "names": [
+        "Hero's Heritage"
+       ]
+      },
+      "extras": true,
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-120": {
+  "keywords": [
+   "field"
+  ],
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 1
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderTrait",
+      "traits": [
+       "Goku's Lineage"
+      ]
+     },
+     {
+      "t": "hasMarker",
+      "yes": false
+     }
+    ],
+    "effects": [
+     {
+      "t": "placeMarker",
+      "n": 1
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-121": {
+  "abilities": [
+   {
+    "timing": "permanent",
+    "cond": [
+     {
+      "t": "oppLifeLE",
+      "n": 2
+     }
+    ],
+    "effects": [
+     {
+      "t": "grant",
+      "target": {
+       "ref": "this"
+      },
+      "kw": "doubleStrike",
+      "dur": "static"
+     }
+    ]
+   },
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "playFrom",
+      "from": "hand",
+      "filter": {
+       "type": "BATTLE",
+       "costLE": 3
+      },
+      "n": 1
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "cantAttack",
+      "dur": "turn"
+     }
+    ]
+   }
+  ]
+ },
+ "FB08-122": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lockActive",
+      "target": {
+       "all": true,
+       "filter": {
+        "rested": true
+       }
+      }
+     },
+     {
+      "t": "grant",
+      "target": {
+       "all": true,
+       "side": "opp",
+       "zones": [
+        "leader"
+       ],
+       "filter": {
+        "rested": true
+       }
+      },
+      "kw": "cantAttack",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ]
+ }
+}

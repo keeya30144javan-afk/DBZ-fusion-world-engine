@@ -31,6 +31,8 @@ export type Timing =
   | 'whenMilled'
   /** [Auto] "When this card is placed in your Leader Area" (game start). */
   | 'gameStart'
+  /** [Auto] "When this card inflicts damage with an attack". */
+  | 'whenDealsDamage'
   /** [Auto] "When this card wins a battle". */
   | 'whenWinsBattle'
   /** [Auto] "When an opponent's Battle Card attacks" (on the defending player's cards). */
@@ -278,6 +280,12 @@ export type Cond =
   | { t: 'kiRemovedThisTurn' }
   /** You used a card from your Battle Area in a combo this turn. */
   | { t: 'comboFromFieldThisTurn' }
+  /** A Battle Card in your Battle Area was returned to its owner's hand this turn. */
+  | { t: 'bouncedThisTurn' }
+  /** A card left your energy this turn. */
+  | { t: 'energyLeftThisTurn' }
+  /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */
+  | { t: 'battleTotalCost'; n: number; only?: Filter }
   /** This card has / hasn't attacked this turn. */
   | { t: 'attackedThisTurn'; yes: boolean }
   /** This card is in a battle with an opponent's card matching the filter. */

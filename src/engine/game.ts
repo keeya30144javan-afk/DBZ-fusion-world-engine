@@ -449,6 +449,7 @@ function resolveDamage(s: GameState, ctl: Choosers) {
       log(s, `hit: ${atk} vs ${def}, P${defSide} takes ${n}${crit ? ' (critical)' : ''}`);
       emit(s, { t: 'damage', p: defSide, n });
       takeLife(s, defSide, n, crit, ctl);
+      if (s.stage !== 'over') fireTriggers(s, b.attacker, 'whenDealsDamage', ctl);
     } else {
       log(s, `hit: ${atk} vs ${def}`);
       koCard(s, b.target, ctl, { src: b.attacker });

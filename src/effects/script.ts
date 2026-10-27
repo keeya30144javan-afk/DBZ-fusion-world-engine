@@ -20,7 +20,7 @@ export function textHash(card: Pick<Card, 'text' | 'back'>): string {
 export const TIMINGS: Timing[] = [
   'onPlay', 'whenAttacking', 'whenAttacked', 'whenKOd', 'whenBlocking', 'activateMain', 'activateBattle', 'counter', 'permanent',
   'endOfYourTurn', 'startOfYourTurn', 'awaken', 'comboFromHand', 'comboFromField', 'whenDamaged', 'whenAllyPlayed', 'whenMilled', 'gameStart',
-  'whenWinsBattle', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
+  'whenWinsBattle', 'whenDealsDamage', 'whenOppAttacks', 'whenAllyRemovedBySelf', 'whenAllyRemovedByOpp', 'auto',
 ];
 export const KEYWORDS: Keyword[] = [
   'blocker', 'critical', 'doubleStrike', 'tripleStrike', 'superCombo', 'barrier', 'indestructible', 'field', 'dragonBall',
@@ -138,6 +138,9 @@ const CONDS: Record<Cond['t'], Spec> = {
   removedOwnThisTurn: {},
   kiRemovedThisTurn: {},
   comboFromFieldThisTurn: {},
+  bouncedThisTurn: {},
+  energyLeftThisTurn: {},
+  battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },
   inBattleWith: { filter: 'F' },
   not: { c: 'Cond' },

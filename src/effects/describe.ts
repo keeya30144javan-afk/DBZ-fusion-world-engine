@@ -57,6 +57,10 @@ export function describeTarget(t: Target): string {
     case 'battler': return `your ${t.filter && Object.keys(t.filter).length ? describeFilter(t.filter) : 'card'} that's in a battle`;
     case 'oppBattler': return "your opponent's card that's in a battle";
   }
+  if (t.zones.length === 1 && t.zones[0] === 'leader') {
+    const f = Object.keys(t.filter).length ? ` (if it is a ${describeFilter(t.filter, 'Leader')})` : '';
+    return `${t.side === 'opp' ? "your opponent's" : t.side === 'any' ? 'each' : 'your'} Leader${f}`;
+  }
   const what = describeFilter(t.filter, t.zones.includes('field') && !t.zones.includes('battle') ? '[Field]' : 'Battle Card');
   const who = t.zones.includes('leader') && t.zones.includes('battle') ? (t.side === 'opp' ? "your opponent's Leader or" : 'your Leader or') : '';
   const qty = t.all ? 'all' : `${t.upTo ? 'up to ' : ''}${t.count}`;
@@ -185,6 +189,9 @@ export function describeCond(c: Cond): string {
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
     case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
+    case 'energyLeftThisTurn': return 'a card was removed from your energy during this turn';
+    case 'battleTotalCost': return `${c.only ? `you only have ${describeFilter(c.only, 'card')}s in your Battle Area and their` : 'the cards in your Battle Area have a'} total cost is ${c.n} or more`;
+    case 'bouncedThisTurn': return "a Battle Card in your Battle Area was returned to its owner's hand during this turn";
     case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
     case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
     case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
@@ -225,7 +232,7 @@ const TIMING: Record<string, string> = {
   startOfYourTurn: 'Start of Your Turn', awaken: 'Awaken', comboFromHand: 'Auto: when used in a combo from your hand',
   comboFromField: 'Auto: when used in a combo from the Battle Area', whenDamaged: 'Auto: when you take damage',
   whenAllyPlayed: 'Auto: when your card is played', whenMilled: 'Auto: when placed from your deck into your Drop',
-  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle',
+  gameStart: 'Auto: when placed in your Leader Area', whenWinsBattle: 'Auto: when this card wins a battle', whenDealsDamage: 'Auto: when this card inflicts damage with an attack',
   whenOppAttacks: "Auto: when an opponent's card attacks", whenAllyRemovedBySelf: 'Auto: when your card is removed from the Battle Area by one of your skills',
   whenAllyRemovedByOpp: 'Auto: when your card is removed from the Battle Area by your opponent', auto: 'Auto',
 };

@@ -77,6 +77,10 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn a card left this player's energy. */
+  energyLeftTurn?: number;
+  /** Last turn one of this player's Battle Cards was returned from the Battle Area to the hand. */
+  bouncedTurn?: number;
   /** Last turn this player used a card from their Battle Area in a combo. */
   comboFieldTurn?: number;
 }
@@ -217,7 +221,7 @@ const auraCache = new WeakMap<object, boolean>();
 const hasAura = (abs: Ability[]) => {
   let v = auraCache.get(abs);
   if (v === undefined) {
-    v = abs.some((a) => a.timing === 'permanent' && a.effects.some((e) => (e.t === 'grant' || e.t === 'power') && e.target.all));
+    v = abs.some((a) => a.timing === 'permanent' && a.effects.some((e) => (e.t === 'grant' || e.t === 'power' || e.t === 'costMod') && e.target.all));
     auraCache.set(abs, v);
   }
   return v;
@@ -240,7 +244,7 @@ export function auraEffects(s: GameState, uid: number): Effect[] {
         for (const ab of abs) {
           if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) continue;
           for (const e of ab.effects) {
-            if ((e.t !== 'grant' && e.t !== 'power') || !e.target.all) continue;
+            if ((e.t !== 'grant' && e.t !== 'power' && e.t !== 'costMod') || !e.target.all) continue;
             const t = e.target;
             const owner = s.inst[uid].owner;
             if (t.side === 'self' ? owner !== side : t.side === 'opp' ? owner === side : false) continue;
@@ -288,6 +292,7 @@ export function costOf(s: GameState, uid: number): number {
     if (!condsHold(s, s.inst[uid].owner, uid, ab.cond)) continue;
     for (const e of ab.effects) if (e.t === 'costMod' && e.target.ref === 'this' && inPlay(s, uid)) c += e.per ? e.amount * countOf(s, s.inst[uid].owner, uid, e.per) : e.amount;
   }
+  if (inPlay(s, uid)) for (const e of auraEffects(s, uid)) if (e.t === 'costMod') c += e.amount;
   return Math.max(0, c);
 }
 
@@ -372,6 +377,13 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'removedOwnThisTurn': return me.removedOwnTurn === s.turn;
     case 'kiRemovedThisTurn': return me.kiRemovedTurn === s.turn;
     case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
+    case 'bouncedThisTurn': return me.bouncedTurn === s.turn;
+    case 'energyLeftThisTurn': return me.energyLeftTurn === s.turn;
+    case 'battleTotalCost': {
+      const list = me.field !== null ? [...me.battle, me.field] : me.battle;
+      if (c.only && !list.every((u) => matchesFilter(s, u, c.only!, src))) return false;
+      return list.reduce((a, u) => a + costOf(s, u), 0) >= c.n;
+    }
     case 'attackedThisTurn': return (s.inst[src].attackedTurn === s.turn) === c.yes;
     case 'inBattleWith': {
       const b = s.battle;
@@ -629,6 +641,8 @@ export function resetInst(i: Inst) {
 export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
   const from = removeFrom(s, uid);
   const inst = s.inst[uid];
+  if (from === 'battle' && zone === 'hand') s.p[inst.owner].bouncedTurn = s.turn;
+  if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
   if (from === 'battle' && s.skillBy !== undefined && cardOf(s, uid).type === 'BATTLE') {
     if (s.skillBy === inst.owner) s.p[inst.owner].removedOwnTurn = s.turn;
     (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy });
