@@ -236,7 +236,7 @@ export type Effect = E<
   /** Top card(s) of your deck to your life. */
   | { t: 'lifeFromDeck'; n: number; until?: number }
   /** Card(s) from your hand to your life. */
-  | { t: 'handToLife'; n: number; upTo: boolean }
+  | { t: 'handToLife'; n: number; upTo: boolean; /** Where in the life: top (default), bottom, or the player's choice. */ pos?: 'bottom' | 'topOrBottom' }
   /** Card(s) from your hand on top of (or under) your deck. */
   | { t: 'handToDeck'; n: number; bottom?: boolean }
   /** Move the card with this skill. */
@@ -259,7 +259,7 @@ export type Effect = E<
   /** "You can't activate the [Activate:Main] of <X> for the turn." */
   | { t: 'lockSkill'; names: string[]; timing: 'activateMain' | 'activateBattle'; dur: Duration }
   /** Return every card in your Drop to your deck and shuffle. */
-  | { t: 'dropToDeck' }
+  | { t: 'dropToDeck'; /** "at the bottom of their owner's deck in a random order" instead of shuffling in. */ bottom?: boolean }
   /** Look through your life and place N of those cards on top of your deck. */
   | { t: 'lifeToDeck'; n: number }
   /** "Negate its skills for the turn" ('onPlay': only its [On Play]). */
@@ -301,7 +301,7 @@ export type Effect = E<
    * "During this turn, when/if <on> ..., <effects>". on: dealsDamage (your card damages the opponent), koInBattle (your card KO's in battle),
    * attacks (your card matching `filter` attacks a card matching `targetFilter`). once: only the next time.
    */
-  | { t: 'delayed'; on: 'dealsDamage' | 'koInBattle' | 'attacks'; filter?: Filter; targetFilter?: Filter; once: boolean; effects: Effect[] }
+  | { t: 'delayed'; on: 'dealsDamage' | 'koInBattle' | 'attacks' | 'usesExtra'; filter?: Filter; targetFilter?: Filter; once: boolean; effects: Effect[] }
   /** [Permanent] cost change for your cards in hand matching filter ('free' = no cost); once: once per turn. */
   | { t: 'handCostMod'; filter: Filter; amount: number | 'free'; once?: boolean }
   /**
@@ -465,7 +465,7 @@ export type Cond =
   /** You used a card from your Drop in a combo this turn. */
   | { t: 'comboFromDropThisTurn' }
   /** One of your Battle Cards was removed from the Battle Area by any skill this turn. */
-  | { t: 'removedBySkillThisTurn' }
+  | { t: 'removedBySkillThisTurn'; filter?: Filter }
   /** This card was played by an [Evolve] skill this turn. */
   | { t: 'playedByEvolve' }
   /** This card was played by a skill this turn. */

@@ -3,10 +3,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { newGame, legalActions, step, Action } from '../src/engine/game';
-import { GameState, Side, costInDrop, matchesFilter } from '../src/engine/core';
+import { GameState, Side, condHolds, costInDrop, matchesFilter, moveTo } from '../src/engine/core';
 import { koCard, playCard, resolveAbility, setWinner, takeLife } from '../src/engine/effects';
 import { defaultChooser } from '../src/ai/heuristics';
 import { Card } from '../src/data/types';
+import { Cond } from '../src/effects/types';
 
 const db = JSON.parse(readFileSync(new URL('../data/cards.json', import.meta.url), 'utf8'));
 const cards: Record<string, Card> = db.cards;
@@ -218,4 +219,54 @@ test('attack tax: Broly makes each attack rest another Active card', () => {
   energy(s, 0, 1);
   step(s, { k: 'attack', uid: atk, target: s.p[1].leader }, ctl);
   assert.ok(s.inst[s.p[0].energy[0]].rested, 'an Active energy was rested to attack');
+});
+
+// ---- fixes from the user's audit notes
+
+test('hand to the bottom of life (SB02-037): the card goes under the other life cards', () => {
+  const s = fresh();
+  s.p[0].hand = [];
+  const card = spawn(s, 0, 'FS01-10', 'hand');
+  resolveAbility(s, s.p[0].leader, { timing: 'auto', once: false, cost: [], cond: [], effects: [{ t: 'handToLife', n: 1, upTo: false, pos: 'bottom' }], text: '', unparsed: [] }, -1, ctl, { costsPaid: true });
+  assert.equal(s.p[0].life[0], card);
+  assert.notEqual(s.p[0].life[s.p[0].life.length - 1], card);
+});
+
+test('Drop to the bottom of the deck (ST01-026): the old top card is still on top', () => {
+  const s = fresh();
+  const top = s.p[0].deck[s.p[0].deck.length - 1];
+  const d1 = spawn(s, 0, 'FS01-10', 'drop'), d2 = spawn(s, 0, 'FS01-10', 'drop');
+  resolveAbility(s, s.p[0].leader, { timing: 'auto', once: false, cost: [], cond: [], effects: [{ t: 'dropToDeck', bottom: true }], text: '', unparsed: [] }, -1, ctl, { costsPaid: true });
+  assert.equal(s.p[0].drop.length, 0);
+  assert.equal(s.p[0].deck[s.p[0].deck.length - 1], top);
+  assert.deepEqual(new Set(s.p[0].deck.slice(0, 2)), new Set([d1, d2]));
+});
+
+test('"during this turn, if you use an Extra" (SB02-022) only counts Extras used after the skill', () => {
+  const s = fresh();
+  const src = spawn(s, 0, 'FS01-10', 'battle');
+  const hand0 = s.p[0].hand.length;
+  resolveAbility(s, src, { timing: 'auto', once: false, cost: [], cond: [], effects: [{ t: 'delayed', on: 'usesExtra', filter: { type: 'EXTRA' }, once: true, effects: [{ t: 'draw', n: 2 }] }], text: '', unparsed: [] }, -1, ctl, { costsPaid: true });
+  assert.equal(s.p[0].hand.length, hand0);
+  const extra = cards["FB03-026"];
+  assert.ok(extra, 'a red [Activate:Main] Extra to test with');
+  energy(s, 0, 4);
+  const u = spawn(s, 0, extra.id, 'hand');
+  const use = legalActions(s).find((a) => a.k === 'activate' && a.uid === u)!;
+  assert.ok(use, 'the Extra can be used');
+  step(s, use, ctl);
+  assert.ok(s.p[0].hand.length >= hand0 + 1, 'the watcher draws when the Extra is used');
+});
+
+test('Cell (SB01-001): only a removed ≪Android≫ counts', () => {
+  const s = fresh();
+  const cond: Cond = { t: 'removedBySkillThisTurn', filter: { type: 'BATTLE', traits: ['Android'] } };
+  const non = Object.values(cards).find((c) => c.type === 'BATTLE' && !c.traits.includes('Android'))!;
+  const and = Object.values(cards).find((c) => c.type === 'BATTLE' && c.traits.includes('Android'))!;
+  const a = spawn(s, 0, non.id, 'battle');
+  s.skillBy = 1; moveTo(s, a, 'drop'); s.skillBy = undefined;
+  assert.equal(condHolds(s, 0, s.p[0].leader, cond), false);
+  const b = spawn(s, 0, and.id, 'battle');
+  s.skillBy = 1; moveTo(s, b, 'drop'); s.skillBy = undefined;
+  assert.equal(condHolds(s, 0, s.p[0].leader, cond), true);
 });

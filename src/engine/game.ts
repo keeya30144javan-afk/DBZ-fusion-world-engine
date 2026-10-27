@@ -550,8 +550,8 @@ function declareAttack(s: GameState, attacker: number, target: number, ctl: Choo
   advanceBattle(s, 'counter', ctl);
 }
 
-/** "During this turn, when your card ... attacks / inflicts damage / KO's in battle": run the delayed effects that match. */
-function runDelayed(s: GameState, side: Side, on: 'attacks' | 'dealsDamage' | 'koInBattle', ctl: Choosers, attacker: number, target?: number) {
+/** "During this turn, when your card ... attacks / inflicts damage / KO's in battle" or "if you use <Extra>": run the delayed effects that match. */
+function runDelayed(s: GameState, side: Side, on: 'attacks' | 'dealsDamage' | 'koInBattle' | 'usesExtra', ctl: Choosers, attacker: number, target?: number) {
   const me = s.p[side];
   if (!me.mods?.length) return;
   for (const m of me.mods.slice()) {
@@ -695,6 +695,7 @@ function useExtra(s: GameState, uid: number, abIdx: number, ctl: Choosers, alt?:
   log(s, () => `P${side} uses ${nameOf(s, uid)}`);
   resolveAbility(s, uid, ab, abIdx, ctl);
   if (again && s.stage !== 'over') resolveAbility(s, uid, ab, abIdx, ctl);
+  if (s.stage !== 'over') runDelayed(s, side, 'usesExtra', ctl, uid);
 }
 
 // ------------------------------------------------------------------ step
@@ -728,7 +729,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
     case 'play': {
       if (!payCardCost(s, a.uid, a.alt, ctl)) return;
       consumeDiscount(s, a.uid);
-      if (cardOf(s, a.uid).type === 'EXTRA') { if (cardOf(s, a.uid).cost >= 1) me.extraUsedTurn = s.turn; (me.usedExtras ??= []).push({ turn: s.turn, uid: a.uid }); placeField(s, a.uid, ctl); }
+      if (cardOf(s, a.uid).type === 'EXTRA') { if (cardOf(s, a.uid).cost >= 1) me.extraUsedTurn = s.turn; (me.usedExtras ??= []).push({ turn: s.turn, uid: a.uid }); placeField(s, a.uid, ctl); if (s.stage !== 'over') runDelayed(s, side, 'usesExtra', ctl, a.uid); }
       else playCard(s, a.uid, ctl);
       return;
     }

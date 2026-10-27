@@ -197,7 +197,7 @@ export function describeEffect(e: Effect): string {
     case 'ki': out = `${pick}${subj} ${many ? 'get' : 'gets'} +${e.n} Ki${e.per ? ` for each ${describeCount(e.per)}` : ''}`; break;
     case 'placeMarker': out = `you place ${e.n} energy marker`; break;
     case 'lifeFromDeck': out = e.until !== undefined ? `add cards from the top of your deck to your life until you have ${e.until} life` : `add the top ${plural(e.n, 'card')} of your deck to your life`; break;
-    case 'handToLife': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your hand to your life`; break;
+    case 'handToLife': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your hand to ${e.pos === 'bottom' ? 'the bottom of your life' : e.pos === 'topOrBottom' ? 'the top or bottom of your life' : 'your life'}`; break;
     case 'handToDeck': out = `place ${plural(e.n, 'card')} from your hand ${e.bottom ? 'at the bottom' : 'on top'} of your deck`; break;
     case 'self': out = { hand: "return this card to its owner's hand", drop: 'place this card into your Drop', energy: `add this card to your energy${e.rested ? ' in Rest Mode' : ''}`, deckBottom: 'place this card at the bottom of your deck', life: 'add this card from your Battle Area to your life', play: `play this card from where it is (your Drop)${e.rested ? ' in Rest Mode' : ''}` }[e.to]; break;
     case 'nextDiscount': out = `during this turn, the next time you use ${describeFilter(e.filter).replace(/^(?=[A-Z<])/, 'a ').replace(/^a (?=Extra)/, 'an ')} from your hand, ${e.amount === 'free' ? "you don't have to pay the cost" : `reduce the cost by ${e.amount}`}`; break;
@@ -211,7 +211,7 @@ export function describeEffect(e: Effect): string {
     case 'comboFrom': out = `${e.per ? `for each ${describeCount(e.per)}, ` : ''}use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
     case 'atEndOfTurn': out = `at the end of the turn, ${e.effects.map(describeEffect).join(', then ')}`; break;
     case 'lockSkill': out = `you can't activate the [${e.timing === 'activateMain' ? 'Activate: Main' : 'Activate: Battle'}] of ${list(e.names.map((n) => `<${n}>`))}${DUR[e.dur]}`; break;
-    case 'dropToDeck': out = "return all cards from your Drop to your deck in a random order"; break;
+    case 'dropToDeck': out = e.bottom ? "place all cards from your Drop at the bottom of their owner's deck in a random order" : "return all cards from your Drop to your deck in a random order"; break;
     case 'lifeToDeck': out = `look through your life and place ${plural(e.n, 'card')} on top of your deck`; break;
     case 'negate': out = `${pick}negate ${e.target.ref === 'this' ? "this card's" : 'its'} ${e.scope === 'onPlay' ? '[On Play] skills' : 'skills'}${DUR[e.dur]}`; break;
     case 'winGame': out = 'you win the game'; break;
@@ -230,6 +230,7 @@ export function describeEffect(e: Effect): string {
     case 'oppMill': out = `place the top ${plural(e.n, 'card')} of your opponent's deck into their owner's Drop`; break;
     case 'delayed': {
       const who = `your ${e.filter ? describeFilter(e.filter) : 'card'}`;
+      if (e.on === 'usesExtra') { out = `during this turn, if you use ${e.filter ? aCard(describeFilter(e.filter, 'Extra')) : 'an Extra'}, ${e.effects.map(describeEffect).join(', then ')}`; break; }
       const when = e.on === 'dealsDamage' ? `${who} inflicts damage to your opponent in battle` : e.on === 'koInBattle' ? `${who} KO's your opponent's Battle Card in battle` : `${who} attacks ${e.targetFilter ? `your opponent's ${describeFilter(e.targetFilter, 'Battle Card')}` : 'a card'}`;
       out = `during this turn, ${e.once ? 'the next time' : 'when'} ${when}, ${e.effects.map(describeEffect).join(', then ')}`;
       break;
@@ -326,7 +327,7 @@ export function describeCond(c: Cond): string {
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
     case 'attackedThisTurn': return c.yes ? 'this card has attacked this turn' : "this card hasn't attacked this turn";
     case 'comboFromDropThisTurn': return 'you used a card from your Drop in a combo during this turn';
-    case 'removedBySkillThisTurn': return 'your Battle Card was removed from your Battle Area by a skill during this turn';
+    case 'removedBySkillThisTurn': return `${c.filter ? `a ${describeFilter(c.filter, 'Battle Card')}` : 'your Battle Card'} was removed from your Battle Area by a skill during this turn`;
     case 'markerUsedThisTurn': return 'your energy marker was removed during this turn';
     case 'oppHasMarker': return c.yes ? 'your opponent has an energy marker' : "your opponent doesn't have an energy marker";
     case 'markerPaid': return 'you removed an energy marker to use this card (or for this skill)';

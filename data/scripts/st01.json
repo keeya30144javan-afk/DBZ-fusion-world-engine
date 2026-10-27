@@ -1101,7 +1101,8 @@
       "t": "atEndOfTurn",
       "effects": [
        {
-        "t": "dropToDeck"
+        "t": "dropToDeck",
+        "bottom": true
        }
       ]
      }
@@ -1109,8 +1110,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: the Drop goes to the bottom of the deck in a random order"
   }
  },
  "ST01-027": {

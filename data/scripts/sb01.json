@@ -34,7 +34,13 @@
     "timing": "whenAttacking",
     "cond": [
      {
-      "t": "removedBySkillThisTurn"
+      "t": "removedBySkillThisTurn",
+      "filter": {
+       "type": "BATTLE",
+       "traits": [
+        "Android"
+       ]
+      }
      }
     ],
     "effects": [
@@ -50,15 +56,12 @@
       "amount": 20000,
       "dur": "battle"
      }
-    ],
-    "unparsed": [
-     "(the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
+   "ok": true,
+   "note": "reviewed by the user"
   }
  },
  "SB01-002": {
@@ -1842,8 +1845,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "card name not in the reading: <son gokue>"
+   "ok": true,
+   "note": "reviewed by the user: <Son Gokue> on the card is a misprint of <Son Goku>"
   }
  },
  "SB01-047": {

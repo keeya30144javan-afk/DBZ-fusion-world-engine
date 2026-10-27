@@ -104,6 +104,8 @@ export interface PlayerState {
   comboDropTurn?: number;
   /** Last turn one of this player's Battle Cards left a Battle Area through any skill. */
   removedBySkillTurn?: number;
+  /** Battle Cards removed from this player's Battle Area by a skill, by turn. */
+  removedBySkill?: { turn: number; uid: number }[];
   /** Last turn one of this player's energy markers was removed. */
   markerUsedTurn?: number;
   /** Last turn this player used an Extra with an original cost of 1 or more. */
@@ -218,6 +220,7 @@ export function cloneState(s: GameState): GameState {
     koBy: p.koBy ? p.koBy.slice() : undefined,
     atEnd: p.atEnd ? p.atEnd.slice() : undefined,
     usedExtras: p.usedExtras ? p.usedExtras.slice() : undefined,
+    removedBySkill: p.removedBySkill ? p.removedBySkill.slice() : undefined,
   });
   return {
     ...s,
@@ -572,7 +575,9 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'oppHasMarker': return (opp.markers > 0) === c.yes;
     case 'markerUsedThisTurn': return me.markerUsedTurn === s.turn;
     case 'comboFromDropThisTurn': return me.comboDropTurn === s.turn;
-    case 'removedBySkillThisTurn': return me.removedBySkillTurn === s.turn;
+    case 'removedBySkillThisTurn': return c.filter
+      ? (me.removedBySkill ?? []).some((x) => x.turn === s.turn && matchesFilter(s, x.uid, c.filter!, src))
+      : me.removedBySkillTurn === s.turn;
     case 'playedByEvolve': return !!s.inst[src].playedByEvolve && s.inst[src].playedTurn === s.turn;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
@@ -921,6 +926,7 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
   if (from === 'battle' && s.skillBy !== undefined && cardOf(s, uid).type === 'BATTLE') {
     if (s.skillBy === inst.owner) s.p[inst.owner].removedOwnTurn = s.turn;
     s.p[inst.owner].removedBySkillTurn = s.turn;
+    (s.p[inst.owner].removedBySkill ??= []).push({ turn: s.turn, uid });
     (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy, to: zone });
   }
   if (inst.under?.length && from === 'battle') {

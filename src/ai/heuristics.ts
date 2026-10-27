@@ -1,6 +1,6 @@
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
-import { Effect } from '../effects/types';
+import { Cond, Effect } from '../effects/types';
 import {
   GameState, Side, activeEnergy, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
@@ -53,7 +53,7 @@ function effectValue(e: Effect): number {
     case 'noop': return 0;
     case 'negate': return 1.0;
     case 'redirect': return 1.0;
-    case 'winGame': return 50;
+    case 'winGame': return 6;
     case 'atEndOfBattle': return e.effects.reduce((a, x) => a + effectValue(x), 0);
     case 'oppMarker': return -0.7 * e.n;
     case 'selfDamage': return -1.0 * e.n;
@@ -64,9 +64,32 @@ function effectValue(e: Effect): number {
 
 const valueCache = new Map<string, number>();
 
-/** How good a card is in a vacuum (about 0..6). Used for deckbuilding seeds and choices. */
-export function cardValue(card: Card): number {
-  const hit = valueCache.get(card.id);
+/**
+ * Whether a condition about the Leader holds for `leader` (unknown leader: assume it can).
+ * Only Leader name/trait conditions are decided here; anything else counts as "maybe".
+ */
+export function leaderCondOk(c: Cond, leader?: Card): boolean {
+  if (!leader) return true;
+  const low = (x: string) => x.toLowerCase();
+  if (c.t === 'leaderIs') return c.names.some((n) => leader.name.includes(n) || leader.characters.some((ch) => ch.includes(n)));
+  if (c.t === 'leaderTrait') {
+    const tr = leader.traits.map(low);
+    if (c.only) return tr.length > 0 && tr.every((t) => c.traits.some((x) => low(x) === t));
+    return c.traits.some((x) => tr.includes(low(x)));
+  }
+  return true;
+}
+
+const leaderCond = (c: Cond) => c.t === 'leaderIs' || c.t === 'leaderTrait';
+
+/**
+ * How good a card is in a vacuum (about 0..6). Used for deckbuilding seeds and choices.
+ * With a Leader, skills that need a different Leader are worth nothing, and skills built
+ * around this Leader are worth a bit more than an ordinary conditional skill.
+ */
+export function cardValue(card: Card, leader?: Card): number {
+  const key = leader ? `${card.id}|${leader.id}` : card.id;
+  const hit = valueCache.get(key);
   if (hit !== undefined) return hit;
   const cc = compileCard(card);
   let v = 0;
@@ -74,15 +97,18 @@ export function cardValue(card: Card): number {
   if (card.type === 'EXTRA') v += 0.5 - card.cost * 0.15;
   v += card.comboPower / 10000;
   for (const ab of cc.abilities) {
-    let av = ab.effects.reduce((a, e) => a + effectValue(e), 0);
+    if (!ab.cond.every((c) => leaderCondOk(c, leader))) { v += ab.unparsed.length * 0.5; continue; }
+    let av = ab.effects.reduce((a, e) => a + (e.cond?.every((c) => leaderCondOk(c, leader)) === false ? 0 : effectValue(e)), 0);
     if (ab.timing === 'permanent') av *= ab.turn ? 0.6 : 1;
     if (ab.timing === 'whenAttacking' || ab.timing === 'activateMain') av *= 0.9;
-    if (ab.cond.length) av *= 0.75;
+    const other = ab.cond.filter((c) => !leaderCond(c));
+    if (other.length) av *= 0.75;
+    else if (ab.cond.length) av *= leader ? 1.1 : 0.75; // a skill keyed to this Leader always works
     if (ab.cost.length) av *= 0.7;
     v += av + ab.unparsed.length * 0.5;
   }
   for (const kw of cc.keywords) v += ({ blocker: 0.6, critical: 0.5, doubleStrike: 1.2, tripleStrike: 2, barrier: 0.5, superCombo: 0.3, indestructible: 0.8 } as any)[kw] ?? 0;
-  valueCache.set(card.id, v);
+  valueCache.set(key, v);
   return v;
 }
 
@@ -91,7 +117,10 @@ export function clearValueCache() {
 }
 
 /** Value of an in-play card right now. */
-const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + cardValue(cardOf(s, u)) * 0.3;
+/** A card's static value for the Leader its owner is playing. */
+const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s.p[s.inst[u].owner].leader));
+
+const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
 
 /** Value of keeping a card in hand: it is both a play and a combo shield. */
 export function keepValue(s: GameState, u: number): number {
@@ -99,7 +128,7 @@ export function keepValue(s: GameState, u: number): number {
   const side = s.inst[u].owner;
   const energy = s.p[side].energy.length;
   const castable = card.cost <= energy + 1 ? 1 : 0.6;
-  return comboPowerOf(s, u) / 10000 + cardValue(card) * 0.5 * castable;
+  return comboPowerOf(s, u) / 10000 + valueIn(s, u) * 0.5 * castable;
 }
 
 // ------------------------------------------------------------------ state evaluation
@@ -142,7 +171,7 @@ export class HeuristicChooser implements Chooser {
         return opts.sort((a, b) => key(a) - key(b)).slice(0, req.max);
       }
       case 'pick': {
-        const key = (u: number) => (req.intent === 'lose' ? -keepValue(s, u) : cardValue(cardOf(s, u)) + cardOf(s, u).power / 20000);
+        const key = (u: number) => (req.intent === 'lose' ? -keepValue(s, u) : valueIn(s, u) + cardOf(s, u).power / 20000);
         return opts.sort((a, b) => key(b) - key(a)).slice(0, req.max);
       }
       case 'target': return this.targets(s, req);
@@ -251,14 +280,20 @@ export class FastPolicy implements Policy {
       const hits = ab?.effects.some((e) => (e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce') && s.p[opp].battle.length > 0);
       if (hits && rand(s) > this.noise) return a;
     }
-    // Play the best card we can afford.
+    // Play the best card we can afford. When new cards can't attack this turn (a rules
+    // option), only cards that hit the opponent's board go before the attacks; the rest
+    // wait, keeping the hand as combo cover meanwhile.
     const plays = actions.filter((a) => a.k === 'play') as { k: 'play'; uid: number }[];
+    const attacksLeft = actions.some((a) => a.k === 'attack');
+    const removal = (u: number) => s.p[opp].battle.length > 0 && compileCard(cardOf(s, u)).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.some((e) =>
+      e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce' || e.t === 'toDrop' || e.t === 'toEnergy' || e.t === 'rest' || (e.t === 'power' && e.amount < 0)));
     if (plays.length) {
-      const score = (u: number) => cardValue(cardOf(s, u)) + costInHand(s, u) * 0.6 + rand(s) * this.noise * 2;
-      plays.sort((a, b) => score(b.uid) - score(a.uid));
-      const best = plays[0];
+      const score = (u: number) => valueIn(s, u) + costInHand(s, u) * 0.6 + rand(s) * this.noise * 2;
+      const now = attacksLeft && !s.rules.attackOnPlayTurn ? plays.filter((p) => removal(p.uid)) : plays;
+      now.sort((a, b) => score(b.uid) - score(a.uid));
+      const best = now[0];
       // Keep at least one combo card in hand when life is low.
-      if (!(me.life.length <= 2 && me.hand.length <= 1)) return best;
+      if (best && !(me.life.length <= 2 && me.hand.length <= 1)) return best;
     }
     // Attacks.
     const attacks = actions.filter((a) => a.k === 'attack') as { k: 'attack'; uid: number; target: number }[];
@@ -271,8 +306,9 @@ export class FastPolicy implements Policy {
         const opts = byAttacker.get(att)!;
         const ap = powerOf(s, att);
         // A rested battle card we beat outright is a free KO.
-        const kos = opts.filter((o) => !isLeader(s, o.target) && powerOf(s, o.target) <= ap);
-        if (kos.length && rand(s) > 0.35) {
+        // Worth it for a card that matters; otherwise pressure on the Leader is better.
+        const kos = opts.filter((o) => !isLeader(s, o.target) && powerOf(s, o.target) <= ap && boardValue(s, o.target) >= 2.2);
+        if (kos.length && rand(s) > 0.25) {
           kos.sort((a, b) => boardValue(s, b.target) - boardValue(s, a.target));
           return kos[0];
         }
@@ -349,7 +385,8 @@ export class FastPolicy implements Policy {
     if (isLeader(s, b.target)) {
       const dmg = hasKeyword(s, b.attacker, 'tripleStrike') ? 3 : hasKeyword(s, b.attacker, 'doubleStrike') ? 2 : 1;
       const after = me.life.length - dmg;
-      budget = after <= 0 ? 99 : after <= 2 ? 40000 : after <= 4 ? 25000 : me.hand.length >= 6 ? 20000 : 10000;
+      // Taking a hit at high life just moves a life card to hand, so don't spend cards on it.
+      budget = after <= 0 ? 99 : after <= 1 ? 40000 : after <= 2 ? 30000 : after <= 3 ? 15000 : after <= 4 ? (me.hand.length >= 7 ? 10000 : 0) : 0;
       if (hasKeyword(s, b.attacker, 'critical')) budget += 5000;
     } else {
       budget = boardValue(s, b.target) > 3 ? 10000 : 0;

@@ -461,9 +461,10 @@
    {
     "timing": "activateMain",
     "once": true,
-    "cond": [
+    "effects": [
      {
-      "t": "extraUsedThisTurn",
+      "t": "delayed",
+      "on": "usesExtra",
       "filter": {
        "type": "EXTRA",
        "costEQ": 3,
@@ -472,27 +473,25 @@
         "Saiyan",
         "Earthling"
        ]
-      }
-     }
-    ],
-    "effects": [
-     {
-      "t": "power",
-      "target": {
-       "ref": "this"
       },
-      "amount": 15000,
-      "dur": "turn"
+      "once": true,
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "ref": "this"
+        },
+        "amount": 15000,
+        "dur": "turn"
+       }
+      ]
      }
-    ],
-    "unparsed": [
-     "(the simulator applies it if the Extra was already used when this activates)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+   "ok": true,
+   "note": "reviewed by the user: counts an Extra used after this skill, during the same turn"
   }
  },
  "SB02-018": {
@@ -651,9 +650,10 @@
    {
     "timing": "whenAttacking",
     "once": true,
-    "cond": [
+    "effects": [
      {
-      "t": "extraUsedThisTurn",
+      "t": "delayed",
+      "on": "usesExtra",
       "filter": {
        "type": "EXTRA",
        "costGE": 3,
@@ -662,23 +662,21 @@
         "Saiyan",
         "Earthling"
        ]
-      }
+      },
+      "once": true,
+      "effects": [
+       {
+        "t": "draw",
+        "n": 2
+       }
+      ]
      }
-    ],
-    "effects": [
-     {
-      "t": "draw",
-      "n": 2
-     }
-    ],
-    "unparsed": [
-     "(the simulator applies it if the Extra was already used when this activates)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+   "ok": true,
+   "note": "reviewed by the user: counts an Extra used after this skill, during the same turn"
   }
  },
  "SB02-023": {
@@ -1388,14 +1386,15 @@
      {
       "t": "handToLife",
       "n": 1,
-      "upTo": true
+      "upTo": true,
+      "pos": "bottom"
      }
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: the card goes to the bottom of life"
   }
  },
  "SB02-038": {
@@ -1477,14 +1476,15 @@
      {
       "t": "handToLife",
       "n": 1,
-      "upTo": true
+      "upTo": true,
+      "pos": "bottom"
      }
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: the card goes to the bottom of life"
   }
  },
  "SB02-040": {
@@ -1607,14 +1607,15 @@
         "t": "lifeLE",
         "n": 3
        }
-      ]
+      ],
+      "pos": "topOrBottom"
      }
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: top or bottom of life (the simulator puts it on top)"
   }
  },
  "SB02-044": {
@@ -1638,14 +1639,15 @@
      {
       "t": "handToLife",
       "n": 1,
-      "upTo": true
+      "upTo": true,
+      "pos": "bottom"
      }
     ]
    }
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "reviewed by the user: the card goes to the bottom of life"
   }
  },
  "SB02-045": {

@@ -6111,7 +6111,8 @@
         "t": "atEndOfTurn",
         "effects": [
          {
-          "t": "dropToDeck"
+          "t": "dropToDeck",
+          "bottom": true
          }
         ]
        }
@@ -6119,8 +6120,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: the Drop goes to the bottom of the deck in a random order"
     },
     "keywords": [],
     "source": "claude",
@@ -9412,8 +9413,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "card name not in the reading: <son gokue>"
+     "ok": true,
+     "note": "reviewed by the user: <Son Gokue> on the card is a misprint of <Son Goku>"
     },
     "keywords": [],
     "source": "claude",
@@ -10029,13 +10030,17 @@
       "cost": [],
       "cond": [
        {
-        "t": "removedBySkillThisTurn"
+        "t": "removedBySkillThisTurn",
+        "filter": {
+         "type": "BATTLE",
+         "traits": [
+          "Android"
+         ]
+        }
        }
       ],
       "text": "",
-      "unparsed": [
-       "(the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
-      ],
+      "unparsed": [],
       "timing": "whenAttacking",
       "effects": [
        {
@@ -10061,8 +10066,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (the removed card must have ≪Android≫ in its special traits; the simulator counts any of your Battle Cards)"
+     "ok": true,
+     "note": "reviewed by the user"
     },
     "keywords": [],
     "source": "claude",
@@ -23287,14 +23292,15 @@
           "t": "lifeLE",
           "n": 3
          }
-        ]
+        ],
+        "pos": "topOrBottom"
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: top or bottom of life (the simulator puts it on top)"
     },
     "keywords": [],
     "source": "claude",
@@ -23928,14 +23934,15 @@
        {
         "t": "handToLife",
         "n": 1,
-        "upTo": true
+        "upTo": true,
+        "pos": "bottom"
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: the card goes to the bottom of life"
     },
     "keywords": [],
     "source": "claude",
@@ -38621,14 +38628,15 @@
        {
         "t": "handToLife",
         "n": 1,
-        "upTo": true
+        "upTo": true,
+        "pos": "bottom"
        }
       ]
      }
     ],
     "check": {
      "ok": true,
-     "note": "Passed the automatic checker and a second read by Claude."
+     "note": "reviewed by the user: the card goes to the bottom of life"
     },
     "keywords": [],
     "source": "claude",
@@ -64966,9 +64974,14 @@
      {
       "once": true,
       "cost": [],
-      "cond": [
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
        {
-        "t": "extraUsedThisTurn",
+        "t": "delayed",
+        "on": "usesExtra",
         "filter": {
          "type": "EXTRA",
          "costEQ": 3,
@@ -64977,36 +64990,32 @@
           "Saiyan",
           "Earthling"
          ]
-        }
-       }
-      ],
-      "text": "",
-      "unparsed": [
-       "(the simulator applies it if the Extra was already used when this activates)"
-      ],
-      "timing": "activateMain",
-      "effects": [
-       {
-        "t": "power",
-        "target": {
-         "side": "self",
-         "zones": [
-          "battle"
-         ],
-         "count": 1,
-         "upTo": false,
-         "filter": {},
-         "ref": "this"
         },
-        "amount": 15000,
-        "dur": "turn"
+        "once": true,
+        "effects": [
+         {
+          "t": "power",
+          "target": {
+           "side": "self",
+           "zones": [
+            "battle"
+           ],
+           "count": 1,
+           "upTo": false,
+           "filter": {},
+           "ref": "this"
+          },
+          "amount": 15000,
+          "dur": "turn"
+         }
+        ]
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+     "ok": true,
+     "note": "reviewed by the user: counts an Extra used after this skill, during the same turn"
     },
     "keywords": [],
     "source": "claude",
@@ -70491,14 +70500,15 @@
        {
         "t": "handToLife",
         "n": 1,
-        "upTo": true
+        "upTo": true,
+        "pos": "bottom"
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: the card goes to the bottom of life"
     },
     "keywords": [],
     "source": "claude",
@@ -77663,9 +77673,14 @@
      {
       "once": true,
       "cost": [],
-      "cond": [
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
        {
-        "t": "extraUsedThisTurn",
+        "t": "delayed",
+        "on": "usesExtra",
         "filter": {
          "type": "EXTRA",
          "costGE": 3,
@@ -77674,25 +77689,21 @@
           "Saiyan",
           "Earthling"
          ]
-        }
-       }
-      ],
-      "text": "",
-      "unparsed": [
-       "(the simulator applies it if the Extra was already used when this activates)"
-      ],
-      "timing": "whenAttacking",
-      "effects": [
-       {
-        "t": "draw",
-        "n": 2
+        },
+        "once": true,
+        "effects": [
+         {
+          "t": "draw",
+          "n": 2
+         }
+        ]
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (the simulator applies it if the Extra was already used when this activates)"
+     "ok": true,
+     "note": "reviewed by the user: counts an Extra used after this skill, during the same turn"
     },
     "keywords": [],
     "source": "claude",

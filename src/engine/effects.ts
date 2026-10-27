@@ -956,7 +956,9 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     }
     case 'handToLife': {
       const pick = pickFrom(s, owner, src, me.hand.slice(), e.n, ctl, 'lose', e.upTo ? 0 : e.n);
-      for (const u of pick) { removeFrom(s, u); resetInst(s.inst[u]); me.life.push(u); }
+      // Life is drawn from the end of the array, so the bottom is the front. Given the choice, the AI
+      // puts it on top so it comes back to hand with the next hit.
+      for (const u of pick) { removeFrom(s, u); resetInst(s.inst[u]); if (e.pos === 'bottom') me.life.unshift(u); else me.life.push(u); }
       return;
     }
     case 'handToDeck': {
@@ -982,7 +984,12 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'cantPlay': addMod(s, e.opp ? other(owner) : owner, { kind: 'cantPlay', filter: e.filter, extras: e.extras, until: e.dur === 'game' ? 1e9 : e.dur === 'oppNextTurn' ? s.turn + 1 : s.turn }); return;
     case 'lockSkill': addMod(s, owner, { kind: 'skillLock', filter: { names: e.names }, timing: e.timing, until: e.dur === 'oppNextTurn' ? s.turn + 1 : s.turn }); return;
     case 'atEndOfTurn': (s.p[s.active].atEnd ??= []).push({ src, effects: e.effects }); return;
-    case 'dropToDeck': { for (const u of me.drop.splice(0)) { resetInst(s.inst[u]); me.deck.push(u); } shuffle(s, me.deck); return; }
+    case 'dropToDeck': {
+      const cards = me.drop.splice(0);
+      cards.forEach((u) => resetInst(s.inst[u]));
+      if (e.bottom) { shuffle(s, cards); me.deck.unshift(...cards); return; } // the deck is drawn from the end
+      me.deck.push(...cards); shuffle(s, me.deck); return;
+    }
     case 'lifeToDeck': {
       const pick = pickFrom(s, owner, src, me.life.slice(), e.n, ctl, 'gain', Math.min(e.n, me.life.length));
       for (const u of pick) { me.life.splice(me.life.indexOf(u), 1); me.deck.push(u); me.lifeLeftTurn = s.turn; }
