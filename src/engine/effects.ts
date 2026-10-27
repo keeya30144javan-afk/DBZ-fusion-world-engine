@@ -163,6 +163,7 @@ export function playCard(s: GameState, uid: number, ctl: Choosers, opts: { reste
   s.inst[uid].playedTurn = s.turn;
   s.inst[uid].playedByLeader = !!opts.byLeader;
   s.inst[uid].playedBySkill = s.skillBy !== undefined;
+  s.inst[uid].playedByEvolve = false;
   if (s.skillBy !== undefined) s.inst[uid].markerPaid = false;
   if (opts.negate) { s.inst[uid].negatedUntil = s.turn; s.inst[uid].negateScope = opts.negate; }
   log(s, `P${owner} plays ${nameOf(s, uid)}`);

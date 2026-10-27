@@ -230,6 +230,7 @@ function doEvolve(s: GameState, uid: number, bases: number[], ctl: Choosers) {
   s.inst[uid].rested = rested;
   s.inst[uid].under = under;
   s.inst[uid].playedTurn = s.turn;
+  s.inst[uid].playedByEvolve = true;
   me.battle.splice(Math.min(at, me.battle.length), 0, uid);
   log(s, `P${side} evolves ${bases.map((b) => nameOf(s, b)).join(' + ')} into ${nameOf(s, uid)}`);
   emit(s, { t: 'play', p: side, id: s.inst[uid].id, uid });

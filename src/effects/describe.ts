@@ -202,6 +202,7 @@ export function describeCond(c: Cond): string {
     case 'thisMatches': return `this card is a ${describeFilter(c.filter, 'card')}`;
     case 'extraUsedThisTurn': return c.filter ? `you used ${describeFilter(c.filter, 'Extra')} during this turn` : 'you used an Extra with an original cost of 1 or more during this turn';
     case 'lifeLeftThisTurn': return 'a card was removed from your life during this turn';
+    case 'playedByEvolve': return 'this card was played by an [Evolve] skill';
     case 'playedBySkill': return 'this card was played by a skill';
     case 'energyLeftThisTurn': return 'a card was removed from your energy during this turn';
     case 'battleTotalCost': return `${c.only ? `you only have ${describeFilter(c.only, 'card')}s in your Battle Area and their` : 'the cards in your Battle Area have a'} total cost is ${c.n} or more`;

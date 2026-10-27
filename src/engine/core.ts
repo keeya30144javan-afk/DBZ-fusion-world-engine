@@ -36,6 +36,8 @@ export interface Inst {
   negatedUntil?: number;
   /** An energy marker was removed to pay for this card when it was last used. */
   markerPaid?: boolean;
+  /** Played on top of another card by [Evolve] / [Fusion Evolve]. */
+  playedByEvolve?: boolean;
   /** Played by a skill (not from hand by paying its cost). */
   playedBySkill?: boolean;
   /** Last turn this card attacked. */
@@ -414,6 +416,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'markerUsedThisTurn': return me.markerUsedTurn === s.turn;
     case 'comboFromDropThisTurn': return me.comboDropTurn === s.turn;
     case 'removedBySkillThisTurn': return me.removedBySkillTurn === s.turn;
+    case 'playedByEvolve': return !!s.inst[src].playedByEvolve && s.inst[src].playedTurn === s.turn;
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;

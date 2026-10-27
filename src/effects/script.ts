@@ -154,6 +154,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   comboFromDropThisTurn: {},
   removedBySkillThisTurn: {},
   playedBySkill: {},
+  playedByEvolve: {},
   battleTotalCost: { n: 'n', only: 'F?' },
   attackedThisTurn: { yes: 'b' },
   inBattleWith: { filter: 'F' },

@@ -314,6 +314,8 @@ export type Cond =
   | { t: 'comboFromDropThisTurn' }
   /** One of your Battle Cards was removed from the Battle Area by any skill this turn. */
   | { t: 'removedBySkillThisTurn' }
+  /** This card was played by an [Evolve] skill this turn. */
+  | { t: 'playedByEvolve' }
   /** This card was played by a skill this turn. */
   | { t: 'playedBySkill' }
   /** The cards in your Battle Area total a cost of n or more (and, with `only`, all match it). */
