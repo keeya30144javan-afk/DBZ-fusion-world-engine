@@ -65,6 +65,9 @@ test('[Evolve]: pay the cost and play on top of the specified card; the base goe
   assert.deepEqual(s.inst[cell].under, [base]);
   assert.equal(s.inst[base].ki, 0, 'Ki on the base is lost');
   assert.equal(s.p[0].hand.length, hand - 1 + 2, 'On Play drew 2');
+  assert.equal(koCard(s, cell, ctl), false, "its On Play: can't be KO'd until the end of the opponent's next turn");
+  s.turn += 2;
+  s.inst[cell].grants = s.inst[cell].grants.filter((g) => g.until === 'battle' || g.until >= s.turn); // as at end of turn
   koCard(s, cell, ctl);
   assert.ok(s.p[0].drop.includes(base), 'cards under it go to the Drop with it');
 });

@@ -75,6 +75,8 @@ export interface PlayerState {
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn this player used a card from their Battle Area in a combo. */
+  comboFieldTurn?: number;
 }
 
 export type Stage = 'mulligan' | 'charge' | 'main' | 'counter' | 'block' | 'offCombo' | 'defCombo' | 'over';
@@ -320,6 +322,7 @@ export function countOf(s: GameState, owner: Side, src: number, w: Count, x: { p
   if (w.zone === 'thisKi') return s.inst[src].ki;
   if (w.zone === 'kiTotal') return [p.leader, ...p.battle].reduce((a, u) => a + s.inst[u].ki, 0);
   if (w.zone === 'kiRemoved') return x.kiRemoved ?? 0;
+  if (w.zone === 'underMax') return Math.max(0, ...p.battle.filter((u) => !w.filter || matchesFilter(s, u, w.filter, src)).map((u) => s.inst[u].under?.length ?? 0));
   let list: number[];
   if (w.zone === 'prev') list = x.prev ?? [];
   else if (w.zone === 'under') list = p.battle.flatMap((u) => s.inst[u].under ?? []);
@@ -328,14 +331,14 @@ export function countOf(s: GameState, owner: Side, src: number, w: Count, x: { p
   return w.filter ? list.filter((u) => matchesFilter(s, u, w.filter!, src)).length : list.length;
 }
 
-export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev: number[] = []): boolean {
+export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev: number[] = [], x: { kiRemoved?: number } = {}): boolean {
   const me = s.p[owner];
   const opp = s.p[other(owner)];
   switch (c.t) {
     case 'oppLifeGE': return opp.life.length >= c.n;
     case 'oppHandGE': return opp.hand.length >= c.n;
     case 'count': {
-      const k = countOf(s, owner, src, c.what, { prev });
+      const k = countOf(s, owner, src, c.what, { prev, kiRemoved: x.kiRemoved });
       return c.op === 'none' ? k === 0 : c.op === 'ge' ? k >= c.n : c.op === 'le' ? k <= c.n : k === c.n;
     }
     case 'leaderTrait': {
@@ -357,8 +360,8 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     }
     case 'prevMatches': return prev.length > 0 && prev.every((u) => matchesFilter(s, u, c.filter, src));
     case 'yourTurn': return (s.active === owner) === c.yes;
-    case 'not': return !condHolds(s, owner, src, c.c, prev);
-    case 'or': return c.any.some((x) => condHolds(s, owner, src, x, prev));
+    case 'not': return !condHolds(s, owner, src, c.c, prev, x);
+    case 'or': return c.any.some((y) => condHolds(s, owner, src, y, prev, x));
     case 'thisHasUnder': return ((s.inst[src].under?.length ?? 0) > 0) === c.yes;
     case 'attacking': return !!s.battle && s.battle.attacker === src && matchesFilter(s, s.battle.target, c.filter, src);
     case 'koedThisTurn': return (me.koBy ?? []).some((k) => k.turn === s.turn && (!c.filter || matchesFilter(s, k.uid, c.filter, src)));
@@ -366,6 +369,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'leaderInBattle': return !!s.battle && (s.battle.attacker === me.leader || s.battle.target === me.leader);
     case 'removedOwnThisTurn': return me.removedOwnTurn === s.turn;
     case 'kiRemovedThisTurn': return me.kiRemovedTurn === s.turn;
+    case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
     case 'inBattleWith': {
       const b = s.battle;
       if (!b || (b.attacker !== src && b.target !== src)) return false;
@@ -402,9 +406,9 @@ export function kiTotal(s: GameState, owner: Side, scope: 'your' | 'battle'): nu
   return k;
 }
 
-export function condsHold(s: GameState, owner: Side, src: number, conds: Cond[] | undefined, prev: number[] = []): boolean {
+export function condsHold(s: GameState, owner: Side, src: number, conds: Cond[] | undefined, prev: number[] = [], x: { kiRemoved?: number } = {}): boolean {
   if (!conds) return true;
-  for (const c of conds) if (!condHolds(s, owner, src, c, prev)) return false;
+  for (const c of conds) if (!condHolds(s, owner, src, c, prev, x)) return false;
   return true;
 }
 

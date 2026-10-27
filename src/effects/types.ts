@@ -107,9 +107,10 @@ export interface Count {
   side: 'self' | 'opp';
   /**
    * thisKi = Ki on the card with the skill; kiTotal = Ki on your Leader and Battle Cards;
-   * kiRemoved = Ki removed by this skill's cost; prev = cards the previous effect affected.
+   * kiRemoved = Ki removed by this skill's cost; prev = cards the previous effect affected;
+   * underMax = cards under the one of your Battle Cards (matching filter) with the most ("choose 1 ... for each card under that card").
    */
-  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev';
+  zone: 'battle' | 'drop' | 'hand' | 'energy' | 'life' | 'deck' | 'combo' | 'under' | 'thisKi' | 'kiTotal' | 'kiRemoved' | 'prev' | 'underMax';
   filter?: Filter;
 }
 
@@ -137,7 +138,7 @@ export type Effect = E<
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
-  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' }
+  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top'; rested?: boolean; negate?: 'all' | 'onPlay' }
   | { t: 'dropToHand'; options: Filter[]; each: number }
   | { t: 'playFrom'; from: 'drop' | 'hand' | 'deck' | 'energy'; filter: Filter; n: number; rested?: boolean; extraType?: boolean; negate?: 'all' | 'onPlay' }
   | { t: 'energyFromDeck'; n: number; rested: boolean }
@@ -169,7 +170,7 @@ export type Effect = E<
   /** "You can't play <filter> for the turn" (applies to the skill's owner). */
   | { t: 'cantPlay'; filter: Filter; dur: Duration; extras?: boolean }
   /** Your opponent's cards cost more / their Battle Cards enter rested, until their next turn ends. */
-  | { t: 'oppTax'; amount: number; filter?: Filter }
+  | { t: 'oppTax'; amount: number; filter?: Filter; dur?: 'turn' | 'oppNextTurn' }
   | { t: 'oppPlayRested'; filter: Filter }
   /** Place cards under a card in play (evolve stacks, Potara, Majin absorption). */
   | { t: 'placeUnder'; target: Target; from: 'drop' | 'hand' | 'deck' | 'battle'; filters: Filter[]; n: number }
@@ -270,6 +271,8 @@ export type Cond =
   | { t: 'removedOwnThisTurn' }
   /** Ki was removed from your cards this turn. */
   | { t: 'kiRemovedThisTurn' }
+  /** You used a card from your Battle Area in a combo this turn. */
+  | { t: 'comboFromFieldThisTurn' }
   /** This card is in a battle with an opponent's card matching the filter. */
   | { t: 'inBattleWith'; filter: Filter }
   | { t: 'not'; c: Cond }

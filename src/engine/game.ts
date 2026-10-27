@@ -477,6 +477,7 @@ function endBattle(s: GameState, ctl: Choosers) {
 
 function addCombo(s: GameState, uid: number, side: Side, ctl: Choosers) {
   const fromHand = s.p[side].hand.includes(uid);
+  if (!fromHand) s.p[side].comboFieldTurn = s.turn;
   moveTo(s, uid, 'combo');
   s.battle!.comboCount[side]++;
   emit(s, { t: 'combo', p: side, id: s.inst[uid].id, uid, fromHand });

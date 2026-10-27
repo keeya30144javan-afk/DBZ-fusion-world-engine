@@ -386,7 +386,7 @@ function fireRemovals(s: GameState, ctl: Choosers) {
 function runEffects(s: GameState, src: number, owner: Side, effects: Effect[], ctx: Ctx, ctl: Choosers) {
   for (const e of effects) {
     if (s.stage === 'over') return;
-    if (!condsHold(s, owner, src, e.cond, ctx.prev)) continue;
+    if (!condsHold(s, owner, src, e.cond, ctx.prev, ctx)) continue;
     runEffect(s, src, owner, e, ctx, ctl);
   }
 }
@@ -559,7 +559,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
         if (dest === 'hand') me.hand.push(u);
         else if (dest === 'drop') me.drop.push(u);
         else if (dest === 'life') me.life.push(u);
-        else { me.hand.push(u); playCard(s, u, ctl); }
+        else { me.hand.push(u); playCard(s, u, ctl, { rested: e.rested, negate: e.negate }); }
       }
       checkDeckOut(s);
       return;
@@ -576,7 +576,9 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'playFrom': {
       const pool = e.from === 'drop' ? me.drop : e.from === 'hand' ? me.hand : e.from === 'energy' ? me.energy : me.deck;
       const cands = pool.filter((u) => u !== src && matchesFilter(s, u, e.filter, src) && (cardOf(s, u).type === 'BATTLE' || (e.extraType && cardOf(s, u).type === 'EXTRA')));
-      for (const u of pickFrom(s, owner, src, cands, e.n, ctl)) {
+      const played = pickFrom(s, owner, src, cands, e.n, ctl);
+      ctx.prev = played;
+      for (const u of played) {
         if (cardOf(s, u).type === 'EXTRA') placeField(s, u, ctl);
         else playCard(s, u, ctl, { rested: e.rested, byLeader: isLeader(s, src), negate: e.negate });
       }
@@ -688,7 +690,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       shuffle(s, me.life);
       return;
     }
-    case 'oppTax': addMod(s, other(owner), { kind: 'tax', filter: e.filter ?? {}, amount: e.amount, until: s.turn + 1 }); return;
+    case 'oppTax': addMod(s, other(owner), { kind: 'tax', filter: e.filter ?? {}, amount: e.amount, until: e.dur === 'turn' ? s.turn : s.turn + 1 }); return;
     case 'oppPlayRested': addMod(s, other(owner), { kind: 'playRested', filter: e.filter, until: s.turn + 1 }); return;
     case 'placeUnder': {
       const ts = chooseTargets(s, src, owner, e, ctx, ctl);

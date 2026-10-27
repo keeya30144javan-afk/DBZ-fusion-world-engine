@@ -75,6 +75,7 @@ function describeCount(c: Count): string {
   if (c.zone === 'thisKi') return 'Ki this card has';
   if (c.zone === 'kiTotal') return 'Ki you have in total';
   if (c.zone === 'kiRemoved') return 'Ki removed by this skill';
+  if (c.zone === 'underMax') return `card under your chosen ${describeFilter(c.filter ?? {}, 'Battle Card')}`;
   if (c.zone === 'prev') return `${describeFilter(c.filter ?? {}, 'card')} chosen by this skill`;
   const zone = c.zone === 'under' ? 'under your cards' : `in ${c.side === 'self' ? 'your' : "your opponent's"} ${c.zone === 'battle' ? 'Battle Area' : c.zone[0].toUpperCase() + c.zone.slice(1)}`;
   return `${describeFilter(c.filter ?? {})} ${zone}`;
@@ -102,7 +103,7 @@ export function describeEffect(e: Effect): string {
     case 'costMod': out = `${pick}${e.amount < 0 ? `reduce its cost by ${-e.amount}` : `increase its cost by ${e.amount}`}${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`; break;
     case 'search': {
       const dest = e.dest ?? 'hand';
-      out = `look at ${plural(e.look, 'card')} from the top of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? 'play it' : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : 'at the bottom of your deck in a random order'}`;
+      out = `look at ${plural(e.look, 'card')} from the top of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : 'at the bottom of your deck in a random order'}`;
       break;
     }
     case 'dropToHand': out = `add ${list(e.options.map((f) => `up to ${e.each} ${describeFilter(f)}`), 'and')} from your Drop to your hand`; break;
@@ -127,7 +128,7 @@ export function describeEffect(e: Effect): string {
     case 'self': out = { hand: "return this card to its owner's hand", drop: 'place this card into your Drop', energy: `add this card to your energy${e.rested ? ' in Rest Mode' : ''}`, deckBottom: 'place this card at the bottom of your deck', play: `play this card${e.rested ? ' in Rest Mode' : ''}` }[e.to]; break;
     case 'nextDiscount': out = `during this turn, the next time you use ${describeFilter(e.filter)}, ${e.amount === 'free' ? "you don't have to pay the cost" : `reduce the cost by ${e.amount}`}`; break;
     case 'cantPlay': out = `you can't ${e.extras ? 'use' : 'play'} ${describeFilter(e.filter, e.extras ? 'Extra' : 'Battle Card')}${DUR[e.dur]}`; break;
-    case 'oppTax': out = `add ${e.amount} to the cost of ${describeFilter(e.filter ?? {})}s your opponent uses until the end of their next turn`; break;
+    case 'oppTax': out = `add ${e.amount} to the cost of ${describeFilter(e.filter ?? {})}s your opponent uses ${e.dur === 'turn' ? 'for the turn' : 'until the end of their next turn'}`; break;
     case 'oppPlayRested': out = `during your opponent's next turn, their ${describeFilter(e.filter, 'Battle Card')}s are played in Rest Mode`; break;
     case 'placeUnder': out = `place ${list(e.filters.map((f) => `up to ${e.n} ${describeFilter(f)}`), 'and')} from your ${e.from === 'drop' ? 'Drop' : e.from} under ${describeTarget(e.target)}`; break;
     case 'choose': out = `choose one — ${e.options.map((o, i) => `(${i + 1}) ${o.map(describeEffect).join('. Then, ')}`).join(' ')}`; break;
@@ -180,6 +181,7 @@ export function describeCond(c: Cond): string {
     case 'playedByLeaderSkill': return "this card was played by your Leader's skill";
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
+    case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
     case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
     case 'inBattleWith': return `this card is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
   }

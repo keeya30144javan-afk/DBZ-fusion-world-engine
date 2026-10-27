@@ -49,7 +49,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   lockActive: { target: 'T' },
   grant: { target: 'T', kw: 'K', dur: 'D' },
   costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
-  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top?' },
+  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top?', rested: 'b?', negate: 'Z:all|onPlay?' },
   dropToHand: { options: 'F[]', each: 'n' },
   playFrom: { from: 'Z:drop|hand|deck|energy', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?' },
   energyFromDeck: { n: 'n', rested: 'b' },
@@ -72,7 +72,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   self: { to: 'Z:hand|drop|energy|deckBottom|play', rested: 'b?' },
   nextDiscount: { filter: 'F', amount: 'n|free' },
   cantPlay: { filter: 'F', dur: 'D', extras: 'b?' },
-  oppTax: { amount: 'n', filter: 'F?' },
+  oppTax: { amount: 'n', filter: 'F?', dur: 'Z:turn|oppNextTurn?' },
   oppPlayRested: { filter: 'F' },
   placeUnder: { target: 'T', from: 'Z:drop|hand|deck|battle', filters: 'F[]', n: 'n' },
   choose: { options: 'E[][]' },
@@ -136,6 +136,7 @@ const CONDS: Record<Cond['t'], Spec> = {
   leaderInBattle: {},
   removedOwnThisTurn: {},
   kiRemovedThisTurn: {},
+  comboFromFieldThisTurn: {},
   inBattleWith: { filter: 'F' },
   not: { c: 'Cond' },
   or: { any: 'Cond[]' },
@@ -148,7 +149,7 @@ const FILTER: Spec = {
 const TARGET: Spec = {
   side: 'Z:opp|self|any', ref: 'Z:this|prev|leader|oppLeader|battler|oppBattler?', chooser: 'Z:opp?', zones: 'zones', count: 'n', upTo: 'b', all: 'b?', filter: 'F',
 };
-const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev', filter: 'F?' };
+const COUNT: Spec = { side: 'Z:self|opp', zone: 'Z:battle|drop|hand|energy|life|deck|combo|under|thisKi|kiTotal|kiRemoved|prev|underMax', filter: 'F?' };
 
 // ------------------------------------------------------------------ validation
 
