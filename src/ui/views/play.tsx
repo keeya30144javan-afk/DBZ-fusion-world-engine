@@ -5,9 +5,11 @@ import { compileCard } from '../../effects/parse';
 import { describeCompiled } from '../../effects/describe';
 import { textHash } from '../../effects/script';
 import { PlayClient } from '../../workers/pool';
-import { ActionOption, ChoiceOption, Decision, PlayLevel, PlayView } from '../../play/host';
+import { ActionOption, Advice, ChoiceOption, Decision, PlayLevel, PlayView } from '../../play/host';
 import { store } from '../store';
 import { Board } from './replay';
+import { VISIONS } from '../visions';
+import { Sampler } from '../translate';
 import { ColorTag, DeckSelect, Seg, fmtPower, leaderLabel, safeStorage, useStore } from '../components';
 
 const [loadPaste, savePaste] = safeStorage<string>('shenron.playPaste', '');
@@ -245,6 +247,7 @@ export function PlayTab() {
         </div>
         <div class="stack" style={{ gap: '10px' }}>
           {card && <CardPanel card={card} reading={st.reviews?.[card.id]} />}
+          {client && meta.current && <AdvisorPanel client={client} disabled={busy || !!view.over} leader={meta.current.you.leader} />}
           <div class="panel stack">
             <div class="eyebrow">AI's recent moves</div>
             {view.aiMoves.length ? <ol class="note" style={{ margin: 0, paddingLeft: '18px' }}>{view.aiMoves.map((m, k) => <li key={k}>{m}</li>)}</ol> : <span class="note">None yet.</span>}
@@ -380,3 +383,75 @@ const cap = (t: string) => {
   const [w, ...rest] = t.split(' ');
   return VERB[w] ? [VERB[w], ...rest].join(' ') : t.charAt(0).toUpperCase() + t.slice(1);
 };
+
+/**
+ * "What would you do here?": the engine searches your position from your seat (guessing the
+ * AI's hidden hand, never reading it), then Claude answers your question with that evidence.
+ */
+function AdvisorPanel({ client, disabled, leader }: { client: PlayClient; disabled: boolean; leader: string }) {
+  const [sample, setSample] = useState<Sampler | null | undefined>(undefined);
+  const [q, setQ] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [ranked, setRanked] = useState<Advice['ranked']>([]);
+  const [phase, setPhase] = useState<'' | 'engine' | 'claude'>('');
+  const [err, setErr] = useState('');
+  const abort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    let live = true;
+    const claude = (window as any).claude;
+    if (!claude?.use) { setSample(null); return; }
+    claude.use('sample').then((s: Sampler | null) => { if (live) setSample(() => s); }, () => live && setSample(null));
+    return () => { live = false; abort.current?.abort(); };
+  }, []);
+
+  async function ask(question: string) {
+    if (phase) return;
+    setErr(''); setAnswer(''); setRanked([]);
+    setPhase('engine');
+    let adv: Advice;
+    try { adv = await client.advise('strong'); } catch (e: any) { setPhase(''); setErr(String(e?.message ?? e)); return; }
+    setRanked(adv.ranked);
+    if (!sample) { setPhase(''); return; }
+    setPhase('claude');
+    const plan = VISIONS.decks[leader];
+    const prompt = [
+      'You are coaching a Dragon Ball Super Card Game Fusion World player during a live game against an AI. Answer their question about their current position.',
+      'Rules to keep in mind: ties go to the attacker; combo cards add power to a battle; Super Combos get +10000 on the opponent\'s turn; taking damage moves a life card to hand (card advantage); only rested Battle Cards can be attacked.',
+      'Use only what the player can see: the AI\'s hand is hidden, so reason about what it could hold. Treat the engine\'s ranking as evidence from search, not as gospel; agree or disagree with reasons.',
+      'Be concrete: name the moves and cards, the order to play them, and why. Keep it under 170 words, plain prose or a short list.',
+      plan ? `Your deck\'s game plan: ${plan.plan}\nEngines: ${plan.engines.slice(0, 6).join(' / ')}` : '',
+      `Strategy notes from strong players: ${VISIONS.principles.slice(0, 30).join(' / ')}`,
+      `POSITION:\n${adv.context}`,
+      adv.ranked.length ? `ENGINE RANKING (${adv.lines ? 'whole turns' : 'single moves'}, estimated win chance after the move, searched from the player\'s seat):\n${adv.ranked.map((r, k) => `${k + 1}. ${r.label}${Number.isFinite(r.value) ? ` (${Math.round(r.value * 100)}%)` : ''}`).join('\n')}` : 'ENGINE RANKING: none (no decision of yours is pending, or only one move is legal).',
+      `PLAYER'S QUESTION: ${question}`,
+    ].filter(Boolean).join('\n\n');
+    abort.current = new AbortController();
+    try {
+      await sample(prompt, { modelTier: 'complex', cache: false, signal: abort.current.signal, onText: ({ text }: { text: string }) => setAnswer(text) });
+    } catch (e: any) {
+      if (e?.code === 'not_granted') setSample(null);
+      else if (e?.name !== 'AbortError') setErr(e?.code === 'rate_limited' ? 'Too many questions right now; try again in a minute.' : String(e?.message ?? e));
+    }
+    setPhase('');
+  }
+
+  return (
+    <div class="panel stack">
+      <div class="eyebrow">Ask Claude about your position</div>
+      <textarea aria-label="Your question" value={q} onInput={(e) => setQ((e.target as HTMLTextAreaElement).value)} placeholder="e.g. What would you do here with my hand? Should I defend this attack?" style={{ minHeight: '50px' }} />
+      <div class="row" style={{ gap: '6px' }}>
+        <button class="btn primary" onClick={() => ask(q.trim() || 'What would you do here, and why?')} disabled={disabled || !!phase}>{phase === 'engine' ? 'Engine searching…' : phase === 'claude' ? 'Claude is thinking…' : 'Ask'}</button>
+        <button class="btn" onClick={() => ask('What would you do here, and why?')} disabled={disabled || !!phase}>What would you do?</button>
+      </div>
+      {sample === null && <p class="note">Claude isn't available in this view, so you'll get the engine's ranking only.</p>}
+      {answer && <div class="audit-text" style={{ whiteSpace: 'pre-wrap' }}>{answer}</div>}
+      {ranked.length > 0 && (
+        <details open={!answer}>
+          <summary class="note">Engine's ranking of your options</summary>
+          <ol class="note" style={{ margin: '4px 0 0', paddingLeft: '18px' }}>{ranked.map((r, k) => <li key={k}>{r.label.charAt(0).toUpperCase() + r.label.slice(1)}{Number.isFinite(r.value) ? ` · ${Math.round(r.value * 100)}% to win` : ''}</li>)}</ol>
+        </details>
+      )}
+      {err && <p class="err">{err}</p>}
+    </div>
+  );
+}

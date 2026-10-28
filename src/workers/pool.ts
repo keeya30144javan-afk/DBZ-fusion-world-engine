@@ -1,7 +1,7 @@
 import { Card } from '../data/types';
 import { MatchJob, MatchResult, runMatch } from '../builder/evaluate';
 import { Replay, RecordOpts, findReplay } from '../builder/replay';
-import { GameRecord, PlayHost, PlayOpts, PlayView } from '../play/host';
+import { Advice, GameRecord, PlayHost, PlayLevel, PlayOpts, PlayView } from '../play/host';
 
 declare const __WORKER_SOURCE__: string;
 
@@ -170,6 +170,7 @@ export class PlayClient {
   answer(picks: number[]): Promise<PlayView> { return this.send({ type: 'playAnswer', picks }, (h) => h.answer(picks)); }
   aiStep(): Promise<PlayView> { return this.send({ type: 'playAI' }, (h) => h.aiStep()); }
   undo(): Promise<PlayView> { return this.send({ type: 'playUndo' }, (h) => h.undo()); }
+  advise(level: PlayLevel = 'strong'): Promise<Advice> { return this.send({ type: 'playAdvise', level }, (h) => h.advise(level)); }
   record(): Promise<GameRecord> { return this.send({ type: 'playRecord' }, (h) => h.record()); }
   close() { this.w?.terminate(); this.w = null; for (const p of this.waiting.values()) p.reject(new Error('closed')); this.waiting.clear(); }
 }

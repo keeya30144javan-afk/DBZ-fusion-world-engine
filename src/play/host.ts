@@ -1,6 +1,6 @@
 import { Card, Decklist } from '../data/types';
 import { RulesConfig } from '../data/rules';
-import { GameState, Side, cardOf, cloneState, isLeader, nameOf, other } from '../engine/core';
+import { GameState, Side, cardOf, cloneState, isLeader, nameOf, other, powerOf } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, newGame, step } from '../engine/game';
 import { compileCard } from '../effects/parse';
@@ -253,6 +253,33 @@ export class PlayHost {
     return this.view();
   }
 
+  /**
+   * Advice for the person's current decision: the engine searches from their seat (guessing the
+   * AI's hidden cards, never reading them) and ranks their options; plus the position in words.
+   */
+  advise(level: PlayLevel = 'strong'): Advice {
+    const s = this.real;
+    if (this.question || s.stage === 'over' || s.toAct !== 0) {
+      return { context: describePosition(s, [], this.question?.prompt ?? null), ranked: [], lines: false };
+    }
+    const legal = legalActions(s);
+    const work = cloneState(s);
+    const pol = new SearchPolicy(SEARCH_LEVELS[level]);
+    pol.lastStats = []; pol.lastLines = [];
+    if (legal.length > 1) pol.act(work, legalActions(work));
+    let ranked: Advice['ranked'] = [];
+    let lines = false;
+    if (pol.lastLines.length) {
+      lines = true;
+      ranked = pol.lastLines.slice(0, 5).map((l) => ({ label: l.actions.filter((x) => x.k !== 'end').map((x) => describeAction(s, x)).join(' → ') || 'end the turn', value: l.value }));
+    } else if (pol.lastStats.length) {
+      ranked = pol.lastStats.map((x) => ({ label: describeAction(s, x.action), value: x.value })).sort((a, b) => b.value - a.value).slice(0, 5);
+    } else if (legal.length === 1) {
+      ranked = [{ label: describeAction(s, legal[0]), value: NaN }];
+    }
+    return { context: describePosition(s, legal, null), ranked, lines };
+  }
+
   aiToMove(): boolean { return !this.question && this.real.stage !== 'over' && this.real.toAct === 1; }
 
   view(): PlayView {
@@ -291,6 +318,47 @@ export class PlayHost {
     const s = this.real;
     return { version: 1, you: this.o.you, ai: this.o.ai, level: this.o.level, seed: this.o.seed, first: this.first, winner: s.winner, reason: s.reason, turns: s.turn, trace: this.trace, ...(this.undos.length ? { undos: this.undos } : {}) };
   }
+}
+
+export interface Advice {
+  /** The position from your side, in words, with every visible card's printed text. */
+  context: string;
+  /** The engine's ranking of your options (searched from your seat, guessing the AI's hidden hand). */
+  ranked: { label: string; value: number }[];
+  /** Whole turns when it's your main phase. */
+  lines: boolean;
+}
+
+/** The position as the person sees it: nothing hidden from them is included. */
+function describePosition(s: GameState, legal: Action[], question: string | null): string {
+  const seen = new Set<string>();
+  const card = (u: number) => {
+    const c = cardOf(s, u), i = s.inst[u];
+    seen.add(i.id);
+    return `${nameOf(s, u)} [${i.id}] ${powerOf(s, u)} power${i.rested ? ', rested' : ''}${i.ki ? `, ${i.ki} Ki` : ''}${i.under?.length ? `, ${i.under.length} under it` : ''}`;
+  };
+  const handCard = (u: number) => { const c = cardOf(s, u); seen.add(c.id); return `${c.name} [${c.id}] cost ${c.cost}, ${c.power} power, combo +${c.comboPower}`; };
+  const side = (p: Side) => {
+    const pl = s.p[p], who = p === 0 ? 'YOU' : 'THE AI';
+    const rested = pl.energy.filter((u) => s.inst[u].rested).length;
+    return [
+      `${who}: Leader ${card(pl.leader)}${pl.awakened ? ' (awakened)' : ''}; life ${pl.life.length}; energy ${pl.energy.length - rested} active of ${pl.energy.length}${pl.markers ? `, ${pl.markers} energy marker` : ''}; deck ${pl.deck.length}`,
+      `  Battle Area: ${pl.battle.length ? pl.battle.map(card).join('; ') : 'empty'}`,
+      p === 0 ? `  Hand (${pl.hand.length}): ${pl.hand.map(handCard).join('; ') || 'empty'}` : `  Hand: ${pl.hand.length} cards (hidden from you)`,
+      `  Drop (${pl.drop.length}): ${pl.drop.map((u) => s.inst[u].id).map((id) => s.cards[id].name).join(', ') || 'empty'}`,
+      ...(pl.energy.length ? [`  Energy: ${pl.energy.map((u) => s.cards[s.inst[u].id].name).join(', ')}`] : []),
+    ].join('\n');
+  };
+  const b = s.battle;
+  const battle = b ? (() => { const t = battleTotals(s); return `Current battle: ${b.atkSide === 0 ? 'your' : "the AI's"} ${nameOf(s, b.attacker)} attacks ${nameOf(s, b.target)}: attack ${t.atk} vs defence ${t.def} (ties go to the attacker).`; })() : '';
+  const texts = [...seen].map((id) => { const c = s.cards[id]; return `${c.name} [${id}]: ${c.text || '(no skill)'}${c.back ? ` || Awakened: ${c.back.text}` : ''}`; });
+  return [
+    `Turn ${s.turn}, ${s.active === 0 ? 'your' : "the AI's"} turn, stage: ${s.stage}. You went ${s.first === 0 ? 'first' : 'second'}.`,
+    side(0), side(1), battle,
+    question ? `You are being asked: ${question}` : `Your legal moves now: ${legal.map((a) => describeAction(s, a)).join(' | ')}`,
+    `Recent log:\n${(s.log ?? []).slice(-16).map((l) => l.replace(/\bP0\b/g, 'You').replace(/\bP1\b/g, 'AI')).join('\n')}`,
+    `Printed text of the visible cards:\n${texts.join('\n')}`,
+  ].filter(Boolean).join('\n\n');
 }
 
 /** Rebuild a recorded game move by move (for Claude's review): returns the state before each move. */
