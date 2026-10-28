@@ -149,6 +149,11 @@ export function PlayTab() {
     setFlagText('');
     await save(view, next, notes);
   }
+  async function removeFlag(k: number) {
+    const next = flags.filter((_, i) => i !== k);
+    setFlags(next);
+    await save(view, next, notes);
+  }
   function quit() {
     if (view && !view.over) void save(view, flags, notes);
     client?.close();
@@ -245,6 +250,16 @@ export function PlayTab() {
             {view.aiMoves.length ? <ol class="note" style={{ margin: 0, paddingLeft: '18px' }}>{view.aiMoves.map((m, k) => <li key={k}>{m}</li>)}</ol> : <span class="note">None yet.</span>}
             <textarea aria-label="What should the AI have done?" value={flagText} onInput={(e) => setFlagText((e.target as HTMLTextAreaElement).value)} placeholder="What was wrong with the AI's last move, and what would a good player do?" style={{ minHeight: '60px' }} />
             <div class="row"><button class="btn" onClick={addFlag} disabled={!flagText.trim()}>Flag the AI's last move</button>{flags.length > 0 && <span class="note">{flags.length} flagged</span>}</div>
+            {flags.length > 0 && (
+              <ul class="note" style={{ margin: 0, paddingLeft: '18px' }}>
+                {flags.map((f, k) => (
+                  <li key={k}>
+                    T{f.turn}{f.aiMove ? ` (${f.aiMove.replace(/^T\d+: /, '')})` : ''}: {f.note}{' '}
+                    <button class="btn small" aria-label="Remove this flag" title="Take this flag back" onClick={() => removeFlag(k)}>✕ remove</button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div class="panel stack">
             <div class="eyebrow">Notes on this game</div>
