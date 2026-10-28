@@ -11,6 +11,7 @@ import { Board } from './replay';
 import { ColorTag, DeckSelect, Seg, fmtPower, leaderLabel, safeStorage, useStore } from '../components';
 
 const [loadPaste, savePaste] = safeStorage<string>('shenron.playPaste', '');
+const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai' }>('shenron.playSetup', {});
 
 interface Flag { atMove: number; turn: number; aiMove: string; note: string }
 
@@ -20,13 +21,16 @@ interface Flag { atMove: number; turn: number; aiMove: string; note: string }
  */
 export function PlayTab() {
   const st = useStore();
-  const [youId, setYouId] = useState(st.meta[4]?.id ?? st.meta[0]?.id ?? '');
-  const [aiId, setAiId] = useState(st.meta[5]?.id ?? st.meta[0]?.id ?? '');
-  const [mode, setMode] = useState<'meta' | 'paste'>(loadPaste() ? 'paste' : 'meta');
+  const setup0 = useMemo(() => loadSetup(), []);
+  const has = (id?: string) => !!id && st.meta.some((m) => m.id === id);
+  const [youId, setYouId] = useState(has(setup0.you) ? setup0.you! : st.meta[4]?.id ?? st.meta[0]?.id ?? '');
+  const [aiId, setAiId] = useState(has(setup0.ai) ? setup0.ai! : st.meta[5]?.id ?? st.meta[0]?.id ?? '');
+  const [mode, setMode] = useState<'meta' | 'paste'>(setup0.mode ?? (loadPaste() ? 'paste' : 'meta'));
   const [paste, setPaste0] = useState(loadPaste());
   const setPaste = (v: string) => { setPaste0(v); savePaste(v); };
-  const [level, setLevel] = useState<PlayLevel>('quick');
-  const [first, setFirst] = useState<'random' | 'you' | 'ai'>('random');
+  const [level, setLevel] = useState<PlayLevel>(setup0.level ?? 'quick');
+  const [first, setFirst] = useState<'random' | 'you' | 'ai'>(setup0.first ?? 'random');
+  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first }), [youId, aiId, mode, level, first]);
 
   const [client, setClient] = useState<PlayClient | null>(null);
   const [view, setView] = useState<PlayView | null>(null);
@@ -88,18 +92,20 @@ export function PlayTab() {
     if (v.over) await save(v, flags, notes, c);
   }
 
-  async function start() {
-    if (!you.deck || !ai) return;
+  async function start(decks?: { you: Decklist; ai: Decklist }) {
+    const yd = decks?.you ?? you.deck, ad = decks?.ai ?? ai;
+    if (!yd || !ad) return;
     setErr(''); setFlags([]); setNotes(''); setSaved(''); docId.current = null;
     client?.close();
     const c = new PlayClient(st.cards);
     setClient(c);
     const seed = Math.floor(Math.random() * 2 ** 30);
-    meta.current = { you: you.deck, ai, level, seed };
-    setNames([you.deck.name, ai.name]);
+    meta.current = { you: yd, ai: ad, level, seed };
+    setNames([yd.name, ad.name]);
+    setInspect(null);
     try {
       setBusy(true);
-      const v = await c.start({ you: you.deck, ai, level, seed, youFirst: first === 'random' ? null : first === 'you', rules: st.rules });
+      const v = await c.start({ you: yd, ai: ad, level, seed, youFirst: first === 'random' ? null : first === 'you', rules: st.rules });
       await settle(v, c);
     } catch (e: any) {
       setBusy(false);
@@ -157,7 +163,7 @@ export function PlayTab() {
             <label class="field">AI strength<Seg label="AI strength" options={[['quick', 'Search'], ['strong', 'Strong'], ['deep', 'Deep']]} value={level} onChange={setLevel} /></label>
             <label class="field">Who goes first<Seg label="Who goes first" options={[['random', 'Random'], ['you', 'You'], ['ai', 'AI']]} value={first} onChange={setFirst} /></label>
             {you.errors.length > 0 && <div class="err">{you.errors.slice(0, 3).map((e) => <div key={e}>{e}</div>)}</div>}
-            <div class="row"><button class="btn primary" onClick={start} disabled={busy || you.errors.length > 0 || !ai}>{busy ? 'Setting up…' : 'Start game'}</button></div>
+            <div class="row"><button class="btn primary" onClick={() => start()} disabled={busy || you.errors.length > 0 || !ai}>{busy ? 'Setting up…' : 'Start game'}</button></div>
             <p class="note">Search thinks for about a second a move, Strong a few seconds, Deep longer. {store.writable ? 'Games save to this app for Claude to study.' : 'Saving is off in this view, so games won’t be kept.'}</p>
             {err && <p class="err">{err}</p>}
           </div>
@@ -206,8 +212,13 @@ export function PlayTab() {
           {s.battle && <div class="panel note">Battle: <b>{nm(s.battle.attacker)}</b> ({fmtPower(s.battle.atkPower)}) attacks <b>{nm(s.battle.target)}</b> ({fmtPower(s.battle.defPower)})</div>}
           <Board nm={nm} side={s.p[0]} who="You" name={names[0]} active={s.active === 0} snapBattle={s.battle} sideIdx={0} onPick={setInspect} />
           <div class="panel stack" aria-live="polite">
+            {!view.over && <div class="eyebrow" style={{ color: s.active === 0 ? 'var(--accent, #d9632b)' : undefined }}>Turn {s.turn} · {s.active === 0 ? 'Your turn' : "AI's turn"}</div>}
             {busy && <div class="note"><b>The AI is thinking…</b></div>}
             {!busy && view.decision && <DecisionPanel d={view.decision} onAct={act} onAnswer={answer} nm={nm} onPick={setInspect} stage={s.stage} />}
+            {view.over && meta.current && <div class="row" style={{ gap: '6px' }}>
+              <button class="btn primary" onClick={() => start({ you: meta.current!.you, ai: meta.current!.ai })}>Rematch</button>
+              <button class="btn" onClick={() => start({ you: meta.current!.ai, ai: meta.current!.you })}>Swap decks and play again</button>
+            </div>}
             {view.over && <div><b>{result}</b> {saved === 'saved' ? 'The game is saved for Claude. Add any last notes on the right.' : saved === 'saving' ? 'Saving…' : 'Saving is off in this view, so this game was not kept.'}</div>}
           </div>
         </div>

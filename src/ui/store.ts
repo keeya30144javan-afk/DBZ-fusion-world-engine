@@ -103,6 +103,9 @@ export class Store {
     this.emit();
   }
 
+  /** The viewer's opaque account id (to tell players' saved games apart). */
+  userId: string | null = null;
+
   async connect() {
     setTimeout(() => { if (this.state.db === 'connecting') this.set({ db: 'offline' }); }, 12000);
     const claude = (window as any).claude;
@@ -111,6 +114,7 @@ export class Store {
       const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
       if (!db) { this.set({ db: 'offline' }); return; }
       this.db = db;
+      try { this.userId = user ? await user.id() : null; } catch { this.userId = null; }
       let canWrite: boolean | null = null;
       try { canWrite = user ? await user.can('data.write') : null; } catch { canWrite = null; }
       let canReview: boolean | null = null;
@@ -221,14 +225,14 @@ export class Store {
     if (!this.db) return null;
     const ref = id ? this.db.collection('playgames').doc(id) : this.db.collection('playgames').doc();
     // Nested lists (moves inside the trace) travel as a JSON string, like scripts.
-    await ref.set(JSON.parse(JSON.stringify({ ...body, updated: new Date().toISOString() })));
+    await ref.set(JSON.parse(JSON.stringify({ ...body, ...(this.userId ? { player: this.userId } : {}), updated: new Date().toISOString() })));
     return ref.id ?? id;
   }
 
   /** "This card's text or engine reading is wrong", from the Play tab. */
   async reportCard(cardId: string, note: string, textHashValue: string): Promise<void> {
     if (!this.db) throw new Error('Reporting needs the shared database, which is not available in this view.');
-    await this.db.collection('reports').doc().set({ cardId, note, textHash: textHashValue, from: 'play', at: new Date().toISOString() });
+    await this.db.collection('reports').doc().set({ cardId, note, textHash: textHashValue, from: 'play', ...(this.userId ? { player: this.userId } : {}), at: new Date().toISOString() });
   }
 
   async saveRules(rules: RulesConfig): Promise<void> {
