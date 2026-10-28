@@ -39,7 +39,7 @@ export function MetaView() {
   }
 
   async function gauntlet() {
-    const decks = st.meta.filter((d) => !validateDeck(d, st.cards, st.rules).length).slice(0, 16);
+    const decks = st.meta.filter((d) => !validateDeck(d, st.cards, st.rules).length).slice(0, 24);
     if (decks.length < 2) return;
     setGauntletRunning(true);
     const games = 40;
@@ -82,7 +82,7 @@ export function MetaView() {
         <div class="scroll"><table>
           <thead><tr><th>Deck</th><th>Leader</th><th class="num">Cards</th><th class="num">Share</th><th></th><th></th></tr></thead>
           <tbody>
-            {st.meta.map((d) => {
+            {[...st.meta].sort((x, y) => +x.name.startsWith('Starter') - +y.name.startsWith('Starter') || (y.share ?? 0) - (x.share ?? 0)).map((d) => {
               const errs = validateDeck(d, st.cards, st.rules);
               return (
                 <tr key={d.id}>
@@ -102,6 +102,7 @@ export function MetaView() {
                   <td class="num">{pct((d.share ?? 0) / totalShare, 0)}</td>
                   <td style={{ width: '18%' }}><Meter value={(d.share ?? 0) / totalShare} /></td>
                   <td class="row" style={{ gap: '6px', justifyContent: 'flex-end' }}>
+                    <button class="btn small" onClick={() => store.requestPlay(d)} title="Play this deck yourself against the AI">Play</button>
                     <CopyButton text={deckToText(d, st.cards)} label="Copy" />
                     <button class="btn small" onClick={() => startEdit(d)} disabled={!store.writable}>Edit</button>
                     {!d.example && <button class="btn small danger" onClick={() => store.deleteDeck(d.id)}>Delete</button>}

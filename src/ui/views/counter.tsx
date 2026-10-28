@@ -16,7 +16,7 @@ const VERDICT_LABEL = { recommend: 'Counter found', inconclusive: 'Promising, no
 export function CounterLab() {
   const st = useStore();
   const [mode, setMode] = useState<'meta' | 'paste'>('meta');
-  const [targetId, setTargetId] = useState(st.meta[0]?.id ?? '');
+  const [targetId, setTargetId] = useState(() => [...st.meta].filter((d) => !d.name.startsWith('Starter')).sort((x, y) => (y.share ?? 0) - (x.share ?? 0))[0]?.id ?? st.meta[0]?.id ?? '');
   const [paste, setPaste] = useState('');
   const [effort, setEffort] = useState<Effort>('test');
   const [threshold, setThreshold] = useState(55);
@@ -227,6 +227,12 @@ function Report({ rec }: { rec: RunRecord }) {
         </div>
       )}
 
+      {best && rec.targetDeck && (
+        <div class="row" style={{ gap: '6px' }}>
+          <button class="btn primary" onClick={() => store.requestPlay(best.deck, rec.targetDeck)}>Play the counter yourself</button>
+          <button class="btn" onClick={() => store.requestPlay(rec.targetDeck, best.deck)}>Play against the counter</button>
+        </div>
+      )}
       {best && rec.targetDeck && (
         <WatchGame key={deckToText(best.deck, st.cards)} a={best.deck} b={rec.targetDeck} cards={st.cards} rules={st.rules} labels={['Counter wins', 'Target wins']} />
       )}

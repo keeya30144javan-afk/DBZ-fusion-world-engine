@@ -4,14 +4,16 @@ import { Decklist } from '../../data/types';
 import { Level, MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
 import { wilson } from '../../builder/stats';
 import { WatchGame } from './replay';
+import { store } from '../store';
 import { CIBar, ColorTag, DeckSelect, Meter, Seg, getPool, leaderLabel, pct, safeStorage, useStore } from '../components';
 
 const [loadPastes, savePastes] = safeStorage<{ a: string; b: string }>('shenron.matchupPastes', { a: '', b: '' });
 
 export function MatchupView() {
   const st = useStore();
-  const [a, setA] = useState(st.meta[0]?.id ?? '');
-  const [b, setB] = useState(st.meta[1]?.id ?? st.meta[0]?.id ?? '');
+  const top = useMemo(() => [...st.meta].filter((d) => !d.name.startsWith('Starter')).sort((x, y) => (y.share ?? 0) - (x.share ?? 0)), []);
+  const [a, setA] = useState(top[0]?.id ?? st.meta[0]?.id ?? '');
+  const [b, setB] = useState(top[1]?.id ?? st.meta[1]?.id ?? st.meta[0]?.id ?? '');
   const [games, setGames] = useState('100');
   const [level, setLevel] = useState<Level>('fast');
   const [res, setRes] = useState<{ r: MatchResult; a: string; b: string } | null>(null);
@@ -93,6 +95,7 @@ export function MatchupView() {
             </tbody></table>
           </div>
         ) : <div class="empty">Pick two decks and press <b>Play matchup</b>.</div>}
+        {da && db && errs.length === 0 && <div class="row"><button class="btn" onClick={() => store.requestPlay(da, db)}>Play this matchup yourself (you are A)</button></div>}
         {da && db && errs.length === 0 && <WatchGame key={`${da.name}|${db.name}|${JSON.stringify(da.main)}|${JSON.stringify(db.main)}`} a={da} b={db} cards={st.cards} rules={st.rules} level={level} />}
       </div>
     </div>

@@ -52,6 +52,8 @@ export interface State {
   auditFocus: string[] | null;
   /** A tab another view asked to open. */
   tabRequest: string | null;
+  /** Decks handed to the Play tab from another tab (a counter, a matchup). */
+  playRequest: { you?: Decklist; ai?: Decklist } | null;
 }
 
 type Listener = () => void;
@@ -82,6 +84,7 @@ export class Store {
     reviews: {},
     auditFocus: null,
     tabRequest: null,
+    playRequest: null,
   };
   private listeners = new Set<Listener>();
   private db: any = null;
@@ -170,6 +173,15 @@ export class Store {
     clearCompileCache();
     clearValueCache();
     this.set({ cards, reviews, sets: [...merged.values()].map((m) => m.info).sort((a, b) => a.set.localeCompare(b.set)) });
+  }
+
+  /** Open the Play tab with these decks ready. */
+  requestPlay(you?: Decklist, ai?: Decklist) {
+    this.set({ playRequest: { you, ai }, tabRequest: 'play' });
+  }
+
+  clearPlayRequest() {
+    if (this.state.playRequest) this.set({ playRequest: null });
   }
 
   /** Open the Audit tab showing just these cards (null shows everything again). */

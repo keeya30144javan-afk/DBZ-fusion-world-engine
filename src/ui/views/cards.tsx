@@ -6,7 +6,9 @@ import { ColorTag, Meter, fmtPower, pct, useStore } from '../components';
 
 export function CardsView() {
   const st = useStore();
-  const [q, setQ] = useState('');
+  const [q, setQ0] = useState('');
+  const [limit, setLimit] = useState(40);
+  const setQ = (v: string) => { setQ0(v); setLimit(40); };
   const [onlyGaps, setOnlyGaps] = useState(false);
   const [importText, setImportText] = useState('');
   const [importMsg, setImportMsg] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export function CardsView() {
     .filter((x) => !onlyGaps || x.cc.coverage < 1)
     .filter((x) => { const k = q.trim().toLowerCase(); return !k || x.c.name.toLowerCase().includes(k) || x.c.id.toLowerCase().includes(k) || x.c.text.toLowerCase().includes(k); })
     .sort((a, b) => a.c.id.localeCompare(b.c.id))
-    .slice(0, 120);
+    .slice(0, limit);
 
   async function doImport(text: string, source: string) {
     setBusy(true); setImportMsg(null);
@@ -130,7 +132,7 @@ export function CardsView() {
             </tr>
           ))}</tbody>
         </table></div>
-        {shown.length === 120 && <p class="note">Showing the first 120 matches. Narrow the search to see more.</p>}
+        {shown.length === limit && <p class="row note">Showing the first {limit} matches. <button class="btn small" onClick={() => setLimit(limit + 40)}>Show 40 more</button></p>}
       </div>
     </div>
   );

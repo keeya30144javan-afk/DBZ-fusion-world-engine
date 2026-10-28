@@ -73,7 +73,7 @@ export function DeckSelect({ id, value, onChange, decks, cards, allowNone }: { i
   return (
     <select id={id} value={value} onChange={(e) => onChange((e.target as HTMLSelectElement).value)}>
       {allowNone && <option value="">{allowNone}</option>}
-      {decks.map((d) => <option key={d.id} value={d.id}>{d.name}{d.example ? ' (example)' : ''} · {leaderLabel(cards, d.leader)}</option>)}
+      {decks.map((d) => <option key={d.id} value={d.id}>{d.name}{d.example ? ' (built-in)' : ''} · {leaderLabel(cards, d.leader)}</option>)}
     </select>
   );
 }

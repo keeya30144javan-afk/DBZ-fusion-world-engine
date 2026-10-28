@@ -31,6 +31,18 @@ export function PlayTab() {
   const [level, setLevel] = useState<PlayLevel>(setup0.level ?? 'quick');
   const [first, setFirst] = useState<'random' | 'you' | 'ai'>(setup0.first ?? 'random');
   useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first }), [youId, aiId, mode, level, first]);
+  // Decks handed over from another tab (Counter Lab, Matchup, Meta).
+  const [given, setGiven] = useState<{ you?: Decklist; ai?: Decklist }>({});
+  useEffect(() => {
+    const r = st.playRequest;
+    if (!r) return;
+    const meta = (d?: Decklist) => d && st.meta.find((m) => m.id === (d as any).id);
+    const y = meta(r.you), a = meta(r.ai);
+    if (y) { setMode('meta'); setYouId(y.id); }
+    if (a) setAiId(a.id);
+    setGiven({ you: y ? undefined : r.you, ai: a ? undefined : r.ai });
+    store.clearPlayRequest();
+  }, [st.playRequest]);
 
   const [client, setClient] = useState<PlayClient | null>(null);
   const [view, setView] = useState<PlayView | null>(null);
@@ -46,6 +58,7 @@ export function PlayTab() {
   const meta = useRef<{ you: Decklist; ai: Decklist; level: PlayLevel; seed: number } | null>(null);
 
   const you = useMemo((): { deck?: Decklist; errors: string[] } => {
+    if (given.you) return { deck: given.you, errors: validateDeck(given.you, st.cards, st.rules) };
     if (mode === 'meta') {
       const d = st.meta.find((m) => m.id === youId);
       return d ? { deck: d, errors: validateDeck(d, st.cards, st.rules) } : { errors: ['Pick your deck'] };
@@ -53,8 +66,8 @@ export function PlayTab() {
     if (!paste.trim()) return { errors: ['Paste your decklist'] };
     const { deck, errors } = parseDecklist(paste, st.cards, 'Your deck');
     return { deck, errors: [...errors, ...validateDeck(deck, st.cards, st.rules)] };
-  }, [mode, youId, paste, st.meta, st.cards, st.rules]);
-  const ai = st.meta.find((m) => m.id === aiId);
+  }, [given.you, mode, youId, paste, st.meta, st.cards, st.rules]);
+  const ai = given.ai ?? st.meta.find((m) => m.id === aiId);
 
   useEffect(() => () => client?.close(), [client]);
 
@@ -155,11 +168,14 @@ export function PlayTab() {
               <b>Your deck</b>
               <Seg label="Your deck source" options={[['meta', 'Saved deck'], ['paste', 'Paste a list']]} value={mode} onChange={setMode} />
             </div>
-            {mode === 'meta'
+            {given.you && <div class="note">Using <b>{given.you.name}</b> ({leaderLabel(st.cards, given.you.leader)}) <button class="btn" onClick={() => setGiven({ ...given, you: undefined })}>Pick another</button></div>}
+            {given.you ? null : mode === 'meta'
               ? <DeckSelect id="play-you" value={youId} onChange={setYouId} decks={st.meta} cards={st.cards} />
               : <textarea aria-label="Your decklist" value={paste} onInput={(e) => setPaste((e.target as HTMLTextAreaElement).value)} placeholder={'One card per line, include the Leader:\n1 FS02-01\n4 FS02-05\n...'} />}
             {mode === 'paste' && you.deck?.leader && st.cards[you.deck.leader] && <div class="note">Leader: <b>{leaderLabel(st.cards, you.deck.leader)}</b> <ColorTag card={st.cards[you.deck.leader]} /></div>}
-            <label class="field"><b>AI's deck</b><DeckSelect id="play-ai" value={aiId} onChange={setAiId} decks={st.meta} cards={st.cards} /></label>
+            {given.ai
+              ? <div class="field"><b>AI's deck</b><div class="note">Using <b>{given.ai.name}</b> ({leaderLabel(st.cards, given.ai.leader)}) <button class="btn" onClick={() => setGiven({ ...given, ai: undefined })}>Pick another</button></div></div>
+              : <label class="field"><b>AI's deck</b><DeckSelect id="play-ai" value={aiId} onChange={setAiId} decks={st.meta} cards={st.cards} /></label>}
             <label class="field">AI strength<Seg label="AI strength" options={[['quick', 'Search'], ['strong', 'Strong'], ['deep', 'Deep']]} value={level} onChange={setLevel} /></label>
             <label class="field">Who goes first<Seg label="Who goes first" options={[['random', 'Random'], ['you', 'You'], ['ai', 'AI']]} value={first} onChange={setFirst} /></label>
             {you.errors.length > 0 && <div class="err">{you.errors.slice(0, 3).map((e) => <div key={e}>{e}</div>)}</div>}
