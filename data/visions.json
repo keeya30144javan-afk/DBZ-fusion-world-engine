@@ -100,7 +100,12 @@
         "Broly ST01-051 (cost 5): rests an enemy card, and can pay 1 + send itself to the Drop to play a 6-cost Broly (ST01-050 or FB08-122) from hand.",
         "Broly ST01-050 evolves from a Broly costing 2+ and KOs one of your own cards (Paragus ST01-047 draws when KO'd) to untap and attack again.",
         "Paragus FB08-084 makes a Broly unremovable by skills until the end of the opponent's next turn; King Vegeta costs 2 less with a 5+ ≪Saiyan≫ in play.",
-        "Leader (awakened): opponent must rest an active card for each Battle Card attack; untaps 1 energy with a 4+ cost Broly in play."
+        "Leader (awakened): opponent must rest an active card for each Battle Card attack; untaps 1 energy with a 4+ cost Broly in play.",
+        "Hawk profile (14 of 15 wins): mid-range aggro. Draw and search hard early (Kakarot FB08-076, Broly ST01-048, Vegeta cantrips, Hercule), so the 3-life awaken is safe; up to 15 cards in hand on awakening.",
+        "Core turn: evolve a 2-cost Broly into the 6-cost ST01-050 for 4 energy, then the awakened Leader untaps an energy, then play Paragus ST01-047: swing 40k, Paragus stuns a rested card, KO Paragus with ST01-050 (draw 1, untap the 40k), swing 40k again (\"KO your dad\").",
+        "When their board gets wide, play FB08-122 Broly (6): its On Play locks every rested enemy card. Broly ST01-051 (5-cost) rests a card and can replace itself with a 6-cost Broly from hand for 1 energy: a turn-early SCR or a stun to dodge a staller.",
+        "If the opponent stalls your awaken by sitting at 4 life with a big body, Broly ST01-049 takes a life (self-awaken) and rests that body. After awakening, avoid more self-awaken life taking unless going for game (Double Strike range at 2).",
+        "The awakened Leader taxes every enemy attack (they must rest an active card) while a 5+ cost Saiyan is out. Weakness: no real removal; win by turn 5 before their board gets too big."
       ]
     },
     "ST01-001": {
