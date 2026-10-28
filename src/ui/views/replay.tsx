@@ -176,7 +176,7 @@ function Slot({ c, leader, awakened, hot, onPick }: { c: CardSnap; leader?: bool
  * "Watch a game" controls plus the viewer: pick who should win and which AI plays,
  * then record a game on its own worker.
  */
-export function WatchGame({ a, b, cards, rules, level: initialLevel = 'quick', labels }: { a: Decklist; b: Decklist; cards: Record<string, Card>; rules?: RulesConfig; level?: Level; labels?: [string, string] }) {
+export function WatchGame({ a, b, cards, rules, level: initialLevel = 'quick', labels, mustPlay, auto }: { a: Decklist; b: Decklist; cards: Record<string, Card>; rules?: RulesConfig; level?: Level; labels?: [string, string]; mustPlay?: string; auto?: boolean }) {
   const [want, setWant] = useState<'any' | 'win' | 'loss'>('any');
   const [level, setLevel] = useState<Level>(initialLevel === 'fast' ? 'fast' : 'quick');
   const [busy, setBusy] = useState<null | (() => void)>(null);
@@ -187,22 +187,25 @@ export function WatchGame({ a, b, cards, rules, level: initialLevel = 'quick', l
   async function watch() {
     setErr('');
     const seed = Math.floor(Math.random() * 1_000_000);
-    const job = recordReplay(cards, { decks: [a, b], levels: [level, level], seed, want, tries: level === 'fast' ? 12 : 6, rules });
+    const job = recordReplay(cards, { decks: [a, b], levels: [level, level], seed, want, tries: level === 'fast' ? 12 : 6, rules, mustPlay });
     setBusy(() => job.cancel);
     try {
       const r = await job.done;
       setReplay(r);
-      if (want !== 'any' && (want === 'win' ? r.winner !== 0 : r.winner !== 1)) setErr(`No game ended that way in ${level === 'fast' ? 12 : 6} tries, so here is the last one.`);
+      const missed = (want !== 'any' && (want === 'win' ? r.winner !== 0 : r.winner !== 1)) || (mustPlay && !r.played[0].includes(mustPlay));
+      if (missed) setErr(`No game went that way in ${level === 'fast' ? 12 : 6} tries, so here is the last one.`);
     } catch (e: any) {
       if (e?.message !== 'cancelled') setErr(String(e?.message ?? e));
     }
     setBusy(null);
   }
 
+  useEffect(() => { if (auto) watch(); }, []);
+
   return (
     <div class="stack">
       <div class="panel stack">
-        <div class="eyebrow">Watch a game</div>
+        <div class="eyebrow">Watch a game{mustPlay ? ` where ${cards[mustPlay]?.name ?? mustPlay} was played` : ''}</div>
         <div class="row">
           <Seg label="Outcome" options={[['any', 'Any game'], ['win', nA], ['loss', nB]]} value={want} onChange={setWant} />
           <Seg label="AI" options={[['quick', 'Search AI'], ['fast', 'Fast AI']]} value={level} onChange={(v) => setLevel(v as Level)} />

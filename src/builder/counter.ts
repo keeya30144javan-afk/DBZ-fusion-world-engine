@@ -49,10 +49,21 @@ const EFFORT = {
   thorough: { gens: 14, pop: 24, screen: 64, validate: 480, finalists: 4, chunk: 8, rerank: 6, rerankGames: 16 },
 };
 
+/** One step in how a deck came to be: where it started, or what a generation changed. */
+export interface Change {
+  gen: number;
+  how: string;
+  added?: Record<string, number>;
+  removed?: Record<string, number>;
+  /** The parent's estimated win rate when the change was made. */
+  parentRate?: number;
+}
+
 export interface Scored {
   deck: Decklist;
   key: string;
   origin: string;
+  history: Change[];
   /** Per-target results with the fast AI (screening). */
   res: MatchResult[];
   /** Per-target results with the searching AI on both sides (re-ranking). */
@@ -62,6 +73,7 @@ export interface Scored {
 export interface Validated {
   deck: Decklist;
   origin: string;
+  history?: Change[];
   rate: number;
   lo: number;
   hi: number;
@@ -168,7 +180,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const freshSeeds = (n: number) => Array.from({ length: n }, () => (seedCounter = (seedCounter * 48271 + 11) % 2147483647));
 
   const screenScore = (c: Scored) => aggregate(c.res, targets, 1).mean;
-  const newScored = (deck: Decklist, origin: string): Scored => ({ deck, key: deckKey(deck), origin, res: targets.map(() => emptyResult()), sres: targets.map(() => emptyResult()) });
+  const newScored = (deck: Decklist, origin: string, history: Change[] = [{ gen: 0, how: origin }]): Scored => ({ deck, key: deckKey(deck), origin, history, res: targets.map(() => emptyResult()), sres: targets.map(() => emptyResult()) });
 
   // ---- ranking: fast-AI screening overrates decks that exploit careless play, so decks
   // checked with the searching AI are ranked on those games, and the rest on their fast
@@ -333,8 +345,9 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     while (children.length < E.pop - elites.length && tries++ < E.pop * 10) {
       const parent = elites[Math.floor(rng() * elites.length)];
       let child: Decklist;
+      let how = 'swapped cards';
       const sameLeader = elites.filter((e) => e !== parent && e.deck.leader === parent.deck.leader);
-      if (sameLeader.length && rng() < 0.3) child = crossover(parent.deck, sameLeader[Math.floor(rng() * sameLeader.length)].deck, cards, rng, rules);
+      if (sameLeader.length && rng() < 0.3) how = 'crossed with another list for the same Leader', child = crossover(parent.deck, sameLeader[Math.floor(rng() * sameLeader.length)].deck, cards, rng, rules);
       else {
         const all = [...parent.res, ...parent.sres];
         const stats = all.reduce((acc, r) => mergeResults(acc, r), emptyResult()).cards ?? {};
@@ -349,7 +362,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       child.name = `${cards[child.leader].name} (${child.leader}) counter`;
       const k = deckKey(child);
       if (seen.has(k) || validateDeck(child, cards, rules).length) continue;
-      const s = newScored(child, 'evolved');
+      const s = newScored(child, 'evolved', [...parent.history, { gen: g, how, ...diffDecks(parent.deck, child), parentRate: rankScore(parent) }]);
       seen.set(k, s);
       children.push(s);
     }
@@ -419,7 +432,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     }
     const agg = aggregate(res, targets, z);
     return {
-      deck: c.deck, origin: c.origin, rate: agg.mean, lo: agg.lo, hi: agg.hi, games: agg.games,
+      deck: c.deck, origin: c.origin, history: c.history, rate: agg.mean, lo: agg.lo, hi: agg.hi, games: agg.games,
       perTarget: res.map((r, i) => ({ name: targets[i].deck.name, ...wilson(score(r), r.games, z), rate: score(r) / Math.max(1, r.games), games: r.games })),
       result: res.reduce((acc, r) => mergeResults(acc, r), emptyResult()),
     };
@@ -462,6 +475,10 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     if (best.lo >= opts.threshold && beatsBaseline) {
       verdict = 'recommend';
       headline = `Recommended: ${best.deck.name}. Wins ${pct(best.rate)} (${conf} confidence: at least ${pct(best.lo)}) over ${best.games} fresh games.`;
+    } else if (best.lo >= opts.threshold && baseline) {
+      verdict = 'inconclusive';
+      headline = `${best.deck.name} clears your ${pct(opts.threshold)} bar (wins ${pct(best.rate)}, at least ${pct(best.lo)}), but it isn't clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`;
+      reasons.push(`Playing "${baseline.deck.name}" as it is works about as well; the changes aren't proven to help.`);
     } else if (best.rate >= opts.threshold && best.hi >= opts.threshold) {
       verdict = 'inconclusive';
       headline = `Promising but not proven: ${best.deck.name} wins ${pct(best.rate)}, but the ${conf} lower bound (${pct(best.lo)}) is below your ${pct(opts.threshold)} bar.`;
@@ -471,7 +488,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       headline = `No reliable counter found. The best candidate wins ${pct(best.rate)} (range ${pct(best.lo)}-${pct(best.hi)}), which does not clear your ${pct(opts.threshold)} bar.`;
       reasons.push('Recommending something anyway would be guessing, so this is a real "no".');
     }
-    if (!beatsBaseline && baseline) reasons.push(`It is not clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`);
+    if (!beatsBaseline && baseline && best.lo < opts.threshold) reasons.push(`It is not clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`);
   }
   if (best) {
     const own = coverageOf(best.deck, cards);
@@ -504,4 +521,15 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
 /** Synchronous runner for Node and tests. */
 export function localRunner(cards: Record<string, Card>, runMatch: (c: Record<string, Card>, j: MatchJob) => MatchResult): Runner {
   return async (jobs, onEach) => jobs.map((j) => { const r = runMatch(cards, j); onEach?.(r); return r; });
+}
+
+/** Cards added to and removed from a deck, by id. */
+export function diffDecks(from: Decklist, to: Decklist): { added: Record<string, number>; removed: Record<string, number> } {
+  const added: Record<string, number> = {}, removed: Record<string, number> = {};
+  for (const id of new Set([...Object.keys(from.main), ...Object.keys(to.main)])) {
+    const d = (to.main[id] ?? 0) - (from.main[id] ?? 0);
+    if (d > 0) added[id] = d;
+    else if (d < 0) removed[id] = -d;
+  }
+  return { added, removed };
 }

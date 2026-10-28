@@ -74,6 +74,8 @@ export interface Replay {
   winner: Side | -1;
   reason: string;
   turns: number;
+  /** Card ids each side played, used, or comboed. */
+  played: [string[], string[]];
   frames: Frame[];
 }
 
@@ -186,20 +188,23 @@ export function recordGame(cards: Record<string, Card>, o: RecordOpts): Replay {
     winner: s.winner,
     reason: s.reason,
     turns: s.turn,
+    played: [0, 1].map((p) => [...new Set((s.events ?? []).filter((e) => (e.t === 'play' || e.t === 'activate' || e.t === 'combo' || e.t === 'counter') && e.p === p).map((e) => (e as { id: string }).id))]) as [string[], string[]],
     frames,
   };
 }
 
 /**
  * Play games from `seed` on until one ends the way `want` asks (deck A's win or
- * loss), up to `tries` games; returns the last game if none matched.
+ * loss) and, with `mustPlay`, deck A played that card; up to `tries` games.
+ * Returns the last game if none matched.
  */
-export function findReplay(cards: Record<string, Card>, o: RecordOpts & { want: 'any' | 'win' | 'loss'; tries?: number }): Replay {
-  const tries = o.want === 'any' ? 1 : o.tries ?? 6;
+export function findReplay(cards: Record<string, Card>, o: RecordOpts & { want: 'any' | 'win' | 'loss'; tries?: number; mustPlay?: string }): Replay {
+  const tries = o.want === 'any' && !o.mustPlay ? 1 : o.tries ?? 6;
   let r: Replay | null = null;
   for (let i = 0; i < tries; i++) {
     r = recordGame(cards, { ...o, seed: o.seed + i, first: undefined });
-    if (o.want === 'any' || (o.want === 'win' ? r.winner === 0 : r.winner === 1)) return r;
+    const outcome = o.want === 'any' || (o.want === 'win' ? r.winner === 0 : r.winner === 1);
+    if (outcome && (!o.mustPlay || r.played[0].includes(o.mustPlay))) return r;
   }
   return r!;
 }

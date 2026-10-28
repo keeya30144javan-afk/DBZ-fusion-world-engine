@@ -23,3 +23,8 @@ test('findReplay looks for the asked-for outcome', () => {
   const r = findReplay(cards, { decks: [meta.decks[0], meta.decks[1]], levels: ['fast', 'fast'], seed: 1, want: 'loss', tries: 12 });
   assert.equal(r.winner, 1);
 });
+
+test('findReplay with mustPlay returns a game where deck A used that card', () => {
+  const r = findReplay(cards, { decks: [meta.decks[1], meta.decks[0]], levels: ['fast', 'fast'], seed: 3, want: 'any', tries: 12, mustPlay: 'FS02-12' });
+  assert.ok(r.played[0].includes('FS02-12'));
+});

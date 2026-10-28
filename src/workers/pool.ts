@@ -98,7 +98,7 @@ export class WorkerPool {
  * Record one game for the viewer on a worker of its own, so it neither waits
  * behind a running search nor freezes the page. Falls back to the main thread.
  */
-export function recordReplay(cards: Record<string, Card>, opts: RecordOpts & { want: 'any' | 'win' | 'loss'; tries?: number }): { done: Promise<Replay>; cancel: () => void } {
+export function recordReplay(cards: Record<string, Card>, opts: RecordOpts & { want: 'any' | 'win' | 'loss'; tries?: number; mustPlay?: string }): { done: Promise<Replay>; cancel: () => void } {
   let w: Worker | null = null;
   try {
     w = new Worker(getWorkerUrl());

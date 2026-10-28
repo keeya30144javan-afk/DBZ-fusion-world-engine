@@ -1,4 +1,5 @@
 import { WatchGame } from './replay';
+import { AskWhy } from './askwhy';
 import { useMemo, useRef, useState } from 'preact/hooks';
 import { Decklist } from '../../data/types';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
@@ -229,6 +230,8 @@ function Report({ rec }: { rec: RunRecord }) {
       {best && rec.targetDeck && (
         <WatchGame key={deckToText(best.deck, st.cards)} a={best.deck} b={rec.targetDeck} cards={st.cards} rules={st.rules} labels={['Counter wins', 'Target wins']} />
       )}
+
+      {best && rec.targetDeck && <AskWhy key={deckToText(best.deck, st.cards)} best={best} target={rec.targetDeck} baseline={r.baseline} cards={st.cards} rules={st.rules} />}
 
       {best && (
         <div class="grid2">

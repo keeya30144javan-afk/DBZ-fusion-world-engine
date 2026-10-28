@@ -43,7 +43,7 @@ export function AuditView() {
     let live = true;
     const claude = (window as any).claude;
     if (!claude?.use) { setSample(null); return; }
-    claude.use('sample').then((s: Sampler | null) => { if (live) setSample(s); }, () => live && setSample(null));
+    claude.use('sample').then((s: Sampler | null) => { if (live) setSample(() => s); }, () => live && setSample(null));
     return () => { live = false; };
   }, []);
 
