@@ -134,7 +134,7 @@ const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(
 const REMOVAL = new Set(['ko', 'bottom', 'bounce', 'toDrop', 'toEnergy']);
 const removalMemo = new WeakMap<object, { key: string; by: [[any, number][], [any, number][]] }>();
 function removalOf(s: GameState): [[any, number][], [any, number][]] {
-  const key = s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
+  const key = s.deckKey ?? s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
   const hit = removalMemo.get(s.cards);
   if (hit && hit.key === key) return hit.by;
   const per: [Map<string, [any, number]>, Map<string, [any, number]>] = [new Map(), new Map()];
@@ -157,6 +157,47 @@ function removalOf(s: GameState): [[any, number][], [any, number][]] {
   const by: [[any, number][], [any, number][]] = [[...per[0].values()], [...per[1].values()]];
   removalMemo.set(s.cards, { key, by });
   return by;
+}
+
+/**
+ * What a side's deck can use from its own energy: filters of "play ... from your energy",
+ * "add ... from your energy to your hand" and "if you have X in your energy". Charging a card
+ * that matches is not a loss but a set-up (Goku Black, Turles' Fruit of the Tree of Might).
+ */
+const energyUseMemo = new WeakMap<object, { key: string; by: [any[], any[]] }>();
+function energyUses(s: GameState): [any[], any[]] {
+  const key = s.deckKey ?? s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
+  const hit = energyUseMemo.get(s.cards);
+  if (hit && hit.key === key) return hit.by;
+  const by: [any[], any[]] = [[], []];
+  const seen = new Set<string>();
+  for (const i of s.inst) {
+    if (seen.has(i.owner + i.id)) continue;
+    seen.add(i.owner + i.id);
+    const walk = (x: any) => {
+      if (!x || typeof x !== 'object') return;
+      if (Array.isArray(x)) return x.forEach(walk);
+      // Only skills that care which card is in energy: "3 or more Rest Mode energy" doesn't.
+      const specific = (f: any) => f && ['names', 'traits', 'type', 'costLE', 'costEQ', 'powerEQ'].some((k) => f[k] !== undefined);
+      if (((x.t === 'playFrom' && x.from === 'energy') || x.t === 'energyToHand') && specific(x.filter)) by[i.owner].push(x.filter);
+      if (x.t === 'count' && x.what?.zone === 'energy' && x.what?.side !== 'opp' && specific(x.what.filter)) by[i.owner].push(x.what.filter);
+      for (const v of Object.values(x)) if (typeof v === 'object') walk(v);
+    };
+    const cc = compileCard(s.cards[i.id]);
+    for (const ab of [...cc.abilities, ...(cc.backAbilities ?? [])]) walk(ab);
+  }
+  energyUseMemo.set(s.cards, { key, by });
+  return by;
+}
+
+/** Does the owner's deck have a use for this card once it is in energy? */
+export function usefulInEnergy(s: GameState, u: number): boolean {
+  const uses = energyUses(s)[s.inst[u].owner];
+  if (!uses.length) return false;
+  const c = cardOf(s, u);
+  return uses.some((f) => (!f.names || f.names.some((n: string) => nameHas(c, n))) && (!f.type || c.type === f.type)
+    && (f.costLE === undefined || c.cost <= f.costLE) && (f.costEQ === undefined || c.cost === f.costEQ)
+    && (f.powerEQ === undefined || c.power === f.powerEQ) && (!f.traits || f.traits.some((t: string) => c.traits.some((ct) => ct.toLowerCase().includes(t.toLowerCase())))));
 }
 
 /** Card ids with a "you win the game" skill (Gogeta: BR's opponent-at-1-life win). */
@@ -203,9 +244,11 @@ export function keepValue(s: GameState, u: number): number {
  * synergy map of every card it owns. Cached per game: the deck never changes.
  */
 const needsMemo = new WeakMap<object, [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>]>();
-function deckNeeds(s: GameState): [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] {
+let frozenNeeds: ReturnType<typeof deckNeeds> | null = null;
+function deckNeeds(s: GameState, legacy = false): [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] {
+  if (legacy) return frozenNeeds ??= deckNeeds({ ...s, deckKey: 'frozen:' + s.deckKey });
   const hit = needsMemo.get(s.cards);
-  const key = s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
+  const key = s.deckKey ?? s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
   if (hit && (hit as any).key === key) return hit;
   const out: [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] = [{}, {}];
   for (const i of s.inst) {
@@ -266,6 +309,8 @@ export interface EvalWeights {
   perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
   /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
   reach?: number;
+  /** Testing only: reproduce the old cache bug (every game reused the first game's deck needs). */
+  legacyNeeds?: boolean;
   /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
   altWin?: number;
 }
@@ -323,7 +368,7 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
     // Resources this deck's engine runs on.
-    const need = deckNeeds(s)[p];
+    const need = deckNeeds(s, W.legacyNeeds)[p];
     let r = 0;
     if (need.ki) r += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
     if (need.drop) r += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
@@ -533,7 +578,8 @@ export class FastPolicy implements Policy {
       const copies = ids.filter((x) => x === c.id).length;
       const soon = c.cost <= me.energy.length + 1 ? 0.5 : 0;
       const tooExpensive = c.cost > me.energy.length + 3 ? -0.6 : 0;
-      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + rand(s) * this.noise;
+      const forEnergy = usefulInEnergy(s, u) ? -1 : 0;
+      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + forEnergy + rand(s) * this.noise;
       return keepValue(s, u) + soon + tooExpensive - (copies > 1 ? 0.4 : 0) + (isSuperComboCard(c) ? 2 : 0) + rand(s) * this.noise;
     };
     charges.sort((a, b) => score(a.uid) - score(b.uid));

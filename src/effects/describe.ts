@@ -258,7 +258,7 @@ export function describeEffect(e: Effect): string {
     case 'energyRedirect': out = "if you would add a card to its owner's energy during this turn, place that card into its owner's Drop instead"; break;
     case 'lockEnergy': out = `choose up to ${e.n} of your opponent's Rest Mode energy, and it can't switch to Active Mode during your opponent's next turn`; break;
     case 'restOppEnergy': out = e.n !== undefined ? `choose up to ${e.n} card${e.n === 1 ? '' : 's'} in your opponent's energy and switch ${e.n === 1 ? 'it' : 'them'} to Rest Mode` : `switch all ${describeFilter(e.filter, 'card', true)} in your opponent's energy to Rest Mode`; break;
-    case 'optionalCost': out = `you may ${e.costs.map(describeCost).join(' and ')}. If you do, ${e.effects.map(describeEffect).join(', then ')}`; break;
+    case 'optionalCost': out = `you may ${e.costs.map(describeCost).join(' and ')}` + (e.effects.length ? `. If you do, ${e.effects.map(describeEffect).join(', then ')}` : ''); break;
     case 'group': out = e.effects.map(describeEffect).join('. Then, '); break;
     case 'evolveOnto': out = 'play the card chosen by this skill on top of this card'; break;
     case 'noop': out = e.note; break;

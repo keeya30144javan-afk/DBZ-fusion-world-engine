@@ -77,6 +77,7 @@ export function newGame(cards: Record<string, Card>, decks: [Decklist, Decklist]
     mulliganTurn: 0,
     log: opts.log ? [] : null,
     events: opts.events ? [] : null,
+    deckKey: decks.map((d) => d.leader + ':' + Object.entries(d.main).sort().map(([id, n]) => id + 'x' + n).join(',')).join('|'),
   };
   s.first = opts.first ?? (Math.floor(Math.random() * 2) as Side);
   if (opts.first === undefined && opts.seed !== undefined) s.first = (Math.abs(opts.seed) % 2) as Side;

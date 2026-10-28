@@ -2,7 +2,7 @@ import { GameState, Side } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, wastesMainEffect, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, usefulInEnergy, wastesMainEffect, winProb } from './heuristics';
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { cardOf, hasKeyword, isLeader, other } from '../engine/core';
@@ -174,9 +174,10 @@ export class SearchPolicy implements Policy {
       // ("I'll see another one, it's a 4-of").
       const me = s.p[s.toAct], ids = me.hand.map((u) => s.inst[u].id);
       const rank = (u: number) => {
-        if (!P.chargeSpares) return keepValue(s, u);
+        const forEnergy = usefulInEnergy(s, u) ? -1 : 0;
+        if (!P.chargeSpares) return keepValue(s, u) + forEnergy;
         const c = cardOf(s, u);
-        return keepValue(s, u) - (ids.filter((x) => x === c.id).length > 1 ? 0.4 : 0) - (c.cost > me.energy.length + 3 ? 0.6 : 0);
+        return keepValue(s, u) + forEnergy - (ids.filter((x) => x === c.id).length > 1 ? 0.4 : 0) - (c.cost > me.energy.length + 3 ? 0.6 : 0);
       };
       charges.sort((a, b) => rank(a.uid) - rank(b.uid));
       return [{ k: 'noCharge' }, ...charges.slice(0, 3)];

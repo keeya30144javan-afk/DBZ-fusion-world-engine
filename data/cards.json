@@ -34889,8 +34889,14 @@
       "timing": "activateMain",
       "effects": [
        {
-        "t": "noop",
-        "note": "place any number of cards from your energy to your Drop (the simulator places none)"
+        "t": "optionalCost",
+        "costs": [
+         {
+          "t": "energyToDrop",
+          "n": 1
+         }
+        ],
+        "effects": []
        },
        {
         "t": "dropToHand",
@@ -34909,7 +34915,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "The 'any number of energy' choice isn't modelled: it places none."
+     "note": "\"Any number\" of energy to the Drop is modelled as an optional 1 (enough to turn on \"a card left your energy this turn\" skills)."
     },
     "keywords": [],
     "source": "claude",

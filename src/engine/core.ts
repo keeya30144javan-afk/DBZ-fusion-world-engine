@@ -157,6 +157,8 @@ export interface GameState {
   winner: Side | -1;
   reason: string;
   seed: number;
+  /** Both decklists in a stable form: a cache key for facts about the decks (they never change). */
+  deckKey?: string;
   charged: boolean;
   /** Mulligan queue during setup. */
   mulliganTurn: Side;
