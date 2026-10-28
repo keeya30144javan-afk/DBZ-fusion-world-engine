@@ -38,7 +38,8 @@ export function PlayTab() {
   const speedRef = useRef<Speed>(speed);
   const setSpeed = (v: Speed) => { setSpeed0(v); speedRef.current = v; };
   const [stepWait, setStepWait] = useState(false);
-  const [showText, setShowText] = useState<boolean>(setup0.showText ?? true);
+  // Text on the board by default on wide screens; on a phone the hand would become a very long column.
+  const [showText, setShowText] = useState<boolean>(setup0.showText ?? (typeof innerWidth === 'number' ? innerWidth >= 700 : true));
   useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first, speed, showText }), [youId, aiId, mode, level, first, speed, showText]);
   // Decks handed over from another tab (Counter Lab, Matchup, Meta).
   const [given, setGiven] = useState<{ you?: Decklist; ai?: Decklist }>({});

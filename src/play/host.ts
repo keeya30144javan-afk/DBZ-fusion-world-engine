@@ -1,6 +1,6 @@
 import { Card, Decklist } from '../data/types';
 import { RulesConfig } from '../data/rules';
-import { GameState, Side, cardOf, cloneState, isLeader, nameOf, other, powerOf } from '../engine/core';
+import { GameState, Side, cardOf, cloneState, isLeader, nameOf, powerOf } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, newGame, step } from '../engine/game';
 import { compileCard } from '../effects/parse';
@@ -153,7 +153,7 @@ export class PlayHost {
   /** Testing: a snapshot after every move. */
   debug?: string[];
 
-  constructor(private cards: Record<string, Card>, private o: PlayOpts) {
+  constructor(cards: Record<string, Card>, private o: PlayOpts) {
     const first: Side = o.youFirst === null ? ((o.seed >>> 3) & 1 ? 1 : 0) : o.youFirst ? 0 : 1;
     this.first = first;
     this.real = newGame(cards, [o.you, o.ai], { seed: o.seed, first, log: true, rules: o.rules });
@@ -353,7 +353,7 @@ export interface Advice {
 function describePosition(s: GameState, legal: Action[], question: string | null): string {
   const seen = new Set<string>();
   const card = (u: number) => {
-    const c = cardOf(s, u), i = s.inst[u];
+    const i = s.inst[u];
     seen.add(i.id);
     return `${nameOf(s, u)} [${i.id}] ${powerOf(s, u)} power${i.rested ? ', rested' : ''}${i.ki ? `, ${i.ki} Ki` : ''}${i.under?.length ? `, ${i.under.length} under it` : ''}`;
   };
@@ -395,5 +395,3 @@ export function replayRecord(cards: Record<string, Card>, r: GameRecord, rules?:
   return states;
 }
 
-export const whoLabel = (p: Side) => (p === 0 ? 'You' : 'AI');
-export { other };

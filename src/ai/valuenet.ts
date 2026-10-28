@@ -1,4 +1,4 @@
-import { GameState, Side, cardOf, comboPowerOf, isLeader, other, powerOf } from '../engine/core';
+import { GameState, Side, cardOf, comboPowerOf, other, powerOf } from '../engine/core';
 import { compileCard } from '../effects/parse';
 import { awakenLife, awakenedWorth, valueIn } from './heuristics';
 
@@ -75,4 +75,3 @@ export function netLogit(net: ValueNet, s: GameState, me: Side): number {
   return out;
 }
 
-export { isLeader };

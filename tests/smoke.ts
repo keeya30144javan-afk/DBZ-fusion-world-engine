@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { newGame, legalActions, step } from '../src/engine/game';
-import { FastPolicy, defaultChooser, playout } from '../src/ai/heuristics';
+import { newGame } from '../src/engine/game';
+import { FastPolicy, playout } from '../src/ai/heuristics';
 const db = JSON.parse(readFileSync('data/cards.json', 'utf8'));
 const meta = JSON.parse(readFileSync('data/meta.json', 'utf8'));
 const decks = meta.decks;

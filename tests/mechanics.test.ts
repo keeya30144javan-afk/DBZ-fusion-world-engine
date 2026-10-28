@@ -146,7 +146,7 @@ test('script: "next Extra costs 0" discount applies once', () => {
   const ex = spawn(s, 0, 'FS01-16', 'hand'); // God Kamehameha, cost 2
   const ex2 = spawn(s, 0, 'FS01-16', 'hand');
   const before = costInHand(s, ex);
-  const u = spawn(s, 0, 'FS01-07', 'hand');
+  spawn(s, 0, 'FS01-07', 'hand');
   energy(s, 0, 2);
   step(s, acts(s, (a) => a.k === 'play' && s.inst[a.uid].id === 'FS01-07')[0], ctl);
   assert.equal(costInHand(s, ex), 0);
@@ -169,7 +169,7 @@ test('script: "can\'t be KO\'d once per turn" survives the first KO only', () =>
 test('script: "choose one" runs one option', () => {
   const s = fresh();
   withScript('FS01-07', { keywords: [], abilities: [{ timing: 'onPlay', once: false, cost: [], cond: [], text: '', unparsed: [], effects: [{ t: 'choose', options: [[{ t: 'draw', n: 2 }], [{ t: 'mill', n: 5 }]] }] }] });
-  const u = spawn(s, 0, 'FS01-07', 'hand');
+  spawn(s, 0, 'FS01-07', 'hand');
   energy(s, 0, 2);
   const hand = s.p[0].hand.length;
   step(s, acts(s, (a) => a.k === 'play' && s.inst[a.uid].id === 'FS01-07')[0], ctl);

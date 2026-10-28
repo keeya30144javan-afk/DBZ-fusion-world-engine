@@ -1,5 +1,5 @@
 import { Card } from '../data/types';
-import { Ability, CardScript, Cond, Cost, Effect, Filter, Keyword, Target, Timing } from './types';
+import { Ability, Cond, Cost, Effect, Filter, Keyword, Target, Timing } from './types';
 
 /**
  * Translations ("scripts"): a card's skills written directly in the skill

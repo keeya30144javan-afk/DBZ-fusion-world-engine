@@ -67,7 +67,7 @@ export function CardsView() {
 
         <div class="panel stack">
           <h2>Add a new set</h2>
-          <p class="note">Load a card file (JSON) from a card database site, for example a saved page from <span class="mono">api.deckplanet.net/cardsearch/fusion_world_cards?limit=500&amp;page=1</span>. You can pick several pages at once. Cards are saved by set, and a newer import replaces the older copy of that set.</p>
+          <p class="note">Load a card file (JSON) from a card database site, for example a saved page from <span class="mono" style={{ overflowWrap: 'anywhere' }}>api.deckplanet.net/cardsearch/fusion_world_cards?limit=500&amp;page=1</span>. You can pick several pages at once. Cards are saved by set, and a newer import replaces the older copy of that set.</p>
           <input id="import-file" type="file" accept=".json,application/json,text/plain" multiple onChange={onFile} disabled={busy} />
           <label class="field">Or paste the JSON
             <textarea id="import-text" value={importText} onInput={(e) => setImportText((e.target as HTMLTextAreaElement).value)} placeholder='{"data":[{"card_number":"FB01-001", ...}]}' />
