@@ -192,6 +192,8 @@ export interface EvalWeights {
   resources: number;
   /** Multiplier on how much an awakened Leader is worth (theirs and yours). */
   awaken: number;
+  /** Extra worth of each card in hand when its owner is at 3 life or less (it's their defence). */
+  handLow?: number;
 }
 export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1, awaken: 1 };
 
@@ -201,7 +203,7 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
   const side = (p: Side) => {
     const pl = s.p[p];
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
-    v += pl.hand.length * W.hand;
+    v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
     for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board;
     v += Math.min(pl.energy.length, 8) * W.energy;
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
@@ -217,6 +219,34 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     return v + r * W.resources;
   };
   return side(me) - side(other(me));
+}
+
+/**
+ * The evaluation's ingredients, as (my side - their side) differences, so its weights can
+ * be fitted to game outcomes: evaluate() = sum of weight x feature (plus the fixed deck-out term).
+ */
+export function evalFeatures(s: GameState, me: Side): Record<'life' | 'hand' | 'boardBase' | 'board' | 'energy' | 'awaken' | 'resources' | 'deck', number> {
+  const side = (p: Side) => {
+    const pl = s.p[p];
+    const need = deckNeeds(s)[p];
+    let r = 0;
+    if (need.ki) r += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
+    if (need.drop) r += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
+    if (need.marker) r += need.marker * 0.5 * Math.min(pl.markers, 2);
+    if (need.restEnemy) r += need.restEnemy * 0.3 * s.p[other(p)].battle.filter((u) => s.inst[u].rested).length;
+    return {
+      life: pl.life.length <= 0 ? -3 : Math.log(1 + pl.life.length),
+      hand: pl.hand.length,
+      boardBase: pl.battle.length,
+      board: pl.battle.reduce((t, u) => t + boardValue(s, u), 0),
+      energy: Math.min(pl.energy.length, 8),
+      awaken: pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0,
+      resources: r,
+      deck: pl.deck.length < 6 ? -(6 - pl.deck.length) * 0.5 : 0,
+    };
+  };
+  const a = side(me), b = side(other(me));
+  return Object.fromEntries(Object.keys(a).map((k) => [k, (a as any)[k] - (b as any)[k]])) as any;
 }
 
 /** Squash an evaluation into a win probability for `me`. */
