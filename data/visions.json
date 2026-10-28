@@ -32,7 +32,12 @@
     "Don't defend a card that will die to its owner's own effect anyway; let it go and keep the cards.",
     "Swing with the free attacker first (Leader, or a body that needs no combo cards) to see their response, then commit cards.",
     "When the opponent is low, each extra hit hands them a card for their counterattack: only push it if it sets up the win, or their counterattack can't kill you anyway.",
-    "Use an Extra early when it gets full value now; holding it for a perfect moment that may never come wastes it and adds decision load."
+    "Use an Extra early when it gets full value now; holding it for a perfect moment that may never come wastes it and adds decision load.",
+    "Ties go to the attacker: an attack exactly equal to the defence wins, so the defender needs to beat it by at least 1 (5000 in practice).",
+    "Against a Leader whose awakened side is much stronger, pressure their Battle Cards (rest them, attack them) instead of their life, so you don't awaken them for free.",
+    "Blockers are worth using while you can: a yellow opponent will rest them on their next attack anyway. A deck that untaps its Battle Cards at end of turn (awakened Frieza) can attack with its blockers freely.",
+    "Defending early has value too: a 20000 swing now is cheaper to stop than a 40000 swing later, but only if the game lasts long enough for that to matter.",
+    "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack."
   ],
   "decks": {
     "FS11-01": {
@@ -70,7 +75,8 @@
         "Vegito FB02-061 (your turn, hand 7 or fewer: enemy cards cost 1 less) + Mai: Future (-1 more) turn 'cost 1 or less' and 'cost 3 or less' removal into answers for real threats.",
         "Bottom-deck suite: Zamasu and Vegito (cost 1 or less), Son Gohan: Adolescence FB03-039 (2 cards cost 3 or less), Sinister Sickle and Vegeta FS02-13 (cost 4 or less), Zen-Oh (everything).",
         "Pilaf and Videl FB03-042 recover 1-cost Earthlings (Mai, Bulma, Pilaf) from the Drop to keep the removal going.",
-        "Vegito FB02-139 bounces cost 5 or less and untaps itself; the awakened Leader gets +15000 with hand 7 or fewer."
+        "Vegito FB02-139 bounces cost 5 or less and untaps itself; the awakened Leader gets +15000 with hand 7 or fewer.",
+        "Exhibition lessons: awaken quickly (Trunks: Future/Vegeta take life to hand) because an awakened 20000 Leader outclasses a 15000 one; reach 7 or fewer cards by comboing when it buys real value, not by throwing cards away. Galick Gun on defence is +15000 and a draw at 7 or fewer."
       ]
     },
     "FB02-105": {
