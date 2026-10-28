@@ -28,6 +28,8 @@ export interface PlanOpts {
   worlds: number;
   /** Also play on through our own next turn before judging (sees set-ups that pay off later). */
   deep?: boolean;
+  /** How many turns past this one to play out before judging (overrides `deep`: 1 = their reply, 2 = through our next turn...). */
+  ahead?: number;
   /** Evaluation weights (defaults otherwise). */
   eval?: EvalWeights;
   /** Habits of the fast AI that plays out imagined games (both sides). */
@@ -66,12 +68,12 @@ function advance(w: GameState, me: Side, pol: FastPolicy, turn: number) {
 }
 
 /** Play on until our next main phase begins (or the game ends): the opponent's reply. */
-function reply(w: GameState, me: Side, pol: FastPolicy, startTurn: number, deep = false) {
+function reply(w: GameState, me: Side, pol: FastPolicy, startTurn: number, deep = false, ahead?: number) {
   let n = 0;
-  while (w.stage !== 'over' && n++ < 2500) {
-    if (!deep && w.turn > startTurn && w.active === me && w.stage === 'main') return;
-    if (deep && w.turn > startTurn + 2) return;
-    if (w.turn > startTurn + 2) return;
+  const last = startTurn + (ahead ?? (deep ? 2 : 1));
+  while (w.stage !== 'over' && n++ < 4000) {
+    if (ahead === undefined && !deep && w.turn > startTurn && w.active === me && w.stage === 'main') return;
+    if (w.turn > last) return;
     const acts = legalActions(w);
     if (!acts.length) return;
     step(w, pol.act(w, acts), ctl);
@@ -183,7 +185,7 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
         if (!legal) break;
         advance(w, me, pol, turn);
       }
-      reply(w, me, pol, turn, opts.deep);
+      reply(w, me, pol, turn, opts.deep, opts.ahead);
       total += winProb(w, me, opts.eval);
     }
     return { actions: n.line, picks: n.picks, value: total / opts.worlds };
