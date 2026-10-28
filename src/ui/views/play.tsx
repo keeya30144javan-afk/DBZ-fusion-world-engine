@@ -15,7 +15,7 @@ import { ColorTag, DeckSelect, Seg, fmtPower, leaderLabel, safeStorage, useStore
 const [loadPaste, savePaste] = safeStorage<string>('shenron.playPaste', '');
 type Speed = 'fast' | 'normal' | 'slow' | 'step';
 const SPEED_MS: Record<Speed, number> = { fast: 0, normal: 900, slow: 2000, step: 0 };
-const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai'; speed?: Speed }>('shenron.playSetup', {});
+const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai'; speed?: Speed; showText?: boolean }>('shenron.playSetup', {});
 
 interface Flag { atMove: number; turn: number; aiMove: string; note: string }
 
@@ -38,7 +38,8 @@ export function PlayTab() {
   const speedRef = useRef<Speed>(speed);
   const setSpeed = (v: Speed) => { setSpeed0(v); speedRef.current = v; };
   const [stepWait, setStepWait] = useState(false);
-  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first, speed }), [youId, aiId, mode, level, first, speed]);
+  const [showText, setShowText] = useState<boolean>(setup0.showText ?? true);
+  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first, speed, showText }), [youId, aiId, mode, level, first, speed, showText]);
   // Decks handed over from another tab (Counter Lab, Matchup, Meta).
   const [given, setGiven] = useState<{ you?: Decklist; ai?: Decklist }>({});
   useEffect(() => {
@@ -257,9 +258,12 @@ export function PlayTab() {
 
       <div class="vgrid">
         <div class="stack" style={{ gap: '10px' }}>
-          <Board nm={nm} side={s.p[1]} who="AI" name={names[1]} active={s.active === 1} snapBattle={s.battle} sideIdx={1} onPick={setInspect} hiddenHand={view.aiHand} />
+          <div class="row" style={{ justifyContent: 'flex-end' }}>
+            <Seg label="Card text" options={[['on', 'Card text on board'], ['off', 'Names only (hover to read)']]} value={showText ? 'on' : 'off'} onChange={(v) => setShowText(v === 'on')} />
+          </div>
+          <Board nm={nm} side={s.p[1]} who="AI" name={names[1]} active={s.active === 1} snapBattle={s.battle} sideIdx={1} onPick={setInspect} hiddenHand={view.aiHand} cards={st.cards} showText={showText} />
           {s.battle && <div class="panel note">Battle: <b>{nm(s.battle.attacker)}</b> ({fmtPower(s.battle.atkPower)}) attacks <b>{nm(s.battle.target)}</b> ({fmtPower(s.battle.defPower)})</div>}
-          <Board nm={nm} side={s.p[0]} who="You" name={names[0]} active={s.active === 0} snapBattle={s.battle} sideIdx={0} onPick={setInspect} />
+          <Board nm={nm} side={s.p[0]} who="You" name={names[0]} active={s.active === 0} snapBattle={s.battle} sideIdx={0} onPick={setInspect} cards={st.cards} showText={showText} />
           <div class="panel stack" aria-live="polite">
             {!view.over && <div class="eyebrow" style={{ color: s.active === 0 ? 'var(--accent, #d9632b)' : undefined }}>Turn {s.turn} · {s.active === 0 ? 'Your turn' : "AI's turn"}</div>}
             <div class="row" style={{ gap: '6px', justifyContent: 'space-between' }}>

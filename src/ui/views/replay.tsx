@@ -83,9 +83,9 @@ export function GameViewer({ replay, cards, onClose }: { replay: Replay; cards: 
 
       <div class="vgrid">
         <div class="stack" style={{ gap: '10px' }}>
-          <Board nm={nm} side={f.snap.p[1]} who="B" name={replay.names[1]} active={f.snap.active === 1} snapBattle={f.snap.battle} sideIdx={1} onPick={setInspect} />
+          <Board nm={nm} side={f.snap.p[1]} who="B" name={replay.names[1]} active={f.snap.active === 1} snapBattle={f.snap.battle} sideIdx={1} onPick={setInspect} cards={cards} />
           <Caption f={f} label={label} nm={nm} />
-          <Board nm={nm} side={f.snap.p[0]} who="A" name={replay.names[0]} active={f.snap.active === 0} snapBattle={f.snap.battle} sideIdx={0} onPick={setInspect} />
+          <Board nm={nm} side={f.snap.p[0]} who="A" name={replay.names[0]} active={f.snap.active === 0} snapBattle={f.snap.battle} sideIdx={0} onPick={setInspect} cards={cards} />
         </div>
         <div class="stack" style={{ gap: '10px' }}>
           {f.options && (
@@ -145,7 +145,11 @@ function Caption({ f, label, nm }: { f: Frame; label: (p: 0 | 1) => string; nm: 
   );
 }
 
-export function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick, hiddenHand }: { nm: (id: string) => string; side: SideSnap; who: string; name: string; active: boolean; snapBattle: Frame['snap']['battle']; sideIdx: 0 | 1; onPick: (id: string) => void; hiddenHand?: number }) {
+/** A card's printed text (both sides of a Leader), for tooltips and the text-on-board view. */
+export const cardText = (c?: Card, leader?: boolean, awakened?: boolean) =>
+  !c ? '' : leader && c.back ? (awakened ? `${c.back.text}` : `${c.text}\n— Awakened (${fmtPower(c.back.power)}): ${c.back.text}`) : c.text || '(no skill)';
+
+export function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick, hiddenHand, cards, showText }: { nm: (id: string) => string; side: SideSnap; who: string; name: string; active: boolean; snapBattle: Frame['snap']['battle']; sideIdx: 0 | 1; onPick: (id: string) => void; hiddenHand?: number; cards?: Record<string, Card>; showText?: boolean }) {
   const inBattle = (c: CardSnap) => !!snapBattle && (c.id === snapBattle.attacker && snapBattle.atk === sideIdx || c.id === snapBattle.target && snapBattle.atk !== sideIdx);
   return (
     <div class={`vboard${active ? ' active' : ''}`}>
@@ -160,28 +164,43 @@ export function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick
         </span>
       </div>
       <div class="vzone">
-        <Slot c={side.leader} leader awakened={side.awakened} hot={inBattle(side.leader)} onPick={onPick} />
-        {side.battle.length ? side.battle.map((c, k) => <Slot key={k} c={c} hot={inBattle(c)} onPick={onPick} />) : <span class="note">(no Battle Cards)</span>}
+        <Slot c={side.leader} leader awakened={side.awakened} hot={inBattle(side.leader)} onPick={onPick} card={cards?.[side.leader.id]} showText={showText} />
+        {side.battle.length ? side.battle.map((c, k) => <Slot key={k} c={c} hot={inBattle(c)} onPick={onPick} card={cards?.[c.id]} showText={showText} />) : <span class="note">(no Battle Cards)</span>}
       </div>
       {side.combo.length > 0 && <div class="note">Combo: {side.combo.map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}</div>}
       <div class="vhand">
         {hiddenHand !== undefined
           ? <span class="note">Hand: {hiddenHand} card{hiddenHand === 1 ? '' : 's'} (hidden)</span>
           : <><span class="note">Hand ({side.hand.length}):</span>
-            {side.hand.map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}</>}
+            {showText && cards
+              ? <div class="vzone" style={{ width: '100%' }}>{side.hand.map((id, k) => <HandCard key={k} card={cards[id]} onPick={onPick} />)}</div>
+              : side.hand.map((id, k) => <button key={k} class="tag vlink" title={cards ? cardText(cards[id]) : undefined} onClick={() => onPick(id)}>{nm(id)}</button>)}</>}
       </div>
       {side.drop.length > 0 && <div class="note">Drop: {side.drop.slice(-8).map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}{side.drop.length > 8 ? ` +${side.drop.length - 8} more` : ''}</div>}
     </div>
   );
 }
 
-function Slot({ c, leader, awakened, hot, onPick }: { c: CardSnap; leader?: boolean; awakened?: boolean; hot?: boolean; onPick: (id: string) => void }) {
+function HandCard({ card, onPick }: { card?: Card; onPick: (id: string) => void }) {
+  if (!card) return null;
   return (
-    <button class={`vcard${leader ? ' leader' : ''}${c.rested ? ' rested' : ''}${hot ? ' hot' : ''}`} onClick={() => onPick(c.id)} title={c.rested ? 'Rest Mode' : 'Active Mode'}>
+    <button class="vcard vhandcard" onClick={() => onPick(card.id)}>
+      <span class="vname">{card.name}</span>
+      <span class="vmeta">cost {card.cost}{card.power ? ` · ${fmtPower(card.power)}` : ''}{card.comboPower ? ` · combo +${fmtPower(card.comboPower)}` : ''}</span>
+      <span class="vtext">{cardText(card)}</span>
+    </button>
+  );
+}
+
+function Slot({ c, leader, awakened, hot, onPick, card, showText }: { c: CardSnap; leader?: boolean; awakened?: boolean; hot?: boolean; onPick: (id: string) => void; card?: Card; showText?: boolean }) {
+  const text = cardText(card, leader, awakened);
+  return (
+    <button class={`vcard${leader ? ' leader' : ''}${c.rested ? ' rested' : ''}${hot ? ' hot' : ''}${showText ? ' withtext' : ''}`} onClick={() => onPick(c.id)} title={text ? `${c.rested ? 'Rest Mode' : 'Active Mode'}\n${text}` : c.rested ? 'Rest Mode' : 'Active Mode'}>
       <span class="vname">{c.name}</span>
       <span class="vpow">{fmtPower(c.power)}</span>
       <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.ki ? ` · Ki ${c.ki}` : ''}{c.under ? ` · ${c.under} under` : ''}{c.rested ? ' · rested' : ''}</span>
       {c.tags && c.tags.length > 0 && <span class="vmeta" style={{ fontWeight: 600 }}>{c.tags.join(' · ')}</span>}
+      {showText && text && <span class="vtext">{text}</span>}
     </button>
   );
 }
