@@ -348,7 +348,9 @@ export function sideFeatures(s: GameState, p: Side): Record<SideFeature, number>
  *     own resources more, bodies on board less, and life more than the originals.
  * The full fits lost: they predict winners well but overvalue life when choosing moves.
  */
-export const DEFAULT_EVAL: EvalWeights = { life: 4.63, hand: 0.795, boardBase: -0.02, board: 0.654, energy: 1.24, resources: 1.51, awaken: 0.65 };
+// 3. resources 1.51 -> 0.75 after fixing the deck-needs cache (it reused the first game's decks):
+//    with the real needs, half weight beat the old behaviour 52.3% (full 46.3%, none 47.5%).
+export const DEFAULT_EVAL: EvalWeights = { life: 4.63, hand: 0.795, boardBase: -0.02, board: 0.654, energy: 1.24, resources: 0.75, awaken: 0.65 };
 
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
