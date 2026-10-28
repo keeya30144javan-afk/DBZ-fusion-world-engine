@@ -228,12 +228,15 @@ export function sideFeatures(s: GameState, p: Side): Record<SideFeature, number>
   };
 }
 /**
- * Tuned by self-play (Oct 2026): weights fitted to 90k positions' outcomes, then blended
- * 42% of the way from the original hand-set ones (2.2, 0.45, 0.4, 0.6, 0.35, 1, 1). Blends
- * from 25% to 50% all beat the originals ~59% over 400-800 strong-AI games each; 65% fell to
- * 53% and the full fit lost (43%): it predicts winners well but overvalues life when choosing.
+ * Tuned by self-play (Oct 2026), in two steps:
+ *  1. Weights fitted to 90k fast-AI positions' outcomes, blended 42% from the original
+ *     hand-set ones (2.2, 0.45, 0.4, 0.6, 0.35, 1, 1): beat the originals ~59% (800+ games).
+ *  2. Weights fitted to 8k strong-AI positions, blended halfway from the originals: beat
+ *     step 1 by 57% over 800 strong-AI games. Strong play values hand, energy and the deck's
+ *     own resources more, bodies on board less, and life more than the originals.
+ * The full fits lost: they predict winners well but overvalue life when choosing moves.
  */
-export const DEFAULT_EVAL: EvalWeights = { life: 4.325, hand: 0.326, boardBase: -0.002, board: 0.556, energy: 0.571, resources: 0.362, awaken: 0.631 };
+export const DEFAULT_EVAL: EvalWeights = { life: 4.63, hand: 0.795, boardBase: -0.02, board: 0.654, energy: 1.24, resources: 1.51, awaken: 0.65 };
 
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
