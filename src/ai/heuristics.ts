@@ -65,7 +65,8 @@ function effectValue(e: Effect): number {
   }
 }
 
-const valueCache = new Map<string, number>();
+/** Card values by Leader id ('' for no Leader), then by card id. */
+const valueByLeader = new Map<string, Map<string, number>>();
 
 /**
  * Whether a condition about the Leader holds for `leader` (unknown leader: assume it can).
@@ -91,8 +92,9 @@ const leaderCond = (c: Cond) => c.t === 'leaderIs' || c.t === 'leaderTrait';
  * around this Leader are worth a bit more than an ordinary conditional skill.
  */
 export function cardValue(card: Card, leader?: Card): number {
-  const key = leader ? `${card.id}|${leader.id}` : card.id;
-  const hit = valueCache.get(key);
+  let byCard = valueByLeader.get(leader?.id ?? '');
+  if (!byCard) valueByLeader.set(leader?.id ?? '', (byCard = new Map()));
+  const hit = byCard.get(card.id);
   if (hit !== undefined) return hit;
   const cc = compileCard(card);
   let v = 0;
@@ -111,12 +113,12 @@ export function cardValue(card: Card, leader?: Card): number {
     v += av + ab.unparsed.length * 0.5;
   }
   for (const kw of cc.keywords) v += ({ blocker: 0.6, critical: 0.5, doubleStrike: 1.2, tripleStrike: 2, barrier: 0.5, superCombo: 0.3, indestructible: 0.8 } as any)[kw] ?? 0;
-  valueCache.set(key, v);
+  byCard.set(card.id, v);
   return v;
 }
 
 export function clearValueCache() {
-  valueCache.clear();
+  valueByLeader.clear();
 }
 
 /** Value of an in-play card right now. */

@@ -645,12 +645,17 @@ function leaderTraits(s: GameState, owner: Side): string[] {
 }
 
 /** Card names as printed vary in spacing around the colon ("Son Goku : BR" vs "Son Goku: BR") and in slashes ("Shallot//Giblet"). */
-export const normName = (s: string) => s.replace(/\s*:\s*/g, ': ').replace(/\s*\/+\s*/g, '/').replace(/\s+/g, ' ').trim();
+const normMemo = new Map<string, string>();
+export const normName = (s: string) => {
+  let v = normMemo.get(s);
+  if (v === undefined) { v = s.replace(/\s*:\s*/g, ': ').replace(/\s*\/+\s*/g, '/').replace(/\s+/g, ' ').trim().toLowerCase(); normMemo.set(s, v); }
+  return v;
+};
 
 /** Does this card's name (or a name it's also treated as) include `n`? */
 export const nameHas = (card: Card, n: string) => {
-  const k = normName(n).toLowerCase();
-  return normName(card.name).toLowerCase().includes(k) || card.characters.some((ch) => normName(ch).toLowerCase().includes(k));
+  const k = normName(n);
+  return normName(card.name).includes(k) || card.characters.some((ch) => normName(ch).includes(k));
 };
 
 export function nameMatches(card: Card, names: string[]): boolean {
