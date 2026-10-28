@@ -161,7 +161,12 @@ export function PlayTab() {
   async function undo() {
     if (!client || busy) return;
     setBusy(true);
-    try { const v = await client.undo(); setView(v); setBusy(false); } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
+    const wasOver = !!view?.over;
+    try {
+      const v = await client.undo(); setView(v); setBusy(false); setStepWait(false);
+      // Undoing out of a finished game: keep the saved record in step (it notes the ending you undid).
+      if (wasOver) await save(v, flags, notes);
+    } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
   }
   async function addFlag() {
     if (!view || !flagText.trim()) return;
@@ -242,7 +247,7 @@ export function PlayTab() {
           </div>
           <div class="row" style={{ gap: '6px' }}>
             <span class="note" aria-live="polite">{saved === 'saving' ? 'Saving…' : saved === 'saved' ? 'Saved for Claude' : saved === 'failed' ? 'Save failed' : saved === 'offline' ? 'Saving off' : ''}</span>
-            {!view.over && <button class="btn" onClick={undo} disabled={busy || !view.canUndo} title="Take back your last move (and the AI's reply to it)">↶ Undo</button>}
+            <button class="btn" onClick={undo} disabled={busy || !view.canUndo} title={view.over ? 'Go back before the end and play it differently' : "Take back your last move (and the AI's reply to it)"}>↶ Undo</button>
             {!view.over && <button class="btn" onClick={() => save(view, flags, notes)}>Save now</button>}
             <button class="btn" onClick={quit}>{view.over ? 'New game' : 'Quit'}</button>
           </div>

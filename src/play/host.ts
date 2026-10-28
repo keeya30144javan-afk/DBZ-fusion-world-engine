@@ -71,7 +71,7 @@ export interface GameRecord {
   turns: number;
   trace: TraceStep[];
   /** Moves you took back: where, and what they were. */
-  undos?: { atMove: number; label: string }[];
+  undos?: { atMove: number; label: string; undidEnding?: { winner: Side | -1; reason: string; turn: number } }[];
 }
 
 class NeedChoice {
@@ -148,7 +148,7 @@ export class PlayHost {
   private aiTurn: { turn: number; moves: { label: string; lines: string[] }[] } = { turn: -1, moves: [] };
   /** The game before each of your moves, for undo. */
   private history: { real: GameState; trace: number; aiMoves: string[]; aiTurn: { turn: number; moves: { label: string; lines: string[] }[] } }[] = [];
-  private undos: { atMove: number; label: string }[] = [];
+  private undos: NonNullable<GameRecord['undos']> = [];
   readonly first: Side;
   /** Testing: a snapshot after every move. */
   debug?: string[];
@@ -247,7 +247,8 @@ export class PlayHost {
     }
     const h = this.history.pop();
     if (!h) return this.view();
-    this.undos.push({ atMove: h.trace, label: this.trace[h.trace]?.label ?? '' });
+    const ended = this.real.stage === 'over' ? { undidEnding: { winner: this.real.winner, reason: this.real.reason, turn: this.real.turn } } : {};
+    this.undos.push({ atMove: h.trace, label: this.trace[h.trace]?.label ?? '', ...ended });
     this.real = h.real;
     this.trace = this.trace.slice(0, h.trace);
     this.aiMoves = h.aiMoves;
