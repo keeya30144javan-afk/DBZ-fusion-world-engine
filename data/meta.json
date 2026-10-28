@@ -333,7 +333,7 @@
     "ST01-026": 2,
     "ST01-070": 3
    },
-   "share": 0.0731,
+   "share": 0.0365,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -429,6 +429,31 @@
     "FB11-094": 3,
     "FB11-122": 4,
     "FB11-093": 4
+   },
+   "share": 0.0366,
+   "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Vegito (Blue, Bombu 60, Hawk profile)",
+   "leader": "FB05-025",
+   "main": {
+    "FB01-055": 4,
+    "FB05-038": 4,
+    "FB05-041": 4,
+    "FB05-046": 4,
+    "FB05-030": 3,
+    "FB05-040": 2,
+    "FB05-048": 2,
+    "FB07-040": 4,
+    "FB09-032": 2,
+    "FB09-046": 4,
+    "FB10-041": 4,
+    "ST01-020": 4,
+    "ST01-021": 4,
+    "ST01-023": 4,
+    "ST01-024": 4,
+    "ST01-070": 3,
+    "ST01-025": 4
    },
    "share": 0.0366,
    "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
