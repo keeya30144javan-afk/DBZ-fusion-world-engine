@@ -2,6 +2,7 @@ import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { Cond, Effect } from '../effects/types';
 import { Resource, rolesOf } from './synergy';
+import { ValueNet, netLogit } from './valuenet';
 
 const isSuperComboCard = (c: Card) => compileCard(c).keywords.has('superCombo');
 import {
@@ -123,7 +124,7 @@ export function clearValueCache() {
 
 /** Value of an in-play card right now. */
 /** A card's static value for the Leader its owner is playing. */
-const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s.p[s.inst[u].owner].leader));
+export const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s.p[s.inst[u].owner].leader));
 
 const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
 
@@ -309,6 +310,9 @@ export interface EvalWeights {
   perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
   /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
   reach?: number;
+  /** A learned evaluation, blended with the hand-set one by `netBlend` (0..1). */
+  net?: ValueNet;
+  netBlend?: number;
   /** Testing only: reproduce the old cache bug (every game reused the first game's deck needs). */
   legacyNeeds?: boolean;
   /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
@@ -349,6 +353,15 @@ export const DEFAULT_EVAL: EvalWeights = { life: 4.63, hand: 0.795, boardBase: -
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
+  if (W.net && W.netBlend) {
+    const learned = netLogit(W.net, s, me) * W.net.scale;
+    if (W.netBlend >= 1) return learned;
+    return (1 - W.netBlend) * handEvaluate(s, me, W) + W.netBlend * learned;
+  }
+  return handEvaluate(s, me, W);
+}
+
+function handEvaluate(s: GameState, me: Side, W: EvalWeights): number {
   const side = (p: Side) => {
     const pl = s.p[p];
     const lw = W.perLeader?.[s.inst[pl.leader].id];

@@ -15,7 +15,7 @@ const VERDICT_LABEL = { recommend: 'Counter found', inconclusive: 'Promising, no
 
 export function CounterLab() {
   const st = useStore();
-  const [mode, setMode] = useState<'meta' | 'paste'>('meta');
+  const [mode, setMode] = useState<'meta' | 'paste' | 'field'>('meta');
   const [targetId, setTargetId] = useState(() => [...st.meta].filter((d) => !d.name.startsWith('Starter')).sort((x, y) => (y.share ?? 0) - (x.share ?? 0))[0]?.id ?? st.meta[0]?.id ?? '');
   const [paste, setPaste] = useState('');
   const [effort, setEffort] = useState<Effort>('test');
@@ -35,6 +35,10 @@ export function CounterLab() {
   const allLeaders = useMemo(() => Object.values(st.cards).filter((c) => c.type === 'LEADER').sort((a, b) => a.name.localeCompare(b.name)), [st.cards]);
 
   const target: { deck: Decklist | null; errors: string[] } = useMemo(() => {
+    if (mode === 'field') {
+      const top = [...st.meta].filter((d) => !d.name.startsWith('Starter') && !validateDeck(d, st.cards, st.rules).length).sort((x, y) => (y.share ?? 0) - (x.share ?? 0));
+      return top.length ? { deck: top[0], errors: [] } : { deck: null, errors: ['Add real decks on the Meta tab first'] };
+    }
     if (mode === 'meta') {
       const d = st.meta.find((m) => m.id === targetId) ?? st.meta[0];
       return { deck: d ?? null, errors: d ? validateDeck(d, st.cards, st.rules) : ['Add a deck on the Meta tab first'] };
@@ -44,6 +48,10 @@ export function CounterLab() {
     return { deck, errors: [...errors, ...validateDeck(deck, st.cards, st.rules)] };
   }, [mode, targetId, paste, st.meta, st.cards, st.rules]);
 
+  // "Beat the field": the most-played real lists, weighted by how much each is played.
+  const field = useMemo(() => [...st.meta].filter((d) => !d.name.startsWith('Starter') && !validateDeck(d, st.cards, st.rules).length)
+    .sort((x, y) => (y.share ?? 0) - (x.share ?? 0)).slice(0, 8), [st.meta, st.cards, st.rules]);
+
   async function run() {
     if (!target.deck) return;
     setRunning(true); setError(null); setLog([]); cancel.current = false;
@@ -52,7 +60,7 @@ export function CounterLab() {
       const report = await findCounter(
         st.cards,
         {
-          targets: [{ deck: target.deck, weight: 1 }],
+          targets: mode === 'field' ? field.map((d) => ({ deck: d, weight: d.share ?? 1 })) : [{ deck: target.deck, weight: 1 }],
           known: st.meta.filter((m) => !validateDeck(m, st.cards, st.rules).length),
           blind: blind === 'blind',
           leaders: leaderMode === 'pick' ? leaders : undefined,
@@ -67,7 +75,7 @@ export function CounterLab() {
         (p) => { setProgress(p); setLog((l) => (l[l.length - 1] === p.message ? l : [...l.slice(-60), p.message])); },
         () => cancel.current,
       );
-      const rec = { report, target: target.deck.name, targetDeck: target.deck, at: new Date().toLocaleString(), threshold: threshold / 100 };
+      const rec = { report, target: mode === 'field' ? `the field (${field.length} most-played lists)` : target.deck.name, targetDeck: target.deck, at: new Date().toLocaleString(), threshold: threshold / 100 };
       setLast(rec);
       saveLast(rec);
     } catch (e: any) {
@@ -85,8 +93,10 @@ export function CounterLab() {
         <p class="intro">Pick the deck everyone is playing. Shenron builds candidate decks, plays thousands of games against it, then re-tests the best ones on fresh games with the searching AI on both sides. It only recommends a deck that clears your bar with confidence. <strong>Otherwise it says there is no reliable counter.</strong></p>
         <div class="panel raised stack">
           <h2>Target deck</h2>
-          <Seg label="Target source" options={[['meta', 'From meta'], ['paste', 'Paste a list']]} value={mode} onChange={setMode} />
-          {mode === 'meta' ? (
+          <Seg label="Target source" options={[['meta', 'One deck'], ['field', 'The whole field'], ['paste', 'Paste a list']]} value={mode} onChange={setMode} />
+          {mode === 'field' ? (
+            <div class="note">Beat the {field.length} most-played lists at once, weighted by how much each is played: {field.map((d) => d.name).join(', ')}. The result shows the worst matchup too, so a deck can't hide a bad one behind a good average. Takes several times longer than one target.</div>
+          ) : mode === 'meta' ? (
             <label class="field">Deck to beat
               <DeckSelect id="target" value={targetId} onChange={setTargetId} decks={st.meta} cards={st.cards} />
             </label>
@@ -95,7 +105,7 @@ export function CounterLab() {
               <textarea id="paste" value={paste} onInput={(e) => setPaste((e.target as HTMLTextAreaElement).value)} placeholder={'1 FS02-01\n4 FS02-05\n4 FS02-06\n...'} />
             </label>
           )}
-          {target.deck?.leader && st.cards[target.deck.leader] && <div class="note">Target leader: <b>{leaderLabel(st.cards, target.deck.leader)}</b> <ColorTag card={st.cards[target.deck.leader]} /></div>}
+          {mode !== 'field' && target.deck?.leader && st.cards[target.deck.leader] && <div class="note">Target leader: <b>{leaderLabel(st.cards, target.deck.leader)}</b> <ColorTag card={st.cards[target.deck.leader]} /></div>}
           {target.errors.length > 0 && <div class="err">{target.errors.slice(0, 4).map((e) => <div key={e}>{e}</div>)}</div>}
         </div>
 
@@ -218,6 +228,17 @@ function Report({ rec }: { rec: RunRecord }) {
           <div class="row"><button class="btn small" onClick={() => store.focusAudit(unreviewedIds(r))}>Review these {unreviewedIds(r).length} cards</button></div>
         )}
         <div class="note">Target: {rec.target} · {r.gamesPlayed.toLocaleString()} games in {(r.ms / 1000).toFixed(0)}s · {rec.at}</div>
+        {best && best.perTarget.length > 1 && (() => {
+          const rows = [...best.perTarget].sort((a, b) => a.rate - b.rate);
+          return (
+            <div class="stack" style={{ gap: '4px' }}>
+              <div class="note">Worst matchup: <b>{rows[0].name}</b> at {pct(rows[0].rate)} ({pct(rows[0].lo, 0)}-{pct(rows[0].hi, 0)}).</div>
+              <table class="tbl"><thead><tr><th>Against</th><th class="num">Wins</th><th class="num">Likely range</th><th class="num">Games</th></tr></thead>
+                <tbody>{rows.map((t) => <tr key={t.name}><td>{t.name}</td><td class="num">{pct(t.rate)}</td><td class="num">{pct(t.lo, 0)}-{pct(t.hi, 0)}</td><td class="num">{t.games}</td></tr>)}</tbody>
+              </table>
+            </div>
+          );
+        })()}
       </div>
 
       {best && (
