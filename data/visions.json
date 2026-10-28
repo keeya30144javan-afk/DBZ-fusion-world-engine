@@ -26,7 +26,13 @@
     "Don't combo away a card you still need to attack with this turn; count your remaining swings first.",
     "Going to 1 life on purpose is a declaration: it hands you cards but invites an all-in. Only do it if your hand (Super Combos, draw-on-defence Extras) can wall their biggest possible push; tournament games are lost by being 20000 short.",
     "Control when your opponent awakens: if their Leader awakens on a life count, don't hand them the hit that flips it early unless the damage wins you more than their awakening gains.",
-    "Removing an opponent's Evolve base forces them to spend a card replaying one, but it costs you a pressure turn. Do it when it is cheap or when their Evolve turn would be decisive."
+    "Removing an opponent's Evolve base forces them to spend a card replaying one, but it costs you a pressure turn. Do it when it is cheap or when their Evolve turn would be decisive.",
+    "Open decklists: list the techs your opponent could have and avoid lines a single tech ruins (an alternate win can be turned off by a [Barrier] body; a big attacker can be locked by a rest effect).",
+    "Damage that lands before an awaken trigger hits harder: if the opponent loses life when they awaken, the extra damage at the threshold pushes them deep.",
+    "Don't defend a card that will die to its owner's own effect anyway; let it go and keep the cards.",
+    "Swing with the free attacker first (Leader, or a body that needs no combo cards) to see their response, then commit cards.",
+    "When the opponent is low, each extra hit hands them a card for their counterattack: only push it if it sets up the win, or their counterattack can't kill you anyway.",
+    "Use an Extra early when it gets full value now; holding it for a perfect moment that may never come wastes it and adds decision load."
   ],
   "decks": {
     "FS11-01": {
@@ -41,7 +47,9 @@
         "Tournament play: the front Leader takes a life every end of turn, so it awakens on schedule (about turn 3). After that each turn is worth +2 energy, so charge to 4 and then mostly stop charging: cards in hand are worth more.",
         "Bread and butter: a 1-cost Son Goku, then a 20000-30000 [Evolve] card (Son Gohan: Adolescence FS11-09 counts without evolving: it is played, not evolved) untaps 2 energy, then evolve again or swing 30000s and untap with Son Goku FS11-07.",
         "Mirror and aggro matchups: hit for 30000 two or three times by turn 3; at the end, count the opponent's possible defence (hand size, Results of Training draws, Super Combos seen) against your all-in total including Kamehameha (+25000, Double Strike) and Blue Power Awakening.",
-        "Tech: Babidi FB03-083 ([Barrier]) can't be chosen, so it survives Gogeta: BR's -25000 and Leader KO and stops its 1-life alternate win."
+        "Tech: Babidi FB03-083 ([Barrier]) can't be chosen, so it survives Gogeta: BR's -25000 and Leader KO and stops its 1-life alternate win.",
+        "Vs Gogeta: BR: the Leader's own life loss means 3 life is the real floor; play Babidi FB03-083 mid-to-late, once they have committed to the FB09-121 plan, not on turn 2. Gotenks FS11-03 locks a rested Gogeta so it can't attack next turn.",
+        "Results of Training draws only if a rested cost 3+ Battle Card is in play; charging it cost a tournament game (the +15000 and draw would have survived). Keep combo Extras for the final defence unless energy is truly short."
       ]
     },
     "FB03-001": {
@@ -104,7 +112,9 @@
         "Gogeta: BR forms: FB09-006 (0 energy: draw, all enemies -5000), FP-070 (0: -15000 on attack), FB09-007 (1: untaps once on attack), FB09-121 (2: all enemies -25000; at end of turn, if the opponent is at 1 life with no Battle Cards, you win).",
         "Leader (awakens at 5 life): once per turn after a Fusion Evolve this turn, KO any number of enemy Battle Cards totalling 15000 power or less; after -25000 that's usually the whole board.",
         "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop.",
-        "Win route (tournament play): pressure to 2 life, then on the last turn go to 1 life yourself if needed for cards, Fusion Evolve into FB09-121, wipe the board with -25000 plus the Leader KO, deal one damage, and win at end of turn. Against Gogeta: BR, sitting at 1 life is a death sentence; keep the board clear of Goku/Vegeta: BR bases so they must rebuild instead of fusing."
+        "Win route (tournament play): pressure to 2 life, then on the last turn go to 1 life yourself if needed for cards, Fusion Evolve into FB09-121, wipe the board with -25000 plus the Leader KO, deal one damage, and win at end of turn. Against Gogeta: BR, sitting at 1 life is a death sentence; keep the board clear of Goku/Vegeta: BR bases so they must rebuild instead of fusing.",
+        "Vs SS3 Goku (awakens at 4 and takes a life when it does): Sphere of Destruction FB03-026 at exactly 4 life deals 1 damage, so they awaken down at 2, inside the alternate-win range.",
+        "Cheelai: BR FB09-012 plus two 2-cost Goku/Vegeta bases enables an early Fusion Evolve; Vegeta: BR's Activate KOs itself plus an enemy, so a Super Combo spent protecting it is wasted."
       ]
     },
     "FB09-097": {
