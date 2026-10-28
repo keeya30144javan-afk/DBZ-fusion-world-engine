@@ -57,7 +57,8 @@ export interface PlayView {
 export interface TraceStep { by: Side; a: Action; picks: number[][]; label: string; turn: number }
 
 export interface GameRecord {
-  version: 1;
+  /** 2: decks are built in sorted card order (1: in the order the lists were written). */
+  version: 1 | 2;
   you: Decklist;
   ai: Decklist;
   level: PlayLevel;
@@ -316,7 +317,7 @@ export class PlayHost {
 
   record(): GameRecord {
     const s = this.real;
-    return { version: 1, you: this.o.you, ai: this.o.ai, level: this.o.level, seed: this.o.seed, first: this.first, winner: s.winner, reason: s.reason, turns: s.turn, trace: this.trace, ...(this.undos.length ? { undos: this.undos } : {}) };
+    return { version: 2, you: this.o.you, ai: this.o.ai, level: this.o.level, seed: this.o.seed, first: this.first, winner: s.winner, reason: s.reason, turns: s.turn, trace: this.trace, ...(this.undos.length ? { undos: this.undos } : {}) };
   }
 }
 

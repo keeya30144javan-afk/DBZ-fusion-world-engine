@@ -82,7 +82,9 @@ export function validateDeck(deck: Decklist, cards: Record<string, Card>, rules:
 
 export function expandDeck(deck: Decklist): string[] {
   const out: string[] = [];
-  for (const [id, n] of Object.entries(deck.main)) for (let i = 0; i < n; i++) out.push(id);
+  // Sorted, so a deck's order (and so every seeded game) doesn't depend on how its card map was
+  // stored: a database can hand the same list back with its keys reordered.
+  for (const [id, n] of Object.entries(deck.main).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) for (let i = 0; i < n; i++) out.push(id);
   return out;
 }
 
