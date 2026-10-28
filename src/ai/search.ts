@@ -2,7 +2,7 @@ import { GameState, Side } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { FastPolicy, Policy, defaultChooser, keepValue, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, Policy, defaultChooser, keepValue, winProb } from './heuristics';
 import { PlanOpts, PlannedLine, planTurn } from './planner';
 
 export interface SearchOpts {
@@ -14,6 +14,8 @@ export interface SearchOpts {
   c: number;
   /** Plan whole turns (lines of play) for main-phase decisions instead of judging one action at a time. */
   plan?: PlanOpts;
+  /** Evaluation weights for judging positions (defaults otherwise). */
+  eval?: EvalWeights;
 }
 
 /**
@@ -62,7 +64,7 @@ export class SearchPolicy implements Policy {
     const cands = this.prune(s, actions);
     if (cands.length === 1) return cands[0];
     if (this.opts.plan && s.stage === 'main' && s.active === me) {
-      const lines = planTurn(s, me, this.opts.plan);
+      const lines = planTurn(s, me, this.opts.eval ? { ...this.opts.plan, eval: this.opts.eval } : this.opts.plan);
       const first = lines[0]?.actions[0];
       const legal = first && cands.find((a) => JSON.stringify(a) === JSON.stringify(first));
       if (legal) {
@@ -93,7 +95,7 @@ export class SearchPolicy implements Policy {
       step(w, cands[pick], ctl);
       rollout(w, this.roll, s.turn + this.opts.horizon);
       visits[pick]++;
-      total[pick] += winProb(w, me);
+      total[pick] += winProb(w, me, this.opts.eval);
       // Stop early once one option is clearly ahead: every option has been tried a few
       // times and the leader beats the runner-up by a wide margin on both mean and visits.
       if (it >= n * 6 && it % 8 === 7) {

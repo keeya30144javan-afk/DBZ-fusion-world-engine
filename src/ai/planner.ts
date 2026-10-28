@@ -2,7 +2,7 @@ import { GameState, Side, cloneState } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { FastPolicy, defaultChooser, evaluate, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, defaultChooser, evaluate, winProb } from './heuristics';
 
 /**
  * Turn planning: search whole lines of play for the current turn ("play Bulma,
@@ -28,6 +28,8 @@ export interface PlanOpts {
   worlds: number;
   /** Also play on through our own next turn before judging (sees set-ups that pay off later). */
   deep?: boolean;
+  /** Evaluation weights (defaults otherwise). */
+  eval?: EvalWeights;
 }
 
 export const PLAN_DEFAULT: PlanOpts = { beam: 6, depth: 14, finalists: 6, worlds: 4 };
@@ -86,7 +88,7 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
   const pol = new FastPolicy(0.05);
   const root = determinize(s, me);
   advance(root, me, pol, turn);
-  let frontier: Node[] = [{ w: root, line: [], h: evaluate(root, me) }];
+  let frontier: Node[] = [{ w: root, line: [], h: evaluate(root, me, opts.eval) }];
   const done: Node[] = [];
   const doneKeys = new Set<string>();
   const finish = (n: Node) => {
@@ -107,7 +109,7 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
         step(w, a, ctl);
         advance(w, me, pol, turn);
         const line = [...node.line, a];
-        const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me);
+        const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, opts.eval);
         const child = { w, line, h };
         if (a.k === 'end' || w.stage === 'over' || w.turn !== turn) { finish(child); continue; }
         // Different orders that reach the same position are one node.
@@ -139,7 +141,7 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
         advance(w, me, pol, turn);
       }
       reply(w, me, pol, turn, opts.deep);
-      total += winProb(w, me);
+      total += winProb(w, me, opts.eval);
     }
     return { actions: n.line, value: total / opts.worlds };
   });

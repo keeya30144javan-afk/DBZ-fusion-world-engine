@@ -5,7 +5,7 @@ import { Resource, rolesOf } from './synergy';
 
 const isSuperComboCard = (c: Card) => compileCard(c).keywords.has('superCombo');
 import {
-  GameState, Side, abilitiesOf, activeEnergy, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
+  GameState, Side, abilitiesOf, activeEnergy, matchesFilter, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, playCostPlan } from '../engine/game';
@@ -136,7 +136,6 @@ export function keepValue(s: GameState, u: number): number {
 
 // ------------------------------------------------------------------ state evaluation
 
-const lifeWorth = (l: number) => (l <= 0 ? -6 : 2.2 * Math.log(1 + l));
 
 /**
  * What a side's deck consumes (Ki, Drop size, markers, rested enemy cards...), from the
@@ -167,7 +166,7 @@ export function awakenLife(s: GameState, side: Side): number | null {
 
 /** How much an awakened Leader is worth: the flip itself plus what its back side does. */
 const awakeMemo = new Map<string, number>();
-function awakenedWorth(card: Card): number {
+export function awakenedWorth(card: Card): number {
   const hit = awakeMemo.get(card.id);
   if (hit !== undefined) return hit;
   const back = compileCard(card).backAbilities ?? [];
@@ -176,35 +175,70 @@ function awakenedWorth(card: Card): number {
   return v;
 }
 
+/** Weights of the position evaluation, so they can be tuned by self-play. */
+export interface EvalWeights {
+  /** Scale of life's value (log-shaped: the last few life matter most). */
+  life: number;
+  /** Each card in hand. */
+  hand: number;
+  /** Each Battle Card in play, plus its power and value. */
+  boardBase: number;
+  board: number;
+  /** Each energy, up to 8. */
+  energy: number;
+  /** Deck-specific resources (Ki, Drop, markers, rested enemies). */
+  resources: number;
+}
+export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1 };
+
 /** Positive is good for `me`. Roughly in "cards" units. */
-export function evaluate(s: GameState, me: Side): number {
+export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
   const side = (p: Side) => {
     const pl = s.p[p];
-    let v = lifeWorth(pl.life.length);
-    v += pl.hand.length * 0.45;
-    for (const u of pl.battle) v += 0.4 + boardValue(s, u) * 0.6;
-    v += Math.min(pl.energy.length, 8) * 0.35;
+    let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
+    v += pl.hand.length * W.hand;
+    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board;
+    v += Math.min(pl.energy.length, 8) * W.energy;
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
     // Resources this deck's engine runs on.
     const need = deckNeeds(s)[p];
-    if (need.ki) v += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
-    if (need.drop) v += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
-    if (need.marker) v += need.marker * 0.5 * Math.min(pl.markers, 2);
-    if (need.restEnemy) v += need.restEnemy * 0.3 * s.p[other(p)].battle.filter((u) => s.inst[u].rested).length;
-    return v;
+    let r = 0;
+    if (need.ki) r += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
+    if (need.drop) r += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
+    if (need.marker) r += need.marker * 0.5 * Math.min(pl.markers, 2);
+    if (need.restEnemy) r += need.restEnemy * 0.3 * s.p[other(p)].battle.filter((u) => s.inst[u].rested).length;
+    return v + r * W.resources;
   };
   return side(me) - side(other(me));
 }
 
 /** Squash an evaluation into a win probability for `me`. */
-export const winProb = (s: GameState, me: Side) => (s.stage === 'over' ? (s.winner === -1 ? 0.5 : s.winner === me ? 1 : 0) : 1 / (1 + Math.exp(-evaluate(s, me) / 3)));
+export const winProb = (s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL) => (s.stage === 'over' ? (s.winner === -1 ? 0.5 : s.winner === me ? 1 : 0) : 1 / (1 + Math.exp(-evaluate(s, me, W) / 3)));
 
 // ------------------------------------------------------------------ chooser
 
 export class HeuristicChooser implements Chooser {
+  /** Smarter picks when searching or recovering cards: what you can play next turn, Evolves with a base in play, combo cover. */
+  constructor(public smartPick = true) {}
+
+  /** How much a card is worth adding to hand right now, for its owner. */
+  private gainValue(s: GameState, me: Side, u: number): number {
+    const card = cardOf(s, u);
+    let v = valueIn(s, u) + card.power / 20000;
+    if (!this.smartPick) return v;
+    const pl = s.p[me];
+    const energy = pl.energy.length + pl.markers;
+    if (card.cost <= energy + 1) v += 0.6; // playable next turn
+    const ev = compileCard(card).evolve;
+    if (ev && pl.battle.some((b) => ev.from.some((f) => matchesFilter(s, b, f, u)) || (ev.orFrom ?? []).some((f) => matchesFilter(s, b, f, u)))) v += 1.2;
+    const cover = pl.hand.reduce((t, h) => t + comboPowerOf(s, h), 0);
+    if (cover < 30000) v += card.comboPower / 10000 * 0.5;
+    return v;
+  }
+
   choose(s: GameState, req: ChoiceReq): number[] {
     const me = req.player;
     const opts = req.options.slice();
@@ -219,7 +253,7 @@ export class HeuristicChooser implements Chooser {
         return opts.sort((a, b) => key(a) - key(b)).slice(0, req.max);
       }
       case 'pick': {
-        const key = (u: number) => (req.intent === 'lose' ? -keepValue(s, u) : valueIn(s, u) + cardOf(s, u).power / 20000);
+        const key = (u: number) => (req.intent === 'lose' ? -keepValue(s, u) : this.gainValue(s, me, u));
         return opts.sort((a, b) => key(b) - key(a)).slice(0, req.max);
       }
       case 'target': return this.targets(s, req);
@@ -283,7 +317,7 @@ export class FastPolicy implements Policy {
    * (don't push the opponent into awaken range) lost badly as a blanket rule (38%), as the
    * video itself says it depends on the matchup. Only awakenHit is on by default.
    */
-  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true };
+  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true, smartMulligan: false, smartBlock: false, holdRemoval: false, delayStrongAwaken: false };
   constructor(public noise = 0.1) {
     const env = (globalThis as any).process?.env;
     if (env?.HABITS_OFF) for (const k of String(env.HABITS_OFF).split(',')) (this.habits as any)[k] = false;
@@ -307,6 +341,15 @@ export class FastPolicy implements Policy {
   private mulligan(s: GameState): Action {
     const me = s.p[s.toAct];
     const early = me.hand.filter((u) => { const c = cardOf(s, u); return c.type === 'BATTLE' && c.cost <= 2; }).length;
+    if (this.habits.smartMulligan) {
+      // Keep hands that start the engine: two cheap plays, or one cheap searcher/cantrip plus
+      // another cheap play. Throw back hands stuck with three or more 5+ cost non-combo cards.
+      const cards = me.hand.map((u) => cardOf(s, u));
+      const starter = cards.some((c) => c.type === 'BATTLE' && c.cost <= 2 && compileCard(c).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.some((e) => e.t === 'search' || e.t === 'draw' || e.t === 'dropToHand')));
+      const heavy = cards.filter((c) => c.cost >= 5 && !isSuperComboCard(c)).length;
+      if (heavy >= 3) return { k: 'mulligan' };
+      return early >= 2 || (starter && early >= 1 && cards.some((c) => c.cost <= 2 && c.type === 'EXTRA')) ? { k: 'keep' } : { k: 'mulligan' };
+    }
     return early >= 2 ? { k: 'keep' } : { k: 'mulligan' };
   }
 
@@ -361,7 +404,13 @@ export class FastPolicy implements Policy {
       e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce' || e.t === 'toDrop' || e.t === 'toEnergy' || e.t === 'rest' || (e.t === 'power' && e.amount < 0)));
     if (plays.length) {
       const score = (u: number) => valueIn(s, u) + costInHand(s, u) * 0.6 + rand(s) * this.noise * 2;
-      const now = attacksLeft && !s.rules.attackOnPlayTurn ? plays.filter((p) => removal(p.uid)) : plays;
+      let now = attacksLeft && !s.rules.attackOnPlayTurn ? plays.filter((p) => removal(p.uid)) : plays;
+      // Hold removal that has nothing to hit: its value comes later, against a real target.
+      if (this.habits.holdRemoval) {
+        const pointless = (u: number) => s.p[opp].battle.length === 0 && compileCard(cardOf(s, u)).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.length > 0 && ab.effects.every((e) => ['ko', 'bottom', 'bounce', 'toDrop', 'rest', 'lockActive', 'power'].includes(e.t) && (!('target' in e) || (e as any).target?.side !== 'self')));
+        const kept = now.filter((p) => !pointless(p.uid));
+        if (kept.length) now = kept; else if (now.length) now = [];
+      }
       now.sort((a, b) => score(b.uid) - score(a.uid));
       const best = now[0];
       // Keep at least one combo card in hand when life is low.
@@ -388,6 +437,8 @@ export class FastPolicy implements Policy {
         if (!face) continue;
         // Don't knock the opponent into their awaken range unless the game is close to over.
         if (this.habits.delayAwaken && this.awakensThem(s, att)) continue;
+        // Matchup-aware version: only hold back when their awakened side is clearly the bigger threat.
+        if (this.habits.delayStrongAwaken && this.awakensThem(s, att) && awakenedWorth(cardOf(s, s.p[opp].leader)) >= 1.8) continue;
         const lp = powerOf(s, face.target);
         if (isLeader(s, att) || ap >= lp || rand(s) < this.noise) return face;
       }
@@ -423,10 +474,17 @@ export class FastPolicy implements Policy {
     const strike = hasKeyword(s, b.attacker, 'doubleStrike') || hasKeyword(s, b.attacker, 'tripleStrike');
     const blocks = actions.filter((a) => a.k === 'block') as { k: 'block'; uid: number }[];
     if (!blocks.length) return { k: 'noBlock' };
-    if (me.life.length <= 2 || (strike && me.life.length <= 5) || rand(s) < 0.15) {
-      blocks.sort((a, b2) => boardValue(s, a.uid) - boardValue(s, b2.uid));
-      return blocks[0];
+    blocks.sort((a, b2) => boardValue(s, a.uid) - boardValue(s, b2.uid));
+    if (this.habits.smartBlock) {
+      // Block when the hit is dangerous, or when a cheap blocker survives the fight for free.
+      const crit = hasKeyword(s, b.attacker, 'critical');
+      const ap = powerOf(s, b.attacker);
+      const survives = blocks.find((x) => powerOf(s, x.uid) >= ap && boardValue(s, x.uid) < 3);
+      if (me.life.length <= 3 || ((strike || crit) && me.life.length <= 5)) return blocks[0];
+      if (survives) return survives;
+      return { k: 'noBlock' };
     }
+    if (me.life.length <= 2 || (strike && me.life.length <= 5) || rand(s) < 0.15) return blocks[0];
     return { k: 'noBlock' };
   }
 
