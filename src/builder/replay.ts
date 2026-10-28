@@ -1,6 +1,6 @@
 import { Card, Decklist } from '../data/types';
 import { RulesConfig } from '../data/rules';
-import { GameState, Side, cardOf, isLeader, nameOf, powerOf } from '../engine/core';
+import { GameState, Side, cardOf, hasKeyword, isLeader, nameOf, powerOf } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, legalActions, newGame, step } from '../engine/game';
 import { FastPolicy, Policy, defaultChooser } from '../ai/heuristics';
@@ -20,7 +20,14 @@ export interface CardSnap {
   ki?: number;
   /** Cards stacked under it (Evolve, Potara…). */
   under?: number;
+  /** What's in effect on it right now ("can't attack this turn", "Double Strike"...). */
+  tags?: string[];
 }
+
+const TAG: [Parameters<typeof hasKeyword>[2], string][] = [
+  ['cantAttack', "can't attack"], ['cantAttackLeader', "can't attack the Leader"], ['cantBlock', "can't block"], ['blocker', 'Blocker'],
+  ['doubleStrike', 'Double Strike'], ['tripleStrike', 'Triple Strike'], ['critical', 'Critical'], ['barrier', 'Barrier'], ['removeImmune', "can't be removed"],
+];
 
 export interface SideSnap {
   leader: CardSnap;
@@ -85,7 +92,13 @@ export interface Replay {
 
 const cardSnap = (s: GameState, u: number): CardSnap => {
   const i = s.inst[u];
-  return { id: i.id, name: nameOf(s, u), power: powerOf(s, u), rested: i.rested, ...(i.ki ? { ki: i.ki } : {}), ...(i.under?.length ? { under: i.under.length } : {}) };
+  const tags: string[] = [];
+  if (!isLeader(s, u)) {
+    for (const [kw, label] of TAG) if (hasKeyword(s, u, kw)) tags.push(label);
+    if (i.lockedUntil > s.turn) tags.push("stays rested next turn");
+    if (i.playedTurn === s.turn) tags.push('played this turn');
+  }
+  return { id: i.id, name: nameOf(s, u), power: powerOf(s, u), rested: i.rested, ...(i.ki ? { ki: i.ki } : {}), ...(i.under?.length ? { under: i.under.length } : {}), ...(tags.length ? { tags } : {}) };
 };
 
 export function snapshot(s: GameState): Snap {

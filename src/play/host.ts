@@ -306,7 +306,12 @@ export class PlayHost {
       decision = { kind: 'choice', prompt: q.prompt, detail: q.detail, min: q.req.min, max: q.req.max, options: q.options, srcId: s.inst[q.req.src]?.id };
     } else if (s.stage !== 'over' && s.toAct === 0) {
       const legal = legalActions(s);
-      const label = (a: Action) => a.k === 'combo' ? `${describeAction(s, a)}${s.p[0].hand.includes(a.uid) ? ' from your hand' : ' from your Battle Area (it leaves the board)'} (+${(cardOf(s, a.uid).comboPower / 1000) | 0}k)` : describeAction(s, a);
+      // Name copies apart: power, and "your Leader" (a Leader can share a Battle Card's name).
+      const who = (u: number) => `${isLeader(s, u) ? 'your Leader ' : ''}${nameOf(s, u)} (${(powerOf(s, u) / 1000) | 0}k)`;
+      const tgt = (u: number) => isLeader(s, u) ? "the AI's Leader" : `${nameOf(s, u)} (${(powerOf(s, u) / 1000) | 0}k)`;
+      const label = (a: Action) => a.k === 'attack' ? `attacks ${tgt(a.target)} with ${who(a.uid)}`
+        : a.k === 'block' ? `blocks with ${who(a.uid)}`
+        : a.k === 'combo' ? `${describeAction(s, a)}${s.p[0].hand.includes(a.uid) ? ' from your hand' : ' from your Battle Area (it leaves the board)'} (+${(cardOf(s, a.uid).comboPower / 1000) | 0}k)` : describeAction(s, a);
       decision = { kind: 'action', options: legal.map((a, i) => ({ i, label: label(a), group: GROUP[a.k] ?? 'Other', detail: actionDetail(s, a) })) };
       if (s.battle && (s.stage === 'offCombo' || s.stage === 'defCombo' || s.stage === 'counter' || s.stage === 'block')) {
         const { atk, def } = battleTotals(s);

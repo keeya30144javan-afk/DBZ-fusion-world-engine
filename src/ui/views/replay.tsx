@@ -181,6 +181,7 @@ function Slot({ c, leader, awakened, hot, onPick }: { c: CardSnap; leader?: bool
       <span class="vname">{c.name}</span>
       <span class="vpow">{fmtPower(c.power)}</span>
       <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.ki ? ` · Ki ${c.ki}` : ''}{c.under ? ` · ${c.under} under` : ''}{c.rested ? ' · rested' : ''}</span>
+      {c.tags && c.tags.length > 0 && <span class="vmeta" style={{ fontWeight: 600 }}>{c.tags.join(' · ')}</span>}
     </button>
   );
 }
