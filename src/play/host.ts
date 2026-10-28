@@ -2,7 +2,7 @@ import { Card, Decklist } from '../data/types';
 import { RulesConfig } from '../data/rules';
 import { GameState, Side, cardOf, cloneState, isLeader, nameOf, other } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
-import { Action, legalActions, newGame, step } from '../engine/game';
+import { Action, battleTotals, legalActions, newGame, step } from '../engine/game';
 import { compileCard } from '../effects/parse';
 import { describeAbility, describeEffect } from '../effects/describe';
 import { Policy, defaultChooser } from '../ai/heuristics';
@@ -35,7 +35,7 @@ export interface ActionOption { i: number; label: string; group: string; detail?
 export interface ChoiceOption { v: number; label: string; id?: string; where?: string }
 
 export type Decision =
-  | { kind: 'action'; options: ActionOption[] }
+  | { kind: 'action'; options: ActionOption[]; battle?: { atk: number; def: number; youAttack: boolean } }
   | { kind: 'choice'; prompt: string; detail: string; min: number; max: number; options: ChoiceOption[]; srcId?: string };
 
 export interface PlayView {
@@ -49,6 +49,8 @@ export interface PlayView {
   over: { winner: Side | -1; reason: string } | null;
   /** The AI's last few moves in words. */
   aiMoves: string[];
+  /** Your last move can be taken back. */
+  canUndo: boolean;
 }
 
 /** Every move and every choice made inside it, in order: enough to replay the game exactly. */
@@ -65,6 +67,8 @@ export interface GameRecord {
   reason: string;
   turns: number;
   trace: TraceStep[];
+  /** Moves you took back: where, and what they were. */
+  undos?: { atMove: number; label: string }[];
 }
 
 class NeedChoice {
@@ -138,6 +142,9 @@ export class PlayHost {
   private pending: { a: Action; by: Side } | null = null;
   private question: NeedChoice | null = null;
   private aiMoves: string[] = [];
+  /** The game before each of your moves, for undo. */
+  private history: { real: GameState; trace: number; aiMoves: string[] }[] = [];
+  private undos: { atMove: number; label: string }[] = [];
   readonly first: Side;
   /** Testing: a snapshot after every move. */
   debug?: string[];
@@ -209,7 +216,30 @@ export class PlayHost {
     if (this.question || this.real.toAct !== 0) return this.view();
     const legal = legalActions(this.real);
     const a = legal[i];
-    if (a) this.tryStep(a, 0);
+    if (a) {
+      this.history.push({ real: this.fresh(), trace: this.trace.length, aiMoves: this.aiMoves.slice() });
+      if (this.history.length > 60) this.history.shift();
+      this.tryStep(a, 0);
+    }
+    return this.view();
+  }
+
+  /** Take back your last move (and whatever the AI did after it), or cancel a move waiting on a choice. */
+  undo(): PlayView {
+    if (this.question && this.pending?.by === 0) {
+      this.undos.push({ atMove: this.trace.length, label: `cancelled: ${describeAction(this.real, this.pending.a)}` });
+      this.question = null; this.pending = null; this.answers = [];
+      // The move never happened, so the board is as it was; drop the history entry it pushed.
+      this.history.pop();
+      return this.view();
+    }
+    const h = this.history.pop();
+    if (!h) return this.view();
+    this.undos.push({ atMove: h.trace, label: this.trace[h.trace]?.label ?? '' });
+    this.real = h.real;
+    this.trace = this.trace.slice(0, h.trace);
+    this.aiMoves = h.aiMoves;
+    this.question = null; this.pending = null; this.answers = [];
     return this.view();
   }
 
@@ -235,7 +265,12 @@ export class PlayHost {
       decision = { kind: 'choice', prompt: q.prompt, detail: q.detail, min: q.req.min, max: q.req.max, options: q.options, srcId: s.inst[q.req.src]?.id };
     } else if (s.stage !== 'over' && s.toAct === 0) {
       const legal = legalActions(s);
-      decision = { kind: 'action', options: legal.map((a, i) => ({ i, label: describeAction(s, a), group: GROUP[a.k] ?? 'Other', detail: actionDetail(s, a) })) };
+      const label = (a: Action) => a.k === 'combo' ? `${describeAction(s, a)}${s.p[0].hand.includes(a.uid) ? ' from your hand' : ' from your Battle Area (it leaves the board)'} (+${(cardOf(s, a.uid).comboPower / 1000) | 0}k)` : describeAction(s, a);
+      decision = { kind: 'action', options: legal.map((a, i) => ({ i, label: label(a), group: GROUP[a.k] ?? 'Other', detail: actionDetail(s, a) })) };
+      if (s.battle && (s.stage === 'offCombo' || s.stage === 'defCombo' || s.stage === 'counter' || s.stage === 'block')) {
+        const { atk, def } = battleTotals(s);
+        decision.battle = { atk, def, youAttack: s.battle.atkSide === 0 };
+      }
     }
     const aiHand = snap.p[1].hand.length;
     snap = { ...snap, p: [snap.p[0], { ...snap.p[1], hand: [] }] };
@@ -248,12 +283,13 @@ export class PlayHost {
       decision,
       over: s.stage === 'over' ? { winner: s.winner, reason: s.reason } : null,
       aiMoves: this.aiMoves,
+      canUndo: (!!this.question && this.pending?.by === 0) || this.history.length > 0,
     };
   }
 
   record(): GameRecord {
     const s = this.real;
-    return { version: 1, you: this.o.you, ai: this.o.ai, level: this.o.level, seed: this.o.seed, first: this.first, winner: s.winner, reason: s.reason, turns: s.turn, trace: this.trace };
+    return { version: 1, you: this.o.you, ai: this.o.ai, level: this.o.level, seed: this.o.seed, first: this.first, winner: s.winner, reason: s.reason, turns: s.turn, trace: this.trace, ...(this.undos.length ? { undos: this.undos } : {}) };
   }
 }
 

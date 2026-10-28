@@ -33,6 +33,7 @@ self.onmessage = (ev: MessageEvent) => {
       else if (msg.type === 'playAct') out = play.act(msg.i);
       else if (msg.type === 'playAnswer') out = play.answer(msg.picks);
       else if (msg.type === 'playAI') out = play.aiStep();
+      else if (msg.type === 'playUndo') out = play.undo();
       else if (msg.type === 'playRecord') out = play.record();
       else out = play.view();
       (self as any).postMessage({ type: 'play', id: msg.id, out });

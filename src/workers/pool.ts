@@ -169,6 +169,7 @@ export class PlayClient {
   act(i: number): Promise<PlayView> { return this.send({ type: 'playAct', i }, (h) => h.act(i)); }
   answer(picks: number[]): Promise<PlayView> { return this.send({ type: 'playAnswer', picks }, (h) => h.answer(picks)); }
   aiStep(): Promise<PlayView> { return this.send({ type: 'playAI' }, (h) => h.aiStep()); }
+  undo(): Promise<PlayView> { return this.send({ type: 'playUndo' }, (h) => h.undo()); }
   record(): Promise<GameRecord> { return this.send({ type: 'playRecord' }, (h) => h.record()); }
   close() { this.w?.terminate(); this.w = null; for (const p of this.waiting.values()) p.reject(new Error('closed')); this.waiting.clear(); }
 }

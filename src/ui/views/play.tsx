@@ -61,7 +61,7 @@ export function PlayTab() {
     try {
       const r = await c.record();
       const id = await store.savePlayGame(docId.current, {
-        version: r.version, you: names[0] || r.you.name, ai: names[1] || r.ai.name, youDeck: r.you, aiDeck: r.ai, level: r.level, seed: r.seed, first: r.first,
+        version: r.version, ...(r.undos ? { undos: r.undos } : {}), you: names[0] || r.you.name, ai: names[1] || r.ai.name, youDeck: r.you, aiDeck: r.ai, level: r.level, seed: r.seed, first: r.first,
         winner: r.winner, reason: r.reason, turns: r.turns, finished: !!v?.over, flags: fl, notes: nt, trace: JSON.stringify(r.trace),
       });
       docId.current = id;
@@ -116,6 +116,11 @@ export function PlayTab() {
     if (!client || busy) return;
     setBusy(true);
     try { await settle(await client.answer(picks)); } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
+  }
+  async function undo() {
+    if (!client || busy) return;
+    setBusy(true);
+    try { const v = await client.undo(); setView(v); setBusy(false); } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
   }
   async function addFlag() {
     if (!view || !flagText.trim()) return;
@@ -187,6 +192,7 @@ export function PlayTab() {
           </div>
           <div class="row" style={{ gap: '6px' }}>
             <span class="note" aria-live="polite">{saved === 'saving' ? 'Saving…' : saved === 'saved' ? 'Saved for Claude' : saved === 'failed' ? 'Save failed' : saved === 'offline' ? 'Saving off' : ''}</span>
+            {!view.over && <button class="btn" onClick={undo} disabled={busy || !view.canUndo} title="Take back your last move (and the AI's reply to it)">↶ Undo</button>}
             {!view.over && <button class="btn" onClick={() => save(view, flags, notes)}>Save now</button>}
             <button class="btn" onClick={quit}>{view.over ? 'New game' : 'Quit'}</button>
           </div>
@@ -236,6 +242,7 @@ function DecisionPanel({ d, onAct, onAnswer, nm, onPick, stage }: { d: Decision;
     return (
       <div class="stack" style={{ gap: '8px' }}>
         <div class="eyebrow">Your move · {STAGE[stage] ?? stage}</div>
+        {d.battle && <BattleMath b={d.battle} />}
         {[...groups].map(([g, os]) => (
           <div key={g} class="stack" style={{ gap: '4px' }}>
             <span class="note">{g}</span>
@@ -300,6 +307,21 @@ function CardPanel({ card, reading }: { card: Card; reading?: { status?: string 
           <div class="row"><button class="btn primary" onClick={report} disabled={!note.trim()}>Send report</button><button class="btn" onClick={() => setOpen(false)}>Cancel</button></div>
         </div>
       )}
+    </div>
+  );
+}
+
+/** "You attack 25k into 20k: you win the battle (ties go to the attacker)". */
+function BattleMath({ b }: { b: { atk: number; def: number; youAttack: boolean } }) {
+  const atkWins = b.atk >= b.def;
+  const you = b.youAttack ? 'Your attack' : 'Their attack';
+  const youWin = b.youAttack ? atkWins : !atkWins;
+  // Combo power comes in 5000 steps.
+  const need = Math.ceil((b.youAttack ? b.def - b.atk : b.atk - b.def + 1) / 5000) * 5000;
+  return (
+    <div class={`note ${youWin ? '' : 'warn'}`} style={{ padding: '6px 8px', border: '1px solid var(--line, #ccd)', borderRadius: '6px' }}>
+      {you}: <b>{fmtPower(b.atk)}</b> vs defence <b>{fmtPower(b.def)}</b>.{' '}
+      {youWin ? <b>You win this battle as it stands{b.youAttack ? ' (ties go to the attacker)' : ''}: no combo needed.</b> : <b>You need {fmtPower(need)} more to win this battle{b.youAttack ? '' : ' (ties go to the attacker)'}.</b>}
     </div>
   );
 }
