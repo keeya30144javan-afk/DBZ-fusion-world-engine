@@ -194,6 +194,12 @@ export interface EvalWeights {
   awaken: number;
   /** Extra worth of each card in hand when its owner is at 3 life or less (it's their defence). */
   handLow?: number;
+  /**
+   * Risk of leaving your own Battle Cards rested on the opponent's turn (they can be attacked
+   * and KO'd): this share of each rested card's board worth is discounted. Only counted at the
+   * end of your own turn, when nothing will untap them before the opponent attacks.
+   */
+  restedRisk?: number;
 }
 export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1, awaken: 1 };
 
@@ -204,7 +210,8 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     const pl = s.p[p];
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
-    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board;
+    const exposed = W.restedRisk && s.active === p && s.stage !== 'over';
+    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1);
     v += Math.min(pl.energy.length, 8) * W.energy;
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
