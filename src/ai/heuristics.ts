@@ -201,7 +201,13 @@ export interface EvalWeights {
    */
   restedRisk?: number;
 }
-export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1, awaken: 1 };
+/**
+ * Tuned by self-play (Oct 2026): weights fitted to 90k positions' outcomes, then blended
+ * 42% of the way from the original hand-set ones (2.2, 0.45, 0.4, 0.6, 0.35, 1, 1). Blends
+ * from 25% to 50% all beat the originals ~59% over 400-800 strong-AI games each; 65% fell to
+ * 53% and the full fit lost (43%): it predicts winners well but overvalues life when choosing.
+ */
+export const DEFAULT_EVAL: EvalWeights = { life: 4.325, hand: 0.326, boardBase: -0.002, board: 0.556, energy: 0.571, resources: 0.362, awaken: 0.631 };
 
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
