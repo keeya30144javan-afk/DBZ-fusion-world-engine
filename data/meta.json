@@ -116,7 +116,7 @@
     "FB06-013": 3,
     "FS06-07": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -141,7 +141,7 @@
     "FS02-13": 2,
     "FS02-15": 2
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -169,7 +169,7 @@
     "SB01-031": 4,
     "ST01-052": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -190,7 +190,7 @@
     "ST01-051": 4,
     "ST01-052": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -214,7 +214,7 @@
     "ST01-016": 4,
     "ST01-017": 1
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -237,7 +237,7 @@
     "FB10-017": 2,
     "FP-070": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -260,7 +260,7 @@
     "FB09-123": 3,
     "FP-074": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -282,7 +282,7 @@
     "FS11-07": 4,
     "ST01-052": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -307,7 +307,7 @@
     "FP-072": 4,
     "FP-076": 1
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -333,7 +333,7 @@
     "ST01-026": 2,
     "ST01-070": 3
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -358,7 +358,7 @@
     "FP-071": 3,
     "FP-075": 1
    },
-   "share": 0.0792,
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -380,7 +380,34 @@
     "FB11-122": 4,
     "FB11-093": 4
    },
-   "share": 0.0792,
+   "share": 0.0731,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Goku SSJ3 (Yellow)",
+   "leader": "FS11-01",
+   "main": {
+    "FB02-125": 3,
+    "FB02-136": 1,
+    "FB09-079": 4,
+    "FB09-080": 4,
+    "FB09-088": 4,
+    "FB09-092": 1,
+    "FB09-096": 4,
+    "FB10-089": 1,
+    "FB10-090": 1,
+    "FP-077": 4,
+    "FS08-15": 3,
+    "FS11-03": 2,
+    "FS11-07": 4,
+    "FS11-09": 4,
+    "FS11-14": 3,
+    "FS11-17": 1,
+    "ST01-044": 1,
+    "ST01-046": 1,
+    "ST01-052": 4
+   },
+   "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
   }
  ]

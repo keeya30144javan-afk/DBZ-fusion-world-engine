@@ -16,12 +16,12 @@
   "decks": {
     "FS11-01": {
       "name": "Son Goku SSJ3 (Yellow)",
-      "plan": "Cheap ≪Another World≫ Son Gokus and Vegetas rest the opponent's board and find more pieces, then evolve into Son Goku FP-077 / FS11-07 and Vegeta FS11-14. Once the Leader awakens, each Evolve onto a 20000-30000 card untaps 2 energy, so several Evolves and plays fit in one turn. Rested enemy cards are then KO'd, locked or sent to the Drop.",
+      "plan": "Cheap ≪Another World≫ Son Gokus rest the opponent's board (FB09-080) and dig for more pieces (FB09-079), then evolve: Son Goku FP-077 / FS11-07 / ST01-044, Vegeta FS11-14 / FB10-090, Son Gohan FS11-09 / ST01-046. Once the Leader awakens, each Evolve onto a 20000-30000 card untaps 2 energy, so several Evolves fit in one turn, and Leader draws plus life-to-hand Evolves keep the hand full. Rested enemy cards are KO'd, locked or sent to the Drop, and Kamehameha closes with a [Double Strike] evolved attacker.",
       "engines": [
         "Leader (awakened) + Evolve cards: with 3+ rested energy, playing a 20000-30000 [Evolve] card untaps 2 energy, chaining Evolves in one turn.",
-        "Rest, then punish: FB09-080 (rest 2), FS11-13, FP-077 and Cui rest enemy cards; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon drops rested cost 4 or less, Gotenks and Vegeta FB09-092 lock or KO rested cards.",
-        "Gotenks FS11-03 costs 2 less with a 4+ cost [Evolve] card in play.",
-        "Babidi untaps Vegeta FS11-14 (≪Wicked Soul≫) at end of turn and gives it [Blocker] through the opponent's turn.",
+        "Rest, then punish: FB09-080 rests 2, FP-077 rests 1; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon (with an Evolve card in play) drops a rested cost 4-or-less card or locks a bigger one, Vegeta FB09-092 KOs a rested 1-cost.",
+        "Card flow: Son Goku FB09-079 searches ≪Another World≫, Vegeta FB10-090 searches a ≪Saiyan≫ cost 5 or less, Son Gohan FS11-09 and ST01-046 add life to hand (ST01-046 also untaps itself to attack), Son Goku FS11-07 draws and untaps.",
+        "Defence: Videl FB02-125 is a 1-cost [Blocker]; Son Goku ST01-044 can pull an attack from a cost 3-or-less attacker onto itself (30000); Vegeta FB10-089 has [Barrier]; Results of Training (+15000, draws) and Paikuhan as Super Combos.",
         "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game."
       ]
     },
