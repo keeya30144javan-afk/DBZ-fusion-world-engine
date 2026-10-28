@@ -26,7 +26,7 @@ export interface SearchOpts {
   /** When the chosen line swings with the Leader later, swing with it first (its draw may change the plan). */
   leaderFirst?: boolean;
   /** Don't consider wasteful moves: see prune(). */
-  prune?: { offCombo?: boolean; earlyDefense?: boolean; weakExtras?: boolean };
+  prune?: { offCombo?: boolean; earlyDefense?: boolean | number; weakExtras?: boolean; chargeSpares?: boolean };
 }
 
 /**
@@ -161,7 +161,7 @@ export class SearchPolicy implements Policy {
       if (P.earlyDefense && isLeader(s, s.battle.target)) {
         const b = s.battle, me = s.p[s.toAct];
         const dmg = hasKeyword(s, b.attacker, 'tripleStrike') ? 3 : hasKeyword(s, b.attacker, 'doubleStrike') ? 2 : 1;
-        if (me.life.length - dmg >= 5 && !hasKeyword(s, b.attacker, 'critical')) return [{ k: 'comboDone' }, ...actions.filter((a) => a.k === 'battleSkill' && !me.hand.includes(a.uid))];
+        if (me.life.length - dmg >= (typeof P.earlyDefense === 'number' ? P.earlyDefense : 5) && !hasKeyword(s, b.attacker, 'critical')) return [{ k: 'comboDone' }, ...actions.filter((a) => a.k === 'battleSkill' && !me.hand.includes(a.uid))];
       }
     }
     if (P.weakExtras && s.stage === 'main') {
@@ -170,7 +170,15 @@ export class SearchPolicy implements Policy {
     }
     if (s.stage === 'charge') {
       const charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];
-      charges.sort((a, b) => keepValue(s, a.uid) - keepValue(s, b.uid));
+      // chargeSpares: spare copies and cards far above your energy are the ones to charge
+      // ("I'll see another one, it's a 4-of").
+      const me = s.p[s.toAct], ids = me.hand.map((u) => s.inst[u].id);
+      const rank = (u: number) => {
+        if (!P.chargeSpares) return keepValue(s, u);
+        const c = cardOf(s, u);
+        return keepValue(s, u) - (ids.filter((x) => x === c.id).length > 1 ? 0.4 : 0) - (c.cost > me.energy.length + 3 ? 0.6 : 0);
+      };
+      charges.sort((a, b) => rank(a.uid) - rank(b.uid));
       return [{ k: 'noCharge' }, ...charges.slice(0, 3)];
     }
     return actions;

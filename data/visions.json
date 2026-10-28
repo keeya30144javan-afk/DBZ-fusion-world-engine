@@ -11,7 +11,13 @@
     "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\").",
     "Cards that replace themselves (draw, search, life to hand) keep the hand full for combos; a card that goes hand-negative needs a real payoff.",
     "A wide board can beat one big card: more bodies means more swings to answer and more targets the opponent has to remove.",
-    "Hand reading: count the Super Combos and big combo cards the opponent has used (check their Drop); assume the rest are still in hand. Go all-in only when your swings beat their best possible wall; an opponent dropping their own life low may be baiting an all-in."
+    "Hand reading: count the Super Combos and big combo cards the opponent has used (check their Drop); assume the rest are still in hand. Go all-in only when your swings beat their best possible wall; an opponent dropping their own life low may be baiting an all-in.",
+    "Life is a resource, not a score: at 5+ life (and for decks that awaken at 4 or less, even 4) let most single hits through. Defend the swings that really hurt: Double/Triple Strike, a hit that drops you to 2, or one that lets a big hand combo you out next turn.",
+    "Charge the right card: a 4-of finisher you only want late can go to energy early; you will see another copy.",
+    "Pick bodies the opponent cannot answer on their turn: a 7-cost or 30000+ body dodges \"cost 5 or less\" bounce, while a 4-cost just goes back to hand.",
+    "Pair partial removal: a power-down (split across targets if the card allows) plus a KO-up-to-power removes bodies neither card handles alone.",
+    "Poke before the kill: when the opponent has a big hand, swing smaller attacks first to make them defend and spend cards, then go for lethal once their hand is too small to wall it.",
+    "Count hand plus and minus: a play that draws back what it costs keeps you alive next turn; if your opponent spent two cards to defend, they may not survive your counterattack."
   ],
   "decks": {
     "FS11-01": {
