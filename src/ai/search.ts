@@ -2,10 +2,10 @@ import { GameState, Side } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, wastesMainEffect, winProb } from './heuristics';
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
-import { cardOf, isLeader } from '../engine/core';
+import { cardOf, hasKeyword, isLeader, other } from '../engine/core';
 import { PlanOpts, PlannedLine, planTurn } from './planner';
 
 export interface SearchOpts {
@@ -25,6 +25,8 @@ export interface SearchOpts {
   mulligan?: 'search' | 'plan';
   /** When the chosen line swings with the Leader later, swing with it first (its draw may change the plan). */
   leaderFirst?: boolean;
+  /** Don't consider wasteful moves: see prune(). */
+  prune?: { offCombo?: boolean; earlyDefense?: boolean; weakExtras?: boolean };
 }
 
 /**
@@ -77,7 +79,8 @@ export class SearchPolicy implements Policy {
     const cands = this.prune(s, actions);
     if (cands.length === 1) return cands[0];
     if (this.opts.plan && s.stage === 'main' && s.active === me) {
-      const lines = planTurn(s, me, this.opts.eval ? { ...this.opts.plan, eval: this.opts.eval } : this.opts.plan);
+      const po = { ...this.opts.plan, ...(this.opts.eval ? { eval: this.opts.eval } : {}), ...(this.opts.prune?.weakExtras ? { skipWeakExtras: true } : {}) };
+      const lines = planTurn(s, me, po);
       let first = lines[0]?.actions[0];
       let pick = lines[0]?.picks?.[0];
       // Information first: if the best line swings with the Leader later and nothing before
@@ -140,13 +143,30 @@ export class SearchPolicy implements Policy {
   /** Cut obviously equivalent or pointless options so the budget goes further. */
   private prune(s: GameState, actions: Action[]): Action[] {
     if (actions.length <= 1) return actions;
+    const P = this.opts.prune ?? {};
     if (s.stage === 'offCombo' && s.battle) {
       const { atk, def } = battleTotals(s);
       if (atk >= def) return [{ k: 'comboDone' }];
+      // Combo cards on offence only when it matters: lethal range, or a target worth a card.
+      if (P.offCombo) {
+        const b = s.battle, opp = s.p[other(s.toAct)];
+        const worth = isLeader(s, b.target) ? opp.life.length <= 2 || hasKeyword(s, b.attacker, 'doubleStrike') || hasKeyword(s, b.attacker, 'tripleStrike') : cardOf(s, b.target).cost >= 4;
+        if (!worth) return [{ k: 'comboDone' }, ...actions.filter((a) => a.k === 'battleSkill' && !s.p[s.toAct].hand.includes(a.uid))];
+      }
     }
     if (s.stage === 'defCombo' && s.battle) {
       const { atk, def } = battleTotals(s);
       if (def > atk) return [{ k: 'comboDone' }];
+      // A hit that leaves you at 5+ life just moves a life card to hand: don't spend cards on it.
+      if (P.earlyDefense && isLeader(s, s.battle.target)) {
+        const b = s.battle, me = s.p[s.toAct];
+        const dmg = hasKeyword(s, b.attacker, 'tripleStrike') ? 3 : hasKeyword(s, b.attacker, 'doubleStrike') ? 2 : 1;
+        if (me.life.length - dmg >= 5 && !hasKeyword(s, b.attacker, 'critical')) return [{ k: 'comboDone' }, ...actions.filter((a) => a.k === 'battleSkill' && !me.hand.includes(a.uid))];
+      }
+    }
+    if (P.weakExtras && s.stage === 'main') {
+      const kept = actions.filter((a) => !wastesMainEffect(s, a));
+      if (kept.length) actions = kept;
     }
     if (s.stage === 'charge') {
       const charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];

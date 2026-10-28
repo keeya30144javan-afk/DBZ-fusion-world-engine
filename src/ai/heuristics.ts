@@ -5,7 +5,7 @@ import { Resource, rolesOf } from './synergy';
 
 const isSuperComboCard = (c: Card) => compileCard(c).keywords.has('superCombo');
 import {
-  GameState, Side, abilitiesOf, activeEnergy, matchesFilter, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
+  GameState, Side, abilitiesOf, activeEnergy, condsHold, matchesFilter, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, playCostPlan } from '../engine/game';
@@ -667,6 +667,25 @@ export class FastPolicy implements Policy {
 }
 
 export const defaultChooser = new HeuristicChooser();
+
+/**
+ * An Extra or skill used for its minor part while its main, conditional part can't happen
+ * yet (Warrior Who Defeats the Evil Demon with no Evolve card in play: just "draw 1").
+ * Holding it keeps the strong part for later.
+ */
+export function wastesMainEffect(s: GameState, a: Action): boolean {
+  if (a.k !== 'activate') return false;
+  const me = s.p[s.toAct];
+  if (!me.hand.includes(a.uid)) return false;
+  const ab = compileCard(cardOf(s, a.uid)).abilities[a.ab];
+  if (!ab) return false;
+  let live = 0, dead = 0;
+  for (const e of ab.effects) {
+    const v = Math.max(0, effectValue(e));
+    if (e.cond?.length && !condsHold(s, s.toAct, a.uid, e.cond)) dead += v; else live += v;
+  }
+  return dead > 0 && dead > live;
+}
 
 /** Is `p` a legal answer to `req`? */
 export const legalPick = (req: ChoiceReq, p: number[]) => p.length >= req.min && p.length <= req.max && p.every((u) => req.options.includes(u)) && new Set(p).size === p.length;
