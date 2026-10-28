@@ -380,7 +380,7 @@
     "FB11-122": 4,
     "FB11-093": 4
    },
-   "share": 0.0731,
+   "share": 0.0365,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -409,6 +409,29 @@
    },
    "share": 0.0731,
    "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Shallot/Giblet (Yellow, Hawk profile)",
+   "leader": "FB11-073",
+   "main": {
+    "FS08-15": 2,
+    "FB09-096": 3,
+    "FB02-136": 2,
+    "FB11-075": 4,
+    "FB11-081": 2,
+    "FB11-082": 4,
+    "FB11-083": 4,
+    "FB11-084": 4,
+    "FB11-085": 2,
+    "FB11-086": 4,
+    "FB11-087": 4,
+    "FB11-088": 4,
+    "FB11-094": 3,
+    "FB11-122": 4,
+    "FB11-093": 4
+   },
+   "share": 0.0366,
+   "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
   }
  ]
 }
