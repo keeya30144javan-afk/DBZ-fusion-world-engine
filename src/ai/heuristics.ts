@@ -524,7 +524,7 @@ export class FastPolicy implements Policy {
    * (don't push the opponent into awaken range) lost badly as a blanket rule (38%), as the
    * video itself says it depends on the matchup. Only awakenHit is on by default.
    */
-  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true, smartMulligan: false, smartBlock: false, holdRemoval: false, delayStrongAwaken: false };
+  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true, smartMulligan: false, smartBlock: false, holdRemoval: false, delayStrongAwaken: false, noFutileCombo: true };
   constructor(public noise = 0.1) {
     const env = (globalThis as any).process?.env;
     if (env?.HABITS_OFF) for (const k of String(env.HABITS_OFF).split(',')) (this.habits as any)[k] = false;
@@ -735,6 +735,7 @@ export class FastPolicy implements Policy {
   }
 
   private offCombo(s: GameState, actions: Action[]): Action {
+    if (this.habits.noFutileCombo && !comboCanWin(s, actions)) return { k: 'comboDone' };
     const free = this.freeValueSkill(s, actions);
     if (free) return free;
     const b = s.battle!;
@@ -751,6 +752,7 @@ export class FastPolicy implements Policy {
   private defCombo(s: GameState, actions: Action[]): Action {
     const free = this.freeValueSkill(s, actions);
     if (free) return free;
+    if (this.habits.noFutileCombo && !comboCanWin(s, actions)) return { k: 'comboDone' };
     const b = s.battle!;
     const me = s.p[s.toAct];
     const { atk, def } = battleTotals(s);
@@ -774,6 +776,29 @@ export class FastPolicy implements Policy {
     if (need + already > budget) return { k: 'comboDone' };
     return this.comboPick(s, actions, need) ?? { k: 'comboDone' };
   }
+}
+
+/** Skills that fire when the card is used in a combo (a Super Combo's +10000 on the opponent's turn...). */
+const COMBO_TIMINGS = new Set(['comboFromHand', 'comboFromField', 'comboFromDrop']);
+const hasComboSkill = (s: GameState, u: number) => abilitiesOf(s, u).some((ab) => COMBO_TIMINGS.has(ab.timing));
+
+/**
+ * Can the side to act still win this battle with the combo cards it has left? Ties go to the
+ * attacker, so a defender needs more than the attack, an attacker at least the defence. Combo
+ * cards that can't get there are thrown away for nothing (a 5000 Piccolo against a 5000 gap).
+ * Battle skills and "when you combo" cards in the battle may add more than we can count: true.
+ */
+export function comboCanWin(s: GameState, actions: Action[]): boolean {
+  if (!s.battle) return true;
+  if (actions.some((a) => a.k === 'battleSkill' || a.k === 'counter')) return true;
+  const me = s.toAct;
+  const b = s.battle;
+  const mine = me === b.atkSide ? b.attacker : b.target;
+  if (abilitiesOf(s, mine).some((ab) => ab.timing === 'whenComboInBattle')) return true;
+  const { atk, def } = battleTotals(s);
+  let extra = 0;
+  for (const a of actions) if (a.k === 'combo') extra += comboPowerOf(s, a.uid) + (hasComboSkill(s, a.uid) ? 10000 : 0);
+  return me === b.atkSide ? atk + extra >= def : def + extra > atk;
 }
 
 export const defaultChooser = new HeuristicChooser();

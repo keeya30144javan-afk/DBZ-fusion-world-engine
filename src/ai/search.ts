@@ -2,7 +2,7 @@ import { GameState, Side } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, usefulInEnergy, wastesMainEffect, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, comboCanWin, keepValue, usefulInEnergy, wastesMainEffect, winProb } from './heuristics';
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { cardOf, hasKeyword, isLeader, other } from '../engine/core';
@@ -144,6 +144,8 @@ export class SearchPolicy implements Policy {
   private prune(s: GameState, actions: Action[]): Action[] {
     if (actions.length <= 1) return actions;
     const P = this.opts.prune ?? {};
+    // Never throw combo cards at a battle they can't win (ties go to the attacker).
+    if ((s.stage === 'offCombo' || s.stage === 'defCombo') && (this.opts.habits?.noFutileCombo ?? true) && !comboCanWin(s, actions)) return [{ k: 'comboDone' }];
     if (s.stage === 'offCombo' && s.battle) {
       const { atk, def } = battleTotals(s);
       if (atk >= def) return [{ k: 'comboDone' }];

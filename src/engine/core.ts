@@ -937,6 +937,10 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
   if (from === 'battle' && zone === 'hand') s.p[inst.owner].bouncedTurn = s.turn;
   if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
   if (from === 'energy' && zone === 'drop') (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy ?? inst.owner, kind: 'energyDrop', bySrc: s.skillSrc });
+  if (from === 'battle' && zone !== 'drop') {
+    const where = zone === 'hand' ? "its owner's hand" : zone === 'deck' ? (opts.bottom ? "the bottom of its owner's deck" : "its owner's deck") : zone === 'energy' ? "its owner's energy" : zone === 'life' ? "its owner's life" : zone;
+    log(s, () => `${nameOf(s, uid)} leaves P${inst.owner}'s Battle Area to ${where}`);
+  }
   if (from === 'battle' && s.skillBy !== undefined && cardOf(s, uid).type === 'BATTLE') {
     if (s.skillBy === inst.owner) s.p[inst.owner].removedOwnTurn = s.turn;
     s.p[inst.owner].removedBySkillTurn = s.turn;
