@@ -40,7 +40,11 @@
     "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack.",
     "Know your outs before charging: don't charge a finisher you need two of (a double 6-cost turn) until you have seen enough copies; charge a card you will never play again instead.",
     "An opponent who over-combos on offence to force your Super Combos is spending their own hand too. Track the hand-size gap, not just life.",
-    "Win-or-bust turns: when you can't survive their next turn (you can't remove or rest their board again), commit everything to lethal, even lines that need a draw to hit."
+    "Win-or-bust turns: when you can't survive their next turn (you can't remove or rest their board again), commit everything to lethal, even lines that need a draw to hit.",
+    "Don't defend every early swing: an opponent who blocks everything early ends up with a 2-4 card hand and can't kill you later. Taking hits down to about 5 life with 6-7 cards is usually stronger.",
+    "Keep the energy marker for a turn where it creates real pressure or reaches a key energy count, not just because turn 1 allows a play.",
+    "Against a 2-card hand, check for lethal every turn: comboing up to 30000 may finish them. When you can't win this turn, pivot to building resources (Ki, cards) so their best swing can't kill you.",
+    "Sequence the card that shuts off their defence (\"opponent can't combo\" or \"can't use Extras\") before the swings it should protect."
   ],
   "decks": {
     "FS11-01": {
