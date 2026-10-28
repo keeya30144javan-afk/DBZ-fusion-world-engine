@@ -23,7 +23,10 @@
     "Spend Ki from Battle Cards first: they will probably be removed, so their Ki is free. Keep the Leader's Ki as a late-game combo reserve (each Ki is close to a card).",
     "Thread the needle: knocking the opponent to low life hands them cards. Push the last points only when you can finish, or when their extra cards cannot save them.",
     "Late game, a card in hand beats more energy if your deck has no big plays left to cast: skip the charge.",
-    "Don't combo away a card you still need to attack with this turn; count your remaining swings first."
+    "Don't combo away a card you still need to attack with this turn; count your remaining swings first.",
+    "Going to 1 life on purpose is a declaration: it hands you cards but invites an all-in. Only do it if your hand (Super Combos, draw-on-defence Extras) can wall their biggest possible push; tournament games are lost by being 20000 short.",
+    "Control when your opponent awakens: if their Leader awakens on a life count, don't hand them the hit that flips it early unless the damage wins you more than their awakening gains.",
+    "Removing an opponent's Evolve base forces them to spend a card replaying one, but it costs you a pressure turn. Do it when it is cheap or when their Evolve turn would be decisive."
   ],
   "decks": {
     "FS11-01": {
@@ -34,7 +37,11 @@
         "Rest, then punish: FB09-080 rests 2, FP-077 rests 1; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon (with an Evolve card in play) drops a rested cost 4-or-less card or locks a bigger one, Vegeta FB09-092 KOs a rested 1-cost.",
         "Card flow: Son Goku FB09-079 searches ≪Another World≫, Vegeta FB10-090 searches a ≪Saiyan≫ cost 5 or less, Son Gohan FS11-09 and ST01-046 add life to hand (ST01-046 also untaps itself to attack), Son Goku FS11-07 draws and untaps.",
         "Defence: Videl FB02-125 is a 1-cost [Blocker]; Son Goku ST01-044 can pull an attack from a cost 3-or-less attacker onto itself (30000); Vegeta FB10-089 has [Barrier]; Results of Training (+15000, draws) and Paikuhan as Super Combos.",
-        "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game."
+        "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game.",
+        "Tournament play: the front Leader takes a life every end of turn, so it awakens on schedule (about turn 3). After that each turn is worth +2 energy, so charge to 4 and then mostly stop charging: cards in hand are worth more.",
+        "Bread and butter: a 1-cost Son Goku, then a 20000-30000 [Evolve] card (Son Gohan: Adolescence FS11-09 counts without evolving: it is played, not evolved) untaps 2 energy, then evolve again or swing 30000s and untap with Son Goku FS11-07.",
+        "Mirror and aggro matchups: hit for 30000 two or three times by turn 3; at the end, count the opponent's possible defence (hand size, Results of Training draws, Super Combos seen) against your all-in total including Kamehameha (+25000, Double Strike) and Blue Power Awakening.",
+        "Tech: Babidi FB03-083 ([Barrier]) can't be chosen, so it survives Gogeta: BR's -25000 and Leader KO and stops its 1-life alternate win."
       ]
     },
     "FB03-001": {
