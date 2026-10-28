@@ -116,7 +116,7 @@
     "FB06-013": 3,
     "FS06-07": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -141,7 +141,7 @@
     "FS02-13": 2,
     "FS02-15": 2
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -169,7 +169,7 @@
     "SB01-031": 4,
     "ST01-052": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -190,7 +190,7 @@
     "ST01-051": 4,
     "ST01-052": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -214,7 +214,7 @@
     "ST01-016": 4,
     "ST01-017": 1
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -237,7 +237,7 @@
     "FB10-017": 2,
     "FP-070": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -260,7 +260,7 @@
     "FB09-123": 3,
     "FP-074": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -282,7 +282,7 @@
     "FS11-07": 4,
     "ST01-052": 4
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -307,7 +307,7 @@
     "FP-072": 4,
     "FP-076": 1
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -333,7 +333,7 @@
     "ST01-026": 2,
     "ST01-070": 3
    },
-   "share": 0.0864,
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -358,7 +358,29 @@
     "FP-071": 3,
     "FP-075": 1
    },
-   "share": 0.0864,
+   "share": 0.0792,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Shallot/Giblet (Yellow)",
+   "leader": "FB11-073",
+   "main": {
+    "FB09-096": 4,
+    "FB02-136": 2,
+    "FB11-075": 4,
+    "FB11-081": 2,
+    "FB11-082": 4,
+    "FB11-083": 4,
+    "FB11-084": 4,
+    "FB11-085": 2,
+    "FB11-086": 4,
+    "FB11-087": 4,
+    "FB11-088": 4,
+    "FB11-094": 4,
+    "FB11-122": 4,
+    "FB11-093": 4
+   },
+   "share": 0.0792,
    "notes": "Player list (shared by the user, Oct 2026)"
   }
  ]

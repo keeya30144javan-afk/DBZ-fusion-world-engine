@@ -38194,7 +38194,80 @@
    ],
    "text": "[Evolve] pay 1 energy: <Shallot> with a cost of 2.\n[When Attacking] If your Leader is <Shallot//Giblet> or <Shallet>, draw 1 card. Then, choose up to 1 card in your opponent's energy or Battle Area and switch it to Rest Mode.",
    "set": "FB11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "costEQ": 2,
+       "names": [
+        "Shallot"
+       ]
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Shallot/Giblet",
+         "Shallet"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAttacking",
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       },
+       {
+        "t": "choose",
+        "options": [
+         [
+          {
+           "t": "rest",
+           "target": {
+            "side": "opp",
+            "zones": [
+             "battle"
+            ],
+            "count": 1,
+            "upTo": true,
+            "filter": {
+             "type": "BATTLE"
+            }
+           }
+          }
+         ],
+         [
+          {
+           "t": "restOppEnergy",
+           "filter": {},
+           "n": 1
+          }
+         ]
+        ]
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "from the user's Shallot list: rests a card in the opponent's energy OR Battle Area (printed <Shallot//Giblet> is a typo)"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "a7f1e5ff"
+   }
   },
   "FB02-072": {
    "id": "FB02-072",

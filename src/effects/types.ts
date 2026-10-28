@@ -342,7 +342,7 @@ export type Effect = E<
   /** Choose up to N of your opponent's Rest Mode energy; they can't switch to Active Mode during their next turn. */
   | { t: 'lockEnergy'; n: number }
   /** Switch all of your opponent's energy matching filter to Rest Mode. */
-  | { t: 'restOppEnergy'; filter: Filter }
+  | { t: 'restOppEnergy'; filter: Filter; /** Rest only this many (active ones first); all when omitted. */ n?: number }
   /** "You may <costs>. If you do, <effects>." */
   | { t: 'optionalCost'; costs: Cost[]; effects: Effect[] }
   /** Several steps under one condition ("If X, A. Then, B."), checked once before A. */

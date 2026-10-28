@@ -644,8 +644,8 @@ function leaderTraits(s: GameState, owner: Side): string[] {
   return c.traits;
 }
 
-/** Card names as printed vary in spacing around the colon ("Son Goku : BR" vs "Son Goku: BR"). */
-export const normName = (s: string) => s.replace(/\s*:\s*/g, ': ').replace(/\s+/g, ' ').trim();
+/** Card names as printed vary in spacing around the colon ("Son Goku : BR" vs "Son Goku: BR") and in slashes ("Shallot//Giblet"). */
+export const normName = (s: string) => s.replace(/\s*:\s*/g, ': ').replace(/\s*\/+\s*/g, '/').replace(/\s+/g, ' ').trim();
 
 /** Does this card's name (or a name it's also treated as) include `n`? */
 export const nameHas = (card: Card, n: string) => {

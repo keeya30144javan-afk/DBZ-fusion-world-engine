@@ -2,6 +2,8 @@ import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { Cond, Effect } from '../effects/types';
 import { Resource, rolesOf } from './synergy';
+
+const isSuperComboCard = (c: Card) => compileCard(c).keywords.has('superCombo');
 import {
   GameState, Side, abilitiesOf, activeEnergy, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
@@ -156,6 +158,24 @@ function deckNeeds(s: GameState): [Partial<Record<Resource, number>>, Partial<Re
   return out;
 }
 
+/** The life total at which this side's Leader awakens ("When your life is at 4 or less"), if it awakens on life. */
+export function awakenLife(s: GameState, side: Side): number | null {
+  const ab = compileCard(cardOf(s, s.p[side].leader)).abilities.find((a) => a.timing === 'awaken');
+  const c = ab?.cond.find((x) => x.t === 'lifeLE') as { t: 'lifeLE'; n: number } | undefined;
+  return c ? c.n : null;
+}
+
+/** How much an awakened Leader is worth: the flip itself plus what its back side does. */
+const awakeMemo = new Map<string, number>();
+function awakenedWorth(card: Card): number {
+  const hit = awakeMemo.get(card.id);
+  if (hit !== undefined) return hit;
+  const back = compileCard(card).backAbilities ?? [];
+  const v = 0.6 + Math.min(1.6, 0.35 * back.reduce((t, ab) => t + ab.effects.reduce((q, e) => q + Math.max(0, effectValue(e)), 0), 0)) + ((card.back?.power ?? 0) > card.power ? 0.3 : 0);
+  awakeMemo.set(card.id, v);
+  return v;
+}
+
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side): number {
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
@@ -165,7 +185,8 @@ export function evaluate(s: GameState, me: Side): number {
     v += pl.hand.length * 0.45;
     for (const u of pl.battle) v += 0.4 + boardValue(s, u) * 0.6;
     v += Math.min(pl.energy.length, 8) * 0.35;
-    v += pl.awakened ? 0.6 : 0;
+    // A stronger back side makes awakening worth more, to you and to delay for your opponent.
+    v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
     // Resources this deck's engine runs on.
     const need = deckNeeds(s)[p];
@@ -254,7 +275,20 @@ export interface Policy {
  * `noise` adds randomness so rollouts explore different lines.
  */
 export class FastPolicy implements Policy {
-  constructor(public noise = 0.1) {}
+  /**
+   * Play habits from experienced players' videos; each can be switched on or off to measure it.
+   * Tested against the previous fast AI over 900 games across all meta decks (Oct 2026):
+   * awakenHit (take the hit that awakens you) won 53.6%; charge (charge what you won't play
+   * soon) and leaderFirst (swing with the Leader before playing) were neutral; delayAwaken
+   * (don't push the opponent into awaken range) lost badly as a blanket rule (38%), as the
+   * video itself says it depends on the matchup. Only awakenHit is on by default.
+   */
+  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true };
+  constructor(public noise = 0.1) {
+    const env = (globalThis as any).process?.env;
+    if (env?.HABITS_OFF) for (const k of String(env.HABITS_OFF).split(',')) (this.habits as any)[k] = false;
+    if (env?.HABITS_ON) for (const k of String(env.HABITS_ON).split(',')) (this.habits as any)[k] = true;
+  }
 
   act(s: GameState, actions: Action[]): Action {
     if (actions.length === 1) return actions[0];
@@ -280,14 +314,22 @@ export class FastPolicy implements Policy {
     const me = s.p[s.toAct];
     const charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];
     if (!charges.length) return { k: 'noCharge' };
-    const maxCost = Math.max(0, ...me.hand.map((u) => cardOf(s, u).cost));
+    // Only charge up to what the cards you mean to play need: Super Combos are combo walls,
+    // not plays, so their cost doesn't count. Once the plan is covered, keep cards in hand.
+    const playable = me.hand.map((u) => cardOf(s, u)).filter((c) => !this.habits.charge || !isSuperComboCard(c));
+    const maxCost = Math.max(0, ...playable.map((c) => c.cost));
     const want = me.energy.length < Math.min(7, Math.max(4, maxCost)) || me.energy.length < 3;
     if (!want || me.hand.length <= 2) return { k: 'noCharge' };
-    // Charge the card least worth keeping; uncastable high costs early are good fodder.
+    // Charge the card you're least likely to play soon: spare copies and cards far above your
+    // energy go first; cheap cards you'll play next turn and Super Combos (defence) stay.
+    const ids = me.hand.map((u) => s.inst[u].id);
     const score = (u: number) => {
       const c = cardOf(s, u);
+      const copies = ids.filter((x) => x === c.id).length;
+      const soon = c.cost <= me.energy.length + 1 ? 0.5 : 0;
       const tooExpensive = c.cost > me.energy.length + 3 ? -0.6 : 0;
-      return keepValue(s, u) + tooExpensive + rand(s) * this.noise;
+      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + rand(s) * this.noise;
+      return keepValue(s, u) + soon + tooExpensive - (copies > 1 ? 0.4 : 0) + (isSuperComboCard(c) ? 2 : 0) + rand(s) * this.noise;
     };
     charges.sort((a, b) => score(a.uid) - score(b.uid));
     return charges[0];
@@ -307,6 +349,9 @@ export class FastPolicy implements Policy {
       const hits = ab?.effects.some((e) => (e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce') && s.p[opp].battle.length > 0);
       if (hits && rand(s) > this.noise) return a;
     }
+    // Swing with the Leader first: its draw shows more options before you commit cards.
+    const leaderFace = actions.find((a) => a.k === 'attack' && a.uid === me.leader && isLeader(s, a.target)) as { k: 'attack'; uid: number; target: number } | undefined;
+    if (this.habits.leaderFirst && leaderFace && !this.awakensThem(s, leaderFace.uid) && !s.p[opp].battle.some((u) => s.inst[u].rested && powerOf(s, u) <= powerOf(s, me.leader) && boardValue(s, u) >= 2.2)) return leaderFace;
     // Play the best card we can afford. When new cards can't attack this turn (a rules
     // option), only cards that hit the opponent's board go before the attacks; the rest
     // wait, keeping the hand as combo cover meanwhile.
@@ -341,12 +386,25 @@ export class FastPolicy implements Policy {
         }
         const face = opts.find((o) => isLeader(s, o.target));
         if (!face) continue;
+        // Don't knock the opponent into their awaken range unless the game is close to over.
+        if (this.habits.delayAwaken && this.awakensThem(s, att)) continue;
         const lp = powerOf(s, face.target);
         if (isLeader(s, att) || ap >= lp || rand(s) < this.noise) return face;
       }
     }
     // A card that must attack whenever possible removes the option to end the turn.
     return actions.some((a) => a.k === 'end') ? { k: 'end' } : attacks[0] ?? actions[0];
+  }
+
+  /** Would a hit from `attacker` push the opponent down to the life where their Leader awakens? */
+  private awakensThem(s: GameState, attacker: number): boolean {
+    const opp = other(s.toAct);
+    const o = s.p[opp];
+    if (o.awakened) return false;
+    const at = awakenLife(s, opp);
+    if (at === null) return false;
+    const dmg = hasKeyword(s, attacker, 'tripleStrike') ? 3 : hasKeyword(s, attacker, 'doubleStrike') ? 2 : 1;
+    return o.life.length > at && o.life.length - dmg <= at && o.life.length - dmg > 2;
   }
 
   private abOf(s: GameState, uid: number, i: number) {
@@ -438,6 +496,9 @@ export class FastPolicy implements Policy {
       const after = me.life.length - dmg;
       // Taking a hit at high life just moves a life card to hand, so don't spend cards on it.
       budget = after <= 0 ? 99 : after <= 1 ? 40000 : after <= 2 ? 30000 : after <= 3 ? 15000 : after <= 4 ? (me.hand.length >= 7 ? 10000 : 0) : 0;
+      // Take the hit that awakens your Leader (unless it leaves you too low), then defend the rest.
+      const at = awakenLife(s, s.toAct);
+      if (this.habits.awakenHit && !me.awakened && at !== null && me.life.length > at && after <= at && after >= 3) budget = 0;
       if (hasKeyword(s, b.attacker, 'critical')) budget += 5000;
     } else {
       budget = boardValue(s, b.target) > 3 ? 10000 : 0;

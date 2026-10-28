@@ -8,7 +8,10 @@
     "13 to 20 different cards, mostly as 4-ofs: consistency over variety.",
     "Evolve decks run 13 to 18 Evolve cards and enough bases (often searchable 1-costs) to always have something to evolve from.",
     "Life is a resource: many decks add life to hand early on purpose, to awaken the Leader sooner or to fuel skills, then rely on Leader shields, blockers and combo walls to survive at low life.",
-    "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\")."
+    "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\").",
+    "Cards that replace themselves (draw, search, life to hand) keep the hand full for combos; a card that goes hand-negative needs a real payoff.",
+    "A wide board can beat one big card: more bodies means more swings to answer and more targets the opponent has to remove.",
+    "Hand reading: count the Super Combos and big combo cards the opponent has used (check their Drop); assume the rest are still in hand. Go all-in only when your swings beat their best possible wall; an opponent dropping their own life low may be baiting an all-in."
   ],
   "decks": {
     "FS11-01": {
@@ -36,7 +39,7 @@
     "FS02-01": {
       "name": "Vegeta (Blue)",
       "plan": "Keep 7 or fewer cards in hand and grind with cost-based bottom-decking. Cost reducers (Vegito FB02-061, Mai: Future) shrink enemy cards so cheap removal (Zamasu, Vegito, Son Gohan FB03-039, Sinister Sickle, Vegeta FS02-13) can bottom-deck them; Pilaf and Videl recycle the 1-cost Earthlings.",
-        "engines": [
+      "engines": [
         "Vegito FB02-061 (your turn, hand 7 or fewer: enemy cards cost 1 less) + Mai: Future (-1 more) turn 'cost 1 or less' and 'cost 3 or less' removal into answers for real threats.",
         "Bottom-deck suite: Zamasu and Vegito (cost 1 or less), Son Gohan: Adolescence FB03-039 (2 cards cost 3 or less), Sinister Sickle and Vegeta FS02-13 (cost 4 or less), Zen-Oh (everything).",
         "Pilaf and Videl FB03-042 recover 1-cost Earthlings (Mai, Bulma, Pilaf) from the Drop to keep the removal going.",
@@ -132,6 +135,18 @@
         "Leader (awakened): draw 1 for each card discarded by an [Evolve] or ≪Tournament of Power≫ card's skill.",
         "Evolve chain: Son Goku (ToP) → FB09-036 (1 energy) → FB09-037 (2 energy, 40000, can swap itself into a battle). Son Goku FB09-035 can be paid by discarding a ToP card and 2 energy.",
         "Removal: Vegeta FB09-045 (discard 2: bottom-deck 2 cards cost 4 or less, draw 1), Frieza FP-071 (discard 2: bottom-deck cost 2 or less), Zen-Oh (pay 12 Drop cards: bottom-deck the card it attacks, cost 6 or less)."
+      ]
+    },
+    "FB11-073": {
+      "name": "Shallot/Giblet (Yellow)",
+      "plan": "Cheap Shallots and Giblets that replace themselves (draw, search, life to hand) build a wide board and self-awaken the Leader at 5 life. Awakened, with a Shallot and a Giblet in play, the Leader untaps 2 energy, which pays for Fusion Evolving the rested pair into Shallet, or Evolving into the 5-cost Shallot / Giblet. Shallet untaps itself on attack, and the turn it is played it untaps your Leader or another attacker too. Rest the opponent's cards with Giblet FB11-081, Shallot FB11-087 / FB11-088, then lock or remove them with Giblet FB11-084 and Warrior Who Defeats the Evil Demon.",
+      "engines": [
+        "Hand-neutral set-up: Shallot FB11-086 (life to hand + search a ≪Saiyan≫-only 2-6 cost), Shallot FB11-087 (life to hand + rest), Bulma (search), Giblet FB11-082 (draw 2, discard 2), Cabba (draw). Every play replaces itself, so the hand stays full for combos.",
+        "Giblets cost 1 less while you have a Shallot but no Giblet in play: Shallot turn 2, Giblet for 1 next to it.",
+        "Leader (awakens at 5 life): with a Shallot and a Giblet in play, untap 2 energy (then no cost 4-or-less Battle Cards that turn). That energy pays for Shallet (Fusion Evolve, 2 energy, rested Shallot + Giblet of equal power) or the 5-cost Evolves.",
+        "Shallet: +5000 on your turn; when attacking, pay 1 to untap it, and if it was played this turn also untap your Leader or another attacker: extra swings.",
+        "Rest, then remove: Giblet FB11-081 rests 2 (cost 4 or less), Shallot FB11-087 and FB11-088 rest one (FB11-088 can rest an energy instead); Giblet FB11-084 locks a rested card; Warrior Who Defeats the Evil Demon (with an Evolve card in play) sends a rested cost 4-or-less card to the Drop or locks a bigger one.",
+        "From the player: don't tunnel into Shallet every turn. Two Shallot/Giblet bodies plus the untapped energy can be better than one big card, because the opponent has to deal with more on board."
       ]
     }
   }

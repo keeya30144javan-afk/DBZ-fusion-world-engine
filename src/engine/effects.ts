@@ -1159,7 +1159,16 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       for (const u of pickFrom(s, owner, src, opp.energy.filter((x) => s.inst[x].rested), e.n, ctl, 'harm')) s.inst[u].lockedUntil = s.turn + 1;
       return;
     }
-    case 'restOppEnergy': for (const u of s.p[other(owner)].energy) if (matchesFilter(s, u, e.filter, src)) s.inst[u].rested = true; return;
+    case 'restOppEnergy': {
+      let left = e.n ?? Infinity;
+      for (const u of s.p[other(owner)].energy) {
+        if (left <= 0) break;
+        if (s.inst[u].rested || !matchesFilter(s, u, e.filter, src)) continue;
+        s.inst[u].rested = true;
+        left--;
+      }
+      return;
+    }
     case 'optionalCost': {
       if (!canPayCosts(s, src, e.costs)) return;
       const yes = ctl[owner].choose(s, { kind: 'yesno', player: owner, src, options: [1], min: 0, max: 1, effect: e, intent: 'gain' });

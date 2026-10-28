@@ -326,3 +326,19 @@ test('Jiren Leader (awakened) with a 30000-power Battle Card takes only 1 damage
   assert.equal(s.p[0].life.length, life - 1, 'capped at 1 damage');
   assert.equal(s.p[0].hand.length, hand + 2, 'the life card plus the Leader\'s draw');
 });
+
+test('Shallot engine: awakened Leader untaps 2 energy with Shallot + Giblet in play; the rested pair Fusion Evolves into Shallet', () => {
+  const s = fresh();
+  s.p[0].leader = spawn(s, 0, 'FB11-073', 'leader');
+  s.p[0].awakened = true;
+  energy(s, 0, 4);
+  for (const u of s.p[0].energy) s.inst[u].rested = true;
+  const sh = spawn(s, 0, 'FB11-087', 'battle'), gi = spawn(s, 0, 'FB11-082', 'battle');
+  const untap = legalActions(s).find((a) => a.k === 'activate' && a.uid === s.p[0].leader);
+  assert.ok(untap, "the awakened Leader's untap is offered");
+  step(s, untap!, ctl);
+  assert.equal(s.p[0].energy.filter((u) => !s.inst[u].rested).length, 2);
+  s.inst[sh].rested = true; s.inst[gi].rested = true;
+  const shallet = spawn(s, 0, 'FB11-122', 'hand');
+  assert.ok(legalActions(s).some((a) => a.k === 'evolve' && a.uid === shallet), 'Shallet can Fusion Evolve from the rested pair');
+});

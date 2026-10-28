@@ -118,7 +118,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   energyToHand: { n: 'n', filter: 'F' },
   energyRedirect: {},
   lockEnergy: { n: 'n' },
-  restOppEnergy: { filter: 'F' },
+  restOppEnergy: { filter: 'F', n: 'n?' },
   optionalCost: { costs: 'Co[]', effects: 'E[]' },
   evolveOnto: {},
   group: { effects: 'E[]' },
