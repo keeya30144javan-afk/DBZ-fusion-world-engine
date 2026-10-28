@@ -281,3 +281,48 @@ test('Gogeta: BR (FB11-005): your Gogeta: BR Leader gets +15000 in a battle with
   s.battle = { attacker: leader, target: t, atkSide: 0, comboCount: [0, 0] } as any;
   assert.equal(powerOf(s, leader), before + 15000);
 });
+
+test('Jiren engine: FB03-009 pays "take 1 damage" -> the awakened Leader draws -> deck top to life: +2 cards, same life', () => {
+  const s = newGame(cards, [{ name: 'J', leader: 'FB03-001', main: { 'FB03-009': 4, 'FB06-013': 46 } }, meta.decks[0]], { seed: 4, first: 1 });
+  step(s, { k: 'keep' }, ctl); step(s, { k: 'keep' }, ctl);
+  s.p[0].awakened = true;
+  const jiren = spawn(s, 0, 'FB03-009', 'battle');
+  s.inst[jiren].rested = true;
+  // Opponent's turn, attacking our Leader.
+  s.turn = 4; s.active = 1;
+  const att = spawn(s, 1, 'FS01-10', 'battle');
+  s.battle = { attacker: att, target: s.p[0].leader, atkSide: 1, comboCount: [0, 0] } as any;
+  s.stage = 'defCombo'; s.toAct = 0;
+  const hand = s.p[0].hand.length, life = s.p[0].life.length;
+  const act = legalActions(s).find((a) => a.k === 'battleSkill' && (a as any).uid === jiren);
+  assert.ok(act, 'Jiren\'s [Activate:Battle] is offered during the opponent\'s attack');
+  step(s, act!, ctl);
+  assert.equal(s.p[0].life.length, life, 'life back to where it was');
+  assert.equal(s.p[0].hand.length, hand + 2, 'the damaged life card plus the Leader\'s draw');
+});
+
+test('names match whatever the spacing around the colon: FP-070 Fusion Evolves from <Son Goku : BR> and <Vegeta : BR>', () => {
+  const s = fresh();
+  s.p[0].leader = spawn(s, 0, 'FB09-001', 'leader');
+  energy(s, 0, 6);
+  spawn(s, 0, 'FB09-010', 'battle');
+  spawn(s, 0, 'FB09-020', 'battle');
+  const g = spawn(s, 0, 'FP-070', 'hand');
+  assert.ok(legalActions(s).some((a) => a.k === 'evolve' && a.uid === g), 'FP-070 can Fusion Evolve');
+});
+
+test('Jiren Leader (awakened) with a 30000-power Battle Card takes only 1 damage from a Double Strike attack, and draws for it', () => {
+  const s = newGame(cards, [{ name: 'J', leader: 'FB03-001', main: { 'FB03-009': 4, 'FB06-013': 46 } }, meta.decks[1]], { seed: 4, first: 1 });
+  step(s, { k: 'keep' }, ctl); step(s, { k: 'keep' }, ctl);
+  s.p[0].awakened = true;
+  spawn(s, 0, 'FB03-009', 'battle');
+  s.turn = 4; s.active = 1;
+  const att = spawn(s, 1, 'FS02-13', 'battle'); // Vegeta, [Double Strike], 35000
+  s.battle = { attacker: att, target: s.p[0].leader, atkSide: 1, comboCount: [0, 0] } as any;
+  s.stage = 'defCombo'; s.toAct = 0;
+  const life = s.p[0].life.length, hand = s.p[0].hand.length;
+  step(s, { k: 'comboDone' }, ctl);
+  while ((s.stage as string) !== 'main' && (s.stage as string) !== 'over' && s.battle) step(s, legalActions(s).find((a) => a.k === 'comboDone' || a.k === 'noCounter' || a.k === 'noBlock') ?? legalActions(s)[0], ctl);
+  assert.equal(s.p[0].life.length, life - 1, 'capped at 1 damage');
+  assert.equal(s.p[0].hand.length, hand + 2, 'the life card plus the Leader\'s draw');
+});

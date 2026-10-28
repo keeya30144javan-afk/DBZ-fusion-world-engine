@@ -1,3 +1,5 @@
+import { synergyBonus } from '../ai/synergy';
+import { nameHas } from '../engine/core';
 import { Card, Decklist } from '../data/types';
 import { DEFAULT_RULES, RulesConfig } from '../data/rules';
 import { cardFitsLeader, deckSize } from '../data/decks';
@@ -36,15 +38,24 @@ export function legalCount(deck: Decklist, cards: Record<string, Card>, id: stri
   return true;
 }
 
-/** Slot targets by cost bucket for a 50-card deck. */
+/**
+ * Slot targets by cost bucket for the Battle Cards of a 50-card deck, besides the
+ * Super Combo cards and Extras. Taken from strong players' lists (Oct 2026): every one
+ * runs 4 Super Combo cards, a big base of 1-costs (cantrips, searchers, evolve bases),
+ * few 3-costs, and its finishers at 4+.
+ */
 const CURVE: [number, number, number][] = [
   // [minCost, maxCost, cards]
-  [0, 1, 12],
-  [2, 2, 14],
-  [3, 3, 10],
-  [4, 4, 6],
-  [5, 99, 4],
+  [0, 1, 15],
+  [2, 2, 10],
+  [3, 3, 4],
+  [4, 4, 5],
+  [5, 99, 6],
 ];
+/** Every strong list runs exactly this many Super Combo cards. */
+const SUPER_COMBOS = 4;
+/** Extras: up to this many, and only ones that earn their slot. */
+const EXTRA_MAX = 6;
 
 /** Names and traits a card's skills ask for (cards to search, play, evolve from…), ignoring Leader conditions. */
 export function wants(card: Card): { names: string[]; traits: string[] } {
@@ -65,7 +76,7 @@ export function wants(card: Card): { names: string[]; traits: string[] } {
   return { names: [...names], traits: [...traits] };
 }
 
-const has = (card: Card, n: string) => card.name.includes(n) || card.characters.some((ch) => ch.includes(n));
+const has = nameHas;
 const hasTrait = (card: Card, t: string) => card.traits.some((x) => x.toLowerCase() === t.toLowerCase());
 
 /** Rough static check of a filter's name/trait/cost parts. */
@@ -125,9 +136,15 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
   const leader = cards[leaderId];
   const noise = new Map(pool.map((c) => [c.id, jitter ? (rng() - 0.5) * jitter : 0]));
   let deck = build((c) => cardValue(c, leader));
-  // Second pass: score synergy against the first list, then build again.
-  const syn = synergyValue(pool, leader, Object.keys(deck.main).map((k) => cards[k]));
-  deck = build(syn);
+  // Two more passes: score each card's synergy with the list so far (named searches,
+  // and resource links: rest -> KO rested, Ki makers -> Ki spenders, Drop fillers ->
+  // Drop payoffs...), then build again around it.
+  for (let pass = 0; pass < 2; pass++) {
+    const named = synergyValue(pool, leader, Object.keys(deck.main).map((k) => cards[k]));
+    const current = deck;
+    const links = new Map(pool.map((c) => [c.id, synergyBonus(cards, current, c)]));
+    deck = build((c) => named(c) + 1.4 * (links.get(c.id) ?? 0));
+  }
   return deck;
 
   function build(base: (c: Card) => number): Decklist {
@@ -141,12 +158,19 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
       }
       return added;
     };
-    const extras = pool.filter((c) => c.type === 'EXTRA').sort((a, b) => val(b) - val(a));
-    let extraSlots = 4;
+    // The combo wall first: the best Super Combo card for this Leader, 4 copies.
+    const supers = pool.filter((c) => c.type === 'BATTLE' && isSuperCombo(c)).sort((a, b) => b.comboPower - a.comboPower || val(b) - val(a));
+    let scLeft = Math.min(SUPER_COMBOS, rules.superComboMax);
+    for (const c of supers) { if (scLeft <= 0) break; scLeft -= add(c, Math.min(rules.maxCopies, scLeft)); }
+    // Extras only when they're worth more than an average Battle Card for this Leader.
+    const battleVals = pool.filter((c) => c.type === 'BATTLE' && !isSuperCombo(c)).map(val).sort((a, b) => b - a);
+    const bar = battleVals[Math.min(battleVals.length - 1, 30)] ?? 0;
+    const extras = pool.filter((c) => c.type === 'EXTRA' && val(c) >= bar).sort((a, b) => val(b) - val(a));
+    let extraSlots = EXTRA_MAX;
     for (const c of extras) { if (extraSlots <= 0) break; extraSlots -= add(c, Math.min(rules.maxCopies, extraSlots)); }
     for (const [lo, hi, slots] of CURVE) {
       let left = slots;
-      const bucket = pool.filter((c) => c.type === 'BATTLE' && c.cost >= lo && c.cost <= hi).sort((a, b) => val(b) - val(a));
+      const bucket = pool.filter((c) => c.type === 'BATTLE' && !isSuperCombo(c) && c.cost >= lo && c.cost <= hi).sort((a, b) => val(b) - val(a));
       for (const c of bucket) { if (left <= 0) break; left -= add(c, Math.min(rules.maxCopies - (deck.main[c.id] ?? 0), left)); }
     }
     dropUnbacked(deck, cards);
@@ -169,7 +193,8 @@ export function dropUnbacked(deck: Decklist, cards: Record<string, Card>) {
 
 export function trimTo(deck: Decklist, cards: Record<string, Card>, size: number) {
   while (deckSize(deck) > size) {
-    const worst = Object.keys(deck.main).filter((k) => deck.main[k] > 0).sort((a, b) => cardValue(cards[a], cards[deck.leader]) - cardValue(cards[b], cards[deck.leader]))[0];
+    const worst = Object.keys(deck.main).filter((k) => deck.main[k] > 0 && !isSuperCombo(cards[k])).sort((a, b) => cardValue(cards[a], cards[deck.leader]) - cardValue(cards[b], cards[deck.leader]))[0];
+    if (!worst) break;
     deck.main[worst]--;
     if (deck.main[worst] === 0) delete deck.main[worst];
   }
@@ -186,12 +211,14 @@ export function mutate(deck: Decklist, cards: Record<string, Card>, rng: Rng, k:
   const pool = poolFor(cards, d.leader, rules);
   if (!pool.length) return d;
   for (let i = 0; i < k; i++) {
-    const ids = Object.keys(d.main).filter((x) => d.main[x] > 0);
+    // The 4 Super Combo cards are fixed: every strong list runs exactly 4.
+    const ids = Object.keys(d.main).filter((x) => d.main[x] > 0 && !isSuperCombo(cards[x]));
     // Remove: weighted toward weak cards.
     const removeW = ids.map((id) => Math.max(0.05, 1 + weak(id) * 2 - cardValue(cards[id], cards[d.leader]) * 0.1));
     const out = ids[weightedPick(removeW, rng)];
     // Add: weighted toward valuable cards not yet at 4.
-    const addable = pool.filter((c) => c.id !== out && legalCount(d, cards, c.id, (d.main[c.id] ?? 0) + 1, rules) && evolveBacked(c, d, cards));
+    if (!ids.length) continue;
+    const addable = pool.filter((c) => c.id !== out && !isSuperCombo(c) && legalCount(d, cards, c.id, (d.main[c.id] ?? 0) + 1, rules) && evolveBacked(c, d, cards));
     if (!addable.length) continue;
     const addW = addable.map((c) => Math.max(0.05, 0.5 + cardValue(c, cards[d.leader]) * 0.5 - weak(c.id) * 2));
     const inn = addable[weightedPick(addW, rng)];
@@ -222,6 +249,20 @@ export function crossover(a: Decklist, b: Decklist, cards: Record<string, Card>,
     if (deckSize(d) >= rules.deckMin) break;
     while (deckSize(d) < rules.deckMin && legalCount(d, cards, c.id, (d.main[c.id] ?? 0) + 1, rules)) d.main[c.id] = (d.main[c.id] ?? 0) + 1;
   }
+  ensureSuperCombos(d, cards, rules);
   trimTo(d, cards, rules.deckMin);
   return d;
+}
+
+/** Top a deck up to 4 Super Combo cards (the best one for its Leader), trimming the weakest others. */
+export function ensureSuperCombos(d: Decklist, cards: Record<string, Card>, rules: RulesConfig = DEFAULT_RULES) {
+  const want = Math.min(4, rules.superComboMax);
+  const have = Object.entries(d.main).reduce((t, [k, n]) => t + (isSuperCombo(cards[k]) ? n : 0), 0);
+  if (have >= want) return;
+  const best = poolFor(cards, d.leader, rules).filter((c) => c.type === 'BATTLE' && isSuperCombo(c)).sort((a, b) => b.comboPower - a.comboPower || (d.main[b.id] ?? 0) - (d.main[a.id] ?? 0));
+  let need = want - have;
+  for (const c of best) {
+    while (need > 0 && legalCount(d, cards, c.id, (d.main[c.id] ?? 0) + 1, rules)) { d.main[c.id] = (d.main[c.id] ?? 0) + 1; need--; }
+    if (need <= 0) break;
+  }
 }

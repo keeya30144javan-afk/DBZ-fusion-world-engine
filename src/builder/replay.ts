@@ -52,6 +52,8 @@ export interface Option {
   value: number;
   visits: number;
   chosen: boolean;
+  /** A whole planned turn rather than a single move. */
+  line?: boolean;
 }
 
 export interface Frame {
@@ -166,7 +168,7 @@ export function recordGame(cards: Record<string, Card>, o: RecordOpts): Replay {
     const actor = s.toAct;
     const turn = s.turn;
     const pol = pols[actor];
-    if (pol instanceof SearchPolicy) pol.lastStats = [];
+    if (pol instanceof SearchPolicy) { pol.lastStats = []; pol.lastLines = []; }
     const a = pol.act(s, acts);
     const move = describeAction(s, a);
     let options: Option[] | undefined;
@@ -176,6 +178,13 @@ export function recordGame(cards: Record<string, Card>, o: RecordOpts): Replay {
         .map((x) => ({ label: describeAction(s, x.action), value: x.value, visits: x.visits, chosen: JSON.stringify(x.action) === key }))
         .sort((x, y) => y.value - x.value)
         .slice(0, 5);
+    }
+    if (pol instanceof SearchPolicy && pol.lastLines.length) {
+      // Whole planned turns: each line in words, the chosen one first.
+      options = pol.lastLines.slice(0, 5).map((l, k) => ({
+        label: l.actions.filter((x) => x.k !== 'end').map((x) => describeAction(s, x)).join(' → ') || 'end the turn',
+        value: l.value, visits: 0, chosen: k === 0, line: true,
+      }));
     }
     const before = s.log!.length;
     step(s, a, ctl);

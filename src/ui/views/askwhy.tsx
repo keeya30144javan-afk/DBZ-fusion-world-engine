@@ -6,6 +6,7 @@ import { cardEvidence, explainPrompt } from '../../builder/explain';
 import { Sampler } from '../translate';
 import { pct } from '../components';
 import { WatchGame } from './replay';
+import { VISIONS } from '../visions';
 
 interface QA { id: string; q: string; a: string; stats: string }
 
@@ -31,7 +32,7 @@ export function AskWhy({ best, target, baseline, cards, rules }: { best: Validat
     return () => { live = false; };
   }, []);
 
-  const ev = useMemo(() => (id ? cardEvidence(cards, best, id, target, baseline) : null), [id, best, target, baseline, cards]);
+  const ev = useMemo(() => (id ? cardEvidence(cards, best, id, target, baseline, VISIONS.decks[best.deck.leader], VISIONS.principles) : null), [id, best, target, baseline, cards]);
   const statLine = ev ? `${ev.card.copies}× · played or comboed in ${ev.stats.gamesWhereItWasPlayedOrComboed} of ${ev.stats.validationGames} games${ev.stats.winRateWhenPlayed !== null ? ` · won ${pct(ev.stats.winRateWhenPlayed, 0)} of those (deck overall ${pct(ev.stats.deckWinRate, 0)})` : ''}` : '';
 
   async function ask() {
@@ -62,6 +63,9 @@ export function AskWhy({ best, target, baseline, cards, rules }: { best: Validat
         </label>
       </div>
       {ev && <div class="note">{statLine}. {ev.stats.verdict[0].toUpperCase() + ev.stats.verdict.slice(1)}.</div>}
+      {ev && ev.links.length > 0 && (
+        <div class="note"><b>Plays off:</b> {ev.links.slice(0, 6).join('; ')}{ev.links.length > 6 ? `; and ${ev.links.length - 6} more` : ''}.</div>
+      )}
       <div class="row">
         <button class="btn primary" onClick={ask} disabled={!sample || busy || !ev}>{busy ? 'Thinking…' : 'Ask'}</button>
         <button class="btn" onClick={() => setWatch({ id, n: (watch?.n ?? 0) + 1 })} disabled={!id}>Watch a game where it was played</button>

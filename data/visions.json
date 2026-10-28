@@ -1,0 +1,138 @@
+{
+  "about": "Game plans of strong players' decks (lists shared by the user, Oct 2026), worked out from the card texts. Each 'engine' names the cards that work together and how.",
+  "principles": [
+    "Exactly 4 Super Combo cards (the 7-cost combo walls) in every deck.",
+    "A big base of 1-costs (9 to 20, usually about 15): cantrips, searchers, evolve bases and cheap removal that find and set up the deck's real plan.",
+    "Few 3-costs. Decks jump from cheap set-up cards to their 4-6 cost payoffs, often by Evolve or by playing them off a cheaper card's skill.",
+    "15 to 23 cards with 10000 combo power, so the hand is always a wall on the opponent's turn.",
+    "13 to 20 different cards, mostly as 4-ofs: consistency over variety.",
+    "Evolve decks run 13 to 18 Evolve cards and enough bases (often searchable 1-costs) to always have something to evolve from.",
+    "Life is a resource: many decks add life to hand early on purpose, to awaken the Leader sooner or to fuel skills, then rely on Leader shields, blockers and combo walls to survive at low life.",
+    "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\")."
+  ],
+  "decks": {
+    "FS11-01": {
+      "name": "Son Goku SSJ3 (Yellow)",
+      "plan": "Cheap ≪Another World≫ Son Gokus and Vegetas rest the opponent's board and find more pieces, then evolve into Son Goku FP-077 / FS11-07 and Vegeta FS11-14. Once the Leader awakens, each Evolve onto a 20000-30000 card untaps 2 energy, so several Evolves and plays fit in one turn. Rested enemy cards are then KO'd, locked or sent to the Drop.",
+      "engines": [
+        "Leader (awakened) + Evolve cards: with 3+ rested energy, playing a 20000-30000 [Evolve] card untaps 2 energy, chaining Evolves in one turn.",
+        "Rest, then punish: FB09-080 (rest 2), FS11-13, FP-077 and Cui rest enemy cards; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon drops rested cost 4 or less, Gotenks and Vegeta FB09-092 lock or KO rested cards.",
+        "Gotenks FS11-03 costs 2 less with a 4+ cost [Evolve] card in play.",
+        "Babidi untaps Vegeta FS11-14 (≪Wicked Soul≫) at end of turn and gives it [Blocker] through the opponent's turn.",
+        "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game."
+      ]
+    },
+    "FB03-001": {
+      "name": "Jiren (Red)",
+      "plan": "Spend life on purpose (Caulifla, Son Goku (Mini): DA, Jiren FB04-006's self-damage) to awaken at 3 life. Awakened Jiren takes at most 1 damage per battle while you have a 30000+ Battle Card, and draws a card every time you take damage. Jiren FB03-009 turns that into a card engine, and It's Over! / Sphere of Destruction clear the board.",
+      "engines": [
+        "Leader (awakened) + Jiren FB03-009: on the opponent's turn, if Jiren is rested (it attacked), pay 'take 1 damage': the life card goes to hand, the Leader draws 1, then the top of the deck goes to life. +2 cards, no life lost, once each opponent turn.",
+        "Leader (awakened) shield: any 30000+ Battle Card (Jiren FB03-009, Rumsshi, Jiren FB04-006, Son Goku FB04-129, Son Goku (Mini): DA once awakened) caps damage at 1 per battle, so [Double Strike] and [Critical] can't finish you.",
+        "It's Over!: with a 30000+ card in play, KO every enemy Battle Card with 25000 power or less. Fuwa (-15000) and Whis (-5000) shrink targets into range.",
+        "Son Goku FB04-129: negates the next damage you take, and gives the whole enemy board -20000 when it attacks.",
+        "Marcarita and Son Goku (Mini): DA get bigger once the Leader is awakened."
+      ]
+    },
+    "FS02-01": {
+      "name": "Vegeta (Blue)",
+      "plan": "Keep 7 or fewer cards in hand and grind with cost-based bottom-decking. Cost reducers (Vegito FB02-061, Mai: Future) shrink enemy cards so cheap removal (Zamasu, Vegito, Son Gohan FB03-039, Sinister Sickle, Vegeta FS02-13) can bottom-deck them; Pilaf and Videl recycle the 1-cost Earthlings.",
+        "engines": [
+        "Vegito FB02-061 (your turn, hand 7 or fewer: enemy cards cost 1 less) + Mai: Future (-1 more) turn 'cost 1 or less' and 'cost 3 or less' removal into answers for real threats.",
+        "Bottom-deck suite: Zamasu and Vegito (cost 1 or less), Son Gohan: Adolescence FB03-039 (2 cards cost 3 or less), Sinister Sickle and Vegeta FS02-13 (cost 4 or less), Zen-Oh (everything).",
+        "Pilaf and Videl FB03-042 recover 1-cost Earthlings (Mai, Bulma, Pilaf) from the Drop to keep the removal going.",
+        "Vegito FB02-139 bounces cost 5 or less and untaps itself; the awakened Leader gets +15000 with hand 7 or fewer."
+      ]
+    },
+    "FB02-105": {
+      "name": "Vegeta (Yellow)",
+      "plan": "Rest-and-lock control. Rest enemy cards (Vegeta FS11-13, Energy Absorption), keep them locked (Son Goku FB02-119, Broly FB08-122, Fierce Hyper Beam), then KO the rested ones (Vegeta FS11-14, Blue Power Awakening). The awakened Leader untaps 2 energy at end of turn to hold up defensive Extras on the opponent's turn.",
+      "engines": [
+        "Lock pieces: Energy Absorption rests and locks, Son Goku FB02-119 locks on play and on attack, Broly FB08-122 locks every rested enemy card and stops a rested Leader attacking.",
+        "Vegeta FS11-14 evolves from FS11-13 / ST01-052 Vegeta, then KOs itself to draw and KO a rested card cost 5 or less; Babidi untaps a ≪Wicked Soul≫ or ≪Majin≫ card (FS11-14, Majin Buu, Yamu) and gives it [Blocker].",
+        "Majin Buu FB03-093 comes back from the Drop rested when KO'd (discard 1).",
+        "Leader (awakened): untap 2 energy at end of your turn, to pay for Time Rewound / And Don't Dream of Resurrecting Again! / Results of Training during the opponent's attacks. Whis recovers a yellow Extra cost 3 or less."
+      ]
+    },
+    "FB08-073": {
+      "name": "Broly (Yellow)",
+      "plan": "Dig for Broly pieces with Kakarot and Broly ST01-048, power through turn 3-4 into Broly ST01-051 / ST01-050 / FB08-122, protect the big Broly with Paragus, and lock the opponent out. The awakened Leader taxes every enemy attack while a 5+ cost ≪Saiyan≫ is in play.",
+      "engines": [
+        "Search: Kakarot finds <Paragus> or a <Broly>; Broly ST01-048 adds life to hand and finds <Kakarot> or a <Broly>.",
+        "Broly ST01-051 (cost 5): rests an enemy card, and can pay 1 + send itself to the Drop to play a 6-cost Broly (ST01-050 or FB08-122) from hand.",
+        "Broly ST01-050 evolves from a Broly costing 2+ and KOs one of your own cards (Paragus ST01-047 draws when KO'd) to untap and attack again.",
+        "Paragus FB08-084 makes a Broly unremovable by skills until the end of the opponent's next turn; King Vegeta costs 2 less with a 5+ ≪Saiyan≫ in play.",
+        "Leader (awakened): opponent must rest an active card for each Battle Card attack; untaps 1 energy with a 4+ cost Broly in play."
+      ]
+    },
+    "ST01-001": {
+      "name": "Son Goten (Red)",
+      "plan": "Ki on the Leader. The Leader starts Fate Transcending Generations from the deck, and Son Goku, Son Gohans and Trunks pile Ki on the Leader to awaken at 3. Fate lets you pay for Kamehameha Extras by resting it, and Family Kamehameha cashes 5+ Ki into a huge attack that deals 2 extra damage on a KO.",
+      "engines": [
+        "Fate Transcending Generations (Field, played at game start): pay a Kamehameha Extra costing up to the Leader's Ki by resting Fate instead of energy; the awakened Leader untaps Fate after a Kamehameha.",
+        "Ki builders: Son Goku ST01-004 (+1), Son Gohan ST01-009 / ST01-010 with Fate (+1), Son Gohan ST01-011 (+1), Trunks ST01-013 rest with Fate (+1).",
+        "Son Goten/Son Gohan ST01-008 rests a 2-cost Son Goku to draw and attack Active cards; that fires Son Goku ST01-004's 'rested by your skill: -25000'.",
+        "Family Kamehameha: remove 5+ Ki for +10000 per Ki, then the next KO in battle deals 2 damage. Kamehameha ST01-016 (+20000 and a search) and Son Gohan ST01-011 (untaps after a Kamehameha) extend the turn."
+      ]
+    },
+    "FB09-001": {
+      "name": "Gogeta: BR (Red)",
+      "plan": "Get a Son Goku: BR and a Vegeta: BR with equal power of 20000+ into play and Fusion Evolve them into Gogeta: BR for 0-2 energy. The awakened Leader then KOs any enemy cards adding up to 15000 power or less the turn a Fusion Evolve card is played, after Gogeta's -5000 / -25000 has shrunk them. Gogeta: BR FB09-121 can win outright at end of turn.",
+      "engines": [
+        "Fusion pairs at 20000: Son Goku: BR FB09-010 / FB10-012 and Vegeta: BR FB09-020 / FB10-017 (15000 +5000 on your turn). Vegeta: BR FB09-020 also pumps itself and a Son Goku: BR by +5000 (revealing a Fusion Evolve card) to match powers.",
+        "Gogeta: BR forms: FB09-006 (0 energy: draw, all enemies -5000), FP-070 (0: -15000 on attack), FB09-007 (1: untaps once on attack), FB09-121 (2: all enemies -25000; at end of turn, if the opponent is at 1 life with no Battle Cards, you win).",
+        "Leader (awakens at 5 life): once per turn after a Fusion Evolve this turn, KO any number of enemy Battle Cards totalling 15000 power or less; after -25000 that's usually the whole board.",
+        "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop."
+      ]
+    },
+    "FB09-097": {
+      "name": "Gogeta: GT (Black)",
+      "plan": "Build Ki on GT Battle Cards and keep an energy marker. Awaken at 2 total Ki, then cash Ki in: Son Goku: GT KOs everything costing up to the Ki removed, Big Bang Kamehameha is paid with Ki, and Gogeta: GT FB09-123 can spend 4 Ki for an extra turn.",
+      "engines": [
+        "Ki: Son Gohan: GT (+2), Son Goku: GT (+1 on play and attack), Vegeta: GT (+1), Pan: GT (+1), Trunks: GT (+1 to a card with Ki), and the awakened Leader (+2 to a GT card when attacking).",
+        "Energy markers: Pan: GT, Vegeta: GT FB09-117 and Gogeta: GT place them; Hercule: GT, Para Para Brothers and Ultimate Sparking get better with one.",
+        "Vegeta: GT FB09-117's cost and power grow with its Ki, so Big Bang Kamehameha (KO a card costing up to the chosen GT card's cost, payable by removing 2 Ki) hits harder.",
+        "Gogeta: GT FB09-123: remove 4 Ki and shuffle your other Battle Cards and 6 energy away to take an extra turn."
+      ]
+    },
+    "FB09-073": {
+      "name": "Son Goku/Vegeta (Yellow)",
+      "plan": "≪Another World≫ evolve deck. 1-cost Son Gokus rest and search, Son Goku/Vegeta FB09-082 is the base, Veku and Gogeta FB09-122 evolve on it. Gogeta rests the whole enemy board on attack and survives lethal by going into your life. The awakened Leader untaps an ≪Another World≫ attacker for a second swing.",
+      "engines": [
+        "Bases: Son Goku/Vegeta FB09-082 (cost 2, adds life to hand, can untap itself) is what Veku (0 energy) and Gogeta FB09-122 (3 energy) evolve from.",
+        "Veku: send to Drop to replay a Son Goku and a Vegeta with ≪Another World≫ (combined cost 3 or less) from the Drop, rested, as fresh bases.",
+        "Gogeta FB09-122: rests all enemy cards when attacking and untaps 1 energy; goes to your life instead of letting you lose at 0 life or being KO'd by a skill.",
+        "Rest and lock: Son Goku FB09-080 rests 2, North Kai locks a rested card, FP-077 rests one; Son Goku FS11-07 (evolve) draws and untaps."
+      ]
+    },
+    "FB09-049": {
+      "name": "Son Gohan: SH (Green)",
+      "plan": "Pile Ki on the Leader (Gotenks: SH, Son Gohan: Adolescence/Piccolo, Special Beam Cannon, Piccolo: SH), awaken at 2, and at 3 Ki cheat out the 8-cost 50000 Son Gohan: SH with [Double Strike] by sending a 5-cost Son Gohan: SH to the Drop.",
+      "engines": [
+        "Son Gohan: SH FB09-059 / FP-072 (cost 5): with the SH Leader at 3+ Ki, send it to the Drop to play the 8-cost Son Gohan: SH from hand.",
+        "Son Gohan: SH FB09-060 (8 cost, [Double Strike]): spend 1 Leader Ki and 1 energy to KO any card, recover an Extra and refund energy. FB07-121 bins 5 energy to send any card to the Drop and recovers 5 energy.",
+        "Piccolo FB10-070 (bin 1 energy): play a Son Gohan costing 5 or less from hand; Gamma 2: SH KOs cost 3 or less at 3 Ki.",
+        "Special Beam Cannon: draw + Ki on main; in battle, remove all Leader Ki for +10000 each, and at 4+ untap a Son Gohan: SH."
+      ]
+    },
+    "FB05-025": {
+      "name": "Vegito (Blue)",
+      "plan": "Fill the Drop to 20+ (Son Goku ST01-023, Gotenks ST01-021, Son Goku/Vegeta ST01-024, the Leader's awaken mills 10). Then the Leader gets +20000, Savior of the World pumps, and Super Vegito gives 40000 Vegitos [Double Strike]. Separately, set up a Potara under Son Goku or Vegeta and evolve into Vegito FB10-121 / ST01-025 / ST01-070.",
+      "engines": [
+        "Potara set-up: Son Goku FB10-031 mills a Vegeta and a Potara, Vegeta FB10-038 / FP-087 mill a Son Goku and a Potara; then pay 1 to put that pair under the card, which lets the Vegitos evolve onto it.",
+        "Vegito FB10-121 (draw 3, mills the opponent 15 at 2 or less life), ST01-025 (Leader +5000 through their turn), ST01-070 (bottom-decks a card costing up to your Drop size).",
+        "Drop count: 20+ turns on the awakened Leader (+20000), Savior of the World (+15000), Vegito FB05-041 (recover a Son Goku and a Vegeta), and I Call This Version...Super Vegito! ([Double Strike]).",
+        "Son Goku FB10-032 evolves on a 1-cost Son Goku, untaps, and bottom-decks enemy cards totalling cost 2 or less; Trunks: Future costs 3 less with an evolved Vegito."
+      ]
+    },
+    "FB09-025": {
+      "name": "Son Goku (Blue, Tournament of Power)",
+      "plan": "Discard and mill to put 7+ ≪Universe≫ cards in the Drop and awaken at 6 or less life. Then every discard paid to an [Evolve] or ≪Tournament of Power≫ card's skill draws a card back, so discard costs (Divine Domain, Vegeta FB09-045, Frieza) become free. Evolve Son Goku up to the 40000 FB09-037.",
+      "engines": [
+        "Awaken: Great Priest (mill 3), Zen-Oh (dig 2, rest to Drop), and the discard + mill costs on Son Goku FB09-033, Vegeta FB09-043, Son Goku/Vegeta FP-075 fill the Drop with ≪Universe≫ cards.",
+        "Leader (awakened): draw 1 for each card discarded by an [Evolve] or ≪Tournament of Power≫ card's skill.",
+        "Evolve chain: Son Goku (ToP) → FB09-036 (1 energy) → FB09-037 (2 energy, 40000, can swap itself into a battle). Son Goku FB09-035 can be paid by discarding a ToP card and 2 energy.",
+        "Removal: Vegeta FB09-045 (discard 2: bottom-deck 2 cards cost 4 or less, draw 1), Frieza FP-071 (discard 2: bottom-deck cost 2 or less), Zen-Oh (pay 12 Drop cards: bottom-deck the card it attacks, cost 6 or less)."
+      ]
+    }
+  }
+}

@@ -83,7 +83,7 @@ export function GameViewer({ replay, cards, onClose }: { replay: Replay; cards: 
         <div class="stack" style={{ gap: '10px' }}>
           {f.options && (
             <div class="panel">
-              <div class="eyebrow">What {label(f.actor as 0 | 1)}'s AI weighed</div>
+              <div class="eyebrow">{f.options[0]?.line ? `Turn plans ${label(f.actor as 0 | 1)}'s AI compared` : `What ${label(f.actor as 0 | 1)}'s AI weighed`}</div>
               <table class="vopts"><tbody>
                 {f.options.map((o) => (
                   <tr key={o.label} class={o.chosen ? 'chosen' : ''}>
@@ -92,7 +92,9 @@ export function GameViewer({ replay, cards, onClose }: { replay: Replay; cards: 
                   </tr>
                 ))}
               </tbody></table>
-              <p class="note" style={{ margin: '6px 0 0' }}>Estimated chance to win after each move, from {f.options.reduce((a, o) => a + o.visits, 0)} imagined continuations. The opponent's hidden cards are guessed, not peeked at.</p>
+              <p class="note" style={{ margin: '6px 0 0' }}>{f.options[0]?.line
+                ? "Whole lines of play for this turn, each scored by the chance to win after the opponent's reply, in several imagined deals of their hidden cards. It plays the first step of the best line, then plans again."
+                : `Estimated chance to win after each move, from ${f.options.reduce((a, o) => a + o.visits, 0)} imagined continuations. The opponent's hidden cards are guessed, not peeked at.`}</p>
             </div>
           )}
           {card && (

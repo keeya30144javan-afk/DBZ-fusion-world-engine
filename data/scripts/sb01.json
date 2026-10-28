@@ -2338,5 +2338,46 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "SB01-031": {
+  "keywords": [
+   "barrier"
+  ],
+  "abilities": [
+   {
+    "timing": "endOfYourTurn",
+    "effects": [
+     {
+      "t": "activate",
+      "target": {
+       "side": "self",
+       "zones": [
+        "battle"
+       ],
+       "count": 1,
+       "upTo": true,
+       "filter": {
+        "traits": [
+         "Majin",
+         "Wicked Soul"
+        ]
+       }
+      }
+     },
+     {
+      "t": "grant",
+      "target": {
+       "ref": "prev"
+      },
+      "kw": "blocker",
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "switches the card to Active Mode and gives [Blocker] until the end of the opponent's next turn"
+  }
  }
 }

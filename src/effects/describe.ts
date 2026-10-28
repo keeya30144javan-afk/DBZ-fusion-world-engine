@@ -169,7 +169,7 @@ export function describeEffect(e: Effect): string {
     }
     case 'search': {
       const dest = e.dest ?? 'hand';
-      out = `look at ${e.fromBottom ? `the bottom ${e.look === 1 ? 'card' : plural(e.look, 'card')}` : `${plural(e.look, 'card')} from the top`} of your deck, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : e.rest === 'hand' ? 'into your hand' : 'at the bottom of your deck in a random order'}`;
+      out = `look at ${e.fromBottom ? `the bottom ${e.look === 1 ? 'card' : plural(e.look, 'card')}` : `${plural(e.look, 'card')} from the top`} of your deck, ${e.eachOption ? `reveal ${e.options.map((f) => `up to 1 ${describeFilter(f)}`).join(' and ')}` : `reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))}`} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : e.rest === 'hand' ? 'into your hand' : 'at the bottom of your deck in a random order'}`;
       break;
     }
     case 'dropToHand': out = e.per
@@ -360,6 +360,7 @@ export function describeCost(c: Cost): string {
     case 'koSelf': return 'KO this card';
     case 'lifeToHand': return c.all ? 'add all of your life to your hand' : `add ${plural(c.n, 'card')} from your life to your hand`;
     case 'lifeToDrop': return `place ${plural(c.n, 'card')} from your life into your Drop`;
+    case 'takeDamage': return `you take ${c.n} damage`;
     case 'reduceKi': if (c.max) return `remove ${c.max >= 99 ? `all ${c.n > 1 ? `${c.n} or more ` : ''}` : `${c.n} or more (up to ${c.max}) `}Ki from ${c.scope === 'this' ? 'this card' : c.scope === 'leader' ? 'your Leader' : c.scope === 'battle' ? 'your Battle Area' : 'your cards'}`;
       return `reduce ${c.scope === 'this' ? "this card's" : c.scope === 'leader' ? "your Leader's" : c.scope === 'battle' ? 'the' : 'your'} Ki${c.scope === 'battle' ? ' of your Battle Area' : ''} by ${c.n}`;
     case 'koOwn': return `KO ${c.n} ${describeFilter(c.filter, 'Battle Card')} in your Battle Area`;

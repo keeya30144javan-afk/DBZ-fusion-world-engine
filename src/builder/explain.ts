@@ -1,3 +1,4 @@
+import { nameHas } from '../engine/core';
 import { Card, Decklist } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { describeCompiled } from '../effects/describe';
@@ -5,6 +6,7 @@ import { cardValue } from '../ai/heuristics';
 import { poolFor, wants } from './deckgen';
 import { Change, Validated } from './counter';
 import { score } from './evaluate';
+import { RESOURCE_LABEL, linksOf } from '../ai/synergy';
 
 /**
  * Evidence for "why is this card in the list?": everything the search actually
@@ -16,7 +18,7 @@ const brief = (c: Card) => ({
   text: c.text, ...(c.back ? { awakened: `${c.back.name}: ${c.back.text}` } : {}),
 });
 
-const has = (c: Card, n: string) => c.name.includes(n) || c.characters.some((ch) => ch.includes(n));
+const has = nameHas;
 const hasTrait = (c: Card, t: string) => c.traits.some((x) => x.toLowerCase() === t.toLowerCase());
 
 export interface CardEvidence {
@@ -36,6 +38,11 @@ export interface CardEvidence {
   history: string[];
   staticValue: { valueForThisLeader: number; rankAmongLegalCardsForLeader: string };
   synergy: { cardsInDeckThatAskForIt: string[]; cardsInDeckItAsksFor: string[] };
+  /** Resource links worked out from the skills: what this card feeds and what feeds it. */
+  links: string[];
+  /** The Leader's known game plan from strong players' lists, when there is one. */
+  leaderPlan?: { plan: string; engines: string[] };
+  deckbuildingPrinciples?: string[];
   target: { name: string; cards: { name: string; id: string; copies: number; cost: number; power: number; text: string }[] };
   baselineHasIt: boolean | null;
 }
@@ -55,7 +62,7 @@ function describeHistory(history: Change[] | undefined, id: string, cards: Recor
   return out;
 }
 
-export function cardEvidence(cards: Record<string, Card>, v: Validated, id: string, target: Decklist, baseline?: Validated | null): CardEvidence {
+export function cardEvidence(cards: Record<string, Card>, v: Validated, id: string, target: Decklist, baseline?: Validated | null, vision?: { plan: string; engines: string[] }, principles?: string[]): CardEvidence {
   const deck = v.deck;
   const card = cards[id];
   const leader = cards[deck.leader];
@@ -103,6 +110,11 @@ export function cardEvidence(cards: Record<string, Card>, v: Validated, id: stri
     history: describeHistory(v.history, id, cards),
     staticValue: { valueForThisLeader: round(cardValue(card, leader)), rankAmongLegalCardsForLeader: `${vals.findIndex((x) => x.id === id) + 1} of ${vals.length} ${card.type === 'EXTRA' ? 'Extra' : 'Battle'} cards` },
     synergy: { cardsInDeckThatAskForIt: [...new Set(asksForIt)], cardsInDeckItAsksFor: [...new Set(itAsksFor)] },
+    links: [...new Set(linksOf(cards, deck, id).map((l) => l.dir === 'feeds'
+      ? `feeds ${cards[l.with].name} (${l.with}), which ${RESOURCE_LABEL[l.resource][1]}`
+      : `is fed by ${cards[l.with].name} (${l.with}), which ${RESOURCE_LABEL[l.resource][0]}`))],
+    ...(vision ? { leaderPlan: { plan: vision.plan, engines: vision.engines } } : {}),
+    ...(principles?.length ? { deckbuildingPrinciples: principles } : {}),
     target: {
       name: target.name,
       cards: Object.entries(target.main).map(([k, n]) => ({ name: cards[k]?.name ?? k, id: k, copies: n, cost: cards[k]?.cost ?? 0, power: cards[k]?.power ?? 0, text: (cards[k]?.text ?? '').slice(0, 220) })),
@@ -122,6 +134,7 @@ export function explainPrompt(e: CardEvidence, question: string): string {
     "- If the verdict says the stats can't separate it from noise, say so plainly: it may just be filler the search never removed. Don't invent a strategy story the numbers don't support.",
     '- You may explain what the card does against the target deck from the card texts, but label that as reading the cards, not as evidence from games.',
     '- If the history shows when and how it entered, say so (seeded from card values and synergy, or swapped in by a later generation).',
+    "- Explain how it plays off the other cards: use 'links' (resource links worked out from the skills) and, when present, 'leaderPlan' (how strong players run this Leader). Name the partner cards. A card with links but weak stats may be a set-up piece whose payoff shows up in other cards' numbers; say so if that fits.",
     '- Say the one thing that would settle the question (e.g. watch a game where it was played, or re-test the deck with it swapped out).',
     '- Plain English, under 170 words, no headings. The user is a player, not a programmer.',
     '',

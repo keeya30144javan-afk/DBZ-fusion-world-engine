@@ -3018,5 +3018,62 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "FS11-09": {
+  "evolve": {
+   "from": [
+    {
+     "names": [
+      "Son Gohan: Adolescence"
+     ]
+    }
+   ],
+   "cost": 1
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "lifeToHand",
+      "n": 1,
+      "upTo": true,
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Son Goku"
+        ]
+       }
+      ]
+     },
+     {
+      "t": "search",
+      "look": 3,
+      "options": [
+       {
+        "names": [
+         "Videl"
+        ]
+       },
+       {
+        "costLE": 5,
+        "traits": [
+         "Saiyan"
+        ]
+       }
+      ],
+      "take": 1,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "from the user's SSJ3 list: the search finds a <Videl>, or a ≪Saiyan≫ card costing 5 or less"
+  }
  }
 }

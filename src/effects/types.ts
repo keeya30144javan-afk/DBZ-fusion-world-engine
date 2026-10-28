@@ -209,7 +209,7 @@ export type Effect = E<
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
-  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean }
+  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean; /** "up to 1 <A> and up to 1 <B>": one card per option. */ eachOption?: boolean }
   /** `per`: take up to `each` for each counted thing; distinctCosts: all with different costs. */
   | { t: 'dropToHand'; options: Filter[]; each: number; per?: Count; distinctCosts?: boolean }
   /**
@@ -365,6 +365,8 @@ export type Cost =
   /** all: every card in your life ("add all of your life to your hand"). */
   | { t: 'lifeToHand'; n: number; all?: boolean }
   | { t: 'lifeToDrop'; n: number }
+  /** "You take 1 damage:" as a cost (fires "when you take damage" skills, unlike moving life to hand). */
+  | { t: 'takeDamage'; n: number }
   /** Remove N Ki. 'your' = leader and Battle Cards, 'battle' = Battle Cards only (manual p.12). */
   /** `max`: "remove N or more" / "remove all" — removes up to max (99 = all); the amount is countable as kiRemoved. */
   | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle'; max?: number }

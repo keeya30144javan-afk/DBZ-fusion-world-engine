@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const cards = JSON.parse(readFileSync('data/cards.json', 'utf8'));
 const meta = JSON.parse(readFileSync('data/meta.json', 'utf8'));
+const visions = JSON.parse(readFileSync('data/visions.json', 'utf8'));
 
 const common = { bundle: true, minify: true, format: 'iife', target: 'es2020', write: false, legalComments: 'none' };
 
@@ -20,6 +21,7 @@ const app = await build({
     __WORKER_SOURCE__: JSON.stringify(workerSrc),
     __BUNDLED_CARDS__: JSON.stringify(cards),
     __BUNDLED_META__: JSON.stringify(meta),
+    __BUNDLED_VISIONS__: JSON.stringify(visions),
   },
 });
 const css = readFileSync('src/ui/styles.css', 'utf8');

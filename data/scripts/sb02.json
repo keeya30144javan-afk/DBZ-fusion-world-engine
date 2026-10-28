@@ -2256,5 +2256,55 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "SB02-031": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "discard",
+      "n": 2
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Gotenks"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "search",
+      "look": 10,
+      "options": [
+       {
+        "names": [
+         "Son Goten"
+        ],
+        "costLE": 2
+       },
+       {
+        "names": [
+         "Trunks: Youth"
+        ],
+        "costLE": 2
+       }
+      ],
+      "take": 2,
+      "eachOption": true,
+      "toHand": true,
+      "dest": "hand",
+      "rest": "bottom"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "up to 1 each of <Son Goten> and <Trunks: Youth>, both cost 2 or less"
+  }
  }
 }

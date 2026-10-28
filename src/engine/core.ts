@@ -611,7 +611,7 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'kiTotalGE': return kiTotal(s, owner, c.scope) >= c.n;
     case 'leaderIs': {
       const lc = cardOf(s, me.leader);
-      return c.names.some((n) => lc.name.includes(n) || lc.characters.some((ch) => ch.includes(n)));
+      return c.names.some((n) => nameHas(lc, n));
     }
     case 'battleCount': {
       const side = c.side === 'self' ? owner : other(owner);
@@ -644,11 +644,17 @@ function leaderTraits(s: GameState, owner: Side): string[] {
   return c.traits;
 }
 
+/** Card names as printed vary in spacing around the colon ("Son Goku : BR" vs "Son Goku: BR"). */
+export const normName = (s: string) => s.replace(/\s*:\s*/g, ': ').replace(/\s+/g, ' ').trim();
+
+/** Does this card's name (or a name it's also treated as) include `n`? */
+export const nameHas = (card: Card, n: string) => {
+  const k = normName(n).toLowerCase();
+  return normName(card.name).toLowerCase().includes(k) || card.characters.some((ch) => normName(ch).toLowerCase().includes(k));
+};
+
 export function nameMatches(card: Card, names: string[]): boolean {
-  return names.some((n) => {
-    const k = n.toLowerCase();
-    return card.name.toLowerCase().includes(k) || card.characters.some((ch) => ch.toLowerCase().includes(k));
-  });
+  return names.some((n) => nameHas(card, n));
 }
 
 export function matchesFilter(s: GameState, uid: number, f: Filter, src: number): boolean {

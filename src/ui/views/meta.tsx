@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
 import { MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
 import { store, MetaDeck } from '../store';
+import { VISIONS } from '../visions';
 import { ColorTag, CopyButton, Meter, deckSizeOf, getPool, leaderLabel, pct, useStore } from '../components';
 
 export function MetaView() {
@@ -38,7 +39,7 @@ export function MetaView() {
   }
 
   async function gauntlet() {
-    const decks = st.meta.filter((d) => !validateDeck(d, st.cards, st.rules).length).slice(0, 10);
+    const decks = st.meta.filter((d) => !validateDeck(d, st.cards, st.rules).length).slice(0, 16);
     if (decks.length < 2) return;
     setGauntletRunning(true);
     const games = 40;
@@ -68,7 +69,7 @@ export function MetaView() {
   return (
     <div class="stack">
       <p class="intro">The decks people are playing right now. Each list's <strong>share</strong> is how much of the field it makes up. The Scouter uses it to guess which list an opponent is on, and the counter search uses these lists as the baseline to beat.</p>
-      {st.meta.some((d) => d.example) && <p class="note warn">Showing example starter-deck lists until you add real meta decks. Saving any deck copies these into your saved meta so you can edit or delete them.</p>}
+      {st.meta.some((d) => d.example) && <p class="note">Showing the built-in lists: strong players' decks shared in October 2026, plus the four starter decks (their exact printed lists aren't known, so those are assumed). Saving any deck copies these into your saved meta so you can edit or delete them.</p>}
       <div class="panel raised">
         <div class="row" style={{ justifyContent: 'space-between', marginBottom: '8px' }}>
           <h2 style={{ margin: 0 }}>Meta decks</h2>
@@ -85,7 +86,17 @@ export function MetaView() {
               const errs = validateDeck(d, st.cards, st.rules);
               return (
                 <tr key={d.id}>
-                  <td><span class="cardname">{d.name}</span>{d.example && <> <span class="tag">example</span></>}{errs.length > 0 && <div class="err">{errs[0]}</div>}</td>
+                  <td>
+                    <span class="cardname">{d.name}</span>{d.example && <> <span class="tag">{d.name.startsWith('Starter') ? 'assumed starter' : 'player list'}</span></>}
+                    {errs.length > 0 && <div class="err">{errs[0]}</div>}
+                    {VISIONS.decks[d.leader] && !d.name.startsWith('Starter') && (
+                      <details class="note" style={{ marginTop: '4px', maxWidth: '62ch' }}>
+                        <summary>Game plan</summary>
+                        <p style={{ margin: '4px 0' }}>{VISIONS.decks[d.leader].plan}</p>
+                        <ul style={{ margin: 0, paddingLeft: '18px' }}>{VISIONS.decks[d.leader].engines.map((e) => <li key={e}>{e}</li>)}</ul>
+                      </details>
+                    )}
+                  </td>
                   <td>{leaderLabel(st.cards, d.leader)} <ColorTag card={st.cards[d.leader]} /></td>
                   <td class="num">{deckSizeOf(d)}</td>
                   <td class="num">{pct((d.share ?? 0) / totalShare, 0)}</td>

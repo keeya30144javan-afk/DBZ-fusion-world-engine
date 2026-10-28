@@ -1,8 +1,9 @@
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { Cond, Effect } from '../effects/types';
+import { Resource, rolesOf } from './synergy';
 import {
-  GameState, Side, activeEnergy, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
+  GameState, Side, abilitiesOf, activeEnergy, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, playCostPlan } from '../engine/game';
@@ -71,7 +72,7 @@ const valueCache = new Map<string, number>();
 export function leaderCondOk(c: Cond, leader?: Card): boolean {
   if (!leader) return true;
   const low = (x: string) => x.toLowerCase();
-  if (c.t === 'leaderIs') return c.names.some((n) => leader.name.includes(n) || leader.characters.some((ch) => ch.includes(n)));
+  if (c.t === 'leaderIs') return c.names.some((n) => nameHas(leader, n));
   if (c.t === 'leaderTrait') {
     const tr = leader.traits.map(low);
     if (c.only) return tr.length > 0 && tr.every((t) => c.traits.some((x) => low(x) === t));
@@ -135,6 +136,26 @@ export function keepValue(s: GameState, u: number): number {
 
 const lifeWorth = (l: number) => (l <= 0 ? -6 : 2.2 * Math.log(1 + l));
 
+/**
+ * What a side's deck consumes (Ki, Drop size, markers, rested enemy cards...), from the
+ * synergy map of every card it owns. Cached per game: the deck never changes.
+ */
+const needsMemo = new WeakMap<object, [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>]>();
+function deckNeeds(s: GameState): [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] {
+  const hit = needsMemo.get(s.cards);
+  const key = s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
+  if (hit && (hit as any).key === key) return hit;
+  const out: [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] = [{}, {}];
+  for (const i of s.inst) {
+    const r = rolesOf(s.cards[i.id]);
+    for (const [res, w] of Object.entries(r.consumes) as [Resource, number][]) out[i.owner][res] = (out[i.owner][res] ?? 0) + w;
+  }
+  for (const o of out) for (const k of Object.keys(o) as Resource[]) o[k] = Math.min(1, o[k]! / 6);
+  (out as any).key = key;
+  needsMemo.set(s.cards, out);
+  return out;
+}
+
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side): number {
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
@@ -146,6 +167,12 @@ export function evaluate(s: GameState, me: Side): number {
     v += Math.min(pl.energy.length, 8) * 0.35;
     v += pl.awakened ? 0.6 : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
+    // Resources this deck's engine runs on.
+    const need = deckNeeds(s)[p];
+    if (need.ki) v += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
+    if (need.drop) v += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
+    if (need.marker) v += need.marker * 0.5 * Math.min(pl.markers, 2);
+    if (need.restEnemy) v += need.restEnemy * 0.3 * s.p[other(p)].battle.filter((u) => s.inst[u].rested).length;
     return v;
   };
   return side(me) - side(other(me));
@@ -363,7 +390,29 @@ export class FastPolicy implements Policy {
     return combos[0];
   }
 
+  /**
+   * A battle skill on the field that adds no power but gives value (draws, life, removal),
+   * like Jiren FB03-009's "take 1 damage: put the top card of your deck into your life".
+   * Worth using whenever it's offered, as long as its cost can't lose the game.
+   */
+  private freeValueSkill(s: GameState, actions: Action[]): Action | null {
+    const me = s.p[s.toAct];
+    for (const a of actions) {
+      if (a.k !== 'battleSkill' || me.hand.includes(a.uid)) continue;
+      const ab = abilitiesOf(s, a.uid)[a.ab];
+      if (!ab || ab.effects.some((e) => e.t === 'power' || e.t === 'comboPower')) continue;
+      const risky = ab.cost.some((c) => (c.t === 'takeDamage' || c.t === 'lifeToDrop' || c.t === 'lifeToHand') && me.life.length <= ((c as { n?: number }).n ?? 1) + 1);
+      if (risky) continue;
+      // Taking damage or moving life to hand is a card gained, not a price.
+      const v = ab.effects.reduce((t, e) => t + effectValue(e), 0) + ab.cost.reduce((t, c) => t + (c.t === 'takeDamage' || c.t === 'lifeToHand' ? 0.4 : -0.3), 0);
+      if (v > 0.4) return a;
+    }
+    return null;
+  }
+
   private offCombo(s: GameState, actions: Action[]): Action {
+    const free = this.freeValueSkill(s, actions);
+    if (free) return free;
     const b = s.battle!;
     const { atk, def } = battleTotals(s);
     if (atk >= def) return { k: 'comboDone' };
@@ -376,6 +425,8 @@ export class FastPolicy implements Policy {
   }
 
   private defCombo(s: GameState, actions: Action[]): Action {
+    const free = this.freeValueSkill(s, actions);
+    if (free) return free;
     const b = s.battle!;
     const me = s.p[s.toAct];
     const { atk, def } = battleTotals(s);

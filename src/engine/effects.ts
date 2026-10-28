@@ -338,6 +338,7 @@ export function canPayCosts(s: GameState, uid: number, costs: Cost[], excludeFro
       case 'restEnergy': energyNeeded += Math.max(0, c.n - skillDiscountOf(s, uid)); break;
       case 'lifeToHand': if (!c.all && me.life.length < c.n) return false; break;
       case 'lifeToDrop': if (me.life.length < c.n) return false; break;
+      case 'takeDamage': if (me.life.length < c.n) return false; break;
       case 'removeMarker': if (me.markers < c.n) return false; break;
       case 'energyToHand': if (me.energy.filter((u) => matchesFilter(s, u, c.filter, uid)).length < c.n) return false; break;
       case 'energyToDeckBottom': if (me.energy.length < c.n) return false; break;
@@ -443,6 +444,7 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
         break;
       }
       case 'lifeToDrop': takeLife(s, owner, c.n, true); break;
+      case 'takeDamage': takeLife(s, owner, c.n, false, ctl); break;
       case 'selfToDrop': if (me.field === uid) { removeFrom(s, uid); me.drop.push(uid); } else moveTo(s, uid, 'drop'); break;
       case 'selfToHand': moveTo(s, uid, 'hand'); break;
       case 'selfToDeckBottom': moveTo(s, uid, 'deck', { bottom: true }); break;
@@ -830,8 +832,15 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     }
     case 'search': {
       const top = e.fromBottom ? me.deck.splice(0, e.look) : me.deck.splice(Math.max(0, me.deck.length - e.look));
-      const match = top.filter((u) => e.options.some((f) => matchesFilter(s, u, f, src)));
-      const pick = pickFrom(s, owner, src, match, e.take, ctl);
+      let pick: number[];
+      if (e.eachOption) {
+        // "up to 1 <A> and up to 1 <B>": one pick per option.
+        pick = [];
+        for (const f of e.options) pick.push(...pickFrom(s, owner, src, top.filter((u) => !pick.includes(u) && matchesFilter(s, u, f, src)), 1, ctl));
+      } else {
+        const match = top.filter((u) => e.options.some((f) => matchesFilter(s, u, f, src)));
+        pick = pickFrom(s, owner, src, match, e.take, ctl);
+      }
       const dest = e.dest ?? (e.toHand ? 'hand' : 'hand');
       const rest = top.filter((u) => !pick.includes(u));
       // Return the rest first so a play from the look sees a consistent deck.

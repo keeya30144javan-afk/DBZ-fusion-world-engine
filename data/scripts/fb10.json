@@ -1137,6 +1137,7 @@
        }
       ],
       "take": 2,
+      "eachOption": true,
       "toHand": false,
       "dest": "drop",
       "rest": "bottom"
@@ -1212,7 +1213,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "May take two of the same card instead of one of each."
+   "note": "from the user's Vegito list: mills one of each, so the Potara setup works"
   }
  },
  "FB10-032": {
@@ -1459,6 +1460,7 @@
        }
       ],
       "take": 2,
+      "eachOption": true,
       "toHand": false,
       "dest": "drop",
       "rest": "bottom"
@@ -1534,7 +1536,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "May take two of the same card instead of one of each."
+   "note": "from the user's Vegito list: mills one of each, so the Potara setup works"
   }
  },
  "FB10-040": {

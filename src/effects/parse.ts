@@ -73,8 +73,11 @@ export function parseFilter(s: string): Filter {
   }
   if (/rest mode/i.test(s)) f.rested = true;
   if (/active mode/i.test(s)) f.active = true;
-  const names = [...s.matchAll(/<([^>]+)>/g)].map((x) => x[1].trim());
+  // "non-<X>", "other than <X>", "without <X> in its card name" exclude a name.
+  const names: string[] = [], notNames: string[] = [];
+  for (const x of s.matchAll(/<([^>]+)>/g)) (/(?:non-|other than |without )$/i.test(s.slice(0, x.index)) ? notNames : names).push(x[1].trim());
   if (names.length) f.names = names;
+  if (notNames.length) f.notNames = notNames;
   const traits = [...s.matchAll(/≪([^≫]+)≫/g)].map((x) => x[1].trim());
   if (traits.length && /≫-only/i.test(s)) f.onlyTraits = traits;
   else if (traits.length && /\bboth ≪/i.test(s)) f.traitsAll = traits;
@@ -205,7 +208,9 @@ function parseSentence(s: string, ctx: { staticDur: Duration }): Effect[] | null
   // Look at the top N, reveal up to 1 <X> or up to 1 Extra and add it to your hand. Rest to bottom.
   if ((m = t.match(/^look at (?:the top )?(\w+) cards? (?:from|of) the top of your deck,? (?:reveal )?(.*?) and add (?:it|them) to your hand$/i)) ||
       (m = t.match(/^look at the top (\w+) cards? of your deck,? (?:reveal )?(.*?) and add (?:it|them) to your hand$/i))) {
-    const options = m[2].split(/\s+or\s+/i).map(parseFilter);
+    // A new option starts at "up to", "card with", "[Field]" or "Extra": "<A> or card with ≪X≫" is two options,
+    // "card with a cost of 5 or less and ≪Saiyan≫" and "<A> or <B>" are one.
+    const options = m[2].split(/\s+or\s+(?=up to |cards? (?:with|that) |\[|Extras?\b|an? )/i).map(parseFilter);
     const take = (m[2].match(/up to (\w+)/i) ? n(m[2].match(/up to (\w+)/i)![1]) : 1);
     return [{ t: 'search', look: n(m[1]), options, take, toHand: true }];
   }
@@ -215,7 +220,8 @@ function parseSentence(s: string, ctx: { staticDur: Duration }): Effect[] | null
   if ((m = t.match(/^add (.*) from your drop to your hand$/i))) {
     const body = m[1];
     const shared = body.match(/[—―-]+\s*both (.*?)\s*[—―-]+/i);
-    const parts = body.replace(/[—―-]+\s*both .*?[—―-]+/i, '').split(/\s+and\s+/i);
+    // Only "and up to …" starts another card; "a card with a cost of 1 or less and ≪Earthling≫" is one card.
+    const parts = body.replace(/[—―-]+\s*both .*?[—―-]+/i, '').split(/\s+and\s+(?=up to )/i);
     const options = parts.map((p) => ({ ...parseFilter(p), ...(shared ? parseFilter(shared[1]) : {}) }));
     const each = n(body.match(/up to (\w+)/i)?.[1] ?? '1');
     return [{ t: 'dropToHand', options, each }];

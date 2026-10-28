@@ -100,7 +100,7 @@
     "once": true,
     "cost": [
      {
-      "t": "lifeToHand",
+      "t": "takeDamage",
       "n": 1
      }
     ],
@@ -120,7 +120,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "from the user's Jiren list: the cost is real damage, so the awakened Jiren Leader's \"when you take damage, draw 1\" fires"
   }
  },
  "FB03-010": {
@@ -2713,6 +2713,51 @@
   "check": {
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
+  }
+ },
+ "FB03-099": {
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "effects": [
+     {
+      "t": "rest",
+      "target": {
+       "side": "opp",
+       "zones": [
+        "battle"
+       ],
+       "count": 1,
+       "upTo": true,
+       "filter": {
+        "type": "BATTLE"
+       }
+      }
+     },
+     {
+      "t": "lockActive",
+      "target": {
+       "ref": "prev"
+      }
+     },
+     {
+      "t": "draw",
+      "n": 1,
+      "cond": [
+       {
+        "t": "prevMatches",
+        "filter": {
+         "costGE": 4
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "from the user's yellow Vegeta list: rests any opposing Battle Card, then locks it"
   }
  }
 }

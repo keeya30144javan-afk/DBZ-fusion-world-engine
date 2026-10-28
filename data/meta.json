@@ -1,6 +1,6 @@
 {
- "updated": "2026-10-26",
- "source": "Starter decks (assumed lists: 4 of each Common, 2 of each SR, trimmed to 50)",
+ "updated": "2026-10-28",
+ "source": "Player lists shared by the user (Oct 2026) plus the four starter decks (assumed lists)",
  "decks": [
   {
    "name": "Starter: Son Goku (Red)",
@@ -22,7 +22,7 @@
     "FS01-15": 3,
     "FS01-16": 3
    },
-   "share": 0.25,
+   "share": 0.0125,
    "notes": "Assumed list"
   },
   {
@@ -45,7 +45,7 @@
     "FS02-15": 3,
     "FS02-16": 3
    },
-   "share": 0.25,
+   "share": 0.0125,
    "notes": "Assumed list"
   },
   {
@@ -68,7 +68,7 @@
     "FS03-15": 3,
     "FS03-16": 3
    },
-   "share": 0.25,
+   "share": 0.0125,
    "notes": "Assumed list"
   },
   {
@@ -91,8 +91,275 @@
     "FS04-15": 3,
     "FS04-16": 3
    },
-   "share": 0.25,
+   "share": 0.0125,
    "notes": "Assumed list"
+  },
+  {
+   "name": "Jiren (Red)",
+   "leader": "FB03-001",
+   "main": {
+    "FB01-004": 3,
+    "FB01-007": 4,
+    "FB01-026": 4,
+    "FB01-032": 1,
+    "FB02-007": 4,
+    "FB02-029": 2,
+    "FB03-009": 4,
+    "FB03-020": 2,
+    "FB03-022": 4,
+    "FB03-023": 2,
+    "FB03-026": 2,
+    "FB04-006": 1,
+    "FB04-012": 4,
+    "FB04-129": 4,
+    "FB05-009": 2,
+    "FB06-013": 3,
+    "FS06-07": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Vegeta (Blue)",
+   "leader": "FS02-01",
+   "main": {
+    "FB01-042": 2,
+    "FB01-050": 3,
+    "FB01-055": 2,
+    "FB01-056": 4,
+    "FB01-068": 2,
+    "FB02-049": 2,
+    "FB02-056": 2,
+    "FB02-061": 4,
+    "FB02-062": 4,
+    "FB02-139": 3,
+    "FB03-039": 3,
+    "FB03-042": 3,
+    "FB03-047": 4,
+    "FS02-08": 4,
+    "FS02-10": 4,
+    "FS02-13": 2,
+    "FS02-15": 2
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Vegeta (Yellow)",
+   "leader": "FB02-105",
+   "main": {
+    "FB02-119": 2,
+    "FB02-130": 2,
+    "FB02-136": 2,
+    "FB02-137": 2,
+    "FB03-093": 4,
+    "FB03-096": 4,
+    "FB03-099": 3,
+    "FB05-091": 2,
+    "FB05-094": 1,
+    "FB07-096": 2,
+    "FB08-075": 4,
+    "FB08-122": 4,
+    "FB09-093": 2,
+    "FB09-096": 2,
+    "FS08-15": 4,
+    "FS11-10": 4,
+    "FS11-13": 4,
+    "FS11-14": 4,
+    "SB01-031": 4,
+    "ST01-052": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Broly (Yellow)",
+   "leader": "FB08-073",
+   "main": {
+    "FB08-076": 4,
+    "FB08-084": 4,
+    "FB08-088": 4,
+    "FB08-091": 3,
+    "FB08-122": 3,
+    "FS11-13": 4,
+    "FS11-14": 4,
+    "ST01-047": 4,
+    "ST01-048": 4,
+    "ST01-049": 4,
+    "ST01-050": 4,
+    "ST01-051": 4,
+    "ST01-052": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Goten (Red)",
+   "leader": "ST01-001",
+   "main": {
+    "FB03-026": 2,
+    "FB05-009": 3,
+    "FB08-121": 1,
+    "FS01-15": 4,
+    "ST01-002": 3,
+    "ST01-004": 4,
+    "ST01-006": 4,
+    "ST01-007": 4,
+    "ST01-008": 4,
+    "ST01-009": 3,
+    "ST01-010": 4,
+    "ST01-011": 2,
+    "ST01-013": 4,
+    "ST01-015": 3,
+    "ST01-016": 4,
+    "ST01-017": 1
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Gogeta: BR (Red)",
+   "leader": "FB09-001",
+   "main": {
+    "FB08-008": 2,
+    "FB09-005": 4,
+    "FB09-006": 4,
+    "FB09-007": 3,
+    "FB09-008": 4,
+    "FB09-010": 4,
+    "FB09-011": 4,
+    "FB09-012": 4,
+    "FB09-013": 4,
+    "FB09-016": 3,
+    "FB09-020": 3,
+    "FB09-121": 3,
+    "FB10-012": 2,
+    "FB10-017": 2,
+    "FP-070": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Gogeta: GT (Black)",
+   "leader": "FB09-097",
+   "main": {
+    "FB03-123": 2,
+    "FB03-132": 3,
+    "FB05-115": 3,
+    "FB06-097": 1,
+    "FB09-100": 3,
+    "FB09-105": 4,
+    "FB09-110": 4,
+    "FB09-112": 4,
+    "FB09-114": 4,
+    "FB09-116": 3,
+    "FB09-117": 4,
+    "FB09-119": 4,
+    "FB09-120": 4,
+    "FB09-123": 3,
+    "FP-074": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Goku/Vegeta (Yellow)",
+   "leader": "FB09-073",
+   "main": {
+    "FB05-075": 3,
+    "FB09-074": 4,
+    "FB09-079": 4,
+    "FB09-080": 4,
+    "FB09-082": 4,
+    "FB09-087": 1,
+    "FB09-088": 4,
+    "FB09-091": 4,
+    "FB09-093": 2,
+    "FB09-096": 4,
+    "FB09-122": 4,
+    "FP-077": 4,
+    "FS11-07": 4,
+    "ST01-052": 4
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Gohan: SH (Green)",
+   "leader": "FB09-049",
+   "main": {
+    "FB01-088": 2,
+    "FB01-101": 2,
+    "FB07-063": 4,
+    "FB07-121": 1,
+    "FB09-052": 3,
+    "FB09-055": 4,
+    "FB09-056": 3,
+    "FB09-059": 3,
+    "FB09-060": 4,
+    "FB09-064": 4,
+    "FB09-068": 2,
+    "FB09-072": 4,
+    "FB10-055": 2,
+    "FB10-057": 3,
+    "FB10-070": 4,
+    "FP-072": 4,
+    "FP-076": 1
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Vegito (Blue)",
+   "leader": "FB05-025",
+   "main": {
+    "FB05-041": 2,
+    "FB05-046": 4,
+    "FB10-031": 4,
+    "FB10-032": 4,
+    "FB10-035": 1,
+    "FB10-038": 4,
+    "FB10-039": 1,
+    "FB10-041": 4,
+    "FB10-047": 4,
+    "FB10-121": 3,
+    "FP-087": 2,
+    "ST01-020": 4,
+    "ST01-021": 4,
+    "ST01-023": 4,
+    "ST01-024": 4,
+    "ST01-025": 4,
+    "ST01-026": 2,
+    "ST01-070": 3
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Goku (Blue, Tournament of Power)",
+   "leader": "FB09-025",
+   "main": {
+    "FB08-034": 1,
+    "FB08-046": 3,
+    "FB09-028": 1,
+    "FB09-029": 4,
+    "FB09-031": 4,
+    "FB09-033": 3,
+    "FB09-035": 3,
+    "FB09-036": 3,
+    "FB09-037": 4,
+    "FB09-038": 4,
+    "FB09-043": 4,
+    "FB09-044": 4,
+    "FB09-045": 4,
+    "FB09-047": 4,
+    "FB10-121": 2,
+    "FP-071": 3,
+    "FP-075": 1
+   },
+   "share": 0.0864,
+   "notes": "Player list (shared by the user, Oct 2026)"
   }
  ]
 }

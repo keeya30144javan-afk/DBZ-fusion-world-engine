@@ -184,7 +184,7 @@
     "timing": "onPlay",
     "cost": [
      {
-      "t": "lifeToHand",
+      "t": "takeDamage",
       "n": 1
      }
     ],
@@ -203,7 +203,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "the cost is real damage (fires \"when you take damage\" skills)"
   }
  },
  "FB04-018": {

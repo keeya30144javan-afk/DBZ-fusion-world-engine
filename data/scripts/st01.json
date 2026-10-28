@@ -2540,5 +2540,58 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "ST01-025": {
+  "evolve": {
+   "from": [
+    {
+     "costEQ": 3,
+     "names": [
+      "Son Goku/Vegeta"
+     ]
+    }
+   ],
+   "cost": 1,
+   "orFrom": [
+    {
+     "underNames": [
+      "Potara"
+     ],
+     "names": [
+      "Son Goku",
+      "Vegeta"
+     ]
+    }
+   ]
+  },
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader"
+       ],
+       "count": 1,
+       "upTo": true,
+       "filter": {
+        "names": [
+         "Vegito"
+        ]
+       }
+      },
+      "amount": 5000,
+      "dur": "oppNextTurn"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "the Leader keeps +5000 until the end of the opponent's next turn"
+  }
  }
 }

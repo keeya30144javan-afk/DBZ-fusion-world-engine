@@ -13787,6 +13787,7 @@
          }
         ],
         "take": 2,
+        "eachOption": true,
         "toHand": false,
         "dest": "drop",
         "rest": "bottom"
@@ -13871,7 +13872,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "May take two of the same card instead of one of each."
+     "note": "from the user's Vegito list: mills one of each, so the Potara setup works"
     },
     "keywords": [],
     "source": "claude",
@@ -39306,7 +39307,69 @@
    ],
    "text": "[Evolve] pay 1 energy: <Son Goku/Vegeta> with a cost of 3, or <Son Goku> or <Vegeta> with a <Potara> under them.\n[On Play] Choose up to 1 of your <Vegito> Leaders and it gets +5000 power until the end of your opponent's next turn.",
    "set": "ST01",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "costEQ": 3,
+       "names": [
+        "Son Goku/Vegeta"
+       ]
+      }
+     ],
+     "cost": 1,
+     "orFrom": [
+      {
+       "underNames": [
+        "Potara"
+       ],
+       "names": [
+        "Son Goku",
+        "Vegeta"
+       ]
+      }
+     ]
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "leader"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Vegito"
+          ]
+         }
+        },
+        "amount": 5000,
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "the Leader keeps +5000 until the end of the opponent's next turn"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "5fb76600"
+   }
   },
   "FB05-053": {
    "id": "FB05-053",
@@ -48861,7 +48924,7 @@
       "once": false,
       "cost": [
        {
-        "t": "lifeToHand",
+        "t": "takeDamage",
         "n": 1
        }
       ],
@@ -48883,7 +48946,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "Passed the automatic checker and a second read by Claude."
+     "note": "the cost is real damage (fires \"when you take damage\" skills)"
     },
     "keywords": [],
     "source": "claude",
@@ -48940,6 +49003,7 @@
          }
         ],
         "take": 2,
+        "eachOption": true,
         "toHand": false,
         "dest": "drop",
         "rest": "bottom"
@@ -49024,7 +49088,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "May take two of the same card instead of one of each."
+     "note": "from the user's Vegito list: mills one of each, so the Potara setup works"
     },
     "keywords": [],
     "source": "claude",
@@ -52529,7 +52593,73 @@
    ],
    "text": "[Evolve] pay 1 energy: <Son Gohan: Adolescence>\n[On Play] If your Leader is <Son Goku>, add up to 1 card from your life to your hand. Then, look at 3 cards from the top of your deck, reveal up to 1 <Videl> or up to 1 card with a cost of 5 or less and ≪Saiyan≫ in its special traits and add it to your hand. Place the rest at the bottom of your deck in a random order.",
    "set": "FS11",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "evolve": {
+     "from": [
+      {
+       "names": [
+        "Son Gohan: Adolescence"
+       ]
+      }
+     ],
+     "cost": 1
+    },
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "lifeToHand",
+        "n": 1,
+        "upTo": true,
+        "cond": [
+         {
+          "t": "leaderIs",
+          "names": [
+           "Son Goku"
+          ]
+         }
+        ]
+       },
+       {
+        "t": "search",
+        "look": 3,
+        "options": [
+         {
+          "names": [
+           "Videl"
+          ]
+         },
+         {
+          "costLE": 5,
+          "traits": [
+           "Saiyan"
+          ]
+         }
+        ],
+        "take": 1,
+        "toHand": true,
+        "dest": "hand",
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "from the user's SSJ3 list: the search finds a <Videl>, or a ≪Saiyan≫ card costing 5 or less"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "526aff35"
+   }
   },
   "FB04-088": {
    "id": "FB04-088",
@@ -70783,7 +70913,63 @@
    ],
    "text": "[barrier]\n[End of Your Turn] Choose up to 1 Battle Card with ≪Majin≫ or ≪Wicked Soul≫ in its special traits in your Battle Area, switch it to Active Mode, and it gains [Blocker] until the end of your opponent's next turn.",
    "set": "SB01",
-   "rarity": "SR"
+   "rarity": "SR",
+   "script": {
+    "keywords": [
+     "barrier"
+    ],
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "endOfYourTurn",
+      "effects": [
+       {
+        "t": "activate",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "traits": [
+           "Majin",
+           "Wicked Soul"
+          ]
+         }
+        }
+       },
+       {
+        "t": "grant",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        },
+        "kw": "blocker",
+        "dur": "oppNextTurn"
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "switches the card to Active Mode and gives [Blocker] until the end of the opponent's next turn"
+    },
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "ddea52e6"
+   }
   },
   "FB10-039": {
    "id": "FB10-039",
@@ -72711,7 +72897,64 @@
    ],
    "text": "[Activate:Main] Discard 2 cards from your hand: If your Leader is <Gotenks>, look at 10 cards from the top of your deck, reveal up to 1 each of <Son Goten> and <Trunks: Youth> -- both with a cost of 2 or less -- and add them to your hand. Place the rest at the bottom of your deck in a random order.",
    "set": "SB02",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [
+       {
+        "t": "discard",
+        "n": 2
+       }
+      ],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Gotenks"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "search",
+        "look": 10,
+        "options": [
+         {
+          "names": [
+           "Son Goten"
+          ],
+          "costLE": 2
+         },
+         {
+          "names": [
+           "Trunks: Youth"
+          ],
+          "costLE": 2
+         }
+        ],
+        "take": 2,
+        "eachOption": true,
+        "toHand": true,
+        "dest": "hand",
+        "rest": "bottom"
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "up to 1 each of <Son Goten> and <Trunks: Youth>, both cost 2 or less"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "54e98d57"
+   }
   },
   "FS09-02": {
    "id": "FS09-02",
@@ -86996,7 +87239,68 @@
    ],
    "text": "[Activate:Main] Choose up to 1 of your opponent's Battle Cards, switch it to Rest Mode, and it can't switch to Active Mode during your opponent's next turn. Then, if that card has a cost of 4 or more, draw 1 card.",
    "set": "FB03",
-   "rarity": "C"
+   "rarity": "C",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "activateMain",
+      "effects": [
+       {
+        "t": "rest",
+        "target": {
+         "side": "opp",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "type": "BATTLE"
+         }
+        }
+       },
+       {
+        "t": "lockActive",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "prev"
+        }
+       },
+       {
+        "t": "draw",
+        "n": 1,
+        "cond": [
+         {
+          "t": "prevMatches",
+          "filter": {
+           "costGE": 4
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "from the user's yellow Vegeta list: rests any opposing Battle Card, then locks it"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "2f0e2645"
+   }
   },
   "FB05-051": {
    "id": "FB05-051",
@@ -96440,7 +96744,7 @@
       "once": true,
       "cost": [
        {
-        "t": "lifeToHand",
+        "t": "takeDamage",
         "n": 1
        }
       ],
@@ -96464,7 +96768,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "Passed the automatic checker and a second read by Claude."
+     "note": "from the user's Jiren list: the cost is real damage, so the awakened Jiren Leader's \"when you take damage, draw 1\" fires"
     },
     "source": "claude",
     "unparsed": [],

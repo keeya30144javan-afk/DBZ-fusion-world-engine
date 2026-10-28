@@ -28,3 +28,17 @@ test('findReplay with mustPlay returns a game where deck A used that card', () =
   const r = findReplay(cards, { decks: [meta.decks[1], meta.decks[0]], levels: ['fast', 'fast'], seed: 3, want: 'any', tries: 12, mustPlay: 'FS02-12' });
   assert.ok(r.played[0].includes('FS02-12'));
 });
+
+test('generated, mutated and crossed decks always keep 4 Super Combo cards', async () => {
+  const { seedDeck, mutate, crossover, mulberry, isSuperCombo } = await import('../src/builder/deckgen');
+  const rng = mulberry(3);
+  const sc = (d: any) => Object.entries(d.main).reduce((t: number, [k, n]: any) => t + (isSuperCombo(cards[k]) ? n : 0), 0);
+  for (const L of ['FB03-001', 'FS02-01', 'FB09-001', 'FB09-097']) {
+    const a = seedDeck(cards, L, rng), b = seedDeck(cards, L, rng, undefined, 1.5);
+    assert.equal(sc(a), 4, `${L} seed`);
+    let m = a;
+    for (let i = 0; i < 20; i++) m = mutate(m, cards, rng, 3);
+    assert.equal(sc(m), 4, `${L} after mutations`);
+    assert.equal(sc(crossover(a, b, cards, rng)), 4, `${L} crossover`);
+  }
+});
