@@ -145,6 +145,7 @@ function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick }: { n
         <span class="row" style={{ gap: '6px' }}>
           <span class="chip" title="Life">♥ <b>{side.life}</b></span>
           <span class="chip" title="Energy: active / rested">⚡ <b>{side.energy.active}</b>/{side.energy.active + side.energy.rested}</span>
+          {side.markers > 0 && <span class="chip" title="Energy marker: pays 1 energy once, then it's removed">Marker <b>{side.markers}</b></span>}
           <span class="chip" title="Deck">Deck <b>{side.deck}</b></span>
           <span class="chip" title="Drop">Drop <b>{side.drop.length}</b></span>
         </span>

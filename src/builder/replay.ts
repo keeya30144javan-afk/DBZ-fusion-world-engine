@@ -28,6 +28,8 @@ export interface SideSnap {
   battle: CardSnap[];
   hand: string[];
   energy: { active: number; rested: number };
+  /** Energy markers (the player going second starts with one). */
+  markers: number;
   life: number;
   deck: number;
   drop: string[];
@@ -94,6 +96,7 @@ export function snapshot(s: GameState): Snap {
       battle: pl.battle.map((u) => cardSnap(s, u)),
       hand: pl.hand.map((u) => s.inst[u].id),
       energy: { active: pl.energy.length - rested, rested },
+      markers: pl.markers,
       life: pl.life.length,
       deck: pl.deck.length,
       drop: pl.drop.map((u) => s.inst[u].id),

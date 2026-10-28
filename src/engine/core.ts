@@ -868,7 +868,7 @@ export function planPayment(s: GameState, p: Side, total: number, spec: Partial<
 export function payPlan(s: GameState, p: Side, plan: { rest: number[]; markers: number }) {
   for (const u of plan.rest) s.inst[u].rested = true;
   s.p[p].markers -= plan.markers;
-  if (plan.markers > 0) s.p[p].markerUsedTurn = s.turn;
+  if (plan.markers > 0) { s.p[p].markerUsedTurn = s.turn; log(s, () => `P${p} removes ${plan.markers} energy marker to pay`); }
 }
 
 export function specFor(s: GameState, uid: number, total: number): Partial<Record<Color, number>> {

@@ -99,6 +99,7 @@ function finishSetup(s: GameState) {
     }
   }
   s.p[other(s.first)].markers = 1;
+  log(s, () => `P${other(s.first)} goes second and gets 1 energy marker`);
   // "When this card is placed in your Leader Area" skills.
   for (const side of [s.first, other(s.first)] as Side[]) fireTriggers(s, s.p[side].leader, 'gameStart', NO_CHOICE);
   s.active = other(s.first);
