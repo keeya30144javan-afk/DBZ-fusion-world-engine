@@ -25,6 +25,11 @@ export interface CounterOptions {
   leaders?: string[];
   /** Known decks to try as-is (the current meta). */
   known?: Decklist[];
+  /**
+   * Build from scratch: known decks are never used as building material (no seeding, no
+   * crossover). They stay the yardstick: the baseline every discovered deck must beat.
+   */
+  blind?: boolean;
   /** Minimum win rate worth recommending, e.g. 0.55. */
   threshold: number;
   /** Confidence for the lower bound, e.g. 0.95. */
@@ -99,6 +104,10 @@ export interface CounterReport {
   baseline: Validated | null;
   keyCards: KeyCard[];
   coverage: { deck: string; coverage: number; unparsedCards: string[]; unreviewed: string[] }[];
+  /** How close the best deck is to the nearest known list with the same Leader (share of cards in common). */
+  nearestKnown?: { name: string; overlap: number } | null;
+  /** True when the search built every candidate itself (known lists were only the bar to beat). */
+  blind?: boolean;
   warnings: string[];
   gamesPlayed: number;
   ms: number;
@@ -292,7 +301,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     seen.set(k, s);
     pop.push(s);
   };
-  for (const k of opts.known ?? []) push(cloneDeck(k), `known: ${k.name}`);
+  if (!opts.blind) for (const k of opts.known ?? []) push(cloneDeck(k), `known: ${k.name}`);
   for (const id of leaders) {
     push(seedDeck(cards, id, rng, rules), 'generated');
     push(seedDeck(cards, id, rng, rules, 1.5), 'generated (variant)');
@@ -509,8 +518,19 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
 
   costDone = plan;
   setStep({ phase: 'done', message: headline });
+  let nearestKnown: CounterReport['nearestKnown'] = null;
+  if (best) {
+    const size = Object.values(best.deck.main).reduce((a, b) => a + b, 0);
+    for (const k of opts.known ?? []) {
+      if (k.leader !== best.deck.leader || deckKey(k) === deckKey(best.deck)) continue;
+      let common = 0;
+      for (const [id, n] of Object.entries(best.deck.main)) common += Math.min(n, k.main[id] ?? 0);
+      const overlap = common / Math.max(size, Object.values(k.main).reduce((a, b) => a + b, 0));
+      if (!nearestKnown || overlap > nearestKnown.overlap) nearestKnown = { name: k.name, overlap };
+    }
+  }
   return {
-    verdict, headline, reasons, best,
+    verdict, headline, reasons, best, nearestKnown, blind: !!opts.blind,
     alternatives: validated.slice(1),
     baseline, keyCards,
     coverage: best ? [...coverage, { deck: best.deck.name, ...coverageOf(best.deck, cards) }] : coverage,

@@ -2,6 +2,7 @@
  * Find a counter to a deck from the command line.
  *   npx tsx cli/counter.ts --target "Starter: Vegeta (Blue)" [--effort quick|standard|thorough]
  *        [--threshold 0.55] [--confidence 0.95] [--level fast|quick|strong] [--deck file.txt]
+ *        [--blind] (build from scratch; known lists are only the bar) [--leaders ID,ID]
  */
 import { readFileSync } from 'node:fs';
 import { CardDB, Meta } from '../src/data/types';
@@ -33,6 +34,8 @@ const report = await findCounter(
   {
     targets: [{ deck: target, weight: 1 }],
     known: meta.decks,
+    blind: process.argv.includes('--blind'),
+    leaders: arg('leaders')?.split(','),
     threshold: +arg('threshold', '0.55')!,
     confidence: +arg('confidence', '0.95')!,
     effort: (arg('effort', 'quick') as any),
@@ -51,6 +54,7 @@ if (report.best) {
   console.log('How games ended:', report.best.result.reasons);
   console.log('Key cards:', report.keyCards.slice(0, 6).map((k) => `${k.name} (+${(k.lift * 100).toFixed(0)}%)`).join(', '));
 }
+if (report.nearestKnown) console.log(`Nearest known list: ${report.nearestKnown.name}, ${(report.nearestKnown.overlap * 100).toFixed(0)}% of cards in common`);
 if (report.baseline) console.log(`Baseline "${report.baseline.deck.name}": ${(report.baseline.rate * 100).toFixed(1)}% [${(report.baseline.lo * 100).toFixed(1)}-${(report.baseline.hi * 100).toFixed(1)}]`);
 for (const a of report.alternatives) console.log(`Alternative ${a.deck.name}: ${(a.rate * 100).toFixed(1)}% [${(a.lo * 100).toFixed(1)}-${(a.hi * 100).toFixed(1)}]`);
 console.log(`\n${report.gamesPlayed} games in ${(report.ms / 1000).toFixed(1)}s`);

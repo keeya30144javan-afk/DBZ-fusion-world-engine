@@ -23,6 +23,7 @@ export function CounterLab() {
   const [confidence, setConfidence] = useState('0.95');
   const [level, setLevel] = useState<Level>('quick');
   const [leaderMode, setLeaderMode] = useState<'all' | 'pick'>('all');
+  const [blind, setBlind] = useState<'blind' | 'seeded'>('blind');
   const [leaders, setLeaders] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<Progress | null>(null);
@@ -53,6 +54,7 @@ export function CounterLab() {
         {
           targets: [{ deck: target.deck, weight: 1 }],
           known: st.meta.filter((m) => !validateDeck(m, st.cards, st.rules).length),
+          blind: blind === 'blind',
           leaders: leaderMode === 'pick' ? leaders : undefined,
           threshold: threshold / 100,
           confidence: +confidence,
@@ -111,6 +113,10 @@ export function CounterLab() {
           </label>
           <label class="field">Test-game AI <span class="hint">"Search" thinks ahead on every move. "Fast" is quicker but easier to exploit.</span>
             <Seg label="AI level" options={[['fast', 'Fast'], ['quick', 'Search'], ['strong', 'Strong search']]} value={level} onChange={setLevel} />
+          </label>
+          <label class="field">Starting point
+            <span class="note">"From scratch": the engine builds every deck from its own reading of the cards; known lists are only the bar to beat. "Use known lists" lets it start from and remix player lists.</span>
+            <Seg label="Starting point" options={[['blind', 'From scratch'], ['seeded', 'Use known lists']]} value={blind} onChange={setBlind} />
           </label>
           <label class="field">Counter leaders
             <Seg label="Leaders" options={[['all', 'Any leader'], ['pick', 'Choose']]} value={leaderMode} onChange={setLeaderMode} />
@@ -200,6 +206,13 @@ function Report({ rec }: { rec: RunRecord }) {
       <div class={`verdict ${r.verdict}`}>
         <span class="pill">{VERDICT_LABEL[r.verdict]}</span>
         <p class="head">{r.headline}</p>
+        {r.best && r.blind !== undefined && (
+          <p class="note">
+            {r.blind ? 'Built from scratch: no player list was used as building material.' : 'Known player lists were allowed as starting points.'}
+            {r.nearestKnown ? <> Closest known list with this Leader: <b>{r.nearestKnown.name}</b>, {Math.round(r.nearestKnown.overlap * 100)}% of cards in common{r.blind ? (r.nearestKnown.overlap >= 0.7 ? ': the engine independently arrived close to what players play.' : r.nearestKnown.overlap <= 0.4 ? ': an unorthodox list, different from what players play.' : '.') : '.'}</> : r.blind ? ' No known list uses this Leader, so this is new ground.' : ''}
+            {' '}Built-in assumptions: 4 Super Combos and a starting cost curve (the search can drift from the curve).
+          </p>
+        )}
         {r.reasons.length > 0 && <ul>{r.reasons.map((x) => <li key={x}>{x}</li>)}</ul>}
         {unreviewedIds(r).length > 0 && (
           <div class="row"><button class="btn small" onClick={() => store.focusAudit(unreviewedIds(r))}>Review these {unreviewedIds(r).length} cards</button></div>
