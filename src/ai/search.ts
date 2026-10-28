@@ -2,7 +2,10 @@ import { GameState, Side } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, Policy, defaultChooser, keepValue, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, keepValue, winProb } from './heuristics';
+import { Card } from '../data/types';
+import { compileCard } from '../effects/parse';
+import { cardOf, isLeader } from '../engine/core';
 import { PlanOpts, PlannedLine, planTurn } from './planner';
 
 export interface SearchOpts {
@@ -16,6 +19,12 @@ export interface SearchOpts {
   plan?: PlanOpts;
   /** Evaluation weights for judging positions (defaults otherwise). */
   eval?: EvalWeights;
+  /** Habits of the fast AI used in imagined games. */
+  habits?: Partial<Habits>;
+  /** Mulligan by rollouts ('search', default) or by whether the hand can start the deck's plan ('plan'). */
+  mulligan?: 'search' | 'plan';
+  /** When the chosen line swings with the Leader later, swing with it first (its draw may change the plan). */
+  leaderFirst?: boolean;
 }
 
 /**
@@ -57,19 +66,34 @@ export class SearchPolicy implements Policy {
   /** The lines the turn planner compared for the last main-phase decision, best first. */
   public lastLines: PlannedLine[] = [];
 
-  constructor(public opts: SearchOpts = SEARCH_LEVELS.quick) {}
+  constructor(public opts: SearchOpts = SEARCH_LEVELS.quick) {
+    if (opts.habits) Object.assign(this.roll.habits, opts.habits);
+  }
 
   act(s: GameState, actions: Action[]): Action {
     const me = s.toAct as Side;
+    if (defaultChooser.armed?.side === me) defaultChooser.armed = null; // a pick planned for an earlier move never applies to this one
+    if (s.stage === 'mulligan' && this.opts.mulligan === 'plan') return planMulligan(s) ? { k: 'keep' } : { k: 'mulligan' };
     const cands = this.prune(s, actions);
     if (cands.length === 1) return cands[0];
     if (this.opts.plan && s.stage === 'main' && s.active === me) {
       const lines = planTurn(s, me, this.opts.eval ? { ...this.opts.plan, eval: this.opts.eval } : this.opts.plan);
-      const first = lines[0]?.actions[0];
+      let first = lines[0]?.actions[0];
+      let pick = lines[0]?.picks?.[0];
+      // Information first: if the best line swings with the Leader later and nothing before
+      // that swing changes the fight, swing now and see the drawn card before committing.
+      if (this.opts.leaderFirst && lines[0] && first?.k !== 'attack') {
+        const li = lines[0].actions.findIndex((a) => a.k === 'attack' && isLeader(s, a.uid));
+        const before = li > 0 ? lines[0].actions.slice(0, li) : [];
+        const harmless = before.every((a) => a.k === 'play' && !compileCard(cardOf(s, a.uid)).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.some((e) => ['ko', 'bottom', 'bounce', 'toDrop', 'rest', 'power', 'lockActive', 'grant'].includes(e.t))));
+        if (li > 0 && harmless) { first = lines[0].actions[li]; pick = lines[0].picks?.[li]; }
+      }
       const legal = first && cands.find((a) => JSON.stringify(a) === JSON.stringify(first));
       if (legal) {
         this.lastLines = lines;
         this.lastStats = [];
+        // Make the real move with the choice the line was planned with (KO target, card searched...).
+        defaultChooser.armed = pick ? { state: s, side: me, turn: s.turn, picks: [pick] } : null;
         return legal;
       }
     }
@@ -131,4 +155,21 @@ export class SearchPolicy implements Policy {
     }
     return actions;
   }
+}
+
+/**
+ * Keep a hand that can start the deck's plan: plays for the first turns (1-2 cost Battle
+ * Cards), ideally a searcher or cantrip, something to do at 3-4 cost, and not clogged
+ * with expensive non-combo cards. Super Combos are fine to hold (defence).
+ */
+export function planMulligan(s: GameState): boolean {
+  const me = s.p[s.toAct];
+  const cards: Card[] = me.hand.map((u) => cardOf(s, u));
+  const sc = (c: Card) => compileCard(c).keywords.has('superCombo');
+  const cheap = cards.filter((c) => c.type === 'BATTLE' && c.cost <= 2 && !sc(c));
+  const starter = cheap.some((c) => compileCard(c).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.some((e) => e.t === 'search' || e.t === 'draw' || e.t === 'dropToHand' || e.t === 'lifeToHand')));
+  const mid = cards.filter((c) => c.cost >= 3 && c.cost <= 4 && !sc(c)).length;
+  const heavy = cards.filter((c) => c.cost >= 5 && !sc(c)).length;
+  const score = Math.min(cheap.length, 3) + (starter ? 1 : 0) + (mid ? 0.5 : 0) - Math.max(0, heavy - 1) * 0.8;
+  return score >= 2.5;
 }

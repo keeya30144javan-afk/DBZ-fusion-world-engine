@@ -2,7 +2,7 @@ import { GameState, Side, cloneState } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, defaultChooser, evaluate, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, ForcedChooser, Habits, RecordingChooser, defaultChooser, evaluate, winProb } from './heuristics';
 
 /**
  * Turn planning: search whole lines of play for the current turn ("play Bulma,
@@ -30,12 +30,22 @@ export interface PlanOpts {
   deep?: boolean;
   /** Evaluation weights (defaults otherwise). */
   eval?: EvalWeights;
+  /** Habits of the fast AI that plays out imagined games (both sides). */
+  habits?: Partial<Habits>;
+  /**
+   * Also search our own choices inside skills: for an action whose skill asks us to choose
+   * (a KO target, a card to take from a search...), try this many of the best-ranked options
+   * as separate lines, not just the default pick.
+   */
+  choices?: number;
 }
 
 export const PLAN_DEFAULT: PlanOpts = { beam: 6, depth: 14, finalists: 6, worlds: 4 };
 
 export interface PlannedLine {
   actions: Action[];
+  /** Our pick for the first choice each action's skill asks for (undefined: the default). */
+  picks?: (number[] | undefined)[];
   /** Estimated chance to win after the line and the opponent's reply. */
   value: number;
 }
@@ -81,18 +91,21 @@ function candidates(w: GameState): Action[] {
   return out;
 }
 
-interface Node { w: GameState; line: Action[]; h: number }
+interface Node { w: GameState; line: Action[]; picks: (number[] | undefined)[]; h: number }
+
+const lineKey = (n: { line: Action[]; picks: (number[] | undefined)[] }) => n.line.map((a, i) => key(a) + (n.picks[i] ? `#${n.picks[i]!.join('.')}` : '')).join('|');
 
 export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT): PlannedLine[] {
   const turn = s.turn;
   const pol = new FastPolicy(0.05);
+  if (opts.habits) Object.assign(pol.habits, opts.habits);
   const root = determinize(s, me);
   advance(root, me, pol, turn);
-  let frontier: Node[] = [{ w: root, line: [], h: evaluate(root, me, opts.eval) }];
+  let frontier: Node[] = [{ w: root, line: [], picks: [], h: evaluate(root, me, opts.eval) }];
   const done: Node[] = [];
   const doneKeys = new Set<string>();
   const finish = (n: Node) => {
-    const k = n.line.map(key).join('|');
+    const k = lineKey(n);
     if (doneKeys.has(k)) return;
     doneKeys.add(k);
     done.push(n);
@@ -105,25 +118,52 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
       const w0 = node.w;
       if (w0.stage === 'over' || w0.turn !== turn || w0.active !== me || w0.stage !== 'main' || w0.toAct !== me) { finish(node); continue; }
       for (const a of candidates(w0)) {
-        const w = cloneState(w0);
-        step(w, a, ctl);
-        advance(w, me, pol, turn);
-        const line = [...node.line, a];
-        const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, opts.eval);
-        const child = { w, line, h };
-        if (a.k === 'end' || w.stage === 'over' || w.turn !== turn) { finish(child); continue; }
-        // Different orders that reach the same position are one node.
-        const sig = positionKey(w, me);
-        if (seenStates.has(sig)) continue;
-        seenStates.add(sig);
-        next.push(child);
+        // The default way to play this action, recording the first choice its skill asks of us.
+        const rec = new RecordingChooser(me);
+        const variants: { w: GameState; pick?: number[] }[] = [];
+        {
+          const w = cloneState(w0);
+          step(w, a, me === 0 ? [rec, defaultChooser] : [defaultChooser, rec]);
+          advance(w, me, pol, turn);
+          variants.push({ w });
+        }
+        // Other ways: the next-best options for that choice, each as its own line.
+        const f = rec.first;
+        if (opts.choices && f && f.req.kind !== 'yesno' && f.req.options.length > 1) {
+          const size = Math.max(1, f.pick.length);
+          const tried = new Set([f.pick.slice().sort().join('.')]);
+          for (const u of f.ranked) {
+            if (variants.length > opts.choices) break;
+            const alt = size === 1 ? [u] : [u, ...f.pick.filter((x) => x !== u)].slice(0, size);
+            const k = alt.slice().sort().join('.');
+            if (tried.has(k)) continue;
+            tried.add(k);
+            const w = cloneState(w0);
+            const forced = new ForcedChooser(me, [alt]);
+            step(w, a, me === 0 ? [forced, defaultChooser] : [defaultChooser, forced]);
+            advance(w, me, pol, turn);
+            variants.push({ w, pick: alt });
+          }
+        }
+        for (const { w, pick } of variants) {
+          const line = [...node.line, a];
+          const picks = [...node.picks, pick];
+          const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, opts.eval);
+          const child = { w, line, picks, h };
+          if (a.k === 'end' || w.stage === 'over' || w.turn !== turn) { finish(child); continue; }
+          // Different orders that reach the same position are one node.
+          const sig = positionKey(w, me);
+          if (seenStates.has(sig)) continue;
+          seenStates.add(sig);
+          next.push(child);
+        }
       }
     }
     next.sort((x, y) => y.h - x.h);
     frontier = next.slice(0, opts.beam);
   }
   // Lines still open at the depth limit end the turn there.
-  for (const n of frontier) finish({ ...n, line: [...n.line, { k: 'end' }] });
+  for (const n of frontier) finish({ ...n, line: [...n.line, { k: 'end' }], picks: [...n.picks, undefined] });
 
   // Re-score the most promising complete lines through the opponent's reply.
   done.sort((x, y) => y.h - x.h);
@@ -133,17 +173,20 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
     for (let i = 0; i < opts.worlds; i++) {
       const w = determinize(s, me);
       advance(w, me, pol, turn);
-      for (const a of n.line) {
+      for (let k = 0; k < n.line.length; k++) {
+        const a = n.line[k];
         if (w.stage === 'over' || w.turn !== turn || w.toAct !== me || w.stage !== 'main') break;
         const legal = legalActions(w).find((x) => key(x) === key(a));
-        step(w, legal ?? { k: 'end' }, ctl);
+        const pick = n.picks[k];
+        const ch: [Chooser, Chooser] = pick ? (me === 0 ? [new ForcedChooser(me, [pick]), defaultChooser] : [defaultChooser, new ForcedChooser(me, [pick])]) : ctl;
+        step(w, legal ?? { k: 'end' }, ch);
         if (!legal) break;
         advance(w, me, pol, turn);
       }
       reply(w, me, pol, turn, opts.deep);
       total += winProb(w, me, opts.eval);
     }
-    return { actions: n.line, value: total / opts.worlds };
+    return { actions: n.line, picks: n.picks, value: total / opts.worlds };
   });
   scored.sort((x, y) => y.value - x.value);
   return scored;

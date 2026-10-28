@@ -188,8 +188,10 @@ export interface EvalWeights {
   energy: number;
   /** Deck-specific resources (Ki, Drop, markers, rested enemies). */
   resources: number;
+  /** Multiplier on how much an awakened Leader is worth (theirs and yours). */
+  awaken: number;
 }
-export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1 };
+export const DEFAULT_EVAL: EvalWeights = { life: 2.2, hand: 0.45, boardBase: 0.4, board: 0.6, energy: 0.35, resources: 1, awaken: 1 };
 
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
@@ -201,7 +203,7 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board;
     v += Math.min(pl.energy.length, 8) * W.energy;
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
-    v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0;
+    v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
     // Resources this deck's engine runs on.
     const need = deckNeeds(s)[p];
@@ -239,7 +241,20 @@ export class HeuristicChooser implements Chooser {
     return v;
   }
 
+  /**
+   * Picks a search decided on for the move it is about to make in the real game: used only
+   * for that exact game state (never for imagined copies), in order, and only if still legal.
+   */
+  public armed: { state: GameState; side: Side; turn: number; picks: number[][] } | null = null;
+
   choose(s: GameState, req: ChoiceReq): number[] {
+    const a = this.armed;
+    if (a && (a.state !== s || a.turn !== s.turn)) this.armed = null;
+    else if (a && a.side === req.player && a.picks.length) {
+      const p = a.picks.shift()!;
+      if (!a.picks.length) this.armed = null;
+      if (legalPick(req, p)) return p;
+    }
     const me = req.player;
     const opts = req.options.slice();
     switch (req.kind) {
@@ -308,6 +323,8 @@ export interface Policy {
  * A quick, rule-based player used for rollouts and as the baseline opponent.
  * `noise` adds randomness so rollouts explore different lines.
  */
+export type Habits = FastPolicy['habits'];
+
 export class FastPolicy implements Policy {
   /**
    * Play habits from experienced players' videos; each can be switched on or off to measure it.
@@ -569,6 +586,35 @@ export class FastPolicy implements Policy {
 }
 
 export const defaultChooser = new HeuristicChooser();
+
+/** Is `p` a legal answer to `req`? */
+export const legalPick = (req: ChoiceReq, p: number[]) => p.length >= req.min && p.length <= req.max && p.every((u) => req.options.includes(u)) && new Set(p).size === p.length;
+
+/** Answers `side`'s next choices with fixed picks (when legal), everything else like the default. */
+export class ForcedChooser implements Chooser {
+  constructor(public side: Side, public picks: number[][]) { this.picks = picks.slice(); }
+  choose(s: GameState, req: ChoiceReq): number[] {
+    if (req.player === this.side && this.picks.length) {
+      const p = this.picks.shift()!;
+      if (legalPick(req, p)) return p;
+    }
+    return defaultChooser.choose(s, req);
+  }
+}
+
+/** Plays like the default, and remembers `side`'s first choice and the default's ranking of its options. */
+export class RecordingChooser implements Chooser {
+  first: { req: ChoiceReq; pick: number[]; ranked: number[] } | null = null;
+  constructor(public side: Side) {}
+  choose(s: GameState, req: ChoiceReq): number[] {
+    const pick = defaultChooser.choose(s, req);
+    if (!this.first && req.player === this.side) {
+      const ranked = req.kind === 'mode' ? req.options.slice() : defaultChooser.choose(s, { ...req, min: 0, max: req.options.length });
+      this.first = { req, pick, ranked: [...ranked, ...req.options.filter((u) => !ranked.includes(u))] };
+    }
+    return pick;
+  }
+}
 
 /** Play a game to the end with a policy for each side. */
 export function playout(s: GameState, policies: [Policy, Policy], maxSteps = 4000): GameState {
