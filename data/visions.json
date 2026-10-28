@@ -17,7 +17,13 @@
     "Pick bodies the opponent cannot answer on their turn: a 7-cost or 30000+ body dodges \"cost 5 or less\" bounce, while a 4-cost just goes back to hand.",
     "Pair partial removal: a power-down (split across targets if the card allows) plus a KO-up-to-power removes bodies neither card handles alone.",
     "Poke before the kill: when the opponent has a big hand, swing smaller attacks first to make them defend and spend cards, then go for lethal once their hand is too small to wall it.",
-    "Count hand plus and minus: a play that draws back what it costs keeps you alive next turn; if your opponent spent two cards to defend, they may not survive your counterattack."
+    "Count hand plus and minus: a play that draws back what it costs keeps you alive next turn; if your opponent spent two cards to defend, they may not survive your counterattack.",
+    "Pieces that find pieces: early searchers and draw cards that later serve as Evolve or Fusion material make a combo deck consistent. Keep those bases alive; the opponent should spend its turn killing them.",
+    "30000 is the magic attack number: against a 20000 body or Leader it forces two combo cards or a Super Combo out of hand. Prefer a 30000 swing over 25000, and don't Super Combo off a 5000 gap.",
+    "Spend Ki from Battle Cards first: they will probably be removed, so their Ki is free. Keep the Leader's Ki as a late-game combo reserve (each Ki is close to a card).",
+    "Thread the needle: knocking the opponent to low life hands them cards. Push the last points only when you can finish, or when their extra cards cannot save them.",
+    "Late game, a card in hand beats more energy if your deck has no big plays left to cast: skip the charge.",
+    "Don't combo away a card you still need to attack with this turn; count your remaining swings first."
   ],
   "decks": {
     "FS11-01": {
@@ -90,7 +96,8 @@
         "Fusion pairs at 20000: Son Goku: BR FB09-010 / FB10-012 and Vegeta: BR FB09-020 / FB10-017 (15000 +5000 on your turn). Vegeta: BR FB09-020 also pumps itself and a Son Goku: BR by +5000 (revealing a Fusion Evolve card) to match powers.",
         "Gogeta: BR forms: FB09-006 (0 energy: draw, all enemies -5000), FP-070 (0: -15000 on attack), FB09-007 (1: untaps once on attack), FB09-121 (2: all enemies -25000; at end of turn, if the opponent is at 1 life with no Battle Cards, you win).",
         "Leader (awakens at 5 life): once per turn after a Fusion Evolve this turn, KO any number of enemy Battle Cards totalling 15000 power or less; after -25000 that's usually the whole board.",
-        "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop."
+        "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop.",
+        "Win route (tournament play): pressure to 2 life, then on the last turn go to 1 life yourself if needed for cards, Fusion Evolve into FB09-121, wipe the board with -25000 plus the Leader KO, deal one damage, and win at end of turn. Against Gogeta: BR, sitting at 1 life is a death sentence; keep the board clear of Goku/Vegeta: BR bases so they must rebuild instead of fusing."
       ]
     },
     "FB09-097": {

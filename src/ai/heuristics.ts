@@ -159,6 +159,20 @@ function removalOf(s: GameState): [[any, number][], [any, number][]] {
   return by;
 }
 
+/** Card ids with a "you win the game" skill (Gogeta: BR's opponent-at-1-life win). */
+const winMemo = new Map<string, boolean>();
+function winsGame(card: Card): boolean {
+  let hit = winMemo.get(card.id);
+  if (hit === undefined) { hit = JSON.stringify(compileCard(card).abilities).includes('"winGame"'); winMemo.set(card.id, hit); }
+  return hit;
+}
+/** Does this side still have an alternate-win card outside its Drop? */
+export function altWinLive(s: GameState, p: Side): boolean {
+  const pl = s.p[p];
+  for (const u of [...pl.hand, ...pl.deck, ...pl.life, ...pl.battle]) if (winsGame(cardOf(s, u))) return true;
+  return false;
+}
+
 /** 0..1: the share of the opponent's removal (by copies, at least 6) that can hit this body now. */
 export function exposure(s: GameState, u: number): number {
   if (hasKeyword(s, u, 'removeImmune')) return 0;
@@ -252,6 +266,8 @@ export interface EvalWeights {
   perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
   /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
   reach?: number;
+  /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
+  altWin?: number;
 }
 
 /** What one side has, feature by feature: the ingredients of a per-Leader evaluation. */
@@ -302,6 +318,7 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     const exposed = W.restedRisk && s.active === p && s.stage !== 'over';
     for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1) * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
     v += Math.min(pl.energy.length, 8) * W.energy;
+    if (W.altWin && pl.life.length === 1 && altWinLive(s, other(p))) v -= W.altWin * (pl.battle.length ? 0.6 : 1);
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
