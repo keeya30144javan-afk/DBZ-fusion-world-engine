@@ -8,12 +8,14 @@ import { ScouterView } from './views/scouter';
 import { MatchupView } from './views/matchup';
 import { CardsView } from './views/cards';
 import { AuditView } from './views/audit';
+import { PlayTab } from './views/play';
 
 const TABS = [
   ['counter', 'Counter Lab'],
   ['meta', 'Meta'],
   ['scouter', 'Scouter'],
   ['matchup', 'Matchup'],
+  ['play', 'Play vs AI'],
   ['cards', 'Cards & Rules'],
   ['audit', 'Audit'],
 ] as const;
@@ -70,6 +72,7 @@ function App() {
         {tab === 'meta' && <MetaView />}
         {tab === 'scouter' && <ScouterView />}
         {tab === 'matchup' && <MatchupView />}
+        {tab === 'play' && <PlayTab />}
         {tab === 'cards' && <CardsView />}
         {tab === 'audit' && <AuditView />}
       </main>

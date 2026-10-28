@@ -138,7 +138,7 @@ function Caption({ f, label, nm }: { f: Frame; label: (p: 0 | 1) => string; nm: 
   );
 }
 
-function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick }: { nm: (id: string) => string; side: SideSnap; who: string; name: string; active: boolean; snapBattle: Frame['snap']['battle']; sideIdx: 0 | 1; onPick: (id: string) => void }) {
+export function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick, hiddenHand }: { nm: (id: string) => string; side: SideSnap; who: string; name: string; active: boolean; snapBattle: Frame['snap']['battle']; sideIdx: 0 | 1; onPick: (id: string) => void; hiddenHand?: number }) {
   const inBattle = (c: CardSnap) => !!snapBattle && (c.id === snapBattle.attacker && snapBattle.atk === sideIdx || c.id === snapBattle.target && snapBattle.atk !== sideIdx);
   return (
     <div class={`vboard${active ? ' active' : ''}`}>
@@ -158,9 +158,12 @@ function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick }: { n
       </div>
       {side.combo.length > 0 && <div class="note">Combo: {side.combo.map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}</div>}
       <div class="vhand">
-        <span class="note">Hand ({side.hand.length}):</span>
-        {side.hand.map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}
+        {hiddenHand !== undefined
+          ? <span class="note">Hand: {hiddenHand} card{hiddenHand === 1 ? '' : 's'} (hidden)</span>
+          : <><span class="note">Hand ({side.hand.length}):</span>
+            {side.hand.map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}</>}
       </div>
+      {side.drop.length > 0 && <div class="note">Drop: {side.drop.slice(-8).map((id, k) => <button key={k} class="tag vlink" onClick={() => onPick(id)}>{nm(id)}</button>)}{side.drop.length > 8 ? ` +${side.drop.length - 8} more` : ''}</div>}
     </div>
   );
 }

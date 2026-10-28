@@ -216,6 +216,21 @@ export class Store {
     await this.db.collection('scripts').doc(id).set(body);
   }
 
+  /** Save (or update) a game played against the AI, for Claude to review. Returns its id. */
+  async savePlayGame(id: string | null, body: Record<string, unknown>): Promise<string | null> {
+    if (!this.db) return null;
+    const ref = id ? this.db.collection('playgames').doc(id) : this.db.collection('playgames').doc();
+    // Nested lists (moves inside the trace) travel as a JSON string, like scripts.
+    await ref.set(JSON.parse(JSON.stringify({ ...body, updated: new Date().toISOString() })));
+    return ref.id ?? id;
+  }
+
+  /** "This card's text or engine reading is wrong", from the Play tab. */
+  async reportCard(cardId: string, note: string, textHashValue: string): Promise<void> {
+    if (!this.db) throw new Error('Reporting needs the shared database, which is not available in this view.');
+    await this.db.collection('reports').doc().set({ cardId, note, textHash: textHashValue, from: 'play', at: new Date().toISOString() });
+  }
+
   async saveRules(rules: RulesConfig): Promise<void> {
     this.set({ rules });
     if (this.db) await this.db.doc('settings/rules').set({ ...rules });

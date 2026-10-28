@@ -1,6 +1,7 @@
 import { Card } from '../data/types';
 import { MatchJob, MatchResult, runMatch } from '../builder/evaluate';
 import { Replay, RecordOpts, findReplay } from '../builder/replay';
+import { GameRecord, PlayHost, PlayOpts, PlayView } from '../play/host';
 
 declare const __WORKER_SOURCE__: string;
 
@@ -122,4 +123,52 @@ export function recordReplay(cards: Record<string, Card>, opts: RecordOpts & { w
   worker.postMessage({ type: 'init', cards });
   worker.postMessage({ type: 'replay', opts });
   return { done, cancel: () => { worker.terminate(); reject(new Error('cancelled')); } };
+}
+
+/**
+ * A game against the AI on a worker of its own (the AI's thinking would freeze the page).
+ * Falls back to the main thread.
+ */
+export class PlayClient {
+  private w: Worker | null = null;
+  private host: PlayHost | null = null;
+  private next = 1;
+  private waiting = new Map<number, { resolve: (v: any) => void; reject: (e: any) => void }>();
+
+  constructor(private cards: Record<string, Card>) {
+    try {
+      this.w = new Worker(getWorkerUrl());
+      this.w.onmessage = (ev) => {
+        const m = ev.data, p = this.waiting.get(m.id);
+        if (!p) return;
+        this.waiting.delete(m.id);
+        if (m.type === 'play') p.resolve(m.out); else p.reject(new Error(m.error));
+      };
+      this.w.onerror = (ev) => { for (const p of this.waiting.values()) p.reject(new Error(ev.message)); this.waiting.clear(); };
+      this.w.postMessage({ type: 'init', cards });
+    } catch {
+      this.w = null;
+    }
+  }
+
+  private send<T>(msg: any, local: (h: PlayHost) => T): Promise<T> {
+    if (!this.w) {
+      return new Promise((resolve, reject) => setTimeout(() => {
+        try {
+          if (msg.type === 'playStart') this.host = new PlayHost(this.cards, msg.opts);
+          if (!this.host) throw new Error('No game in progress.');
+          resolve(local(this.host));
+        } catch (e) { reject(e); }
+      }, 0));
+    }
+    const id = this.next++;
+    return new Promise((resolve, reject) => { this.waiting.set(id, { resolve, reject }); this.w!.postMessage({ ...msg, id }); });
+  }
+
+  start(opts: PlayOpts): Promise<PlayView> { return this.send({ type: 'playStart', opts }, (h) => h.view()); }
+  act(i: number): Promise<PlayView> { return this.send({ type: 'playAct', i }, (h) => h.act(i)); }
+  answer(picks: number[]): Promise<PlayView> { return this.send({ type: 'playAnswer', picks }, (h) => h.answer(picks)); }
+  aiStep(): Promise<PlayView> { return this.send({ type: 'playAI' }, (h) => h.aiStep()); }
+  record(): Promise<GameRecord> { return this.send({ type: 'playRecord' }, (h) => h.record()); }
+  close() { this.w?.terminate(); this.w = null; for (const p of this.waiting.values()) p.reject(new Error('closed')); this.waiting.clear(); }
 }
