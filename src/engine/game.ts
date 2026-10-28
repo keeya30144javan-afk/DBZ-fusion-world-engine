@@ -38,6 +38,8 @@ export interface NewGameOpts {
   first?: Side;
   log?: boolean;
   events?: boolean;
+  /** Deal in the order the list was written (games saved before decks were sorted). */
+  listedOrder?: boolean;
 }
 
 // ------------------------------------------------------------------ setup
@@ -54,7 +56,7 @@ export function newGame(cards: Record<string, Card>, decks: [Decklist, Decklist]
     const leader = mk(d.leader, side);
     return {
       leader, awakened: false,
-      deck: expandDeck(d).map((id) => mk(id, side)),
+      deck: expandDeck(d, opts.listedOrder).map((id) => mk(id, side)),
       hand: [], battle: [], energy: [], drop: [], life: [], combo: [], field: null,
       markers: 0, usedOnce: [], mulliganed: false,
     };

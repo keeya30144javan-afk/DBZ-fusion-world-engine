@@ -364,7 +364,7 @@ function describePosition(s: GameState, legal: Action[], question: string | null
 
 /** Rebuild a recorded game move by move (for Claude's review): returns the state before each move. */
 export function replayRecord(cards: Record<string, Card>, r: GameRecord, rules?: RulesConfig): GameState[] {
-  let s = newGame(cards, [r.you, r.ai], { seed: r.seed, first: r.first, log: true, rules });
+  let s = newGame(cards, [r.you, r.ai], { seed: r.seed, first: r.first, log: true, rules, listedOrder: r.version === 1 });
   const states: GameState[] = [];
   for (const t of r.trace) {
     states.push(cloneState(s));

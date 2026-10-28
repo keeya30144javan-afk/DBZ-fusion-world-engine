@@ -929,7 +929,7 @@ export function resetInst(i: Inst) {
   i.playedFrom = undefined;
 }
 
-export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean } = {}) {
+export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' | 'removed' | 'field'>, opts: { bottom?: boolean; rested?: boolean; quiet?: boolean } = {}) {
   const from = removeFrom(s, uid);
   const inst = s.inst[uid];
   // "If you would add a card to its owner's energy during this turn, place that card into its owner's Drop instead."
@@ -937,6 +937,9 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
   if (from === 'battle' && zone === 'hand') s.p[inst.owner].bouncedTurn = s.turn;
   if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
   if (from === 'energy' && zone === 'drop') (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy ?? inst.owner, kind: 'energyDrop', bySrc: s.skillSrc });
+  if (from === 'battle' && zone === 'drop' && !opts.quiet && s.skillBy !== undefined) {
+    log(s, () => `${nameOf(s, uid)} is placed from P${inst.owner}'s Battle Area into the Drop`);
+  }
   if (from === 'battle' && zone !== 'drop') {
     const where = zone === 'hand' ? "its owner's hand" : zone === 'deck' ? (opts.bottom ? "the bottom of its owner's deck" : "its owner's deck") : zone === 'energy' ? "its owner's energy" : zone === 'life' ? "its owner's life" : zone;
     log(s, () => `${nameOf(s, uid)} leaves P${inst.owner}'s Battle Area to ${where}`);

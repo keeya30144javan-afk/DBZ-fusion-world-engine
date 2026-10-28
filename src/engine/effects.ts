@@ -125,7 +125,7 @@ export function checkZeroPower(s: GameState, ctl: Choosers) {
     for (const u of s.p[side].battle.slice()) {
       if (powerOf(s, u) <= 0) {
         // Not a KO: "When KO'd" does not trigger (FW manual p. 11).
-        moveTo(s, u, 'drop');
+        moveTo(s, u, 'drop', { quiet: true });
         log(s, () => `${nameOf(s, u)} drops at 0 power`);
         emit(s, { t: 'toDrop', p: side, id: s.inst[u].id, uid: u });
       }
@@ -151,7 +151,7 @@ export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}
   }
   if (tryReplace(s, uid, true, by, ctl)) return false;
   if (by.src !== undefined && s.inst[by.src].owner !== owner) (s.p[s.inst[by.src].owner].koBy ??= []).push({ turn: s.turn, uid: by.src });
-  moveTo(s, uid, 'drop');
+  moveTo(s, uid, 'drop', { quiet: true });
   log(s, () => `${nameOf(s, uid)} is KO'd`);
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
   emit(s, { t: 'toDrop', p: owner, id: s.inst[uid].id, uid });
