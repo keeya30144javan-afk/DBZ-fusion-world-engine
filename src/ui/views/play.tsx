@@ -13,7 +13,9 @@ import { Sampler } from '../translate';
 import { ColorTag, DeckSelect, Seg, fmtPower, leaderLabel, safeStorage, useStore } from '../components';
 
 const [loadPaste, savePaste] = safeStorage<string>('shenron.playPaste', '');
-const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai' }>('shenron.playSetup', {});
+type Speed = 'fast' | 'normal' | 'slow' | 'step';
+const SPEED_MS: Record<Speed, number> = { fast: 0, normal: 900, slow: 2000, step: 0 };
+const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai'; speed?: Speed }>('shenron.playSetup', {});
 
 interface Flag { atMove: number; turn: number; aiMove: string; note: string }
 
@@ -32,7 +34,11 @@ export function PlayTab() {
   const setPaste = (v: string) => { setPaste0(v); savePaste(v); };
   const [level, setLevel] = useState<PlayLevel>(setup0.level ?? 'quick');
   const [first, setFirst] = useState<'random' | 'you' | 'ai'>(setup0.first ?? 'random');
-  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first }), [youId, aiId, mode, level, first]);
+  const [speed, setSpeed0] = useState<Speed>(setup0.speed ?? 'normal');
+  const speedRef = useRef<Speed>(speed);
+  const setSpeed = (v: Speed) => { setSpeed0(v); speedRef.current = v; };
+  const [stepWait, setStepWait] = useState(false);
+  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first, speed }), [youId, aiId, mode, level, first, speed]);
   // Decks handed over from another tab (Counter Lab, Matchup, Meta).
   const [given, setGiven] = useState<{ you?: Decklist; ai?: Decklist }>({});
   useEffect(() => {
@@ -97,11 +103,14 @@ export function PlayTab() {
     if (!c) return;
     let guard = 0;
     while (!v.over && !v.decision && guard++ < 400) {
+      if (speedRef.current === 'step') { setBusy(false); setStepWait(true); return; }
       setBusy(true);
       const before = v.moves;
       v = await c.aiStep();
       setView(v);
       if (v.moves === before && !v.decision) break;
+      // Give the person time to see each AI move land.
+      if (!v.decision && !v.over && SPEED_MS[speedRef.current]) await new Promise((r) => setTimeout(r, SPEED_MS[speedRef.current]));
     }
     setBusy(false);
     if (v.over) await save(v, flags, notes, c);
@@ -110,7 +119,7 @@ export function PlayTab() {
   async function start(decks?: { you: Decklist; ai: Decklist }) {
     const yd = decks?.you ?? you.deck, ad = decks?.ai ?? ai;
     if (!yd || !ad) return;
-    setErr(''); setFlags([]); setNotes(''); setSaved(''); docId.current = null;
+    setErr(''); setFlags([]); setNotes(''); setSaved(''); setStepWait(false); docId.current = null;
     client?.close();
     const c = new PlayClient(st.cards);
     setClient(c);
@@ -137,6 +146,17 @@ export function PlayTab() {
     if (!client || busy) return;
     setBusy(true);
     try { await settle(await client.answer(picks)); } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
+  }
+  /** Step mode: let the AI make its next move. */
+  async function nextAI() {
+    if (!client || busy || !view) return;
+    setStepWait(false);
+    setBusy(true);
+    try {
+      const v = await client.aiStep();
+      setBusy(false);
+      if (!v.over && !v.decision) { setView(v); setStepWait(true); } else await settle(v);
+    } catch (e: any) { setBusy(false); setErr(String(e?.message ?? e)); }
   }
   async function undo() {
     if (!client || busy) return;
@@ -184,6 +204,7 @@ export function PlayTab() {
               ? <div class="field"><b>AI's deck</b><div class="note">Using <b>{given.ai.name}</b> ({leaderLabel(st.cards, given.ai.leader)}) <button class="btn" onClick={() => setGiven({ ...given, ai: undefined })}>Pick another</button></div></div>
               : <label class="field"><b>AI's deck</b><DeckSelect id="play-ai" value={aiId} onChange={setAiId} decks={st.meta} cards={st.cards} /></label>}
             <label class="field">AI strength<Seg label="AI strength" options={[['quick', 'Search'], ['strong', 'Strong'], ['deep', 'Deep']]} value={level} onChange={setLevel} /></label>
+            <label class="field">AI speed<Seg label="AI speed" options={[['fast', 'Fast'], ['normal', 'Normal'], ['slow', 'Slow'], ['step', 'Step']]} value={speed} onChange={setSpeed} /></label>
             <label class="field">Who goes first<Seg label="Who goes first" options={[['random', 'Random'], ['you', 'You'], ['ai', 'AI']]} value={first} onChange={setFirst} /></label>
             {you.errors.length > 0 && <div class="err">{you.errors.slice(0, 3).map((e) => <div key={e}>{e}</div>)}</div>}
             <div class="row"><button class="btn primary" onClick={() => start()} disabled={busy || you.errors.length > 0 || !ai}>{busy ? 'Setting up…' : 'Start game'}</button></div>
@@ -236,7 +257,11 @@ export function PlayTab() {
           <Board nm={nm} side={s.p[0]} who="You" name={names[0]} active={s.active === 0} snapBattle={s.battle} sideIdx={0} onPick={setInspect} />
           <div class="panel stack" aria-live="polite">
             {!view.over && <div class="eyebrow" style={{ color: s.active === 0 ? 'var(--accent, #d9632b)' : undefined }}>Turn {s.turn} · {s.active === 0 ? 'Your turn' : "AI's turn"}</div>}
-            {busy && <div class="note"><b>The AI is thinking…</b></div>}
+            <div class="row" style={{ gap: '6px', justifyContent: 'space-between' }}>
+              {busy ? <div class="note"><b>The AI is thinking…</b></div> : <span />}
+              <Seg label="AI speed" options={[['fast', 'Fast'], ['normal', 'Normal'], ['slow', 'Slow'], ['step', 'Step']]} value={speed} onChange={(v) => { setSpeed(v); if (v !== 'step' && stepWait && view) { setStepWait(false); void settle(view); } }} />
+            </div>
+            {stepWait && !busy && <div class="row"><button class="btn primary" onClick={nextAI}>Next AI move ▶</button><span class="note">Step mode: the AI waits for you.</span></div>}
             {!busy && view.decision && <DecisionPanel d={view.decision} onAct={act} onAnswer={answer} nm={nm} onPick={setInspect} stage={s.stage} />}
             {view.over && meta.current && <div class="row" style={{ gap: '6px' }}>
               <button class="btn primary" onClick={() => start({ you: meta.current!.you, ai: meta.current!.ai })}>Rematch</button>
@@ -249,8 +274,17 @@ export function PlayTab() {
           {card && <CardPanel card={card} reading={st.reviews?.[card.id]} />}
           {client && meta.current && <AdvisorPanel client={client} disabled={busy || !!view.over} leader={meta.current.you.leader} />}
           <div class="panel stack">
-            <div class="eyebrow">AI's recent moves</div>
-            {view.aiMoves.length ? <ol class="note" style={{ margin: 0, paddingLeft: '18px' }}>{view.aiMoves.map((m, k) => <li key={k}>{m}</li>)}</ol> : <span class="note">None yet.</span>}
+            <div class="eyebrow">What the AI just did</div>
+            {view.aiTurn.length ? (
+              <ol class="note" style={{ margin: 0, paddingLeft: '18px' }}>
+                {view.aiTurn.map((m, k) => (
+                  <li key={k} style={k === view.aiTurn.length - 1 ? { fontWeight: 600, color: 'var(--ink, inherit)' } : undefined}>
+                    {m.label.charAt(0).toUpperCase() + m.label.slice(1)}
+                    {m.lines.length > 0 && <ul style={{ margin: '2px 0', paddingLeft: '16px', fontWeight: 'normal' }}>{m.lines.slice(0, 4).map((l, j) => <li key={j}>{l}</li>)}</ul>}
+                  </li>
+                ))}
+              </ol>
+            ) : <span class="note">Nothing yet.</span>}
             <textarea aria-label="What should the AI have done?" value={flagText} onInput={(e) => setFlagText((e.target as HTMLTextAreaElement).value)} placeholder="What was wrong with the AI's last move, and what would a good player do?" style={{ minHeight: '60px' }} />
             <div class="row"><button class="btn" onClick={addFlag} disabled={!flagText.trim()}>Flag the AI's last move</button>{flags.length > 0 && <span class="note">{flags.length} flagged</span>}</div>
             {flags.length > 0 && (

@@ -49,6 +49,8 @@ export interface PlayView {
   over: { winner: Side | -1; reason: string } | null;
   /** The AI's last few moves in words. */
   aiMoves: string[];
+  /** The AI's moves in its latest turn, each with what it did (log lines, from your point of view). */
+  aiTurn: { label: string; lines: string[] }[];
   /** Your last move can be taken back. */
   canUndo: boolean;
 }
@@ -143,8 +145,9 @@ export class PlayHost {
   private pending: { a: Action; by: Side } | null = null;
   private question: NeedChoice | null = null;
   private aiMoves: string[] = [];
+  private aiTurn: { turn: number; moves: { label: string; lines: string[] }[] } = { turn: -1, moves: [] };
   /** The game before each of your moves, for undo. */
-  private history: { real: GameState; trace: number; aiMoves: string[] }[] = [];
+  private history: { real: GameState; trace: number; aiMoves: string[]; aiTurn: { turn: number; moves: { label: string; lines: string[] }[] } }[] = [];
   private undos: { atMove: number; label: string }[] = [];
   readonly first: Side;
   /** Testing: a snapshot after every move. */
@@ -177,7 +180,15 @@ export class PlayHost {
     }
     this.trace.push({ by, a, picks, label, turn: this.real.turn });
     this.debug?.push(JSON.stringify(snapshot(work)));
-    if (by === 1) this.aiMoves = [...this.aiMoves, `T${this.real.turn}: ${label}`].slice(-6);
+    if (by === 1) {
+      this.aiMoves = [...this.aiMoves, `T${this.real.turn}: ${label}`].slice(-6);
+      const before = this.real.log?.length ?? 0;
+      const lines = (work.log ?? []).slice(before).map((l) => l.replace(/^T\d+ /, '').replace(/\bP0\b/g, 'You').replace(/\bP1\b/g, 'AI'))
+        .filter((l) => !/^AI (attacks|plays|charges|uses|evolves|awakens)\b/.test(l) && !/skill resolves$/.test(l));
+      // A new turn of the AI's (or a move during your turn, like a combo) starts a new recap.
+      if (this.aiTurn.turn !== this.real.turn) this.aiTurn = { turn: this.real.turn, moves: [] };
+      if (!/stops adding combo cards|charges nothing|does not (block|counter)/.test(label) || lines.length) this.aiTurn.moves.push({ label, lines });
+    }
     this.real = work;
     this.pending = null;
     this.question = null;
@@ -218,7 +229,7 @@ export class PlayHost {
     const legal = legalActions(this.real);
     const a = legal[i];
     if (a) {
-      this.history.push({ real: this.fresh(), trace: this.trace.length, aiMoves: this.aiMoves.slice() });
+      this.history.push({ real: this.fresh(), trace: this.trace.length, aiMoves: this.aiMoves.slice(), aiTurn: { turn: this.aiTurn.turn, moves: this.aiTurn.moves.slice() } });
       if (this.history.length > 60) this.history.shift();
       this.tryStep(a, 0);
     }
@@ -240,6 +251,7 @@ export class PlayHost {
     this.real = h.real;
     this.trace = this.trace.slice(0, h.trace);
     this.aiMoves = h.aiMoves;
+    this.aiTurn = h.aiTurn;
     this.question = null; this.pending = null; this.answers = [];
     return this.view();
   }
@@ -311,6 +323,7 @@ export class PlayHost {
       decision,
       over: s.stage === 'over' ? { winner: s.winner, reason: s.reason } : null,
       aiMoves: this.aiMoves,
+      aiTurn: this.aiTurn.moves.slice(-14),
       canUndo: (!!this.question && this.pending?.by === 0) || this.history.length > 0,
     };
   }
