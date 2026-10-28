@@ -342,3 +342,20 @@ test('Shallot engine: awakened Leader untaps 2 energy with Shallot + Giblet in p
   const shallet = spawn(s, 0, 'FB11-122', 'hand');
   assert.ok(legalActions(s).some((a) => a.k === 'evolve' && a.uid === shallet), 'Shallet can Fusion Evolve from the rested pair');
 });
+
+test('Gotenks FP-083: up to 3 Extras with different names whose costs add up to 3 or less', () => {
+  const s = fresh();
+  s.p[0].leader = spawn(s, 0, Object.values(cards).find((c) => c.type === 'LEADER' && c.name === 'Gotenks')!.id, 'leader');
+  const ex = (cost: number, n: number) => Object.values(cards).filter((c) => c.type === 'EXTRA' && c.cost === cost).slice(0, n);
+  const ones = ex(1, 2), twos = ex(2, 1), threes = ex(3, 1);
+  for (const c of [...ones, ones[0], ...twos, ...threes]) spawn(s, 0, c.id, 'drop');
+  const g = spawn(s, 0, 'FP-083', 'hand');
+  energy(s, 0, 6);
+  const hand0 = s.p[0].hand.length;
+  step(s, legalActions(s).find((a) => a.k === 'play' && a.uid === g)!, ctl);
+  const got = s.p[0].hand.slice(hand0 - 1).map((u) => cards[s.inst[u].id]);
+  const total = got.reduce((t, c) => t + c.cost, 0);
+  assert.ok(got.length >= 1 && got.length <= 3, `took ${got.length}`);
+  assert.ok(total <= 3, `total cost ${total}`);
+  assert.equal(new Set(got.map((c) => c.name)).size, got.length, 'different names');
+});

@@ -53,7 +53,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   grant: { target: 'T', kw: 'K', dur: 'D' },
   costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
   search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?', fromBottom: 'b?', eachOption: 'b?' },
-  dropToHand: { options: 'F[]', each: 'n', per: 'C?', distinctCosts: 'b?' },
+  dropToHand: { options: 'F[]', each: 'n', per: 'C?', distinctCosts: 'b?', distinctNames: 'b?', totalCostLE: 'n?' },
   playFrom: { from: 'Z:drop|hand|deck|energy|life|lifeTop', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?', each: 'F[]?', totalCostLE: 'n?', distinctNames: 'b?' },
   energyFromDeck: { n: 'n', rested: 'b' },
   energyFromDrop: { filter: 'F', n: 'n', rested: 'b' },

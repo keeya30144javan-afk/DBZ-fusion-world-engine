@@ -75256,20 +75256,19 @@
        }
       ],
       "text": "",
-      "unparsed": [
-       "(the 3 Extras must have different card names)"
-      ],
+      "unparsed": [],
       "timing": "onPlay",
       "effects": [
        {
         "t": "dropToHand",
         "options": [
          {
-          "type": "EXTRA",
-          "costEQ": 3
+          "type": "EXTRA"
          }
         ],
-        "each": 3
+        "each": 3,
+        "distinctNames": true,
+        "totalCostLE": 3
        }
       ]
      },
@@ -75292,8 +75291,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (the 3 Extras must have different card names)"
+     "ok": true,
+     "note": "reviewed by the user: up to 3 Extras with different names whose costs add up to 3 or less"
     },
     "keywords": [],
     "source": "claude",

@@ -174,7 +174,9 @@ export function describeEffect(e: Effect): string {
     }
     case 'dropToHand': out = e.per
       ? `add a number of ${list(e.options.map((f) => describeFilter(f)))}s up to the number of ${describeCount(e.per)}${e.distinctCosts ? ', with different costs,' : ''} from your Drop to your hand`
-      : `add ${list(e.options.map((f) => `up to ${e.each} ${describeFilter(f)}`), 'and')}${e.distinctCosts ? ' with different costs' : ''} from your Drop to your hand`; break;
+      : e.distinctNames || e.totalCostLE !== undefined
+        ? `add up to ${e.each} ${list(e.options.map((f) => describeFilter(f, 'card', true)))}${[e.distinctNames ? ' with different card names' : '', e.totalCostLE !== undefined ? ` whose costs add up to ${e.totalCostLE} or less` : ''].join(e.distinctNames && e.totalCostLE !== undefined ? ' and' : '')} from your Drop to your hand`
+        : `add ${list(e.options.map((f) => `up to ${e.each} ${describeFilter(f)}`), 'and')}${e.distinctCosts ? ' with different costs' : ''} from your Drop to your hand`; break;
     case 'playFrom': {
       const what = e.each?.length ? list(e.each.map((f) => `up to 1 ${describeFilter(f)}`), 'and') : `up to ${e.n} ${describeFilter(e.filter)}`;
       const extra = [e.distinctNames ? 'with different card names' : '', e.totalCostLE !== undefined ? `with a combined cost of ${e.totalCostLE} or less` : ''].filter(Boolean).join(' and ');

@@ -200,6 +200,32 @@ export interface EvalWeights {
    * end of your own turn, when nothing will untap them before the opponent attacks.
    */
   restedRisk?: number;
+  /**
+   * Learned weights per Leader id for sideFeatures(): when a side's Leader has an entry, its
+   * half of the evaluation is the weighted sum of its own features (its deck's own judgement).
+   */
+  perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
+}
+
+/** What one side has, feature by feature: the ingredients of a per-Leader evaluation. */
+export const SIDE_FEATURES = ['life', 'hand', 'bodies', 'board', 'energy', 'awaken', 'ki', 'drop', 'marker', 'restEnemy'] as const;
+export type SideFeature = (typeof SIDE_FEATURES)[number];
+
+export function sideFeatures(s: GameState, p: Side): Record<SideFeature, number> & { deck: number } {
+  const pl = s.p[p];
+  return {
+    life: pl.life.length <= 0 ? -3 : Math.log(1 + pl.life.length),
+    hand: pl.hand.length,
+    bodies: pl.battle.length,
+    board: pl.battle.reduce((t, u) => t + boardValue(s, u), 0),
+    energy: Math.min(pl.energy.length, 8),
+    awaken: pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0,
+    ki: [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0),
+    drop: Math.min(pl.drop.length, 20) / 20,
+    marker: Math.min(pl.markers, 2),
+    restEnemy: s.p[other(p)].battle.filter((u) => s.inst[u].rested).length,
+    deck: pl.deck.length < 6 ? -(6 - pl.deck.length) * 0.5 : 0,
+  };
 }
 /**
  * Tuned by self-play (Oct 2026): weights fitted to 90k positions' outcomes, then blended
@@ -214,6 +240,13 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
   const side = (p: Side) => {
     const pl = s.p[p];
+    const lw = W.perLeader?.[s.inst[pl.leader].id];
+    if (lw) {
+      const f = sideFeatures(s, p);
+      let v = f.deck;
+      for (const k of SIDE_FEATURES) v += (lw[k] ?? 0) * f[k];
+      return v;
+    }
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
     const exposed = W.restedRisk && s.active === p && s.stage !== 'over';

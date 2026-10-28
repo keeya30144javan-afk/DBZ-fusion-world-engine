@@ -863,6 +863,20 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'dropToHand': {
       const taken: number[] = [];
       const each = e.per ? e.each * countOf(s, owner, src, e.per, ctx) : e.each;
+      if (e.distinctNames || e.totalCostLE !== undefined) {
+        // One card at a time, so each pick respects the names and total cost already taken.
+        for (let i = 0; i < each; i++) {
+          const spent = taken.reduce((t, x) => t + cardOf(s, x).cost, 0);
+          const cands = me.drop.filter((u) => !taken.includes(u) && e.options.some((f) => matchesFilter(s, u, f, src))
+            && (!e.distinctNames || !taken.some((x) => cardOf(s, x).name === cardOf(s, u).name))
+            && (e.totalCostLE === undefined || spent + cardOf(s, u).cost <= e.totalCostLE));
+          const pick = pickFrom(s, owner, src, cands, 1, ctl);
+          if (!pick.length) break;
+          taken.push(pick[0]);
+        }
+        for (const u of taken) { moveTo(s, u, 'hand'); emit(s, { t: 'toHandPublic', p: owner, id: s.inst[u].id, uid: u }); }
+        return;
+      }
       for (const f of e.options) {
         let cands = me.drop.filter((u) => !taken.includes(u) && matchesFilter(s, u, f, src));
         if (e.distinctCosts) cands = cands.filter((u) => !taken.some((x) => cardOf(s, x).cost === cardOf(s, u).cost));

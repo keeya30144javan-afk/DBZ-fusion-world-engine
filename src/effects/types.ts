@@ -211,7 +211,7 @@ export type Effect = E<
    */
   | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean; /** "up to 1 <A> and up to 1 <B>": one card per option. */ eachOption?: boolean }
   /** `per`: take up to `each` for each counted thing; distinctCosts: all with different costs. */
-  | { t: 'dropToHand'; options: Filter[]; each: number; per?: Count; distinctCosts?: boolean }
+  | { t: 'dropToHand'; options: Filter[]; each: number; per?: Count; distinctCosts?: boolean; /** Different card names only. */ distinctNames?: boolean; /** The chosen cards' costs add up to this or less. */ totalCostLE?: number }
   /**
    * 'life' = look through your life (then shuffle it); 'lifeTop' = the top card of your life.
    * each: up to 1 card per filter ("up to 1 <A> and up to 1 <B>"); totalCostLE: combined cost cap; distinctNames: different card names.
