@@ -37,7 +37,10 @@
     "Against a Leader whose awakened side is much stronger, pressure their Battle Cards (rest them, attack them) instead of their life, so you don't awaken them for free.",
     "Blockers are worth using while you can: a yellow opponent will rest them on their next attack anyway. A deck that untaps its Battle Cards at end of turn (awakened Frieza) can attack with its blockers freely.",
     "Defending early has value too: a 20000 swing now is cheaper to stop than a 40000 swing later, but only if the game lasts long enough for that to matter.",
-    "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack."
+    "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack.",
+    "Know your outs before charging: don't charge a finisher you need two of (a double 6-cost turn) until you have seen enough copies; charge a card you will never play again instead.",
+    "An opponent who over-combos on offence to force your Super Combos is spending their own hand too. Track the hand-size gap, not just life.",
+    "Win-or-bust turns: when you can't survive their next turn (you can't remove or rest their board again), commit everything to lethal, even lines that need a draw to hit."
   ],
   "decks": {
     "FS11-01": {
