@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useMemo, useRef, useState } from 'preact/hooks';
 import { parseDecklist, validateDeck } from '../../data/decks';
 import { Decklist } from '../../data/types';
 import { Level, MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
@@ -18,6 +18,9 @@ export function MatchupView() {
   const [level, setLevel] = useState<Level>('fast');
   const [res, setRes] = useState<{ r: MatchResult; a: string; b: string } | null>(null);
   const [running, setRunning] = useState(false);
+  const [prog, setProg] = useState<{ done: number; total: number; t0: number; r: MatchResult } | null>(null);
+  const runId = useRef(0);
+  const partial = useRef<{ r: MatchResult; a: string; b: string } | null>(null);
   const saved = useMemo(() => loadPastes(), []);
   const [modeA, setModeA] = useState<'meta' | 'paste'>(saved.a ? 'paste' : 'meta');
   const [modeB, setModeB] = useState<'meta' | 'paste'>(saved.b ? 'paste' : 'meta');
@@ -54,13 +57,35 @@ export function MatchupView() {
   async function run() {
     if (!da || !db) return;
     setRunning(true);
+    const id = ++runId.current;
     const n = +games;
-    const chunk = level === 'fast' ? 25 : 4;
+    const chunk = level === 'fast' ? 10 : 2;
     const base = Date.now() % 1_000_000;
     const jobs: MatchJob[] = [];
     for (let g = 0; g < n; g += chunk) jobs.push({ a: da, b: db, seeds: Array.from({ length: Math.min(chunk, n - g) }, (_, k) => base + g + k), level, track: true, rules: st.rules });
-    const out = await getPool(st.cards).run(jobs);
-    setRes({ r: out.reduce((acc, r) => mergeResults(acc, r), emptyResult()), a: da.name, b: db.name });
+    let sofar = emptyResult();
+    partial.current = null;
+    const t0 = Date.now();
+    setProg({ done: 0, total: n, t0, r: sofar });
+    try {
+      await getPool(st.cards).run(jobs, (r) => {
+        if (runId.current !== id) return;
+        sofar = mergeResults(sofar, r);
+        partial.current = { r: sofar, a: da.name, b: db.name };
+        setProg({ done: sofar.games, total: n, t0, r: sofar });
+      });
+    } catch { /* stopped: keep the games played so far */ }
+    if (runId.current !== id) return;
+    if (sofar.games > 0) setRes({ r: sofar, a: da.name, b: db.name });
+    setProg(null);
+    setRunning(false);
+  }
+
+  function stop() {
+    runId.current++;
+    getPool(st.cards).cancelQueued();
+    if (partial.current && partial.current.r.games > 0) setRes(partial.current);
+    setProg(null);
     setRunning(false);
   }
 
@@ -78,11 +103,13 @@ export function MatchupView() {
           <div class="row">
             <button class="btn primary" onClick={run} disabled={running || errs.length > 0}>{running ? 'Playing…' : 'Play matchup'}</button>
           </div>
+          {running && <button class="btn" onClick={stop}>Stop and show results so far</button>}
           {level !== 'fast' && <p class="note">Search AI takes about a second per move decision. 100 games can take a few minutes.</p>}
         </div>
       </div>
       <div class="stack">
-        {res && ci ? (
+        {prog && <MatchProgress {...prog} />}
+        {res && ci && !prog ? (
           <div class="panel raised stack">
             <div class="eyebrow">{res.a} vs {res.b}</div>
             <div class="big">{pct(ci.mean)} <small>for deck A</small></div>
@@ -94,10 +121,28 @@ export function MatchupView() {
               <tr><td>Average length</td><td class="num">{(res.r.turns / Math.max(1, res.r.games)).toFixed(1)} turns</td><td /></tr>
             </tbody></table>
           </div>
-        ) : <div class="empty">Pick two decks and press <b>Play matchup</b>.</div>}
+        ) : !prog && <div class="empty">Pick two decks and press <b>Play matchup</b>.</div>}
         {da && db && errs.length === 0 && <div class="row"><button class="btn" onClick={() => store.requestPlay(da, db)}>Play this matchup yourself (you are A)</button></div>}
         {da && db && errs.length === 0 && <WatchGame key={`${da.name}|${db.name}|${JSON.stringify(da.main)}|${JSON.stringify(db.main)}`} a={da} b={db} cards={st.cards} rules={st.rules} level={level} />}
       </div>
     </div>
   );
+}
+
+function MatchProgress({ done, total, t0, r }: { done: number; total: number; t0: number; r: MatchResult }) {
+  const secs = (Date.now() - t0) / 1000;
+  const left = done > 0 ? (secs / done) * (total - done) : null;
+  return (
+    <div class="panel raised progress" aria-live="polite">
+      <div class="eyebrow">Playing · {done} / {total} games · {pct(done / total, 0)} done{left !== null ? ` · about ${fmtLeft(left)} left` : ' · estimating time left…'}</div>
+      <Meter value={done / total} accent />
+      {r.games > 0 ? <p class="note">So far deck A has won {pct(score(r) / r.games, 0)} of {r.games} games.</p> : null}
+    </div>
+  );
+}
+
+function fmtLeft(sec: number): string {
+  if (sec < 90) return `${Math.max(5, Math.round(sec / 5) * 5)} s`;
+  if (sec < 5400) return `${Math.round(sec / 60)} min`;
+  return `${(sec / 3600).toFixed(1)} h`;
 }
