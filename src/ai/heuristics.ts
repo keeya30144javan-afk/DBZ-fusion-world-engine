@@ -127,6 +127,51 @@ const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s
 
 const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
 
+/**
+ * The opponent's removal: the target filter of every skill that KOs, bounces, bottoms or
+ * drops one of our cards, with its copies. Cached per game: decks never change.
+ */
+const REMOVAL = new Set(['ko', 'bottom', 'bounce', 'toDrop', 'toEnergy']);
+const removalMemo = new WeakMap<object, { key: string; by: [[any, number][], [any, number][]] }>();
+function removalOf(s: GameState): [[any, number][], [any, number][]] {
+  const key = s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
+  const hit = removalMemo.get(s.cards);
+  if (hit && hit.key === key) return hit.by;
+  const per: [Map<string, [any, number]>, Map<string, [any, number]>] = [new Map(), new Map()];
+  for (const i of s.inst) {
+    const card = s.cards[i.id];
+    if (card.type === 'LEADER') continue;
+    const fs: any[] = [];
+    const walk = (x: any) => {
+      if (!x || typeof x !== 'object') return;
+      if (Array.isArray(x)) return x.forEach(walk);
+      if (REMOVAL.has(x.t) && x.target && (x.target.side === 'opp' || x.target.side === 'any' || x.target.side === undefined) && x.target.ref === undefined) fs.push(x.target.filter ?? {});
+      for (const v of Object.values(x)) if (typeof v === 'object') walk(v);
+    };
+    for (const ab of compileCard(card).abilities) walk(ab.effects);
+    for (const [k, f] of fs.entries()) {
+      const id = i.id + '#' + k, m = per[i.owner];
+      m.set(id, [f, (m.get(id)?.[1] ?? 0) + 1]);
+    }
+  }
+  const by: [[any, number][], [any, number][]] = [[...per[0].values()], [...per[1].values()]];
+  removalMemo.set(s.cards, { key, by });
+  return by;
+}
+
+/** 0..1: the share of the opponent's removal (by copies, at least 6) that can hit this body now. */
+export function exposure(s: GameState, u: number): number {
+  if (hasKeyword(s, u, 'removeImmune')) return 0;
+  const opp = other(s.inst[u].owner);
+  let n = 0, all = 0;
+  for (const [f, copies] of removalOf(s)[opp]) {
+    all += copies;
+    if (f.costLEv || f.powerLEv || f.costEQv) { n += copies * 0.5; continue; }
+    if (matchesFilter(s, u, { ...f, rested: undefined }, s.p[opp].leader)) n += copies;
+  }
+  return n / Math.max(6, all);
+}
+
 /** Value of keeping a card in hand: it is both a play and a combo shield. */
 export function keepValue(s: GameState, u: number): number {
   const card = cardOf(s, u);
@@ -205,6 +250,8 @@ export interface EvalWeights {
    * half of the evaluation is the weighted sum of its own features (its deck's own judgement).
    */
   perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
+  /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
+  reach?: number;
 }
 
 /** What one side has, feature by feature: the ingredients of a per-Leader evaluation. */
@@ -253,7 +300,7 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
     const exposed = W.restedRisk && s.active === p && s.stage !== 'over';
-    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1);
+    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1) * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
     v += Math.min(pl.energy.length, 8) * W.energy;
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
