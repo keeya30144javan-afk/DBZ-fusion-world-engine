@@ -143,7 +143,13 @@
         "Bases: Son Goku/Vegeta FB09-082 (cost 2, adds life to hand, can untap itself) is what Veku (0 energy) and Gogeta FB09-122 (3 energy) evolve from.",
         "Veku: send to Drop to replay a Son Goku and a Vegeta with ≪Another World≫ (combined cost 3 or less) from the Drop, rested, as fresh bases.",
         "Gogeta FB09-122: rests all enemy cards when attacking and untaps 1 energy; goes to your life instead of letting you lose at 0 life or being KO'd by a skill.",
-        "Rest and lock: Son Goku FB09-080 rests 2, North Kai locks a rested card, FP-077 rests one; Son Goku FS11-07 (evolve) draws and untaps."
+        "Rest and lock: Son Goku FB09-080 rests 2, North Kai locks a rested card, FP-077 rests one; Son Goku FS11-07 (evolve) draws and untaps.",
+        "Hamza's god-rank build (52): 10-12 cantrips (Saike Demon, North Kai, Son Goku searchers, the 1-cost Vegeta cantrip ST01-052) so every early play replaces itself; the Vegeta cantrip is what made the deck viable again.",
+        "Awakened Leader: rest one Another World card to untap another, usually Gogeta FB09-122 (a 6-drop that rests the whole enemy board and untaps an energy each swing) or the 5-cost Son Goku, for three 30k swings or two 40k swings.",
+        "Kill turn: hold the Leader attack; 20 Goku/Vegeta, 40 and 40 with Gogeta, 30 with the promo Vegeta FP-073 untapped under Majin Vegeta, then end with the Leader swing for its draw.",
+        "Vs SS3 on 4 energy: Vegeta cantrip, Majin Vegeta FS11-14 swing 30k, then two Warriors Who Defeat the Evil Demon to clear three bodies without going minus in hand.",
+        "Gogeta FB09-122 is the crutch: it returns to life instead of being KO'd, so only blue (bottom of the deck/bounce) or a direct-to-Drop 6-cost answers it. Blue Power Awakening (1 copy) kills an early 6-cost Vegito to buy a turn against blue.",
+        "Weakness: combo-piece reliant. Going first vs Majin Vegeta or Beast Gohan, the 2-cost Son Goku/Vegeta must come down on curve or the game is lost; a hand of only 1-drops loses."
       ]
     },
     "FB09-049": {

@@ -282,7 +282,7 @@
     "FS11-07": 4,
     "ST01-052": 4
    },
-   "share": 0.0731,
+   "share": 0.0365,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -457,6 +457,29 @@
    },
    "share": 0.0366,
    "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Son Goku/Vegeta (Yellow Gogeta, Hamza 52)",
+   "leader": "FB09-073",
+   "main": {
+    "FB05-075": 2,
+    "FB09-074": 3,
+    "FB09-080": 4,
+    "FB09-082": 4,
+    "FB09-088": 4,
+    "FB09-091": 4,
+    "FB09-096": 4,
+    "FB09-122": 4,
+    "FS11-07": 4,
+    "FS11-14": 4,
+    "FP-073": 2,
+    "FP-077": 4,
+    "FB02-136": 1,
+    "FB09-079": 4,
+    "ST01-052": 4
+   },
+   "share": 0.0366,
+   "notes": "God-rank ladder list by Hamza, from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
   }
  ]
 }
