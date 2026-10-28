@@ -29,7 +29,14 @@ export function GameViewer({ replay, cards, onClose }: { replay: Replay; cards: 
   }, [playing, i, speed, n]);
 
   useEffect(() => {
-    listRef.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: 'nearest' });
+    // Scroll only the move list, never the page (scrollIntoView would pull the page back to the
+    // viewer on every move and stop the reader from scrolling away while it plays).
+    const list = listRef.current, row = list?.querySelector('[aria-current="step"]') as HTMLElement | null;
+    if (list && row) {
+      const top = row.offsetTop, bottom = top + row.offsetHeight;
+      if (top < list.scrollTop) list.scrollTop = top;
+      else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+    }
   }, [i]);
 
   // Turn starts, for the jump list.
