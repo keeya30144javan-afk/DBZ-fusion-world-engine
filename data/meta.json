@@ -190,7 +190,7 @@
     "ST01-051": 4,
     "ST01-052": 4
    },
-   "share": 0.0731,
+   "share": 0.0365,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -480,6 +480,28 @@
    },
    "share": 0.0366,
    "notes": "God-rank ladder list by Hamza, from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
+  },
+  {
+   "name": "Broly (Yellow, Hawk profile)",
+   "leader": "FB08-073",
+   "main": {
+    "FB04-097": 3,
+    "FB08-076": 4,
+    "FB08-084": 3,
+    "FB08-088": 4,
+    "FB08-091": 3,
+    "FB08-122": 2,
+    "FS11-13": 4,
+    "FS11-14": 3,
+    "ST01-047": 4,
+    "ST01-048": 4,
+    "ST01-049": 4,
+    "ST01-050": 4,
+    "ST01-052": 4,
+    "ST01-051": 4
+   },
+   "share": 0.0366,
+   "notes": "Hawk Dragon Ball Nest profile list (shared by the user, Oct 2026); 49 as pasted, 50th card (4th Broly ST01-051) chosen by Claude"
   }
  ]
 }
