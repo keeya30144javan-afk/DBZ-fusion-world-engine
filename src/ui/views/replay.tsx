@@ -157,6 +157,7 @@ export function Board({ nm, side, who, name, active, snapBattle, sideIdx, onPick
         <span class="eyebrow">{who} · {name}{active ? ' · to move' : ''}</span>
         <span class="row" style={{ gap: '6px' }}>
           <span class="chip" title="Life">♥ <b>{side.life}</b></span>
+          <span class="chip" title="Ki on the Leader">Ki <b>{side.leader.ki ?? 0}</b></span>
           <span class="chip" title="Energy: active / rested">⚡ <b>{side.energy.active}</b>/{side.energy.active + side.energy.rested}</span>
           {side.markers > 0 && <span class="chip" title="Energy marker: pays 1 energy once, then it's removed">Marker <b>{side.markers}</b></span>}
           <span class="chip" title="Deck">Deck <b>{side.deck}</b></span>
@@ -197,9 +198,10 @@ function Slot({ c, leader, awakened, hot, onPick, card, showText }: { c: CardSna
   return (
     <button class={`vcard${leader ? ' leader' : ''}${c.rested ? ' rested' : ''}${hot ? ' hot' : ''}${showText ? ' withtext' : ''}`} onClick={() => onPick(c.id)} title={text ? `${c.rested ? 'Rest Mode' : 'Active Mode'}\n${text}` : c.rested ? 'Rest Mode' : 'Active Mode'}>
       {c.rested && <span class="vrest">Rest Mode</span>}
+      {(leader || !!c.ki) && <span class="vki" title="Ki on this card">Ki {c.ki ?? 0}</span>}
       <span class="vname">{c.name}</span>
       <span class="vpow">{fmtPower(c.power)}</span>
-      <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.ki ? ` · Ki ${c.ki}` : ''}{c.under ? ` · ${c.under} under` : ''}</span>
+      <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.under ? ` · ${c.under} under` : ''}</span>
       {c.tags && c.tags.length > 0 && <span class="vmeta" style={{ fontWeight: 600 }}>{c.tags.join(' · ')}</span>}
       {showText && text && <span class="vtext">{text}</span>}
     </button>
