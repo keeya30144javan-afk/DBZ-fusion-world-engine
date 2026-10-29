@@ -10,12 +10,14 @@ import { store } from '../store';
 import { Board } from './replay';
 import { VISIONS } from '../visions';
 import { Sampler } from '../translate';
-import { ColorTag, DeckSelect, Seg, fmtPower, leaderLabel, safeStorage, useStore } from '../components';
+import { ColorTag, DeckSelect, Seg, fmtPower, getPool, leaderLabel, safeStorage, useStore } from '../components';
+import { MatchJob, emptyResult, mergeResults } from '../../builder/evaluate';
 
 const [loadPaste, savePaste] = safeStorage<string>('shenron.playPaste', '');
 type Speed = 'fast' | 'normal' | 'slow' | 'step';
 const SPEED_MS: Record<Speed, number> = { fast: 0, normal: 900, slow: 2000, step: 0 };
-const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai'; speed?: Speed; showText?: boolean }>('shenron.playSetup', {});
+type AiPick = 'pick' | 'surprise' | 'tough';
+const [loadSetup, saveSetup] = safeStorage<{ you?: string; ai?: string; aiPick?: AiPick; mode?: 'meta' | 'paste'; level?: PlayLevel; first?: 'random' | 'you' | 'ai'; speed?: Speed; showText?: boolean }>('shenron.playSetup', {});
 
 interface Flag { atMove: number; turn: number; aiMove: string; note: string }
 
@@ -40,7 +42,10 @@ export function PlayTab() {
   const [stepWait, setStepWait] = useState(false);
   // Text on the board by default on wide screens; on a phone the hand would become a very long column.
   const [showText, setShowText] = useState<boolean>(setup0.showText ?? true);
-  useEffect(() => saveSetup({ you: youId, ai: aiId, mode, level, first, speed, showText }), [youId, aiId, mode, level, first, speed, showText]);
+  const [aiPick, setAiPick] = useState<AiPick>(setup0.aiPick ?? 'pick');
+  const [choosing, setChoosing] = useState('');
+  const [chosen, setChosen] = useState<{ name: string; why: string } | null>(null);
+  useEffect(() => saveSetup({ you: youId, ai: aiId, aiPick, mode, level, first, speed, showText }), [youId, aiId, aiPick, mode, level, first, speed, showText]);
   // Decks handed over from another tab (Counter Lab, Matchup, Meta).
   const [given, setGiven] = useState<{ you?: Decklist; ai?: Decklist }>({});
   useEffect(() => {
@@ -118,9 +123,55 @@ export function PlayTab() {
     if (v.over) await save(v, flags, notes, c);
   }
 
+  /**
+   * The AI picks its own deck: a random meta deck (weighted by how often it's played), or a
+   * tough one for your deck (every meta deck plays your deck: fast games to narrow the field,
+   * then the searching AI on the top few, since the fast AI misjudges some decks; then one of
+   * the strongest at random, so it isn't the same deck every time).
+   */
+  async function pickOpponent(yd: Decklist): Promise<Decklist | undefined> {
+    const pool = st.meta.filter((d) => !d.name.startsWith('Starter') && d.name !== yd.name && !validateDeck(d, st.cards, st.rules).length);
+    if (!pool.length) return undefined;
+    const weighted = (xs: { d: Decklist; w: number }[]) => {
+      let r = Math.random() * xs.reduce((a, x) => a + x.w, 0);
+      for (const x of xs) if ((r -= x.w) <= 0) return x.d;
+      return xs[xs.length - 1].d;
+    };
+    if (aiPick === 'surprise') {
+      const d = weighted(pool.map((d) => ({ d, w: d.share ?? 0.01 })));
+      setChosen({ name: d.name, why: 'picked at random from the meta, weighted by how often it is played' });
+      return d;
+    }
+    const seed = () => Math.floor(Math.random() * 2 ** 30);
+    const test = async (decks: Decklist[], games: number, lvl: 'fast' | 'quick', label: string) => {
+      const jobs: MatchJob[] = [], who: number[] = [];
+      decks.forEach((d, i) => { for (let g = 0; g < games; g += 4) { jobs.push({ a: d, b: yd, seeds: Array.from({ length: Math.min(4, games - g) }, seed), level: lvl, rules: st.rules }); who.push(i); } });
+      let done = 0;
+      const out = await getPool(st.cards).run(jobs, (r) => { done += r.games; setChoosing(`${label}: ${done}/${jobs.length * 4} games`); });
+      const res = decks.map(() => emptyResult());
+      out.forEach((r, i) => mergeResults(res[who[i]], r));
+      return res.map((r) => r.wins / Math.max(1, r.games));
+    };
+    const fast = await test(pool, 16, 'fast', 'Trying every meta deck against yours');
+    const top = pool.map((d, i) => ({ d, r: fast[i] })).sort((a, b) => b.r - a.r).slice(0, 5);
+    const careful = await test(top.map((x) => x.d), 8, 'quick', 'Checking the strongest with the searching AI');
+    const ranked = top.map((x, i) => ({ d: x.d, r: (careful[i] * 8 + x.r * 4) / 12 })).sort((a, b) => b.r - a.r).slice(0, 3);
+    const d = weighted(ranked.map((x) => ({ d: x.d, w: Math.max(0.05, x.r) ** 2 })));
+    const r = ranked.find((x) => x.d === d)!.r;
+    setChosen({ name: d.name, why: `one of the three strongest against your deck in a quick test (won about ${Math.round(r * 100)}% of its games; a rough estimate)` });
+    return d;
+  }
+
   async function start(decks?: { you: Decklist; ai: Decklist }) {
-    const yd = decks?.you ?? you.deck, ad = decks?.ai ?? ai;
-    if (!yd || !ad) return;
+    const yd = decks?.you ?? you.deck;
+    let ad = decks?.ai ?? ai;
+    if (!yd) return;
+    if (!decks && !given.ai && aiPick !== 'pick') {
+      setBusy(true); setErr(''); setChoosing('Choosing a deck');
+      try { ad = await pickOpponent(yd); } catch (e: any) { setErr(String(e?.message ?? e)); }
+      setChoosing(''); setBusy(false);
+    } else if (!decks) setChosen(null);
+    if (!ad) return;
     setErr(''); setFlags([]); setNotes(''); setSaved(''); setStepWait(false); docId.current = null;
     client?.close();
     const c = new PlayClient(st.cards);
@@ -209,12 +260,15 @@ export function PlayTab() {
             {mode === 'paste' && you.deck?.leader && st.cards[you.deck.leader] && <div class="note">Leader: <b>{leaderLabel(st.cards, you.deck.leader)}</b> <ColorTag card={st.cards[you.deck.leader]} /></div>}
             {given.ai
               ? <div class="field"><b>AI's deck</b><div class="note">Using <b>{given.ai.name}</b> ({leaderLabel(st.cards, given.ai.leader)}) <button class="btn" onClick={() => setGiven({ ...given, ai: undefined })}>Pick another</button></div></div>
-              : <label class="field"><b>AI's deck</b><DeckSelect id="play-ai" value={aiId} onChange={setAiId} decks={st.meta} cards={st.cards} /></label>}
+              : <div class="field"><div class="row" style={{ justifyContent: 'space-between' }}><b>AI's deck</b><Seg label="AI's deck" options={[['pick', "I'll pick"], ['surprise', 'Surprise me'], ['tough', 'A tough one for my deck']]} value={aiPick} onChange={setAiPick} /></div>
+                {aiPick === 'pick' ? <DeckSelect id="play-ai" value={aiId} onChange={setAiId} decks={st.meta} cards={st.cards} />
+                  : <div class="note">{aiPick === 'surprise' ? 'The AI picks a meta deck at random, weighted by how often each one is played.' : 'The AI tests every meta deck against yours (about a minute), then plays one of the three strongest.'}</div>}</div>}
             <label class="field">AI strength<Seg label="AI strength" options={[['quick', 'Search'], ['strong', 'Strong'], ['deep', 'Deep']]} value={level} onChange={setLevel} /></label>
             <label class="field">AI speed<Seg label="AI speed" options={[['fast', 'Fast'], ['normal', 'Normal'], ['slow', 'Slow'], ['step', 'Step']]} value={speed} onChange={setSpeed} /></label>
             <label class="field">Who goes first<Seg label="Who goes first" options={[['random', 'Random'], ['you', 'You'], ['ai', 'AI']]} value={first} onChange={setFirst} /></label>
             {you.errors.length > 0 && <div class="err">{you.errors.slice(0, 3).map((e) => <div key={e}>{e}</div>)}</div>}
-            <div class="row"><button class="btn primary" onClick={() => start()} disabled={busy || you.errors.length > 0 || !ai}>{busy ? 'Setting up…' : 'Start game'}</button></div>
+            <div class="row"><button class="btn primary" onClick={() => start()} disabled={busy || you.errors.length > 0 || (aiPick === 'pick' && !ai && !given.ai)}>{choosing ? 'Choosing…' : busy ? 'Setting up…' : 'Start game'}</button></div>
+            {choosing && <p class="note" aria-live="polite">{choosing}</p>}
             <p class="note">Search thinks for about a second a move, Strong a few seconds, Deep longer. {store.writable ? 'Games save to this app for Claude to study.' : 'Saving is off in this view, so games won’t be kept.'}</p>
             {err && <p class="err">{err}</p>}
           </div>
@@ -245,6 +299,7 @@ export function PlayTab() {
           <div>
             <div class="eyebrow">You vs AI · {meta.current?.level === 'quick' ? 'Search' : meta.current?.level === 'strong' ? 'Strong' : 'Deep'} AI · turn {s.turn}</div>
             <h3 style={{ margin: '2px 0 0' }}>{names[0]} <span class="note">vs</span> {names[1]}</h3>
+            {chosen && chosen.name === names[1] && <p class="note" style={{ margin: '2px 0 0' }}>The AI chose its deck: {chosen.why}.</p>}
             {view.over && <div><b>{result}</b> <span class="note">({view.over.reason})</span></div>}
           </div>
           <div class="row" style={{ gap: '6px' }}>
