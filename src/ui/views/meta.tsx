@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { deckToText, parseDecklist, validateDeck } from '../../data/decks';
 import { MatchJob, MatchResult, emptyResult, mergeResults, score } from '../../builder/evaluate';
-import { store, MetaDeck } from '../store';
+import { store, MetaDeck, BUNDLED_RESULTS } from '../store';
 import { VISIONS } from '../visions';
 import { ColorTag, CopyButton, Meter, deckSizeOf, getPool, leaderLabel, pct, useStore } from '../components';
 
@@ -69,7 +69,8 @@ export function MetaView() {
   return (
     <div class="stack">
       <p class="intro">The decks people are playing right now. Each list's <strong>share</strong> is how much of the field it makes up. The Scouter uses it to guess which list an opponent is on, and the counter search uses these lists as the baseline to beat.</p>
-      {st.meta.some((d) => d.example) && <p class="note">Showing the built-in lists: strong players' decks shared in October 2026, plus the four starter decks (their exact printed lists aren't known, so those are assumed). Saving any deck copies these into your saved meta so you can edit or delete them.</p>}
+      {st.meta.some((d) => d.example) && <p class="note">Showing the built-in lists: top-cut lists from recent regionals, players' decks shared in October 2026, and the four starter decks (their exact printed lists aren't known, so those are assumed). Saving any deck copies these into your saved meta so you can edit or delete them.</p>}
+      {BUNDLED_RESULTS && <RealResults />}
       <div class="panel raised">
         <div class="row" style={{ justifyContent: 'space-between', marginBottom: '8px' }}>
           <h2 style={{ margin: 0 }}>Meta decks</h2>
@@ -151,6 +152,32 @@ export function MetaView() {
           </table></div>
         </div>
       )}
+    </div>
+  );
+}
+
+/** What real players brought and how far it went: the current format's regionals. */
+function RealResults() {
+  const st = useStore();
+  const r = BUNDLED_RESULTS!;
+  return (
+    <div class="panel">
+      <h2>Real tournament results</h2>
+      <p class="note">{r.format} format, {r.events} events from {r.from} to {r.to}, {r.players} players with a known Leader (from {r.source}). <strong>Converts</strong> is the share of top-cut spots divided by the share of the field: above 1 means the deck makes top cut more often than its numbers alone would.</p>
+      <div class="scroll"><table>
+        <thead><tr><th>Leader</th><th class="num">Field</th><th class="num">Top cut</th><th class="num">Converts</th><th class="num">Wins</th></tr></thead>
+        <tbody>
+          {r.leaders.map((l) => (
+            <tr key={l.leader}>
+              <td>{st.cards[l.leader] ? <>{leaderLabel(st.cards, l.leader)} <ColorTag card={st.cards[l.leader]} /></> : l.leader}</td>
+              <td class="num">{pct(l.field, 1)}</td>
+              <td class="num">{pct(l.top, 1)}</td>
+              <td class="num" style={{ fontWeight: l.top / l.field >= 1.1 ? 600 : 400 }}>{l.field ? `${(l.top / l.field).toFixed(2)}×` : '–'}</td>
+              <td class="num">{l.wins}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table></div>
     </div>
   );
 }

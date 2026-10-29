@@ -69,6 +69,9 @@ const bundledSets = (): Map<string, { cards: Card[]; info: SetInfo }> => {
   return m;
 };
 
+/** Real tournament results for the current format, if the build has them. */
+export const BUNDLED_RESULTS = __BUNDLED_META__.results;
+
 const exampleMeta = (): MetaDeck[] => __BUNDLED_META__.decks.map((d, i) => ({ ...d, id: `example-${i}`, example: true }));
 
 export class Store {

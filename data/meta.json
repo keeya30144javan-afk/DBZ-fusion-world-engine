@@ -1,6 +1,6 @@
 {
  "updated": "2026-10-29",
- "source": "Player lists shared by the user (Oct 2026) plus the four starter decks (assumed lists); shares from FB10 tournament fields (deckbuilder.egmanevents.com)",
+ "source": "Player lists shared by the user (Oct 2026) plus the four starter decks (assumed lists); shares from FB10 tournament fields (deckbuilder.egmanevents.com); shares from FB10 tournament fields (deckbuilder.egmanevents.com)",
  "decks": [
   {
    "name": "Starter: Son Goku (Red)",
@@ -1043,5 +1043,75 @@
    "notes": "Gametrade Distribuzione Italy Regionals, 2026-06-28: 13th of 120 (LUPO). From deckbuilder.egmanevents.com",
    "share": 0.0107
   }
- ]
+ ],
+ "results": {
+  "format": "FB10",
+  "events": 13,
+  "players": 425,
+  "from": "2026-06-20",
+  "to": "2026-10-04",
+  "source": "deckbuilder.egmanevents.com",
+  "leaders": [
+   {
+    "leader": "FS11-01",
+    "field": 0.2988,
+    "top": 0.392,
+    "wins": 8
+   },
+   {
+    "leader": "FB10-025",
+    "field": 0.1624,
+    "top": 0.0795,
+    "wins": 1
+   },
+   {
+    "leader": "FB09-049",
+    "field": 0.1388,
+    "top": 0.1193,
+    "wins": 2
+   },
+   {
+    "leader": "FB09-001",
+    "field": 0.1294,
+    "top": 0.1136,
+    "wins": 0
+   },
+   {
+    "leader": "FB09-097",
+    "field": 0.1176,
+    "top": 0.0966,
+    "wins": 0
+   },
+   {
+    "leader": "ST01-053",
+    "field": 0.0541,
+    "top": 0.0227,
+    "wins": 0
+   },
+   {
+    "leader": "FB05-025",
+    "field": 0.0494,
+    "top": 0.0341,
+    "wins": 0
+   },
+   {
+    "leader": "FB08-073",
+    "field": 0.0235,
+    "top": 0.0114,
+    "wins": 0
+   },
+   {
+    "leader": "FS12-01",
+    "field": 0.0141,
+    "top": 0,
+    "wins": 0
+   },
+   {
+    "leader": "FB10-097",
+    "field": 0.0118,
+    "top": 0.0057,
+    "wins": 0
+   }
+  ]
+ }
 }

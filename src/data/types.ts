@@ -56,4 +56,17 @@ export interface Meta {
   updated: string;
   source: string;
   decks: Decklist[];
+  /** Real tournament results for the current format (cli/import-tournaments.ts). */
+  results?: TournamentSummary;
+}
+
+export interface TournamentSummary {
+  format: string;
+  events: number;
+  players: number;
+  from: string;
+  to: string;
+  source: string;
+  /** Per Leader: share of the field, share of top-cut spots, event wins. */
+  leaders: { leader: string; field: number; top: number; wins: number }[];
 }

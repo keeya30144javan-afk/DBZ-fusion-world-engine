@@ -299,6 +299,9 @@ export interface EvalWeights {
   handLow?: number;
   /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
   reach?: number;
+  /** On your own turn: each Active Battle Card is free combo defence for the opponent's coming turn
+   * (Active Mode only, rule 5-6-4-1-1), worth this much per 10000 combo power (0 = off). */
+  activeCombo?: number;
   /** A learned evaluation, blended with the hand-set one by `netBlend` (0..1). */
   net?: ValueNet;
   netBlend?: number;
@@ -335,7 +338,10 @@ function handEvaluate(s: GameState, me: Side, W: EvalWeights): number {
     const pl = s.p[p];
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
-    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
+    for (const u of pl.battle) {
+      v += W.boardBase + boardValue(s, u) * W.board * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
+      if (W.activeCombo && s.active === p && !s.inst[u].rested) v += W.activeCombo * Math.min(comboPowerOf(s, u), 20000) / 10000;
+    }
     v += Math.min(pl.energy.length, 8) * W.energy;
     if (W.altWin && pl.life.length === 1 && altWinLive(s, other(p))) v -= W.altWin * (pl.battle.length ? 0.6 : 1);
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.

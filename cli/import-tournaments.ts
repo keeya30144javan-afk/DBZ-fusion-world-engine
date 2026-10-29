@@ -16,6 +16,8 @@ const arg = (k: string) => { const i = process.argv.indexOf(`--${k}`); return i 
 const db: CardDB = JSON.parse(readFileSync('data/cards.json', 'utf8'));
 const data = JSON.parse(readFileSync('data/tournaments.json', 'utf8'));
 const meta = JSON.parse(readFileSync('data/meta.json', 'utf8'));
+// Rerunning replaces this importer's own lists; lists from anywhere else stay.
+meta.decks = meta.decks.filter((d: Decklist) => !/egmanevents/.test(d.notes ?? ''));
 const per = +(arg('per') ?? 2);
 const MIN_FIELD = 0.01, FLOOR = 0.01, STARTER = 0.004;
 
@@ -26,7 +28,15 @@ const inFormat = events.filter((e) => e.set_group === format).sort((a, b) => b.s
 
 const leaderOf = (code: string) => code.replace(/-[FB]$/, '');
 const field = new Map<string, number>();
-let players = 0;
+const top = new Map<string, number>();
+const wins = new Map<string, number>();
+let players = 0, topN = 0;
+for (const e of inFormat) for (const r of e.results) {
+  if (!db.cards[leaderOf(r.deck_type)]) continue;
+  top.set(leaderOf(r.deck_type), (top.get(leaderOf(r.deck_type)) ?? 0) + 1);
+  topN++;
+  if (r.placement === 1) wins.set(leaderOf(r.deck_type), (wins.get(leaderOf(r.deck_type)) ?? 0) + 1);
+}
 for (const e of inFormat) for (const b of e.leader_breakdown) {
   if (!db.cards[leaderOf(b.deck_type)]) continue; // "Other"
   field.set(leaderOf(b.deck_type), (field.get(leaderOf(b.deck_type)) ?? 0) + b.count);
@@ -91,6 +101,11 @@ console.log(`${added.length} lists added; ${decks.length} meta decks`);
 for (const d of [...decks].sort((a, b) => b.share! - a.share!)) console.log(`  ${(100 * d.share!).toFixed(1).padStart(5)}%  ${d.name}`);
 if (!process.argv.includes('--dry')) {
   meta.decks = decks;
+  meta.results = {
+    format, events: inFormat.length, players, from: inFormat.at(-1)!.start_date, to: inFormat[0].start_date, source: 'deckbuilder.egmanevents.com',
+    leaders: [...field].filter(([, n]) => n / players >= 0.005).sort((a, b) => b[1] - a[1])
+      .map(([leader, n]) => ({ leader, field: +(n / players).toFixed(4), top: +((top.get(leader) ?? 0) / topN).toFixed(4), wins: wins.get(leader) ?? 0 })),
+  };
   meta.updated = new Date().toISOString().slice(0, 10);
   meta.source = `${meta.source ?? ''}; shares from ${format} tournament fields (deckbuilder.egmanevents.com)`.replace(/^; /, '');
   writeFileSync('data/meta.json', JSON.stringify(meta, null, 1));
