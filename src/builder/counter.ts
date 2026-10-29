@@ -221,7 +221,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const seedPlan = (2 * leaders.length + (opts.known?.length ?? 0)) * E.chunk * 2.5 * nT; // successive halving, see below
   const evolvePlan = E.gens * E.pop * E.screen * nT;
   const rerankLevel: Level | null = level === 'fast' ? null : 'quick';
-  const rerankPlan = rerankLevel ? (E.gens + 1) * E.rerank * E.rerankGames * nT * GAME_COST[rerankLevel] : 0;
+  const rerankPlan = rerankLevel ? ((E.gens + 1) * E.rerank + E.pop * 3) * E.rerankGames * nT * GAME_COST[rerankLevel] : 0;
   const validatePlan = (E.finalists + 1) * validateGames * nT * GAME_COST[level];
   const plan = seedPlan + evolvePlan + rerankPlan + validatePlan;
   let costDone = 0;
@@ -325,13 +325,25 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       await screen(survivors, games);
       played += games;
     }
-    if (survivors.length <= E.pop && played >= E.screen) break;
-    if (survivors.length > E.pop) {
+    // Fast games only narrow the field to a wide shortlist (3x the population): the fast AI
+    // misplays some Leaders badly, so the final cut is made with the searching AI below.
+    const keep = rerankLevel ? E.pop * 3 : E.pop;
+    if (survivors.length <= keep && played >= E.screen) break;
+    if (survivors.length > keep) {
       survivors.sort((a, b) => screenScore(b) - screenScore(a));
-      survivors = survivors.slice(0, Math.max(E.pop, Math.ceil(survivors.length / 2)));
+      survivors = survivors.slice(0, Math.max(keep, Math.ceil(survivors.length / 2)));
     } else if (played >= E.screen) break;
   }
 
+  if (rerankLevel && survivors.length > E.pop && !isCancelled()) {
+    // The shortlist plays a short series with the searching AI; the best deck of each Leader
+    // goes first, so one Leader can't take every seat, then the rest by rank.
+    setStep({ phase: 'seed', message: `Checking the ${survivors.length} best starting decks with the searching AI`, step: { label: 'Starting decks, search check', done: 0, total: 1 } });
+    await rerank(survivors, 'Starting decks', false, { games: E.rerankGames });
+    survivors.sort(byRank);
+    const firstOfLeader = survivors.filter((c, i) => survivors.findIndex((x) => x.deck.leader === c.deck.leader) === i);
+    survivors = [...firstOfLeader, ...survivors.filter((c) => !firstOfLeader.includes(c))].slice(0, E.pop);
+  }
   offerBest(survivors);
   await rerank(survivors, 'Starting decks');
 

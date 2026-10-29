@@ -40,6 +40,14 @@ export function requiredFor(cards: Record<string, Card>, leaderId: string, rules
   return poolFor(cards, leaderId, rules).filter((c) => names.includes(c.name)).map((c) => c.id);
 }
 
+/**
+ * The Leader's name tags: what follows the colon in each name ("Gogeta: BR" -> BR,
+ * "Trunks: Future/Son Gohan: Future" -> Future). Cards sharing a tag form an archetype the
+ * Leader's text doesn't spell out (a real BR list is ~48 BR cards; their traits differ).
+ */
+const nameTags = (name: string) => name.split('/').map((p) => p.split(':')[1]?.trim().toLowerCase()).filter((t): t is string => !!t);
+export const sharesTag = (card: Card, leader: Card) => { const tags = nameTags(leader.name); return tags.length > 0 && nameTags(card.name).some((t) => tags.includes(t)); };
+
 /** Copies in the deck after a change must respect copy and [Super Combo] limits. */
 export function legalCount(deck: Decklist, cards: Record<string, Card>, id: string, n: number, rules: RulesConfig = DEFAULT_RULES): boolean {
   if (n > copyLimit(rules, id)) return false;
@@ -149,7 +157,9 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
   const leader = cards[leaderId];
   const required = requiredFor(cards, leaderId, rules);
   const noise = new Map(pool.map((c) => [c.id, jitter ? (rng() - 0.5) * jitter : 0]));
-  let deck = build((c) => cardValue(c, leader));
+  // Cards of the Leader's own archetype (same name tag) start ahead.
+  const tagged = (c: Card) => (sharesTag(c, leader) ? 1.5 : 0);
+  let deck = build((c) => cardValue(c, leader) + tagged(c));
   // Two more passes: score each card's synergy with the list so far (named searches,
   // and resource links: rest -> KO rested, Ki makers -> Ki spenders, Drop fillers ->
   // Drop payoffs...), then build again around it.
@@ -157,7 +167,7 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
     const named = synergyValue(pool, leader, Object.keys(deck.main).map((k) => cards[k]));
     const current = deck;
     const links = new Map(pool.map((c) => [c.id, synergyBonus(cards, current, c)]));
-    deck = build((c) => named(c) + 1.4 * (links.get(c.id) ?? 0));
+    deck = build((c) => named(c) + 1.4 * (links.get(c.id) ?? 0) + tagged(c));
   }
   return deck;
 
@@ -242,6 +252,26 @@ export function mutate(deck: Decklist, cards: Record<string, Card>, rng: Rng, k:
     d.main[out]--;
     if (d.main[out] === 0) delete d.main[out];
     d.main[inn.id] = (d.main[inn.id] ?? 0) + 1;
+    // Packages: an [Evolve] / [Fusion Evolve] card needs its bases in numbers, which swapping one
+    // card at a time almost never builds up (Gogeta: BR needs both BR halves). Half the time,
+    // bring each base it needs up to 2 copies, paying with the weakest other cards.
+    const ev = compileCard(inn).evolve;
+    if (ev && rng() < 0.5) {
+      for (const f of ev.from) {
+        const bases = pool.filter((c) => c.type === 'BATTLE' && c.id !== inn.id && fits(c, f) && copyLimit(rules, c.id) >= 2);
+        if (!bases.length) continue;
+        const base = bases.slice().sort((x, y) => (d.main[y.id] ?? 0) - (d.main[x.id] ?? 0) || cardValue(y, cards[d.leader]) - cardValue(x, cards[d.leader]))[0];
+        while ((d.main[base.id] ?? 0) < 2 && legalCount(d, cards, base.id, (d.main[base.id] ?? 0) + 1, rules)) {
+          const spare = Object.keys(d.main).filter((x) => x !== base.id && x !== inn.id && d.main[x] > 0 && !isSuperCombo(cards[x]) && !(d.main[x] === 1 && required.includes(x)));
+          if (!spare.length) break;
+          const w = spare.map((id) => Math.max(0.05, 1 + weak(id) * 2 - cardValue(cards[id], cards[d.leader]) * 0.1));
+          const drop = spare[weightedPick(w, rng)];
+          d.main[drop]--;
+          if (d.main[drop] === 0) delete d.main[drop];
+          d.main[base.id] = (d.main[base.id] ?? 0) + 1;
+        }
+      }
+    }
   }
   return d;
 }
