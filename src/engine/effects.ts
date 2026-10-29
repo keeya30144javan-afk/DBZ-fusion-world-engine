@@ -21,6 +21,8 @@ export interface ChoiceReq {
   labels?: string[];
   /** The card a 'mode' question is about (where to put it). */
   about?: number;
+  /** Resting cards to pay an attack tax ("can't attack unless they switch 1 Active card to Rest Mode"). */
+  tax?: boolean;
 }
 
 /** "At the top or bottom of the deck": true for the bottom. */

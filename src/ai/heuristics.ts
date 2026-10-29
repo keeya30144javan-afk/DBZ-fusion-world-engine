@@ -482,6 +482,11 @@ export class HeuristicChooser implements Chooser {
         return opts.sort((a, b) => key(a) - key(b)).slice(0, req.max);
       }
       case 'pick': {
+        if (req.tax) {
+          // An attack tax: rest an active energy first, then the weakest Battle Card, the Leader last.
+          const rank = (u: number) => (s.p[me].energy.includes(u) ? 0 : isLeader(s, u) ? 2e6 : 1e6 + powerOf(s, u));
+          return opts.sort((a, b) => rank(a) - rank(b)).slice(0, req.max);
+        }
         const key = (u: number) => (req.intent === 'lose' ? -keepValue(s, u) : this.gainValue(s, me, u));
         return opts.sort((a, b) => key(b) - key(a)).slice(0, req.max);
       }
@@ -615,7 +620,8 @@ export class FastPolicy implements Policy {
       const soon = c.cost <= me.energy.length + 1 ? 0.5 : 0;
       const tooExpensive = c.cost > me.energy.length + 3 ? -0.6 : 0;
       const forEnergy = usefulInEnergy(s, u) ? -1 : 0;
-      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + forEnergy + rand(s) * this.noise;
+      // A Super Combo is defence, never a play: it is charged only if nothing else can be.
+      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + forEnergy + (isSuperComboCard(c) ? 100 : 0) + rand(s) * this.noise;
       return keepValue(s, u) + soon + tooExpensive - (copies > 1 ? 0.4 : 0) + (isSuperComboCard(c) ? 2 : 0) + rand(s) * this.noise;
     };
     charges.sort((a, b) => score(a.uid) - score(b.uid));

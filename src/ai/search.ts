@@ -171,7 +171,10 @@ export class SearchPolicy implements Policy {
       if (kept.length) actions = kept;
     }
     if (s.stage === 'charge') {
-      const charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];
+      let charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];
+      // Never charge a Super Combo while anything else could go (the user: "never charge a super combo").
+      const keep = charges.filter((a) => !compileCard(cardOf(s, a.uid)).keywords.has('superCombo'));
+      if (keep.length) charges = keep;
       // chargeSpares: spare copies and cards far above your energy are the ones to charge
       // ("I'll see another one, it's a 4-of").
       const me = s.p[s.toAct], ids = me.hand.map((u) => s.inst[u].id);

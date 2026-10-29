@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { newGame, step } from '../src/engine/game';
-import { GameState, Side, condsHold, costInHand, costOf, moveTo } from '../src/engine/core';
+import { GameState, Side, cloneState, condsHold, costInHand, costOf, moveTo } from '../src/engine/core';
 import { koCard, payCosts, resolveAbility } from '../src/engine/effects';
 import { defaultChooser } from '../src/ai/heuristics';
 import { compileCard } from '../src/effects/parse';
@@ -89,4 +89,25 @@ test('Kakarot (FS05-03): the AI puts the card from hand at the bottom of the dec
   payCosts(s, k, compileCard(cards['FS05-03']).abilities[0].cost!, ctl);
   const gone = handBefore.find((u) => !s.p[0].hand.includes(u))!;
   assert.equal(s.p[0].deck[0], gone, 'bottom of the deck is the front of the array');
+});
+
+test("Broly's awakened tax (FB08-073): a Leader's attack is free; a Battle Card's attack asks what to rest", () => {
+  const s = fresh();
+  // The opponent: awakened Broly with a cost-5 Saiyan Battle Card in play.
+  const broly = s.p[1].leader;
+  s.inst[broly] = { ...s.inst[broly], id: 'FB08-073' };
+  s.p[1].awakened = true;
+  spawn(s, 1, 'ST01-051', 'battle');
+  const mine = spawn(s, 0, 'FB09-122', 'battle');
+  spawn(s, 0, 'FS01-02', 'battle');
+  for (const u of s.p[0].energy) s.inst[u].rested = true;
+  const asked: number[][] = [];
+  const spy: any = { choose: (st: GameState, req: any) => { if (req.tax) asked.push(req.options); return defaultChooser.choose(st, req); } };
+  const leaderAttack = cloneState(s);
+  step(leaderAttack, { k: 'attack', uid: leaderAttack.p[0].leader, target: broly }, [spy, ctl[1]]);
+  assert.equal(asked.length, 0, "no tax on the Leader's attack");
+  assert.equal(leaderAttack.inst[mine].rested, false);
+  step(s, { k: 'attack', uid: mine, target: broly }, [spy, ctl[1]]);
+  assert.equal(asked.length, 1, 'the attacker is asked what to rest');
+  assert.equal(s.inst[s.p[0].leader].rested, false, 'the AI chooser rests a Battle Card before the Leader');
 });

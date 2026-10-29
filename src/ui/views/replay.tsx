@@ -196,9 +196,10 @@ function Slot({ c, leader, awakened, hot, onPick, card, showText }: { c: CardSna
   const text = cardText(card, leader, awakened);
   return (
     <button class={`vcard${leader ? ' leader' : ''}${c.rested ? ' rested' : ''}${hot ? ' hot' : ''}${showText ? ' withtext' : ''}`} onClick={() => onPick(c.id)} title={text ? `${c.rested ? 'Rest Mode' : 'Active Mode'}\n${text}` : c.rested ? 'Rest Mode' : 'Active Mode'}>
+      {c.rested && <span class="vrest">Rest Mode</span>}
       <span class="vname">{c.name}</span>
       <span class="vpow">{fmtPower(c.power)}</span>
-      <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.ki ? ` · Ki ${c.ki}` : ''}{c.under ? ` · ${c.under} under` : ''}{c.rested ? ' · rested' : ''}</span>
+      <span class="vmeta">{leader ? (awakened ? 'Leader · awakened' : 'Leader') : c.id}{c.ki ? ` · Ki ${c.ki}` : ''}{c.under ? ` · ${c.under} under` : ''}</span>
       {c.tags && c.tags.length > 0 && <span class="vmeta" style={{ fontWeight: 600 }}>{c.tags.join(' · ')}</span>}
       {showText && text && <span class="vtext">{text}</span>}
     </button>

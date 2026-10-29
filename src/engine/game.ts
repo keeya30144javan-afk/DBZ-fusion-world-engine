@@ -521,9 +521,14 @@ function declareAttack(s: GameState, attacker: number, target: number, ctl: Choo
   const side = s.active;
   // "Can't attack with a Battle Card unless they switch 1 of their Active Mode cards to Rest Mode."
   for (const r of attackRules(s, side)) {
-    if (!r.e.restTax || (r.e.attacker && !matchesFilter(s, attacker, r.e.attacker, r.src))) continue;
-    const pool = taxPool(s, side, attacker).sort((a, b) => +s.p[side].energy.includes(b) - +s.p[side].energy.includes(a));
-    for (const u of pool.slice(0, r.e.restTax)) s.inst[u].rested = true;
+    if (!r.e.restTax) continue;
+    // A Leader is never a Battle Card (the filter matcher lets Leaders through on type).
+    if (r.e.attacker && (isLeader(s, attacker) ? r.e.attacker.type === 'BATTLE' : !matchesFilter(s, attacker, r.e.attacker, r.src))) continue;
+    const pool = taxPool(s, side, attacker);
+    const n = Math.min(r.e.restTax, pool.length);
+    const pick = ctl[side].choose(s, { kind: 'pick', player: side, src: r.src, options: pool, min: n, max: n, intent: 'lose', tax: true });
+    for (const u of pick.slice(0, n)) s.inst[u].rested = true;
+    log(s, () => `P${side} rests ${pick.slice(0, n).map((u) => nameOf(s, u)).join(', ')} to attack (${nameOf(s, r.src)})`);
   }
   s.inst[attacker].rested = true;
   s.inst[attacker].attackedTurn = s.turn;

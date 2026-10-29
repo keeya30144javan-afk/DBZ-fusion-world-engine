@@ -118,14 +118,16 @@ class HumanChooser implements Chooser {
       : req.options.map((u) => ({ v: u, label: n(u), id: s.inst[u].id, where: zoneOf(s, u) }));
     const src = s.inst[req.src];
     const what = req.effect ? describeEffect(req.effect as any) : '';
-    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${req.about !== undefined ? `Where does ${nameOf(s, req.about)} go?` : req.labels ? 'Choose how to pay' : PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
+    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${req.tax ? `Rest ${req.max} of your Active cards to attack` : req.about !== undefined ? `Where does ${nameOf(s, req.about)} go?` : req.labels ? 'Choose how to pay' : PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
     throw new NeedChoice(req, options, snapshot(s), prompt, what);
   }
 }
 
 function actionDetail(s: GameState, a: Action): string | undefined {
   if (a.k === 'activate' || a.k === 'counter' || a.k === 'battleSkill') {
-    const ab = compileCard(cardOf(s, a.uid)).abilities[a.ab] ?? (s.p[s.inst[a.uid].owner].awakened && isLeader(s, a.uid) ? compileCard(cardOf(s, a.uid)).backAbilities?.[a.ab] : undefined);
+    // The skills the card has now: an awakened Leader's are its back side's.
+    const c = compileCard(cardOf(s, a.uid));
+    const ab = (isLeader(s, a.uid) && s.p[s.inst[a.uid].owner].awakened && c.backAbilities ? c.backAbilities : c.abilities)[a.ab];
     return ab ? describeAbility(ab) : undefined;
   }
   return undefined;
