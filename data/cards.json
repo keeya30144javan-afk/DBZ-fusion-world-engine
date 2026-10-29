@@ -53757,7 +53757,8 @@
         "t": "playFrom",
         "from": "hand",
         "filter": {
-         "costLE": 2
+         "costLE": 2,
+         "type": "BATTLE"
         },
         "n": 1
        }
@@ -53775,7 +53776,8 @@
         "t": "playFrom",
         "from": "hand",
         "filter": {
-         "costLE": 2
+         "costLE": 2,
+         "type": "BATTLE"
         },
         "n": 1
        }
@@ -53784,7 +53786,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "Passed the automatic checker and a second read by Claude."
+     "note": "checked against the printed card (the user's Boujack list)"
     },
     "keywords": [],
     "source": "claude",
