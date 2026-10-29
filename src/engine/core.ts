@@ -333,14 +333,14 @@ let auraDepth = 0;
 export function auraEffects(s: GameState, uid: number): Effect[] {
   if (auraDepth > 0) return NO_EFFECTS; // an aura's own condition doesn't see auras: no loops
   if (!anyAura(s)) return NO_EFFECTS; // most boards have none
-  const out: Effect[] = [];
+  let out: Effect[] | null = null;
   const where = isLeader(s, uid) ? 'leader' : 'battle';
   auraDepth++;
   try {
-    for (const side of [0, 1] as Side[]) {
+    for (let side: Side = 0; side < 2; side = (side + 1) as Side) {
       const p = s.p[side];
-      const srcs = p.field !== null ? [p.leader, ...p.battle, p.field] : [p.leader, ...p.battle];
-      for (const src of srcs) {
+      for (let i = 0, n = sourceCount(p); i < n; i++) {
+        const src = sourceAt(p, i);
         const abs = abilitiesOf(s, src);
         if (!summaryOf(abs).aura) continue;
         for (const ab of abs) {
@@ -350,7 +350,7 @@ export function auraEffects(s: GameState, uid: number): Effect[] {
             const t = e.target;
             // "Your Leader gets +X" written on a Battle Card or Field.
             if (t.ref === 'leader' && src !== p.leader) {
-              if (uid === p.leader && condsHold(s, side, src, ab.cond) && condsHold(s, side, src, e.cond)) out.push(e);
+              if (uid === p.leader && condsHold(s, side, src, ab.cond) && condsHold(s, side, src, e.cond)) (out ??= []).push(e);
               continue;
             }
             if (!t.all) continue;
@@ -359,13 +359,13 @@ export function auraEffects(s: GameState, uid: number): Effect[] {
             if (!t.zones.includes(where as 'leader' | 'battle')) continue;
             if (!matchesFilter(s, uid, t.filter, src)) continue;
             if (!condsHold(s, side, src, ab.cond) || !condsHold(s, side, src, e.cond)) continue;
-            out.push(e);
+            (out ??= []).push(e);
           }
         }
       }
     }
   } finally { auraDepth--; }
-  return out;
+  return out ?? NO_EFFECTS;
 }
 
 export function hasKeyword(s: GameState, uid: number, kw: Keyword): boolean {
@@ -495,21 +495,31 @@ export function valOf(s: GameState, owner: Side, src: number, v: Val): number {
 export interface StaticHit<E extends Effect = Effect> { e: E; src: number; idx: number; ab: Ability }
 
 /** Every effect of type t in the [Permanent] abilities of `side`'s cards in play whose conditions hold. */
-export function staticRules<T extends Effect['t']>(s: GameState, side: Side, t: T): StaticHit<Extract<Effect, { t: T }>>[] {
-  const out: StaticHit<Extract<Effect, { t: T }>>[] = [];
+/** The cards whose [Permanent] skills apply on a side: Leader, Battle Cards, then Field (no allocation). */
+function sourceAt(p: PlayerState, i: number): number {
+  return i === 0 ? p.leader : i <= p.battle.length ? p.battle[i - 1] : p.field!;
+}
+const sourceCount = (p: PlayerState) => 1 + p.battle.length + (p.field !== null ? 1 : 0);
+const NO_HITS: never[] = [];
+
+export function staticRules<T extends Effect['t']>(s: GameState, side: Side, t: T): readonly StaticHit<Extract<Effect, { t: T }>>[] {
+  // Called constantly (every legal-move check), and nearly always finds nothing: no arrays
+  // are built until a source actually has a rule of this kind.
+  let out: StaticHit<Extract<Effect, { t: T }>>[] | null = null;
   const p = s.p[side];
-  const srcs = p.field !== null ? [p.leader, ...p.battle, p.field] : [p.leader, ...p.battle];
-  for (const src of srcs) {
+  for (let i = 0, n = sourceCount(p); i < n; i++) {
+    const src = sourceAt(p, i);
     const abs = abilitiesOf(s, src);
     if (!summaryOf(abs).rules.has(t)) continue;
-    abs.forEach((ab, idx) => {
-      if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) return;
-      if (!ab.effects.some((e) => e.t === t)) return;
-      if (!condsHold(s, side, src, ab.cond)) return;
-      for (const e of ab.effects) if (e.t === t && condsHold(s, side, src, e.cond)) out.push({ e: e as Extract<Effect, { t: T }>, src, idx, ab });
-    });
+    for (let idx = 0; idx < abs.length; idx++) {
+      const ab = abs[idx];
+      if (ab.timing !== 'permanent' || !turnMatches(s, side, ab.turn)) continue;
+      if (!ab.effects.some((e) => e.t === t)) continue;
+      if (!condsHold(s, side, src, ab.cond)) continue;
+      for (const e of ab.effects) if (e.t === t && condsHold(s, side, src, e.cond)) (out ??= []).push({ e: e as Extract<Effect, { t: T }>, src, idx, ab });
+    }
   }
-  return out;
+  return out ?? NO_HITS;
 }
 
 // ------------------------------------------------------------------ conditions & filters
