@@ -39,6 +39,8 @@ export interface Inst {
   markerPaid?: boolean;
   /** Played on top of another card by [Evolve] / [Fusion Evolve]. */
   playedByEvolve?: boolean;
+  /** Times it has left the Battle Area: back in play it's a new card (official Q346), so [Once Per Turn] starts over. */
+  gen?: number;
   /** Played by a skill (not from hand by paying its cost). */
   playedBySkill?: boolean;
   /** Last turn this card attacked. */
@@ -971,6 +973,7 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
     (s.p[inst.owner].removedBySkill ??= []).push({ turn: s.turn, uid });
     (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy, to: zone });
   }
+  if (from === 'battle') inst.gen = (inst.gen ?? 0) + 1;
   if (inst.under?.length && from === 'battle') {
     for (const u of inst.under) { resetInst(s.inst[u]); s.p[s.inst[u].owner].drop.push(u); }
   }

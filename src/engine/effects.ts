@@ -146,8 +146,11 @@ export function checkZeroPower(s: GameState, ctl: Choosers) {
   for (const side of [0, 1] as Side[]) {
     for (const u of s.p[side].battle.slice()) {
       if (powerOf(s, u) <= 0) {
-        // Not a KO: "When KO'd" does not trigger (FW manual p. 11).
-        moveTo(s, u, 'drop', { quiet: true });
+        // Not a KO: "When KO'd" does not trigger (FW manual p. 11), and it isn't "removed by a skill"
+        // either, even mid-skill (official Q200): the rules move it, not the skill.
+        const by = s.skillBy;
+        s.skillBy = undefined;
+        try { moveTo(s, u, 'drop', { quiet: true }); } finally { s.skillBy = by; }
         log(s, () => `${nameOf(s, u)} drops at 0 power`);
         emit(s, { t: 'toDrop', p: side, id: s.inst[u].id, uid: u });
       }
@@ -330,7 +333,7 @@ export function fireAll(s: GameState, side: Side, timing: Ability['timing'], ctl
 /** A costless activated skill without [Once Per Turn] would repeat forever; treat it as once per turn. */
 export const isFreeRepeatable = (ab: Ability) => (ab.timing === 'activateMain' || ab.timing === 'activateBattle') && ab.cost.length === 0;
 
-export const onceKey = (s: GameState, uid: number, idx: number) => `${uid}:${idx}:${isLeader(s, uid) && s.p[s.inst[uid].owner].awakened ? 'b' : 'f'}`;
+export const onceKey = (s: GameState, uid: number, idx: number) => `${uid}.${s.inst[uid].gen ?? 0}:${idx}:${isLeader(s, uid) && s.p[s.inst[uid].owner].awakened ? 'b' : 'f'}`;
 
 // ------------------------------------------------------------------ costs
 

@@ -253,3 +253,26 @@ test("Q232: a card reduced to 0 power goes to the Drop without its [When KO'd]",
   assert.ok(s.p[0].drop.includes(cui));
   assert.ok(!s.log!.some((l) => /\[When KO'd\]/.test(l)));
 });
+
+test('Q346: a card that leaves the Battle Area and comes back is a new card ([Once Per Turn] starts over)', async () => {
+  const { onceKey } = await import('../src/engine/effects');
+  const s = fresh();
+  const z = spawn(s, 0, 'FB10-078', 'battle');
+  const before = onceKey(s, z, 0);
+  moveTo(s, z, 'hand');
+  moveTo(s, z, 'battle');
+  assert.notEqual(onceKey(s, z, 0), before);
+});
+
+test("Q200: dropping at 0 power mid-skill isn't 'removed by a skill'", async () => {
+  const { checkZeroPower } = await import('../src/engine/effects');
+  const s = fresh();
+  const cui = spawn(s, 0, 'FS04-02', 'battle');
+  s.inst[cui].mods.push({ amount: -100000, until: s.turn });
+  s.skillBy = 1;
+  const r = s.removals?.length ?? 0;
+  checkZeroPower(s, ctl);
+  assert.equal(s.skillBy, 1, 'restored');
+  assert.equal(s.removals?.length ?? 0, r, 'no removal queued');
+  assert.ok(s.p[0].drop.includes(cui));
+});
