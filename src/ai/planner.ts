@@ -34,6 +34,8 @@ export interface PlanOpts {
   eval?: EvalWeights;
   /** Habits of the fast AI that plays out imagined games (both sides). */
   habits?: Partial<Habits>;
+  /** Keep attacks that change nothing but resting the attacker (off by default: they only expose it). */
+  keepFutile?: boolean;
   /**
    * Also search our own choices inside skills: for an action whose skill asks us to choose
    * (a KO target, a card to take from a search...), try this many of the best-ranked options
@@ -148,6 +150,10 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
           }
         }
         for (const { w, pick } of variants) {
+          // An attack that changed nothing but resting the attacker (no damage, no KO, no card
+          // drawn or spent by either side, no Ki) only exposes it: the 10k Pan: GT swinging into
+          // a 20k Leader. Its line ties with not attacking, and noise picked it half the time.
+          if (a.k === 'attack' && !opts.keepFutile && futile(w0, w, a.uid)) continue;
           const line = [...node.line, a];
           const picks = [...node.picks, pick];
           const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, opts.eval);
@@ -193,6 +199,16 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
   scored.sort((x, y) => y.value - x.value);
   return scored;
 }
+
+/** Everything an attack could change, except the attacker going to Rest Mode. */
+function attackSig(w: GameState, attacker: number): string {
+  const side = (p: GameState['p'][0]) => [p.life.length, p.hand.length, p.deck.length, p.drop.length, p.energy.length,
+    p.energy.filter((u) => w.inst[u].rested).length, p.markers, p.awakened, p.battle.map((u) => `${u}${u !== attacker && w.inst[u].rested ? 'r' : ''}`).join(','),
+    [p.leader, ...p.battle].reduce((n, u) => n + w.inst[u].ki, 0), p.leader === attacker ? '' : w.inst[p.leader].rested].join('/');
+  return `${side(w.p[0])}|${side(w.p[1])}`;
+}
+const futile = (before: GameState, after: GameState, attacker: number) =>
+  after.stage !== 'over' && after.inst[attacker].rested && attackSig(before, attacker) === attackSig(after, attacker);
 
 /** Enough of a position to tell transpositions apart within one turn. */
 function positionKey(w: GameState, me: Side): string {

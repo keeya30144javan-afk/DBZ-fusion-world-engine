@@ -305,6 +305,8 @@ export interface EvalWeights {
   /** A learned evaluation, blended with the hand-set one by `netBlend` (0..1). */
   net?: ValueNet;
   netBlend?: number;
+  /** Use `net` as a correction added to the hand-set evaluation (trained on its residual). */
+  netResidual?: boolean;
   /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
   altWin?: number;
 }
@@ -325,6 +327,8 @@ export const DEFAULT_EVAL: EvalWeights = { life: 4.63, hand: 0.795, boardBase: -
 /** Positive is good for `me`. Roughly in "cards" units. */
 export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL): number {
   if (s.stage === 'over') return s.winner === -1 ? 0 : s.winner === me ? 100 : -100;
+  // Residual: the hand-set evaluation plus the network's learned correction.
+  if (W.net && W.netResidual) return handEvaluate(s, me, W) * (W.net.handScale ?? 1) + netLogit(W.net, s, me) * W.net.scale;
   if (W.net && W.netBlend) {
     const learned = netLogit(W.net, s, me) * W.net.scale;
     if (W.netBlend >= 1) return learned;
