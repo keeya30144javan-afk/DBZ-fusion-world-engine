@@ -89,13 +89,16 @@ export interface PlayerState {
   mulliganed: boolean;
   mods?: PlayerMod[];
   /** Cards (uids) of this player that KO'd an opponent's Battle Card, by turn. */
-  koBy?: { turn: number; uid: number }[];
+  koBy?: { turn: number; uid: number; battle?: boolean }[];
   /** Effects to run at the end of this turn: [source card, effects]. */
   atEnd?: { src: number; effects: import('../effects/types').Effect[] }[];
   /** Last turn one of this player's Battle Cards left a Battle Area through this player's own skill. */
   removedOwnTurn?: number;
   /** Last turn Ki was removed from this player's cards. */
   kiRemovedTurn?: number;
+  /** Last turn Ki were removed from this player's Leader, and from their Battle Area. */
+  kiRemovedLeaderTurn?: number;
+  kiRemovedBattleTurn?: number;
   /** Last turn a card left this player's life. */
   lifeLeftTurn?: number;
   /** Extras this player used, by turn (for "if you use an Extra with ... during this turn"). */
@@ -112,6 +115,8 @@ export interface PlayerState {
   extraUsedTurn?: number;
   /** Last turn a card left this player's energy. */
   energyLeftTurn?: number;
+  /** Last turn this player placed a card from their energy into their Drop. */
+  energyToDropTurn?: number;
   /** Last turn one of this player's Battle Cards was returned from the Battle Area to the hand. */
   bouncedTurn?: number;
   /** Last turn this player used a card from their Battle Area in a combo. */
@@ -401,6 +406,10 @@ export function costOf(s: GameState, uid: number): number {
   const mods = s.inst[uid].costMods;
   let c = base;
   if (mods) for (const m of mods) c += m.amount;
+  // "Increase the cost of this card in a deck or Battle Area by 4."
+  if (!inPlay(s, uid) && s.p[s.inst[uid].owner].deck.includes(uid)) {
+    for (const ab of compiledOf(s, uid).abilities) if (ab.timing === 'permanent') for (const e of ab.effects) if (e.t === 'costMod' && e.inDeck && e.target.ref === 'this') c += e.amount;
+  }
   if (!inPlay(s, uid) || staticDepth >= MAX_STATIC_DEPTH) return Math.max(0, c);
   staticDepth++;
   try {
@@ -560,14 +569,15 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'and': return c.all.every((y) => condHolds(s, owner, src, y, prev, x));
     case 'thisHasUnder': return ((s.inst[src].under?.length ?? 0) > 0) === c.yes;
     case 'attacking': return !!s.battle && s.battle.attacker === src && matchesFilter(s, s.battle.target, c.filter, src);
-    case 'koedThisTurn': return (me.koBy ?? []).some((k) => k.turn === s.turn && (!c.filter || matchesFilter(s, k.uid, c.filter, src)));
+    case 'koedThisTurn': return (me.koBy ?? []).some((k) => k.turn === s.turn && (!c.inBattle || k.battle) && (!c.filter || matchesFilter(s, k.uid, c.filter, src)));
     case 'playedByLeaderSkill': return !!s.inst[src].playedByLeader && s.inst[src].playedTurn === s.turn;
     case 'leaderInBattle': return !!s.battle && (s.battle.attacker === me.leader || s.battle.target === me.leader);
     case 'removedOwnThisTurn': return me.removedOwnTurn === s.turn;
-    case 'kiRemovedThisTurn': return me.kiRemovedTurn === s.turn;
+    case 'kiRemovedThisTurn': return (c.from === 'leader' ? me.kiRemovedLeaderTurn : c.from === 'battle' ? me.kiRemovedBattleTurn : me.kiRemovedTurn) === s.turn;
     case 'comboFromFieldThisTurn': return me.comboFieldTurn === s.turn;
     case 'bouncedThisTurn': return me.bouncedTurn === s.turn;
     case 'energyLeftThisTurn': return me.energyLeftTurn === s.turn;
+    case 'energyToDropThisTurn': return me.energyToDropTurn === s.turn;
     case 'extraUsedThisTurn':
       if (!c.filter) return me.extraUsedTurn === s.turn;
       return (me.usedExtras ?? []).some((x) => x.turn === s.turn && matchesFilter(s, x.uid, c.filter!, src));
@@ -936,6 +946,7 @@ export function moveTo(s: GameState, uid: number, zone: Exclude<Zone, 'leader' |
   if (zone === 'energy' && (s.p[inst.owner].mods ?? []).some((m) => m.kind === 'energyRedirect' && m.until >= s.turn)) zone = 'drop';
   if (from === 'battle' && zone === 'hand') s.p[inst.owner].bouncedTurn = s.turn;
   if (from === 'energy') s.p[inst.owner].energyLeftTurn = s.turn;
+  if (from === 'energy' && zone === 'drop') s.p[inst.owner].energyToDropTurn = s.turn;
   if (from === 'energy' && zone === 'drop') (s.removals ??= []).push({ uid, owner: inst.owner, by: s.skillBy ?? inst.owner, kind: 'energyDrop', bySrc: s.skillSrc });
   if (from === 'battle' && zone === 'drop' && !opts.quiet && s.skillBy !== undefined) {
     log(s, () => `${nameOf(s, uid)} is placed from P${inst.owner}'s Battle Area into the Drop`);

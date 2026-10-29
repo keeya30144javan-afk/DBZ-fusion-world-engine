@@ -639,8 +639,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "number not in the reading: 4"
+   "ok": true,
+   "note": "reviewed by the user: if your Leader is Son Goku and this card has 4 or less Ki, it gets +1 Ki"
   }
  },
  "FB12-029": {
@@ -2675,8 +2675,21 @@
     "timing": "onPlay",
     "cost": [
      {
-      "t": "discard",
-      "n": 1
+      "t": "anyOf",
+      "options": [
+       [
+        {
+         "t": "discard",
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "handToDeckTop",
+         "n": 1
+        }
+       ]
+      ]
      }
     ],
     "effects": [
@@ -2699,15 +2712,12 @@
       ],
       "each": 2
      }
-    ],
-    "unparsed": [
-     "(cost alternative not modelled: place 1 card from your hand on top of your deck instead of discarding)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (cost alternative not modelled: place 1 card from your hand on top of your deck instead of discarding)"
+   "ok": true,
+   "note": "reviewed by the user: cost: discard 1 card OR place 1 card from your hand on top of your deck"
   }
  },
  "FS14-01": {

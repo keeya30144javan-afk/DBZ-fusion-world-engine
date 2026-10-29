@@ -277,7 +277,7 @@
     "timing": "onPlay",
     "cond": [
      {
-      "t": "energyLeftThisTurn"
+      "t": "energyToDropThisTurn"
      }
     ],
     "effects": [
@@ -289,8 +289,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the Drop; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: only counts a card placed from your energy into your Drop this turn"
   }
  },
  "FP-029": {
@@ -324,10 +324,7 @@
   "abilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card has all card names and special traits, and all of your energy is treated as all colors."
-    ]
+    "effects": []
    },
    {
     "timing": "whenAttacking",
@@ -360,10 +357,7 @@
   "backAbilities": [
    {
     "timing": "permanent",
-    "effects": [],
-    "unparsed": [
-     "This card has all card names and special traits, and all of your energy is treated as all colors."
-    ]
+    "effects": []
    },
    {
     "timing": "whenAttacking",
@@ -379,8 +373,8 @@
    "event-only Leader with every name and trait"
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: This card has all card names and special traits, and all of your energy is treated as all colors. / This card has all card names and special; needs engine support for: event-only Leader with every name and trait"
+   "ok": true,
+   "note": "reviewed by the user: event-only card for friendly games, not competitive; its \"every name and trait\" rule is not modelled"
   }
  },
  "FP-031": {
@@ -740,7 +734,8 @@
     "timing": "whenAttacking",
     "cond": [
      {
-      "t": "koedThisTurn"
+      "t": "koedThisTurn",
+      "inBattle": true
      }
     ],
     "effects": [
@@ -752,15 +747,12 @@
       "amount": 15000,
       "dur": "battle"
      }
-    ],
-    "unparsed": [
-     "(counts only KOs in battle; the simulator also counts KOs by your skills)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (counts only KOs in battle; the simulator also counts KOs by your skills)"
+   "ok": true,
+   "note": "reviewed by the user: only a KO in battle this turn counts"
   }
  },
  "FP-043": {
@@ -2226,15 +2218,12 @@
       "kw": "cantBlock",
       "dur": "oppNextTurn"
      }
-    ],
-    "unparsed": [
-     "(modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
+   "ok": true,
+   "note": "reviewed by the user: the chosen card can't be switched to Rest Mode by its owner until the end of their next turn, so it can't attack or block"
   }
  },
  "FP-081": {

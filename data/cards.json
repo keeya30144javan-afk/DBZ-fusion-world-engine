@@ -8605,7 +8605,8 @@
         ]
        },
        {
-        "t": "kiRemovedThisTurn"
+        "t": "kiRemovedThisTurn",
+        "from": "battle"
        }
       ],
       "text": "",
@@ -10297,14 +10298,16 @@
           "Bardock's Crew"
          ]
         },
-        "n": 1
+        "n": 1,
+        "look": 1,
+        "rest": "either"
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: look at the top card; a Bardock's Crew Battle Card can be used in a combo, anything else goes to the top or bottom of the deck"
     },
     "keywords": [],
     "source": "claude",
@@ -21776,7 +21779,8 @@
        },
        {
         "t": "handToDeck",
-        "n": 1
+        "n": 1,
+        "either": true
        },
        {
         "t": "ki",
@@ -21793,7 +21797,8 @@
         "n": 1,
         "cond": [
          {
-          "t": "kiRemovedThisTurn"
+          "t": "kiRemovedThisTurn",
+          "from": "leader"
          }
         ]
        }
@@ -21801,8 +21806,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: when KO'd: draw 1, then place 1 card from hand at the top OR bottom of the deck"
     },
     "keywords": [],
     "source": "claude",
@@ -27955,14 +27960,12 @@
       "cost": [],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "(also looks through your life)"
-      ],
+      "unparsed": [],
       "timing": "activateMain",
       "effects": [
        {
         "t": "search",
-        "look": 99,
+        "look": 0,
         "options": [
          {
           "traits": [
@@ -27972,14 +27975,14 @@
         ],
         "take": 1,
         "toHand": true,
-        "rest": "bottom"
+        "withLife": true
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (also looks through your life)"
+     "ok": true,
+     "note": "reviewed by the user: looks through the deck and the life cards, then shuffles both"
     },
     "keywords": [],
     "source": "claude",
@@ -29485,7 +29488,7 @@
       "cost": [],
       "cond": [
        {
-        "t": "energyLeftThisTurn"
+        "t": "energyToDropThisTurn"
        }
       ],
       "text": "",
@@ -29500,8 +29503,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the Drop; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: only counts a card placed from your energy into your Drop this turn"
     },
     "source": "claude",
     "unparsed": [],
@@ -33953,9 +33956,7 @@
        }
       ],
       "text": "",
-      "unparsed": [
-       "(looks at 2 cards; the simulator only checks the top one)"
-      ],
+      "unparsed": [],
       "timing": "whenAttacking",
       "effects": [
        {
@@ -33964,14 +33965,16 @@
         "filter": {
          "type": "BATTLE"
         },
-        "n": 1
+        "n": 1,
+        "look": 2,
+        "rest": "top"
        }
       ]
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (looks at 2 cards; the simulator only checks the top one)"
+     "ok": true,
+     "note": "reviewed by the user: looks at 2 cards from the top, not just 1"
     },
     "keywords": [],
     "source": "claude",
@@ -62024,7 +62027,8 @@
       "cost": [
        {
         "t": "handToDeckTop",
-        "n": 1
+        "n": 1,
+        "either": true
        }
       ],
       "cond": [
@@ -62045,8 +62049,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "the card mentions the bottom of a deck; the reading doesn't"
+     "ok": true,
+     "note": "reviewed by the user: place 1 card from your hand at the top OR bottom of your deck (the printed \"top of bottom\" is a typo)"
     },
     "keywords": [],
     "source": "claude",
@@ -101211,9 +101215,7 @@
       "cost": [],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "(modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
-      ],
+      "unparsed": [],
       "timing": "whenAttacking",
       "effects": [
        {
@@ -101249,8 +101251,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (modelled as: its owner can't attack or block with it, the two ways they would switch it to Rest Mode)"
+     "ok": true,
+     "note": "reviewed by the user: the chosen card can't be switched to Rest Mode by its owner until the end of their next turn, so it can't attack or block"
     },
     "keywords": [],
     "source": "claude",
@@ -103697,9 +103699,7 @@
       "cost": [],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "(also while in the deck)"
-      ],
+      "unparsed": [],
       "timing": "permanent",
       "effects": [
        {
@@ -103715,7 +103715,8 @@
          "ref": "this"
         },
         "amount": 4,
-        "dur": "static"
+        "dur": "static",
+        "inDeck": true
        }
       ]
      },
@@ -103751,8 +103752,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (also while in the deck)"
+     "ok": true,
+     "note": "reviewed by the user: cost is 4 higher in the deck or Battle Area, but not in hand"
     },
     "keywords": [],
     "source": "claude",
@@ -105887,9 +105888,7 @@
       "cost": [],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "This card has all card names and special traits, and all of your energy is treated as all colors."
-      ],
+      "unparsed": [],
       "timing": "permanent",
       "effects": []
      },
@@ -105936,9 +105935,7 @@
       "cost": [],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "This card has all card names and special traits, and all of your energy is treated as all colors."
-      ],
+      "unparsed": [],
       "timing": "permanent",
       "effects": []
      },
@@ -105961,8 +105958,8 @@
      "event-only Leader with every name and trait"
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: This card has all card names and special traits, and all of your energy is treated as all colors. / This card has all card names and special; needs engine support for: event-only Leader with every name and trait"
+     "ok": true,
+     "note": "reviewed by the user: event-only card for friendly games, not competitive; its \"every name and trait\" rule is not modelled"
     },
     "keywords": [],
     "source": "claude",
@@ -107560,13 +107557,12 @@
       "cost": [],
       "cond": [
        {
-        "t": "koedThisTurn"
+        "t": "koedThisTurn",
+        "inBattle": true
        }
       ],
       "text": "",
-      "unparsed": [
-       "(counts only KOs in battle; the simulator also counts KOs by your skills)"
-      ],
+      "unparsed": [],
       "timing": "whenAttacking",
       "effects": [
        {
@@ -107588,8 +107584,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (counts only KOs in battle; the simulator also counts KOs by your skills)"
+     "ok": true,
+     "note": "reviewed by the user: only a KO in battle this turn counts"
     },
     "keywords": [],
     "source": "claude",
@@ -112651,15 +112647,26 @@
       "once": false,
       "cost": [
        {
-        "t": "discard",
-        "n": 1
+        "t": "anyOf",
+        "options": [
+         [
+          {
+           "t": "discard",
+           "n": 1
+          }
+         ],
+         [
+          {
+           "t": "handToDeckTop",
+           "n": 1
+          }
+         ]
+        ]
        }
       ],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "(cost alternative not modelled: place 1 card from your hand on top of your deck instead of discarding)"
-      ],
+      "unparsed": [],
       "timing": "onPlay",
       "effects": [
        {
@@ -112692,8 +112699,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (cost alternative not modelled: place 1 card from your hand on top of your deck instead of discarding)"
+     "ok": true,
+     "note": "reviewed by the user: cost: discard 1 card OR place 1 card from your hand on top of your deck"
     },
     "source": "claude",
     "unparsed": [],
@@ -113391,8 +113398,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "number not in the reading: 4"
+     "ok": true,
+     "note": "reviewed by the user: if your Leader is Son Goku and this card has 4 or less Ki, it gets +1 Ki"
     },
     "keywords": [],
     "source": "claude",

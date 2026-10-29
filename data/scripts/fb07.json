@@ -3615,7 +3615,7 @@
     "effects": [
      {
       "t": "search",
-      "look": 99,
+      "look": 0,
       "options": [
        {
         "traits": [
@@ -3625,17 +3625,14 @@
       ],
       "take": 1,
       "toHand": true,
-      "rest": "bottom"
+      "withLife": true
      }
-    ],
-    "unparsed": [
-     "(also looks through your life)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (also looks through your life)"
+   "ok": true,
+   "note": "reviewed by the user: looks through the deck and the life cards, then shuffles both"
   }
  },
  "FB07-121": {

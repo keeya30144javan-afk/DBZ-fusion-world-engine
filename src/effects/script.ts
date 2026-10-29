@@ -51,8 +51,8 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   activate: { target: 'T' },
   lockActive: { target: 'T' },
   grant: { target: 'T', kw: 'K', dur: 'D' },
-  costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?' },
-  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?', fromBottom: 'b?', eachOption: 'b?' },
+  costMod: { target: 'T', amount: 'n', dur: 'D', per: 'C?', inDeck: 'b?' },
+  search: { look: 'n', options: 'F[]', take: 'n', toHand: 'b', dest: 'Z:hand|play|drop|life?', rest: 'Z:bottom|drop|top|hand?', rested: 'b?', negate: 'Z:all|onPlay?', fromBottom: 'b?', eachOption: 'b?', withLife: 'b?' },
   dropToHand: { options: 'F[]', each: 'n', per: 'C?', distinctCosts: 'b?', distinctNames: 'b?', totalCostLE: 'n?' },
   playFrom: { from: 'Z:drop|hand|deck|energy|life|lifeTop', filter: 'F', n: 'n', rested: 'b?', extraType: 'b?', negate: 'Z:all|onPlay?', each: 'F[]?', totalCostLE: 'n?', distinctNames: 'b?' },
   energyFromDeck: { n: 'n', rested: 'b' },
@@ -71,7 +71,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   placeMarker: { n: 'n' },
   lifeFromDeck: { n: 'n', until: 'n?' },
   handToLife: { n: 'n', upTo: 'b', pos: 'Z:bottom|topOrBottom?' },
-  handToDeck: { n: 'n', bottom: 'b?' },
+  handToDeck: { n: 'n', bottom: 'b?', either: 'b?' },
   self: { to: 'Z:hand|drop|energy|deckBottom|play|life', rested: 'b?' },
   nextDiscount: { filter: 'F', amount: 'n|free' },
   cantPlay: { filter: 'F', dur: 'D', extras: 'b?', opp: 'b?' },
@@ -79,7 +79,7 @@ const EFFECTS: Record<Effect['t'], Spec> = {
   oppPlayRested: { filter: 'F' },
   placeUnder: { target: 'T', from: 'Z:drop|hand|deck|battle|handOrBattle', filters: 'F[]', n: 'n', untilUnder: 'n?' },
   choose: { options: 'E[][]' },
-  comboFrom: { from: 'Z:drop|deckTop', filter: 'F', n: 'n', per: 'C?' },
+  comboFrom: { from: 'Z:drop|deckTop', filter: 'F', n: 'n', per: 'C?', look: 'n?', rest: 'Z:top|either?' },
   atEndOfTurn: { effects: 'E[]' },
   lockSkill: { names: 's[]', timing: 'Z:activateMain|activateBattle', dur: 'D' },
   dropToDeck: { bottom: 'b?' },
@@ -148,7 +148,8 @@ const COSTS: Record<Cost['t'], Spec> = {
   energyToDeckBottom: { n: 'n' },
   pickUnder: { filter: 'F', onto: 'F' },
   toComboOwn: { filter: 'F' },
-  handToDeckTop: { n: 'n' },
+  handToDeckTop: { n: 'n', either: 'b?' },
+  anyOf: { options: 'Co[][]' },
   mill: { n: 'n' },
   reveal: { filter: 'F' },
   underToDrop: { n: 'n', filter: 'F?' },
@@ -178,14 +179,15 @@ const CONDS: Record<Cond['t'], Spec> = {
   yourTurn: { yes: 'b' },
   thisHasUnder: { yes: 'b' },
   attacking: { filter: 'F' },
-  koedThisTurn: { filter: 'F?' },
+  koedThisTurn: { filter: 'F?', inBattle: 'b?' },
   playedByLeaderSkill: {},
   leaderInBattle: {},
   removedOwnThisTurn: {},
-  kiRemovedThisTurn: {},
+  kiRemovedThisTurn: { from: 'Z:leader|battle?' },
   comboFromFieldThisTurn: {},
   bouncedThisTurn: {},
   energyLeftThisTurn: {},
+  energyToDropThisTurn: {},
   extraUsedThisTurn: { filter: 'F?' },
   lifeLeftThisTurn: {},
   thisMatches: { filter: 'F' },
@@ -244,6 +246,7 @@ function checkField(v: unknown, type: string, path: string, errs: string[]) {
     case 'n|V': if (typeof v !== 'number') checkObj(v, VAL, path, errs); return;
     case 'V': checkObj(v, VAL, path, errs); return;
     case 'Tm': if (!TIMINGS.includes(v as Timing)) bad('a timing'); return;
+    case 'Co[][]': if (!Array.isArray(v) || !v.length || !v.every(Array.isArray)) bad('a list of cost lists'); else v.forEach((o, i) => (o as unknown[]).forEach((c, j) => checkTagged(c, COSTS, `${path}[${i}][${j}]`, errs, 'cost'))); return;
     case 'Co[]': if (!Array.isArray(v)) bad('a list of costs'); else v.forEach((c, i) => checkTagged(c, COSTS, `${path}[${i}]`, errs, 'cost')); return;
     case 's[]': if (!Array.isArray(v) || !v.every((x) => typeof x === 'string')) bad('a list of text'); return;
     case 'col[]': if (!Array.isArray(v) || !v.every((x) => COLORS.includes(x as string))) bad(`colours from ${COLORS.join('/')}`); return;

@@ -125,14 +125,16 @@
         "Bardock's Crew"
        ]
       },
-      "n": 1
+      "n": 1,
+      "look": 1,
+      "rest": "either"
      }
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: look at the top card; a Bardock's Crew Battle Card can be used in a combo, anything else goes to the top or bottom of the deck"
   }
  },
  "FS05-03": {
@@ -142,7 +144,8 @@
     "cost": [
      {
       "t": "handToDeckTop",
-      "n": 1
+      "n": 1,
+      "either": true
      }
     ],
     "cond": [
@@ -160,8 +163,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: place 1 card from your hand at the top OR bottom of your deck (the printed \"top of bottom\" is a typo)"
   }
  },
  "FS05-06": {
@@ -1059,17 +1062,16 @@
       "filter": {
        "type": "BATTLE"
       },
-      "n": 1
+      "n": 1,
+      "look": 2,
+      "rest": "top"
      }
-    ],
-    "unparsed": [
-     "(looks at 2 cards; the simulator only checks the top one)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (looks at 2 cards; the simulator only checks the top one)"
+   "ok": true,
+   "note": "reviewed by the user: looks at 2 cards from the top, not just 1"
   }
  },
  "FS09-05": {
@@ -1433,11 +1435,9 @@
        "ref": "this"
       },
       "amount": 4,
-      "dur": "static"
+      "dur": "static",
+      "inDeck": true
      }
-    ],
-    "unparsed": [
-     "(also while in the deck)"
     ]
    },
    {
@@ -1469,8 +1469,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (also while in the deck)"
+   "ok": true,
+   "note": "reviewed by the user: cost is 4 higher in the deck or Battle Area, but not in hand"
   }
  },
  "FS09-17": {

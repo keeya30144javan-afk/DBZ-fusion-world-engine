@@ -113,12 +113,12 @@ class HumanChooser implements Chooser {
     if (this.k < this.answers.length) return this.answers[this.k++];
     const n = (u: number) => nameOf(s, u);
     const options: ChoiceOption[] = req.kind === 'mode'
-      ? req.options.map((i) => ({ v: i, label: req.effect && (req.effect as any).options?.[i] ? (req.effect as any).options[i].map((e: any) => describeEffect(e)).join(', then ') : `Option ${i + 1}` }))
+      ? req.options.map((i) => ({ v: i, label: req.labels?.[i] ?? (req.effect && (req.effect as any).options?.[i] ? (req.effect as any).options[i].map((e: any) => describeEffect(e)).join(', then ') : `Option ${i + 1}`) }))
       : req.kind === 'yesno' ? [{ v: 1, label: 'Yes' }]
       : req.options.map((u) => ({ v: u, label: n(u), id: s.inst[u].id, where: zoneOf(s, u) }));
     const src = s.inst[req.src];
     const what = req.effect ? describeEffect(req.effect as any) : '';
-    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
+    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${req.about !== undefined ? `Where does ${nameOf(s, req.about)} go?` : req.labels ? 'Choose how to pay' : PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
     throw new NeedChoice(req, options, snapshot(s), prompt, what);
   }
 }

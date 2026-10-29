@@ -1,5 +1,6 @@
 import { Ability, Cost, Effect, Filter, Target } from '../effects/types';
 import { compileCard } from '../effects/parse';
+import { describeCost } from '../effects/describe';
 import {
   EvalCtx, GameState, PlayerMod, Side, abilitiesOf, activeMods, cardOf, condsHold, costOf, countOf, emit, hasKeyword, inPlay, isLeader, log, matchesFilter, moveTo, nameOf,
   other, planPayment, payPlan, powerOf, rand, removeFrom, resetInst, shuffle, staticRules, turnMatches, valOf, withCtx, zoneOf,
@@ -16,6 +17,15 @@ export interface ChoiceReq {
   effect?: Effect;
   /** 'good' when the chosen cards benefit the chooser, 'bad' when they are hurt. */
   intent: 'buff' | 'harm' | 'gain' | 'lose';
+  /** 'mode' questions that aren't a choose effect: one label per option. */
+  labels?: string[];
+  /** The card a 'mode' question is about (where to put it). */
+  about?: number;
+}
+
+/** "At the top or bottom of the deck": true for the bottom. */
+export function chooseBottom(s: GameState, owner: Side, src: number, u: number, ctl: Choosers): boolean {
+  return ctl[owner].choose(s, { kind: 'mode', player: owner, src, options: [0, 1], min: 1, max: 1, intent: 'gain', labels: ['Top of the deck', 'Bottom of the deck'], about: u })[0] === 1;
 }
 
 export interface Chooser {
@@ -150,7 +160,7 @@ export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}
     return false;
   }
   if (tryReplace(s, uid, true, by, ctl)) return false;
-  if (by.src !== undefined && s.inst[by.src].owner !== owner) (s.p[s.inst[by.src].owner].koBy ??= []).push({ turn: s.turn, uid: by.src });
+  if (by.src !== undefined && s.inst[by.src].owner !== owner) (s.p[s.inst[by.src].owner].koBy ??= []).push({ turn: s.turn, uid: by.src, ...(by.battle ? { battle: true } : {}) });
   moveTo(s, uid, 'drop', { quiet: true });
   log(s, () => `${nameOf(s, uid)} is KO'd`);
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
@@ -359,6 +369,7 @@ export function canPayCosts(s: GameState, uid: number, costs: Cost[], excludeFro
       case 'koOwn': case 'dropOwn': case 'bounceOwn': case 'bottomOwn': if (ownInPlay(s, owner, c.filter, uid).length < c.n) return false; break;
       case 'restOwn': if (restPool(s, uid, c).reduce((a, u) => a + restWeight(s, uid, u), 0) < c.n) return false; break;
       case 'handToDeckTop': if (hand.length < c.n) return false; break;
+      case 'anyOf': if (!c.options.some((o) => canPayCosts(s, uid, o, excludeFromHand))) return false; break;
       case 'mill': if (me.deck.length < c.n) return false; break;
       case 'reveal': if (!hand.some((u) => matchesFilter(s, u, c.filter, uid))) return false; break;
       case 'underToDrop': if (underPool(s, owner, c.filter, uid).length < c.n) return false; break;
@@ -459,6 +470,7 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
           const k = Math.min(left, s.inst[u].ki);
           s.inst[u].ki -= k;
           if (k && s.battle) s.inst[u].kiRemovedBattle = (s.inst[u].kiRemovedBattle ?? 0) + k;
+          if (k) { if (isLeader(s, u)) me.kiRemovedLeaderTurn = s.turn; else me.kiRemovedBattleTurn = s.turn; }
           left -= k;
           if (!left) break;
         }
@@ -492,7 +504,13 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
       }
       case 'handToDeckTop': {
         const pick = ctl[owner].choose(s, { kind: 'discard', player: owner, src: uid, options: me.hand.filter((u) => u !== uid), min: c.n, max: c.n, intent: 'lose' });
-        for (const u of pick.slice(0, c.n)) moveTo(s, u, 'deck');
+        for (const u of pick.slice(0, c.n)) moveTo(s, u, 'deck', { bottom: c.either && chooseBottom(s, owner, uid, u, ctl) });
+        break;
+      }
+      case 'anyOf': {
+        const ok = c.options.map((o, i) => i).filter((i) => canPayCosts(s, uid, c.options[i]));
+        const i = ok.length > 1 ? ctl[owner].choose(s, { kind: 'mode', player: owner, src: uid, options: ok, min: 1, max: 1, intent: 'lose', labels: c.options.map((o) => o.map(describeCost).join(', ')) })[0] ?? ok[0] : ok[0];
+        if (i !== undefined) { const r = payCosts(s, uid, c.options[i], ctl); kiRemoved += r.kiRemoved; paid.push(...r.paid); }
         break;
       }
       case 'mill': millCards(s, owner, c.n, ctl); break;
@@ -831,6 +849,17 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
       return;
     }
     case 'search': {
+      if (e.withLife) {
+        // "Look through your deck and life ... Then, shuffle your deck and life."
+        const pool = [...me.deck, ...me.life];
+        const match = pool.filter((u) => e.options.some((f) => matchesFilter(s, u, f, src)));
+        const pick = pickFrom(s, owner, src, match, e.take, ctl);
+        for (const u of pick) { removeFrom(s, u); emit(s, { t: 'reveal', p: owner, id: s.inst[u].id, uid: u }); me.hand.push(u); }
+        me.deck = shuffle(s, me.deck); me.life = shuffle(s, me.life);
+        ctx.prev = pick;
+        checkDeckOut(s);
+        return;
+      }
       const top = e.fromBottom ? me.deck.splice(0, e.look) : me.deck.splice(Math.max(0, me.deck.length - e.look));
       let pick: number[];
       if (e.eachOption) {
@@ -994,7 +1023,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     }
     case 'handToDeck': {
       const pick = ctl[owner].choose(s, { kind: 'discard', player: owner, src, options: me.hand.slice(), min: Math.min(e.n, me.hand.length), max: e.n, intent: 'lose' });
-      for (const u of pick.slice(0, e.n)) moveTo(s, u, 'deck', { bottom: e.bottom });
+      for (const u of pick.slice(0, e.n)) moveTo(s, u, 'deck', { bottom: e.either ? chooseBottom(s, owner, src, u, ctl) : e.bottom });
       return;
     }
     case 'self': {
@@ -1061,8 +1090,12 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
         for (const u of used) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; me.comboDropTurn = s.turn; emit(s, { t: 'combo', p: owner, id: s.inst[u].id, uid: u, fromHand: false }); }
         for (const u of used) { if (s.stage === 'over') break; fireTriggers(s, u, 'comboFromDrop', ctl); }
       } else {
-        const u = me.deck[me.deck.length - 1];
-        if (u !== undefined && cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src)) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; }
+        // Look at the top card(s), use up to n matching Battle Cards, then the rest go back.
+        const seen = me.deck.slice(-(e.look ?? 1)).reverse();
+        const cands = seen.filter((u) => cardOf(s, u).type === 'BATTLE' && matchesFilter(s, u, e.filter, src));
+        const used = (e.look ?? 1) > 1 ? pickFrom(s, owner, src, cands, e.n, ctl) : cands.slice(0, e.n);
+        for (const u of used) { moveTo(s, u, 'combo'); s.battle.comboCount[owner]++; emit(s, { t: 'combo', p: owner, id: s.inst[u].id, uid: u, fromHand: false }); }
+        if (e.rest === 'either') for (const u of seen) if (!used.includes(u) && me.deck.includes(u) && chooseBottom(s, owner, src, u, ctl)) { removeFrom(s, u); me.deck.unshift(u); }
         checkDeckOut(s);
       }
       if (s.battle && s.stage !== 'over') {

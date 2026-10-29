@@ -1391,7 +1391,8 @@
       ]
      },
      {
-      "t": "kiRemovedThisTurn"
+      "t": "kiRemovedThisTurn",
+      "from": "battle"
      }
     ],
     "effects": [
@@ -3247,7 +3248,8 @@
      },
      {
       "t": "handToDeck",
-      "n": 1
+      "n": 1,
+      "either": true
      },
      {
       "t": "ki",
@@ -3257,7 +3259,8 @@
       "n": 1,
       "cond": [
        {
-        "t": "kiRemovedThisTurn"
+        "t": "kiRemovedThisTurn",
+        "from": "leader"
        }
       ]
      }
@@ -3265,8 +3268,8 @@
    }
   ],
   "check": {
-   "ok": false,
-   "note": "the card mentions the bottom of a deck; the reading doesn't"
+   "ok": true,
+   "note": "reviewed by the user: when KO'd: draw 1, then place 1 card from hand at the top OR bottom of the deck"
   }
  },
  "FB11-119": {

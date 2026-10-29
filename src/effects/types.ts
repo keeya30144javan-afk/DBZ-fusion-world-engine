@@ -204,12 +204,12 @@ export type Effect = E<
   | { t: 'lockActive'; target: Target }
   | { t: 'grant'; target: Target; kw: Keyword; dur: Duration }
   /** Change the cost of a card in play ("reduce its cost by 1 for the turn"). */
-  | { t: 'costMod'; target: Target; amount: number; dur: Duration; per?: Count }
+  | { t: 'costMod'; target: Target; amount: number; dur: Duration; per?: Count; /** [Permanent] on this card: also applies while it is in the deck. */ inDeck?: boolean }
   /**
    * Look at the top `look` cards; take up to `take` matching any option.
    * dest: where the taken cards go; rest: where the others go.
    */
-  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean; /** "up to 1 <A> and up to 1 <B>": one card per option. */ eachOption?: boolean }
+  | { t: 'search'; look: number; options: Filter[]; take: number; toHand: boolean; /** "Look through your deck and life": the life is searched too, then deck and life are shuffled. */ withLife?: boolean; dest?: 'hand' | 'play' | 'drop' | 'life'; rest?: 'bottom' | 'drop' | 'top' | 'hand'; rested?: boolean; negate?: 'all' | 'onPlay'; fromBottom?: boolean; /** "up to 1 <A> and up to 1 <B>": one card per option. */ eachOption?: boolean }
   /** `per`: take up to `each` for each counted thing; distinctCosts: all with different costs. */
   | { t: 'dropToHand'; options: Filter[]; each: number; per?: Count; distinctCosts?: boolean; /** Different card names only. */ distinctNames?: boolean; /** The chosen cards' costs add up to this or less. */ totalCostLE?: number }
   /**
@@ -238,7 +238,7 @@ export type Effect = E<
   /** Card(s) from your hand to your life. */
   | { t: 'handToLife'; n: number; upTo: boolean; /** Where in the life: top (default), bottom, or the player's choice. */ pos?: 'bottom' | 'topOrBottom' }
   /** Card(s) from your hand on top of (or under) your deck. */
-  | { t: 'handToDeck'; n: number; bottom?: boolean }
+  | { t: 'handToDeck'; n: number; bottom?: boolean; /** "at the top or bottom": the player chooses. */ either?: boolean }
   /** Move the card with this skill. */
   | { t: 'self'; to: 'hand' | 'drop' | 'energy' | 'deckBottom' | 'play' | 'life'; rested?: boolean }
   /** "During this turn, the next time you use <filter>, reduce its cost by N / you don't pay the cost." */
@@ -253,7 +253,7 @@ export type Effect = E<
   /** Choose one of several effect lists. */
   | { t: 'choose'; options: Effect[][] }
   /** Use cards from a zone in the current battle's combo. */
-  | { t: 'comboFrom'; from: 'drop' | 'deckTop'; filter: Filter; n: number; per?: Count }
+  | { t: 'comboFrom'; from: 'drop' | 'deckTop'; filter: Filter; n: number; per?: Count; /** deckTop: look at this many cards (default 1). */ look?: number; /** deckTop: where the cards not used go (default: stay on top). */ rest?: 'top' | 'either' }
   /** Run these effects at the end of the current turn ("at the end of the turn, switch this card to Active Mode"). */
   | { t: 'atEndOfTurn'; effects: Effect[] }
   /** "You can't activate the [Activate:Main] of <X> for the turn." */
@@ -390,7 +390,9 @@ export type Cost =
   /** Place 1 of your Battle Cards matching filter into your Combo Area. */
   | { t: 'toComboOwn'; filter: Filter }
   /** N cards from your hand on top of your deck. */
-  | { t: 'handToDeckTop'; n: number }
+  | { t: 'handToDeckTop'; n: number; /** "at the top or bottom": the player chooses. */ either?: boolean }
+  /** Pay one of several ways ("discard 1 card or place 1 card on top of your deck"). */
+  | { t: 'anyOf'; options: Cost[][] }
   | { t: 'mill'; n: number }
   /** Reveal a card from hand (must exist). */
   | { t: 'reveal'; filter: Filter }
@@ -439,20 +441,22 @@ export type Cond =
   /** This card is attacking a card (Leader or Battle Card) that matches. */
   | { t: 'attacking'; filter: Filter }
   /** One of your cards matching filter KO'd an opponent's Battle Card this turn. */
-  | { t: 'koedThisTurn'; filter?: Filter }
+  | { t: 'koedThisTurn'; filter?: Filter; /** Only KOs in battle count, not KOs by skills. */ inBattle?: boolean }
   /** This card was played by your Leader's skill. */
   | { t: 'playedByLeaderSkill' }
   | { t: 'leaderInBattle' }
   /** One of your Battle Cards was removed from a Battle Area by your own skill this turn. */
   | { t: 'removedOwnThisTurn' }
   /** Ki was removed from your cards this turn. */
-  | { t: 'kiRemovedThisTurn' }
+  | { t: 'kiRemovedThisTurn'; /** Only Ki removed from your Leader, or only from your Battle Area. */ from?: 'leader' | 'battle' }
   /** You used a card from your Battle Area in a combo this turn. */
   | { t: 'comboFromFieldThisTurn' }
   /** A Battle Card in your Battle Area was returned to its owner's hand this turn. */
   | { t: 'bouncedThisTurn' }
   /** A card left your energy this turn. */
   | { t: 'energyLeftThisTurn' }
+  /** You placed a card from your energy into your Drop during this turn. */
+  | { t: 'energyToDropThisTurn' }
   /** You used an Extra this turn (without filter: one with an original cost of 1 or more). */
   | { t: 'extraUsedThisTurn'; filter?: Filter }
   /** A card was removed from your life this turn. */

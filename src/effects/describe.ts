@@ -164,10 +164,12 @@ export function describeEffect(e: Effect): string {
     case 'grant': out = `${pick}${subj} ${KW[e.kw] ?? `${many || e.target.all ? 'gain' : 'gains'} ${KW_NAME[e.kw] ?? `[${e.kw}]`}`}${DUR[e.dur]}`; break;
     case 'costMod': {
       const whose = e.target.ref === 'this' ? "this card's cost" : e.target.ref || e.target.all ? `the cost of ${tgt}` : many ? 'their cost' : 'its cost';
-      out = `${pick}${e.amount < 0 ? `reduce ${whose} by ${-e.amount}` : `increase ${whose} by ${e.amount}`}${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`;
+      out = e.inDeck ? `increase the cost of this card in a deck or Battle Area by ${e.amount}`
+        : `${pick}${e.amount < 0 ? `reduce ${whose} by ${-e.amount}` : `increase ${whose} by ${e.amount}`}${e.per ? ` for each ${describeCount(e.per)}` : ''}${DUR[e.dur]}`;
       break;
     }
     case 'search': {
+      if (e.withLife) { out = `look through your deck and life, reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))} and add it to your hand. Then, shuffle your deck and life`; break; }
       const dest = e.dest ?? 'hand';
       out = `look at ${e.fromBottom ? `the bottom ${e.look === 1 ? 'card' : plural(e.look, 'card')}` : `${plural(e.look, 'card')} from the top`} of your deck, ${e.eachOption ? `reveal ${e.options.map((f) => `up to 1 ${describeFilter(f)}`).join(' and ')}` : `reveal up to ${e.take} ${list(e.options.map((f) => describeFilter(f)))}`} and ${dest === 'play' ? `play it${e.rested ? ' in Rest Mode' : ''}${e.negate ? ` with its ${e.negate === 'onPlay' ? '[On Play] skills' : 'skills'} negated for the turn` : ''}` : `add it to your ${dest === 'hand' ? 'hand' : dest === 'drop' ? 'Drop' : 'life'}`}. Place the rest ${e.rest === 'drop' ? 'into your Drop' : e.rest === 'top' ? 'on top of your deck' : e.rest === 'hand' ? 'into your hand' : 'at the bottom of your deck in a random order'}`;
       break;
@@ -200,7 +202,7 @@ export function describeEffect(e: Effect): string {
     case 'placeMarker': out = `you place ${e.n} energy marker`; break;
     case 'lifeFromDeck': out = e.until !== undefined ? `add cards from the top of your deck to your life until you have ${e.until} life` : `add the top ${plural(e.n, 'card')} of your deck to your life`; break;
     case 'handToLife': out = `add ${e.upTo ? 'up to ' : ''}${plural(e.n, 'card')} from your hand to ${e.pos === 'bottom' ? 'the bottom of your life' : e.pos === 'topOrBottom' ? 'the top or bottom of your life' : 'your life'}`; break;
-    case 'handToDeck': out = `place ${plural(e.n, 'card')} from your hand ${e.bottom ? 'at the bottom' : 'on top'} of your deck`; break;
+    case 'handToDeck': out = `place ${plural(e.n, 'card')} from your hand ${e.either ? 'at the top or bottom' : e.bottom ? 'at the bottom' : 'on top'} of your deck`; break;
     case 'self': out = { hand: "return this card to its owner's hand", drop: 'place this card into your Drop', energy: `add this card to your energy${e.rested ? ' in Rest Mode' : ''}`, deckBottom: 'place this card at the bottom of your deck', life: 'add this card from your Battle Area to your life', play: `play this card from where it is (your Drop)${e.rested ? ' in Rest Mode' : ''}` }[e.to]; break;
     case 'nextDiscount': out = `during this turn, the next time you use ${describeFilter(e.filter).replace(/^(?=[A-Z<])/, 'a ').replace(/^a (?=Extra)/, 'an ')} from your hand, ${e.amount === 'free' ? "you don't have to pay the cost" : `reduce the cost by ${e.amount}`}`; break;
     case 'cantPlay': out = `${e.opp ? "your opponent can't" : "you can't"} ${e.extras ? 'use' : 'play'} ${describeFilter(e.filter, e.extras ? 'Extra' : 'Battle Card')}${DUR[e.dur]}`; break;
@@ -210,7 +212,9 @@ export function describeEffect(e: Effect): string {
       ? `place any number of ${list(e.filters.map((f) => describeFilter(f)))} from your ${e.from === 'handOrBattle' ? 'hand or Battle Area' : e.from === 'drop' ? 'Drop' : e.from} under ${describeTarget(e.target)} until it has ${e.untilUnder} or fewer cards under it`
       : `place ${list(e.filters.map((f) => `up to ${e.n} ${describeFilter(f)}`), 'and')} from your ${e.from === 'drop' ? 'Drop' : e.from === 'handOrBattle' ? 'hand or Battle Area' : e.from} under ${describeTarget(e.target)}`; break;
     case 'choose': out = `choose one — ${e.options.map((o, i) => `(${i + 1}) ${o.map(describeEffect).join('. Then, ')}`).join(' ')}`; break;
-    case 'comboFrom': out = `${e.per ? `for each ${describeCount(e.per)}, ` : ''}use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
+    case 'comboFrom': out = e.from === 'deckTop' && (e.look || e.rest)
+      ? `look at ${(e.look ?? 1) === 1 ? 'the top card' : `${plural(e.look!, 'card')} from the top`} of your deck and use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} in a combo. Place the rest ${e.rest === 'either' ? 'at the top or bottom of your deck' : 'on top of your deck in any order'}`
+      : `${e.per ? `for each ${describeCount(e.per)}, ` : ''}use up to ${e.n} ${describeFilter(e.filter, 'Battle Card')} from your ${e.from === 'drop' ? 'Drop' : 'deck top'} in a combo`; break;
     case 'atEndOfTurn': out = `at the end of the turn, ${e.effects.map(describeEffect).join(', then ')}`; break;
     case 'lockSkill': out = `you can't activate the [${e.timing === 'activateMain' ? 'Activate: Main' : 'Activate: Battle'}] of ${list(e.names.map((n) => `<${n}>`))}${DUR[e.dur]}`; break;
     case 'dropToDeck': out = e.bottom ? "place all cards from your Drop at the bottom of their owner's deck in a random order" : "return all cards from your Drop to your deck in a random order"; break;
@@ -318,12 +322,12 @@ export function describeCond(c: Cond): string {
     case 'attackingBattleCard': return `attacking ${c.filter ? describeFilter(c.filter, 'Battle Card') : 'a Battle Card'}`;
     case 'prevMatches': return Object.keys(c.filter).length ? `the chosen card is ${aCard(describeFilter(c.filter))}` : 'a card was chosen';
     case 'yourTurn': return c.yes ? "it's your turn" : "it's your opponent's turn";
-    case 'not': return `not (${describeCond(c.c)})`;
+    case 'not': return c.c.t === 'thisKiGE' ? `this card has ${c.c.n - 1} or less Ki` : `not (${describeCond(c.c)})`;
     case 'or': return c.any.map(describeCond).join(' or ');
     case 'and': return `(${c.all.map(describeCond).join(' and ')})`;
     case 'thisHasUnder': return c.yes ? 'there are cards under this card' : 'there are no cards under this card';
     case 'attacking': return `attacking ${describeFilter(c.filter)}`;
-    case 'koedThisTurn': return `your ${c.filter ? describeFilter(c.filter) : 'card'} has KO'd one of your opponent's Battle Cards during this turn`;
+    case 'koedThisTurn': return c.inBattle ? `an opponent's Battle Card was KO'd in battle by your ${c.filter ? describeFilter(c.filter) : 'card'} during this turn` : `your ${c.filter ? describeFilter(c.filter) : 'card'} has KO'd one of your opponent's Battle Cards during this turn`;
     case 'playedByLeaderSkill': return "this card was played by your Leader's skill";
     case 'leaderInBattle': return 'your Leader is in a battle';
     case 'removedOwnThisTurn': return 'your Battle Card was removed from a Battle Area by one of your skills during this turn';
@@ -339,10 +343,11 @@ export function describeCond(c: Cond): string {
     case 'playedByEvolve': return 'this card was played by an [Evolve] skill';
     case 'playedBySkill': return 'this card was played by a skill';
     case 'energyLeftThisTurn': return 'a card was removed from your energy during this turn';
+    case 'energyToDropThisTurn': return 'you placed a card from your energy into your Drop during this turn';
     case 'battleTotalCost': return `${c.only ? `you only have ${describeFilter(c.only, 'card', true)} in your Battle Area and their` : 'the cards in your Battle Area have a'} total cost is ${c.n} or more`;
     case 'bouncedThisTurn': return "a Battle Card in your Battle Area was returned to its owner's hand during this turn";
     case 'comboFromFieldThisTurn': return 'you used a card from your Battle Area in a combo during this turn';
-    case 'kiRemovedThisTurn': return 'any Ki have been removed from your cards during this turn';
+    case 'kiRemovedThisTurn': return `any Ki have been removed from your ${c.from === 'leader' ? 'Leader' : c.from === 'battle' ? 'Battle Area' : 'cards'} during this turn`;
     case 'inBattleWith': return `${c.leader ? 'your Leader' : 'this card'} is in a battle with your opponent's ${describeFilter(c.filter, 'card')}`;
     case 'revealedMatches': return `the revealed card is ${aCard(describeFilter(c.filter))}`;
     case 'causedByLeader': return `it was caused by your ${c.filter ? describeFilter(c.filter, 'Leader') : 'Leader'}'s skill`;
@@ -376,7 +381,8 @@ export function describeCost(c: Cost): string {
     case 'energyToDeckBottom': return `place ${c.n} of your energy at the bottom of your deck`;
     case 'pickUnder': return `choose 1 ${describeFilter(c.filter)} under ${describeFilter(c.onto)} in your Battle Area`;
     case 'toComboOwn': return `place 1 ${describeFilter(c.filter, 'Battle Card')} from your Battle Area in your Combo Area`;
-    case 'handToDeckTop': return `place ${plural(c.n, 'card')} from your hand on top of your deck`;
+    case 'handToDeckTop': return `place ${plural(c.n, 'card')} from your hand ${c.either ? 'at the top or bottom' : 'on top'} of your deck`;
+    case 'anyOf': return c.options.map((o) => o.map(describeCost).join(' and ')).join(' or ');
     case 'mill': return `place the top ${plural(c.n, 'card')} of your deck into your Drop`;
     case 'reveal': return `reveal 1 ${describeFilter(c.filter)} from your hand`;
     case 'dropToDeck': return `place ${c.n} ${describeFilter(c.filter ?? {}, 'card', true)} from your Drop at the bottom of your deck`;

@@ -26,7 +26,7 @@ export interface SearchOpts {
   /** When the chosen line swings with the Leader later, swing with it first (its draw may change the plan). */
   leaderFirst?: boolean;
   /** Don't consider wasteful moves: see prune(). */
-  prune?: { offCombo?: boolean; earlyDefense?: boolean | number; weakExtras?: boolean; chargeSpares?: boolean };
+  prune?: { offCombo?: boolean; earlyDefense?: boolean | number; weakExtras?: boolean; chargeSpares?: boolean; chargeBig?: number };
 }
 
 /**
@@ -36,9 +36,9 @@ export interface SearchOpts {
  * the time over 96 games (starters and player lists), at about the same speed.
  */
 export const SEARCH_LEVELS: Record<string, SearchOpts> = {
-  quick: { iterations: 48, horizon: 2, c: 0.7, plan: { beam: 6, depth: 14, finalists: 6, worlds: 8, deep: true } },
-  strong: { iterations: 160, horizon: 3, c: 0.7, plan: { beam: 8, depth: 16, finalists: 8, worlds: 12, deep: true } },
-  deep: { iterations: 500, horizon: 4, c: 0.6, plan: { beam: 10, depth: 18, finalists: 10, worlds: 20, deep: true } },
+  quick: { iterations: 48, horizon: 2, c: 0.7, prune: { chargeBig: 7 }, plan: { beam: 6, depth: 14, finalists: 6, worlds: 8, deep: true } },
+  strong: { iterations: 160, horizon: 3, c: 0.7, prune: { chargeBig: 7 }, plan: { beam: 8, depth: 16, finalists: 8, worlds: 12, deep: true } },
+  deep: { iterations: 500, horizon: 4, c: 0.6, prune: { chargeBig: 7 }, plan: { beam: 10, depth: 18, finalists: 10, worlds: 20, deep: true } },
 };
 
 const ctl: [Chooser, Chooser] = [defaultChooser, defaultChooser];
@@ -182,6 +182,13 @@ export class SearchPolicy implements Policy {
         return keepValue(s, u) + forEnergy - (ids.filter((x) => x === c.id).length > 1 ? 0.4 : 0) - (c.cost > me.energy.length + 3 ? 0.6 : 0);
       };
       charges.sort((a, b) => rank(a.uid) - rank(b.uid));
+      // chargeBig: with a hand this big and cards you can't afford yet, skipping the charge
+      // only strands them (the SS3 Goku that sat on 13 cards and 1 energy). On at 7 cards:
+      // 54.7% vs. off over 1,200 strong A/B games.
+      if (P.chargeBig && charges.length && me.hand.length >= P.chargeBig) {
+        const want = Math.min(7, Math.max(0, ...me.hand.map((u) => cardOf(s, u)).filter((c) => !compileCard(c).keywords.has('superCombo')).map((c) => c.cost)));
+        if (me.energy.length < want) return charges.slice(0, 3);
+      }
       return [{ k: 'noCharge' }, ...charges.slice(0, 3)];
     }
     return actions;

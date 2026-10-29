@@ -127,6 +127,9 @@ export function clearValueCache() {
 export const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s.p[s.inst[u].owner].leader));
 
 const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
+/** A body that can't attack and can't block: it only matters for its combo power and its effects. */
+export const isInert = (s: GameState, u: number) => hasKeyword(s, u, 'cantAttack') && (!hasKeyword(s, u, 'blocker') || hasKeyword(s, u, 'cantBlock'));
+const inertValue = (s: GameState, u: number, share: number) => (1 - share) * powerOf(s, u) / 10000 + share * comboPowerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
 
 /**
  * The opponent's removal: the target filter of every skill that KOs, bounces, bottoms or
@@ -317,6 +320,12 @@ export interface EvalWeights {
   legacyNeeds?: boolean;
   /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
   altWin?: number;
+  /**
+   * Share of a body's power that doesn't count when it can neither attack nor block (a Piccolo
+   * that "can't attack" with no Blocker): it threatens nothing, only its combo power and effects
+   * are worth anything, so it isn't worth spending removal or a combo on (0 = off).
+   */
+  inert?: number;
 }
 
 /** What one side has, feature by feature: the ingredients of a per-Leader evaluation. */
@@ -376,7 +385,7 @@ function handEvaluate(s: GameState, me: Side, W: EvalWeights): number {
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
     const exposed = W.restedRisk && s.active === p && s.stage !== 'over';
-    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1) * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
+    for (const u of pl.battle) v += W.boardBase + (W.inert && isInert(s, u) ? inertValue(s, u, W.inert) : boardValue(s, u)) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1) * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
     v += Math.min(pl.energy.length, 8) * W.energy;
     if (W.altWin && pl.life.length === 1 && altWinLive(s, other(p))) v -= W.altWin * (pl.battle.length ? 0.6 : 1);
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
@@ -479,6 +488,18 @@ export class HeuristicChooser implements Chooser {
       case 'target': return this.targets(s, req);
       case 'mode': {
         const e = req.effect;
+        if (req.about !== undefined) {
+          // Top or bottom of the deck: a card given up from hand goes to the bottom; a card
+          // looked at from the deck stays on top only if it can be played next turn.
+          const u = req.about, c = cardOf(s, u);
+          if (s.p[me].hand.includes(u)) return [1];
+          return [c.type === 'BATTLE' && c.cost <= s.p[me].energy.length + 1 ? 0 : 1];
+        }
+        if (req.labels) {
+          // Paying one of several ways: keep cards (deck top) over discarding them.
+          const i = req.options.find((o) => !/discard/i.test(req.labels![o] ?? ''));
+          return [i ?? req.options[0]];
+        }
         if (!e || e.t !== 'choose') return [0];
         let best = 0, bestV = -Infinity;
         e.options.forEach((list, i) => { const v = list.reduce((a, x) => a + effectValue(x), 0); if (v > bestV) { bestV = v; best = i; } });
