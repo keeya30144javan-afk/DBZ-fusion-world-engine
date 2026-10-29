@@ -251,6 +251,27 @@
     "Matchup notes (from the user's video): strong against Beast Gohan; against Vegito stay at 4 life (at 3 its mill finisher works through blockers); against Gogeta GT race them before their turn-6 SR; against Gogeta BR the SR and the 6-drop are hard to answer; play around Pinnacle when swinging with the 4-drop.",
     "Finisher: a double striker (the transcript calls it \"Namaku\") and big hand dumps, since the Fruit adds 15000 to a swing for free."
    ]
+  },
+  "FB10-025": {
+   "name": "Son Goku/Vegeta (Blue)",
+   "plan": "Potara fusion. The 1-cost Son Gokus (FB10-030, FB10-031) and Vegetas (FB10-038, FP-087) dig or mill a <Vegeta>/<Son Goku> and a <Potara> into the Drop, then their [Activate:Main] puts a Potara under them. Vegito FB10-040 evolves onto a Goku or Vegeta with a Potara under it and replays the [On Play] skills of the blue cards under it (Son Goku FB10-032 bottom-decks two cheap enemy cards, Vegeta FB10-039 returns a card from the Drop). Vegito FB10-121 (40000) draws 3, and once the opponent is at 2 life its hits mill 15 cards. The awakened Leader gets +10000 for each card under an [Evolve] card, so tall stacks make the Leader a big threat too. Final Kamehameha costs 1 with this Leader.",
+   "engines": [
+    "Potara engine: 1-cost Goku/Vegeta put <Vegeta>/<Son Goku> + <Potara> in the Drop, then pay 1 to place a Potara under themselves.",
+    "Vegito FB10-040 evolves onto a Potara-stacked Goku/Vegeta and re-runs the [On Play] skills underneath (removal + card return).",
+    "Vegito FB10-121: draw 3 on play; at opponent's 2 life or less each damage or battle KO mills 15.",
+    "Awakened Leader: +10000 per card under your chosen [Evolve] card when attacking.",
+    "Final Kamehameha (cost 1 here) and Trunks: Future (cost 1 with an evolved Vegito) for reach and protection."
+   ]
+  },
+  "FB10-097": {
+   "name": "Cell (Black)",
+   "plan": "Combo-from-the-board evolve. Cheap Androids and Cells hit the board (Android 17 FB10-101 searches, Cell FB10-107 filters, Cell FB10-108 refills from life), then are thrown into combos from the Battle Area: Android 17/18 FB10-102 can combo even while rested and draws, Android 18 FB10-104 discounts the next 6-cost Cell's [Evolve]. Using a board card in a combo turns on Cell FB10-109/110 (Drop or deck search), lets Cell FB10-112 untap, and makes Cell's Kamehameha cost 1. Evolve 1-cost Cell into 4-cost, then into 6-cost Cell: FB10-111 draws 2 and can't be KO'd, FB10-123 has [Double Strike] and grows with the Combo Area.",
+   "engines": [
+    "Board combos: FB10-102 (combo even while rested, draws), FB10-104 (cheaper 6-cost Cell evolve), Chi-Chi FB06-103 (combo another card from the Drop).",
+    "'Used a card from your Battle Area in a combo this turn' turns on FB10-109/110 searches, FB10-112's untap and a 1-cost Cell's Kamehameha.",
+    "Evolve ladder: 1-cost Cell → 4-cost Cell (1 energy) → 6-cost Cell (2-3 energy).",
+    "Awakened Leader (life 5 or less): pay 1 to play two ≪Android≫-only cards with combined cost 2 or less from hand."
+   ]
   }
  }
 }
