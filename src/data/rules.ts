@@ -26,6 +26,9 @@ export interface RulesConfig {
   evolveKeepsMode: boolean;
   /** Safety cap so a stalled simulation cannot loop forever. */
   maxTurns: number;
+  /** Official ban list: banned cards (0 copies) and restricted cards (1 copy). */
+  banned: string[];
+  restricted: string[];
 }
 
 export const DEFAULT_RULES: RulesConfig = {
@@ -44,7 +47,14 @@ export const DEFAULT_RULES: RulesConfig = {
   deckOutAtZero: true,
   evolveKeepsMode: true,
   maxTurns: 40,
+  // Bandai's Fusion World list from March 14, 2026 (Kefla FB02-013 was lifted then).
+  banned: ['FB01-005', 'FB01-056', 'FB02-031'],
+  restricted: ['FB04-085', 'FB04-094', 'FB04-095', 'SB01-011', 'SB01-015'],
 };
+
+/** How many copies of a card a deck may hold under the ban list. */
+export const copyLimit = (rules: RulesConfig, id: string) =>
+  rules.banned?.includes(id) ? 0 : rules.restricted?.includes(id) ? 1 : rules.maxCopies;
 
 export const RULE_NOTES: Record<string, string> = {
   attackOnPlayTurn: 'Official Rule Manual v1.20 p.9: "Battle Cards can attack in the same turn that they\'re played."',

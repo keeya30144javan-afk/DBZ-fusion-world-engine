@@ -1,7 +1,7 @@
 import { synergyBonus } from '../ai/synergy';
 import { nameHas } from '../engine/core';
 import { Card, Decklist } from '../data/types';
-import { DEFAULT_RULES, RulesConfig } from '../data/rules';
+import { DEFAULT_RULES, RulesConfig, copyLimit } from '../data/rules';
 import { cardFitsLeader, deckSize } from '../data/decks';
 import { compileCard } from '../effects/parse';
 import { cardValue } from '../ai/heuristics';
@@ -24,12 +24,12 @@ export const isSuperCombo = (c: Card) => compileCard(c).keywords.has('superCombo
 export function poolFor(cards: Record<string, Card>, leaderId: string, rules: RulesConfig = DEFAULT_RULES): Card[] {
   const leader = cards[leaderId];
   if (!leader) return [];
-  return Object.values(cards).filter((c) => c.type !== 'LEADER' && cardFitsLeader(c, leader, rules));
+  return Object.values(cards).filter((c) => c.type !== 'LEADER' && cardFitsLeader(c, leader, rules) && copyLimit(rules, c.id) > 0);
 }
 
 /** Copies in the deck after a change must respect copy and [Super Combo] limits. */
 export function legalCount(deck: Decklist, cards: Record<string, Card>, id: string, n: number, rules: RulesConfig = DEFAULT_RULES): boolean {
-  if (n > rules.maxCopies) return false;
+  if (n > copyLimit(rules, id)) return false;
   if (isSuperCombo(cards[id])) {
     let sc = 0;
     for (const [k, v] of Object.entries(deck.main)) if (k !== id && isSuperCombo(cards[k])) sc += v;
@@ -161,17 +161,17 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
     // The combo wall first: the best Super Combo card for this Leader, 4 copies.
     const supers = pool.filter((c) => c.type === 'BATTLE' && isSuperCombo(c)).sort((a, b) => b.comboPower - a.comboPower || val(b) - val(a));
     let scLeft = Math.min(SUPER_COMBOS, rules.superComboMax);
-    for (const c of supers) { if (scLeft <= 0) break; scLeft -= add(c, Math.min(rules.maxCopies, scLeft)); }
+    for (const c of supers) { if (scLeft <= 0) break; scLeft -= add(c, Math.min(copyLimit(rules, c.id), scLeft)); }
     // Extras only when they're worth more than an average Battle Card for this Leader.
     const battleVals = pool.filter((c) => c.type === 'BATTLE' && !isSuperCombo(c)).map(val).sort((a, b) => b - a);
     const bar = battleVals[Math.min(battleVals.length - 1, 30)] ?? 0;
     const extras = pool.filter((c) => c.type === 'EXTRA' && val(c) >= bar).sort((a, b) => val(b) - val(a));
     let extraSlots = EXTRA_MAX;
-    for (const c of extras) { if (extraSlots <= 0) break; extraSlots -= add(c, Math.min(rules.maxCopies, extraSlots)); }
+    for (const c of extras) { if (extraSlots <= 0) break; extraSlots -= add(c, Math.min(copyLimit(rules, c.id), extraSlots)); }
     for (const [lo, hi, slots] of CURVE) {
       let left = slots;
       const bucket = pool.filter((c) => c.type === 'BATTLE' && !isSuperCombo(c) && c.cost >= lo && c.cost <= hi).sort((a, b) => val(b) - val(a));
-      for (const c of bucket) { if (left <= 0) break; left -= add(c, Math.min(rules.maxCopies - (deck.main[c.id] ?? 0), left)); }
+      for (const c of bucket) { if (left <= 0) break; left -= add(c, Math.min(copyLimit(rules, c.id) - (deck.main[c.id] ?? 0), left)); }
     }
     dropUnbacked(deck, cards);
     // Top up (or trim) to the minimum size with the best remaining cards.

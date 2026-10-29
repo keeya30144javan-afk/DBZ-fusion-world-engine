@@ -124,3 +124,21 @@ test('Trunks: Future (FB11-035): "remove 2 or more Ki" lets the AI remove just e
   assert.ok(s.p[0].battle.includes(t3), 'the 3-cost Trunks was played (2 Ki removed)');
   assert.equal(s.p[0].deck[0], t2, 'the 2-drop went to the bottom of the deck');
 });
+
+test('the ban list: banned cards and extra copies of restricted ones make a deck illegal; the deck builder avoids them', async () => {
+  const { validateDeck } = await import('../src/data/decks');
+  const { seedDeck, mulberry } = await import('../src/builder/deckgen');
+  const { DEFAULT_RULES } = await import('../src/data/rules');
+  const base = meta.decks.find((d: any) => d.name === 'Jiren (Red)');
+  assert.deepEqual(validateDeck(base, cards, DEFAULT_RULES), []);
+  const leaderOf = (id: string) => Object.values(cards).find((c) => c.type === 'LEADER' && c.colors.some((x) => cards[id].colors.includes(x)))!.id;
+  const roshi = { name: 't', leader: leaderOf('FB01-005'), main: { 'FB01-005': 1 } };
+  assert.ok(validateDeck(roshi, cards, DEFAULT_RULES).some((e) => /banned/.test(e)));
+  const cell = { name: 't', leader: 'SB01-001', main: { 'SB01-011': 2 } };
+  assert.ok(validateDeck(cell, cards, DEFAULT_RULES).some((e) => /restricted/.test(e)));
+  const rng = mulberry(7);
+  for (let i = 0; i < 20; i++) {
+    const d = seedDeck(cards, 'SB01-001', rng, DEFAULT_RULES);
+    assert.ok((d.main['SB01-011'] ?? 0) <= 1 && (d.main['SB01-015'] ?? 0) <= 1, 'seeded Cell deck respects the restricted list');
+  }
+});

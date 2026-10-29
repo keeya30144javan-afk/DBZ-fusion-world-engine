@@ -109,6 +109,11 @@ export function CardsView() {
             <span class="hint">{RULE_NOTES.colorRule}</span>
           </label>
         </div>
+        <div class="note">
+          <b>Ban list</b> (Bandai, March 14, 2026; decks and Counter Lab follow it).{' '}
+          Banned: {(st.rules.banned ?? []).map((id) => `${st.cards[id]?.name ?? id} ${id}`).join(', ') || 'none'}.{' '}
+          Restricted to 1: {(st.rules.restricted ?? []).map((id) => `${st.cards[id]?.name ?? id} ${id}`).join(', ') || 'none'}.
+        </div>
       </div>
 
       <div class="panel stack">

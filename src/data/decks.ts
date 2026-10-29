@@ -1,5 +1,5 @@
 import { Card, Decklist } from './types';
-import { RulesConfig, DEFAULT_RULES } from './rules';
+import { RulesConfig, DEFAULT_RULES, copyLimit } from './rules';
 import { baseId } from './normalize';
 
 const ID_RE = /\b([A-Z]{1,4}\d{0,3}-\d{2,3}[a-z]?)\b/i;
@@ -71,7 +71,7 @@ export function validateDeck(deck: Decklist, cards: Record<string, Card>, rules:
     // Manual p.12: [Dragon Ball] cards ignore the 4-copy limit but total at most 7.
     const isDragonBall = /\[Dragon Ball\]/i.test(c.text);
     if (isDragonBall) dragonBalls += n;
-    else if (n > rules.maxCopies) errs.push(`${n} copies of ${id} (max ${rules.maxCopies})`);
+    else if (n > copyLimit(rules, id)) errs.push(copyLimit(rules, id) === 0 ? `${id} ${c.name} is banned` : `${n} copies of ${id} ${c.name} (max ${copyLimit(rules, id)}${copyLimit(rules, id) === 1 ? ': restricted' : ''})`);
     if (leader && !cardFitsLeader(c, leader, rules)) errs.push(`${id} (${c.colors.join('/')}) is off-colour for ${leader.name}`);
     if (hasKeyword(c, 'Super Combo')) superCombo += n;
   }
