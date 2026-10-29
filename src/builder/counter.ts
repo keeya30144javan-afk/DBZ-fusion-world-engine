@@ -266,14 +266,15 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   }
 
   /** A short series with the searching AI on both sides for the top candidates. */
-  async function rerank(pool: Scored[], label: string, offer = true) {
+  async function rerank(pool: Scored[], label: string, offer = true, all?: { games: number }) {
     if (!rerankLevel || isCancelled()) return;
-    const picks = pool.slice().sort(byRank).filter((c) => searchGames(c) < E.rerankGames * nT * 2).slice(0, E.rerank);
+    const picks = all ? pool.slice() : pool.slice().sort(byRank).filter((c) => searchGames(c) < E.rerankGames * nT * 2).slice(0, E.rerank);
+    const perPick = all?.games ?? E.rerankGames;
     const jobs: MatchJob[] = [];
     const map: [number, number][] = [];
     picks.forEach((c, ci) => targets.forEach((t, ti) => {
-      for (let g = 0; g < E.rerankGames; g += 4) {
-        jobs.push({ a: c.deck, b: t.deck, seeds: freshSeeds(Math.min(4, E.rerankGames - g)).map((x) => x + 2_000_000), level: rerankLevel, track: true, rules });
+      for (let g = 0; g < perPick; g += 4) {
+        jobs.push({ a: c.deck, b: t.deck, seeds: freshSeeds(Math.min(4, perPick - g)).map((x) => x + 2_000_000), level: rerankLevel, track: true, rules });
         map.push([ci, ti]);
       }
     }));
@@ -407,12 +408,19 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   const unplayed = baselines.filter((b) => b.res.every((r) => r.games === 0));
   if (unplayed.length > 1 && !isCancelled()) {
     setStep({ phase: 'validate', message: `Checking ${unplayed.length} known lists against the target, to find the bar to beat`, step: { label: 'Known lists', done: 0, total: 1 } });
-    await screen(unplayed, E.screen);
-    // Successive halving: one short series can bury the real best list on a bad streak, so
-    // the top third get more games before the top few are checked with the searching AI.
-    const contenders = unplayed.slice().sort(byRank).slice(0, Math.max(3, Math.ceil(unplayed.length / 3)));
-    await screen(contenders, E.screen * 2);
-    await rerank(contenders, 'Known lists', false);
+    // Searching AI from the start: the fast AI misplays some decks badly (SS3 Goku trading
+    // life for cards), so a fast screen buried the real best list. There are only a couple of
+    // dozen known lists, so they can afford it: every list gets a short series, the top third
+    // get another before the baseline is chosen.
+    if (rerankLevel) {
+      await rerank(unplayed, 'Known lists', false, { games: E.rerankGames });
+      const contenders = unplayed.slice().sort(byRank).slice(0, Math.max(3, Math.ceil(unplayed.length / 3)));
+      await rerank(contenders, 'Known lists, closer look', false, { games: E.rerankGames * 2 });
+    } else {
+      await screen(unplayed, E.screen);
+      const contenders = unplayed.slice().sort(byRank).slice(0, Math.max(3, Math.ceil(unplayed.length / 3)));
+      await screen(contenders, E.screen * 2);
+    }
   }
   baselines.sort(byRank);
   const baselineScored = baselines[0];
