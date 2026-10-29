@@ -314,6 +314,12 @@ function doEvolve(s: GameState, uid: number, bases: number[], ctl: Choosers) {
   if (ev.extraCost?.length) payCosts(s, uid, ev.extraCost, ctl);
   const rested = s.rules.evolveKeepsMode && bases.some((b) => me.battle.includes(b) && s.inst[b].rested);
   const at = bases.some((b) => me.battle.includes(b)) ? me.battle.indexOf(bases.find((b) => me.battle.includes(b))!) : me.battle.length;
+  // Rule 14-5-2: power changes, Ki and being in battle carry over to the card placed on top; other continuous effects don't.
+  const live = bases.filter((b) => me.battle.includes(b));
+  const ki = live.reduce((n, b) => n + s.inst[b].ki, 0);
+  const mods = live.flatMap((b) => s.inst[b].mods);
+  const basePowerSet = live.map((b) => s.inst[b].basePowerSet).find(Boolean);
+  const kiRemovedBattle = live.reduce((n, b) => n + (s.inst[b].kiRemovedBattle ?? 0), 0) || undefined;
   const under: number[] = [];
   for (const b of bases) {
     under.push(...(s.inst[b].under ?? []), b);
@@ -325,6 +331,11 @@ function doEvolve(s: GameState, uid: number, bases: number[], ctl: Choosers) {
   me.hand.splice(me.hand.indexOf(uid), 1);
   resetInst(s.inst[uid]);
   s.inst[uid].rested = rested;
+  Object.assign(s.inst[uid], { ki, mods, basePowerSet, kiRemovedBattle });
+  if (s.battle) {
+    if (live.includes(s.battle.attacker)) s.battle.attacker = uid;
+    if (live.includes(s.battle.target)) s.battle.target = uid;
+  }
   s.inst[uid].under = under;
   s.inst[uid].playedTurn = s.turn;
   s.inst[uid].playedByEvolve = true;

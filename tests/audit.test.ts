@@ -159,3 +159,31 @@ test("a triggered skill with a cost is optional: Slug (FB10-082) asks before dis
   koCard(s2, slug2, ctl);
   assert.ok(s2.p[0].battle.includes(slug2), 'saying yes (the AI default) plays it again');
 });
+
+test('Evolve (rule 14-5-2): Ki and power changes carry over to the evolved card; granted keywords do not', async () => {
+  const { evolveOptions } = await import('../src/engine/game');
+  const s = fresh();
+  for (let i = 0; i < 8; i++) spawn(s, 0, 'FS01-02', 'energy');
+  for (const u of s.p[0].energy) s.inst[u].rested = false;
+  for (const evo of Object.values(cards)) {
+    if (evo.type !== 'BATTLE' || !compileCard(evo).evolve) continue;
+    const up = spawn(s, 0, evo.id, 'hand');
+    for (const base of Object.values(cards)) {
+      if (base.type !== 'BATTLE' || base.id === evo.id) continue;
+      const b = spawn(s, 0, base.id, 'battle');
+      const m = evolveOptions(s, up)[0];
+      if (!m) { s.p[0].battle.pop(); continue; }
+      s.inst[b].ki = 2;
+      s.inst[b].mods.push({ amount: 5000, until: s.turn });
+      s.inst[b].grants.push({ kw: 'blocker' as any, until: s.turn });
+      step(s, m, ctl);
+      assert.ok(s.p[0].battle.includes(up), `${evo.id} evolved from ${base.id}`);
+      assert.equal(s.inst[up].ki, 2, 'Ki carried over');
+      assert.deepEqual(s.inst[up].mods, [{ amount: 5000, until: s.turn }], 'power change carried over');
+      assert.equal(s.inst[up].grants.length, 0, 'other continuous effects are not carried over');
+      return;
+    }
+    s.p[0].hand.pop();
+  }
+  assert.fail('no evolve pair found');
+});
