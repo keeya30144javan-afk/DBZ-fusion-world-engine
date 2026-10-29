@@ -142,3 +142,20 @@ test('the ban list: banned cards and extra copies of restricted ones make a deck
     assert.ok((d.main['SB01-011'] ?? 0) <= 1 && (d.main['SB01-015'] ?? 0) <= 1, 'seeded Cell deck respects the restricted list');
   }
 });
+
+test("a triggered skill with a cost is optional: Slug (FB10-082) asks before discarding", () => {
+  const s = fresh();
+  const slug = spawn(s, 0, 'FB10-082', 'battle');
+  const hand = s.p[0].hand.length;
+  const asked: string[] = [];
+  const no: any = { choose: (st: GameState, req: any) => { if (req.kind === 'yesno') { asked.push(req.question ?? ''); return []; } return defaultChooser.choose(st, req); } };
+  koCard(s, slug, [no, ctl[1]]);
+  assert.equal(asked.length, 1);
+  assert.match(asked[0], /Discard 1 card/i);
+  assert.equal(s.p[0].hand.length, hand, 'nothing discarded');
+  assert.ok(s.p[0].drop.includes(slug), 'Slug stays in the Drop');
+  const s2 = fresh();
+  const slug2 = spawn(s2, 0, 'FB10-082', 'battle');
+  koCard(s2, slug2, ctl);
+  assert.ok(s2.p[0].battle.includes(slug2), 'saying yes (the AI default) plays it again');
+});

@@ -1,6 +1,6 @@
 import { Ability, Cost, Effect, Filter, Target } from '../effects/types';
 import { compileCard } from '../effects/parse';
-import { describeCost } from '../effects/describe';
+import { describeCost, describeEffect } from '../effects/describe';
 import {
   EvalCtx, GameState, PlayerMod, Side, abilitiesOf, activeMods, cardOf, condsHold, costOf, countOf, emit, hasKeyword, inPlay, isLeader, log, matchesFilter, moveTo, nameOf,
   other, planPayment, payPlan, powerOf, rand, removeFrom, resetInst, shuffle, staticRules, turnMatches, valOf, withCtx, zoneOf,
@@ -21,6 +21,8 @@ export interface ChoiceReq {
   labels?: string[];
   /** The card a 'mode' question is about (where to put it). */
   about?: number;
+  /** The question to show a person for a yes/no (what the skill would do). */
+  question?: string;
   /** Choosing how many Ki to remove (options are the amounts). */
   kiChoice?: boolean;
   /** Resting cards to pay an attack tax ("can't attack unless they switch 1 Active card to Rest Mode"). */
@@ -208,7 +210,9 @@ function tryReplace(s: GameState, uid: number, ko: boolean, by: ByWhom, ctl: Cho
       if ((r.by === 'opp' && !opp) || (r.by === 'oppSkill' && !oppSkill)) continue;
       if (!turnMatches(s, owner, ab.turn) || !condsHold(s, owner, src, ab.cond) || !canPayCosts(s, src, ab.cost)) continue;
       if (ab.once && s.p[owner].usedOnce.includes(onceKey(s, src, i))) continue;
-      const yes = ctl[owner].choose(s, { kind: 'yesno', player: owner, src, options: [1], min: 0, max: 1, intent: 'gain' });
+      const what = [ab.cost.map(describeCost).join(', '), ...ab.effects.map((e) => describeEffect(e))].filter(Boolean).join(': ');
+      const question = `${nameOf(s, uid)} is about to be ${ko ? "KO'd" : 'removed'}. Use ${nameOf(s, src)}'s skill to save it? (${what} instead)`;
+      const yes = ctl[owner].choose(s, { kind: 'yesno', player: owner, src, options: [1], min: 0, max: 1, intent: 'gain', question });
       if (!yes.length) continue;
       if (!busy) replacing.set(s, (busy = new Set()));
       busy.add(uid);
@@ -285,6 +289,13 @@ export function fireTriggers(s: GameState, uid: number, timing: Ability['timing'
     if (!turnMatches(s, owner, ab.turn)) continue;
     if (ab.once && s.p[owner].usedOnce.includes(onceKey(s, uid, i))) continue;
     if (SUBJECT_TIMINGS.has(timing) && (subject === undefined || (ab.trigger && !matchesFilter(s, subject, ab.trigger, uid)))) continue;
+    // A triggered skill with a cost ("Discard 1 card from your hand: ...") is the player's choice:
+    // not paying just means the effect doesn't happen.
+    if (ab.cost.length && condsHold(s, owner, uid, ab.cond) && canPayCosts(s, uid, ab.cost)) {
+      const what = `${ab.cost.map(describeCost).join(', ')}: ${ab.effects.map((e) => describeEffect(e)).join('. Then, ')}`;
+      const yes = ctl[owner].choose(s, { kind: 'yesno', player: owner, src: uid, options: [1], min: 0, max: 1, intent: 'gain', question: `Use ${nameOf(s, uid)}'s skill? (${what})` });
+      if (!yes.length) continue;
+    }
     resolveAbility(s, uid, ab, i, ctl);
   }
 }
