@@ -239,6 +239,18 @@
     "Tech: Kaio-Ken X20 as a single copy (pitch it to the Field early, recur it with ST01-064 when needed), the 2-cost Namek Goku as a big Drop-scaling swing, a promo 4-drop that removes a 4-drop on play.",
     "Weaknesses: almost no defence (Super Combos only) and little early removal; most combo power comes from the hand, so it bleeds cards. Don't leave the Leader rested going into a Yellow Broly's turn 5 (it can lock it down). Against SS3 Goku, its SR keeps it at 3 life and out of kill range, so you need it at 2 before the finisher turn. In the mirror, whoever gets Krillin and the chain out first usually wins."
    ]
+  },
+  "FB08-049": {
+   "name": "Turles (Green)",
+   "plan": "Ramp and value around the Fruit of the Tree of Might (FB08-072): a 3-cost Extra that gives +15000 in battle and then puts itself into your energy (while you have 5 or less energy). The awakened Leader (flips at 4 life) uses one Fruit a turn for free, and The Tree of Might (FB08-071, a Field) pulls the Fruit back from energy every turn: Fruit on offence from one source, on defence from the other, every turn. The core chain from turn 4: Turles FB10-062 (4) swings 30000, takes the Fruit back from energy, goes to the Drop to play a 5-cost Turles from hand and ramps the top card of the deck; Turles FB08-059 (5) then plays a 3-cost Greatest Showdown card or Field for 1 life or energy. Turles FB10-061 (3) takes 2 life into hand on play and, with a Fruit in energy, KOs cards with costs adding up to 2 on attack. Kill Driver (1) KOs a cost 5-or-less card while a Fruit is in energy.",
+   "engines": [
+    "Fruit loop: use the Fruit (free with the awakened Leader), it ramps itself into energy, The Tree of Might or FB10-062 brings it back to hand. Keep energy at 5 or less or the Fruit stops ramping and stops being free.",
+    "Going second is strong: the 3-drop or the 4-drop come down a turn early with the energy marker. Taking early life on purpose (FB10-061, early hits) speeds up the awaken and ramps through the Fruit.",
+    "Early removal: Turles FB10-061 clears 1-2 cheap cards on attack (great against evolve and 2-drop starts), Kill Driver handles up to cost 5. Nothing in the deck answers cost-6 bodies, its main weakness.",
+    "Defence: several Blockers, the Fruit as a free 15000 every opponent turn, and the promo Turles that heals back to 3 life on attack (not yet in paper or in this card pool).",
+    "Matchup notes (from the user's video): strong against Beast Gohan; against Vegito stay at 4 life (at 3 its mill finisher works through blockers); against Gogeta GT race them before their turn-6 SR; against Gogeta BR the SR and the 6-drop are hard to answer; play around Pinnacle when swinging with the 4-drop.",
+    "Finisher: a double striker (the transcript calls it \"Namaku\") and big hand dumps, since the Fruit adds 15000 to a swing for free."
+   ]
   }
  }
 }

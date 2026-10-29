@@ -1631,8 +1631,21 @@
     "once": true,
     "cost": [
      {
-      "t": "lifeToDrop",
-      "n": 1
+      "t": "anyOf",
+      "options": [
+       [
+        {
+         "t": "energyToDrop",
+         "n": 1
+        }
+       ],
+       [
+        {
+         "t": "lifeToDrop",
+         "n": 1
+        }
+       ]
+      ]
      }
     ],
     "effects": [
@@ -1659,15 +1672,12 @@
       "n": 1,
       "extraType": true
      }
-    ],
-    "unparsed": [
-     "(the cost may instead be 1 of your energy placed into your Drop)"
     ]
    }
   ],
   "check": {
-   "ok": false,
-   "note": "parts the engine can't read: (the cost may instead be 1 of your energy placed into your Drop)"
+   "ok": true,
+   "note": "cost: 1 of your life OR energy into the Drop (from the user's Turles video)"
   }
  },
  "FB08-060": {

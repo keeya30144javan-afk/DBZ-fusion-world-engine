@@ -22,7 +22,7 @@
     "FS01-15": 3,
     "FS01-16": 3
    },
-   "share": 0.0116,
+   "share": 0.0112,
    "notes": "Assumed list"
   },
   {
@@ -45,7 +45,7 @@
     "FS02-15": 3,
     "FS02-16": 3
    },
-   "share": 0.0116,
+   "share": 0.0112,
    "notes": "Assumed list"
   },
   {
@@ -68,7 +68,7 @@
     "FS03-15": 3,
     "FS03-16": 3
    },
-   "share": 0.0116,
+   "share": 0.0112,
    "notes": "Assumed list"
   },
   {
@@ -91,7 +91,7 @@
     "FS04-15": 3,
     "FS04-16": 3
    },
-   "share": 0.0116,
+   "share": 0.0112,
    "notes": "Assumed list"
   },
   {
@@ -116,7 +116,7 @@
     "FB06-013": 3,
     "FS06-07": 4
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -141,7 +141,7 @@
     "FS02-13": 2,
     "FS02-15": 2
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -169,7 +169,7 @@
     "SB01-031": 4,
     "ST01-052": 4
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -190,7 +190,7 @@
     "ST01-051": 4,
     "ST01-052": 4
    },
-   "share": 0.0339,
+   "share": 0.0327,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -214,7 +214,7 @@
     "ST01-016": 4,
     "ST01-017": 1
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -237,7 +237,7 @@
     "FB10-017": 2,
     "FP-070": 4
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -260,7 +260,7 @@
     "FB09-123": 3,
     "FP-074": 4
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -282,7 +282,7 @@
     "FS11-07": 4,
     "ST01-052": 4
    },
-   "share": 0.0339,
+   "share": 0.0327,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -307,7 +307,7 @@
     "FP-072": 4,
     "FP-076": 1
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -333,7 +333,7 @@
     "ST01-026": 2,
     "ST01-070": 3
    },
-   "share": 0.0339,
+   "share": 0.0327,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -358,7 +358,7 @@
     "FP-071": 3,
     "FP-075": 1
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -380,7 +380,7 @@
     "FB11-122": 4,
     "FB11-093": 4
    },
-   "share": 0.0339,
+   "share": 0.0327,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -407,7 +407,7 @@
     "ST01-046": 1,
     "ST01-052": 4
    },
-   "share": 0.0678,
+   "share": 0.0653,
    "notes": "Player list (shared by the user, Oct 2026)"
   },
   {
@@ -430,7 +430,7 @@
     "FB11-122": 4,
     "FB11-093": 4
    },
-   "share": 0.034,
+   "share": 0.0328,
    "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
   },
   {
@@ -455,7 +455,7 @@
     "ST01-070": 3,
     "ST01-025": 4
    },
-   "share": 0.034,
+   "share": 0.0328,
    "notes": "Deck profile list from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
   },
   {
@@ -478,7 +478,7 @@
     "FB09-079": 4,
     "ST01-052": 4
    },
-   "share": 0.034,
+   "share": 0.0328,
    "notes": "God-rank ladder list by Hamza, from Hawk Dragon Ball Nest (shared by the user, Oct 2026)"
   },
   {
@@ -500,7 +500,7 @@
     "ST01-052": 4,
     "ST01-051": 4
    },
-   "share": 0.034,
+   "share": 0.0328,
    "notes": "Hawk Dragon Ball Nest profile list (shared by the user, Oct 2026); 49 as pasted, 50th card (4th Broly ST01-051) chosen by Claude"
   },
   {
@@ -523,7 +523,7 @@
     "FB10-079": 4,
     "FB10-095": 4
    },
-   "share": 0.0353,
+   "share": 0.034,
    "notes": "Player list (shared by the user as an image, Oct 2026)"
   },
   {
@@ -544,8 +544,30 @@
     "FB11-037": 4,
     "FB11-031": 4
    },
-   "share": 0.0366,
+   "share": 0.0353,
    "notes": "YouTube run-through list by Joey (FB11 Trunks), shared by the user, Oct 2026"
+  },
+  {
+   "name": "Trunks: Future (Blue, FB11, list 2)",
+   "leader": "FB11-025",
+   "main": {
+    "FB01-050": 3,
+    "FB01-065": 4,
+    "FB06-027": 4,
+    "FB07-039": 4,
+    "FB10-036": 4,
+    "FB11-031": 4,
+    "FB11-033": 4,
+    "FB11-035": 4,
+    "FB11-036": 1,
+    "FB11-037": 3,
+    "FB11-038": 4,
+    "FB11-040": 4,
+    "FB11-041": 3,
+    "FB11-046": 4
+   },
+   "share": 0.0366,
+   "notes": "Player list (trunksfb11) shared by the user, Oct 2026"
   }
  ]
 }

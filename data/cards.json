@@ -89343,15 +89343,26 @@
       "once": true,
       "cost": [
        {
-        "t": "lifeToDrop",
-        "n": 1
+        "t": "anyOf",
+        "options": [
+         [
+          {
+           "t": "energyToDrop",
+           "n": 1
+          }
+         ],
+         [
+          {
+           "t": "lifeToDrop",
+           "n": 1
+          }
+         ]
+        ]
        }
       ],
       "cond": [],
       "text": "",
-      "unparsed": [
-       "(the cost may instead be 1 of your energy placed into your Drop)"
-      ],
+      "unparsed": [],
       "timing": "activateMain",
       "effects": [
        {
@@ -89381,8 +89392,8 @@
      }
     ],
     "check": {
-     "ok": false,
-     "note": "parts the engine can't read: (the cost may instead be 1 of your energy placed into your Drop)"
+     "ok": true,
+     "note": "cost: 1 of your life OR energy into the Drop (from the user's Turles video)"
     },
     "keywords": [],
     "source": "claude",
