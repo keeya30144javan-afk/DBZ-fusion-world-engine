@@ -2,9 +2,9 @@
  * Find a counter to a deck from the command line.
  *   npx tsx cli/counter.ts --target "Starter: Vegeta (Blue)" [--effort quick|standard|thorough]
  *        [--threshold 0.55] [--confidence 0.95] [--level fast|quick|strong] [--deck file.txt]
- *        [--blind] (build from scratch; known lists are only the bar) [--leaders ID,ID]
+ *        [--blind] (build from scratch; known lists are only the bar) [--leaders ID,ID] [--json out.json]
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { CardDB, Meta } from '../src/data/types';
 import { deckToText, parseDecklist } from '../src/data/decks';
 import { findCounter, localRunner } from '../src/builder/counter';
@@ -57,4 +57,9 @@ if (report.best) {
 if (report.nearestKnown) console.log(`Nearest known list: ${report.nearestKnown.name}, ${(report.nearestKnown.overlap * 100).toFixed(0)}% of cards in common`);
 if (report.baseline) console.log(`Baseline "${report.baseline.deck.name}": ${(report.baseline.rate * 100).toFixed(1)}% [${(report.baseline.lo * 100).toFixed(1)}-${(report.baseline.hi * 100).toFixed(1)}]`);
 for (const a of report.alternatives) console.log(`Alternative ${a.deck.name}: ${(a.rate * 100).toFixed(1)}% [${(a.lo * 100).toFixed(1)}-${(a.hi * 100).toFixed(1)}]`);
+if (report.knownBetter) console.log(`KNOWN BETTER: ${report.knownBetter.deck.name} ${(report.knownBetter.rate * 100).toFixed(1)}%`);
 console.log(`\n${report.gamesPlayed} games in ${(report.ms / 1000).toFixed(1)}s`);
+if (arg('json')) {
+  const v = (x: any) => x && { name: x.deck.name, leader: x.deck.leader, origin: x.origin, rate: x.rate, lo: x.lo, hi: x.hi, games: x.games, deck: deckToText(x.deck, db.cards) };
+  writeFileSync(arg('json')!, JSON.stringify({ target: target.name, verdict: report.verdict, headline: report.headline, reasons: report.reasons, best: v(report.best), baseline: v(report.baseline), knownBetter: v(report.knownBetter), alternatives: report.alternatives.map(v), nearestKnown: report.nearestKnown, gamesPlayed: report.gamesPlayed, ms: report.ms }, null, 1));
+}

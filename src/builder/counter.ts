@@ -108,6 +108,8 @@ export interface CounterReport {
   nearestKnown?: { name: string; overlap: number } | null;
   /** True when the search built every candidate itself (known lists were only the bar to beat). */
   blind?: boolean;
+  /** Building from scratch: a known list that clearly beat the engine's best deck. */
+  knownBetter?: Validated | null;
   warnings: string[];
   gamesPlayed: number;
   ms: number;
@@ -264,7 +266,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   }
 
   /** A short series with the searching AI on both sides for the top candidates. */
-  async function rerank(pool: Scored[], label: string) {
+  async function rerank(pool: Scored[], label: string, offer = true) {
     if (!rerankLevel || isCancelled()) return;
     const picks = pool.slice().sort(byRank).filter((c) => searchGames(c) < E.rerankGames * nT * 2).slice(0, E.rerank);
     const jobs: MatchJob[] = [];
@@ -286,7 +288,7 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     });
     results.forEach((r, i) => { const [ci, ti] = map[i]; mergeResults(picks[ci].sres[ti], r); });
     recalibrate();
-    offerBest(pool);
+    if (offer) offerBest(pool);
   }
 
   // ---- seed population
@@ -397,7 +399,21 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   }
   // Baseline: the best known deck that is not just one of the finalists. If the
   // user gave no meta decks, the target itself (the mirror) is the baseline.
-  const baselines = (opts.known?.length ? opts.known : targets.map((t) => t.deck)).map((d) => seen.get(deckKey(d)) ?? newScored(cloneDeck(d), `known: ${d.name}`));
+  const baselines = (opts.known?.length ? opts.known : targets.map((t) => t.deck))
+    .filter((d) => !validateDeck(d, cards, rules).length)
+    .map((d) => seen.get(deckKey(d)) ?? newScored(cloneDeck(d), `known: ${d.name}`));
+  // Known lists the search never played (all of them, building from scratch) get screened now,
+  // so the baseline really is the best known list and not whichever comes first.
+  const unplayed = baselines.filter((b) => b.res.every((r) => r.games === 0));
+  if (unplayed.length > 1 && !isCancelled()) {
+    setStep({ phase: 'validate', message: `Checking ${unplayed.length} known lists against the target, to find the bar to beat`, step: { label: 'Known lists', done: 0, total: 1 } });
+    await screen(unplayed, E.screen);
+    // Successive halving: one short series can bury the real best list on a bad streak, so
+    // the top third get more games before the top few are checked with the searching AI.
+    const contenders = unplayed.slice().sort(byRank).slice(0, Math.max(3, Math.ceil(unplayed.length / 3)));
+    await screen(contenders, E.screen * 2);
+    await rerank(contenders, 'Known lists', false);
+  }
   baselines.sort(byRank);
   const baselineScored = baselines[0];
 
@@ -469,7 +485,12 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
   }
 
   validated.sort((a, b) => b.lo - a.lo || b.rate - a.rate);
-  const best = validated[0] ?? null;
+  // Building from scratch, the answer is the engine's own deck; a known list that does better is
+  // reported next to it (knownBetter), never swapped in.
+  const own = opts.blind && baseline ? validated.filter((v) => v !== baseline) : validated;
+  const best = own[0] ?? validated[0] ?? null;
+  const knownBetter = opts.blind && baseline && best && best !== baseline
+    && diffZ(baseline.rate * baseline.games, baseline.games, best.rate * best.games, best.games) > 1.645 ? baseline : null;
 
   // ---- verdict
   const reasons: string[] = [];
@@ -497,7 +518,8 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
       headline = `No reliable counter found. The best candidate wins ${pct(best.rate)} (range ${pct(best.lo)}-${pct(best.hi)}), which does not clear your ${pct(opts.threshold)} bar.`;
       reasons.push('Recommending something anyway would be guessing, so this is a real "no".');
     }
-    if (!beatsBaseline && baseline && best.lo < opts.threshold) reasons.push(`It is not clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`);
+    if (!beatsBaseline && baseline && best.lo < opts.threshold && !knownBetter) reasons.push(`It is not clearly better than just playing "${baseline.deck.name}" (${pct(baseline.rate)}).`);
+    if (knownBetter) reasons.unshift(`A known list does better: "${knownBetter.deck.name}" wins ${pct(knownBetter.rate)} against this target, against ${pct(best.rate)} for the deck built from scratch. The search did not rediscover a deck like it; try "Use known lists", or more effort.`);
   }
   if (best) {
     const own = coverageOf(best.deck, cards);
@@ -530,8 +552,8 @@ export async function findCounter(cards: Record<string, Card>, opts: CounterOpti
     }
   }
   return {
-    verdict, headline, reasons, best, nearestKnown, blind: !!opts.blind,
-    alternatives: validated.slice(1),
+    verdict, headline, reasons, best, nearestKnown, blind: !!opts.blind, knownBetter,
+    alternatives: validated.filter((v) => v !== best),
     baseline, keyCards,
     coverage: best ? [...coverage, { deck: best.deck.name, ...coverageOf(best.deck, cards) }] : coverage,
     warnings, gamesPlayed, ms: Date.now() - t0,

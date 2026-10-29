@@ -223,7 +223,13 @@ function Report({ rec }: { rec: RunRecord }) {
             {' '}Built-in assumptions: 4 Super Combos and a starting cost curve (the search can drift from the curve).
           </p>
         )}
-        {r.reasons.length > 0 && <ul>{r.reasons.map((x) => <li key={x}>{x}</li>)}</ul>}
+        {r.knownBetter && (
+          <div class="panel err" role="note">
+            <b>A known list beats this.</b> "{r.knownBetter.deck.name}" wins {(r.knownBetter.rate * 100).toFixed(1)}% against the target over {r.knownBetter.games} games, more than the deck built from scratch. The search didn't rediscover a deck like it.
+            {rec.targetDeck && <div class="row" style={{ marginTop: '6px' }}><button class="btn small" onClick={() => store.requestPlay(r.knownBetter!.deck, rec.targetDeck)}>Play it against the target</button></div>}
+          </div>
+        )}
+        {r.reasons.filter((x) => !r.knownBetter || !x.startsWith('A known list does better')).length > 0 && <ul>{r.reasons.filter((x) => !r.knownBetter || !x.startsWith('A known list does better')).map((x) => <li key={x}>{x}</li>)}</ul>}
         {unreviewedIds(r).length > 0 && (
           <div class="row"><button class="btn small" onClick={() => store.focusAudit(unreviewedIds(r))}>Review these {unreviewedIds(r).length} cards</button></div>
         )}
