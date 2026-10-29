@@ -128,6 +128,12 @@ export function dealDamage(s: GameState, p: Side, n: number, crit: boolean, ctl:
   takeLife(s, p, n, crit, ctl);
 }
 
+/** Flip the Leader: power changes and Ki carry over, granted keywords ([Critical]...) don't (official Q635). */
+export function awakenLeader(s: GameState, p: Side) {
+  s.p[p].awakened = true;
+  s.inst[s.p[p].leader].grants = [];
+}
+
 /** Cards on a player's field whose skills are live: Leader, Battle Cards, Field. */
 export function fieldOf(s: GameState, p: Side): number[] {
   const me = s.p[p];
@@ -171,12 +177,19 @@ export function koCard(s: GameState, uid: number, ctl: Choosers, by: ByWhom = {}
   log(s, () => `${nameOf(s, uid)} is KO'd`);
   emit(s, { t: 'ko', p: owner, id: s.inst[uid].id });
   emit(s, { t: 'toDrop', p: owner, id: s.inst[uid].id, uid });
+  // A KO by a skill (or its cost) triggers [When KO'd] once that skill has finished resolving
+  // (official Q587/Q591: Boujack switches to Active before the KO'd Zangya draws).
+  if (s.skillBy !== undefined) (s.removals ??= []).push({ uid, owner, by: s.skillBy, kind: 'ko' });
+  else firedKO(s, uid, owner, ctl);
+  return true;
+}
+
+function firedKO(s: GameState, uid: number, owner: Side, ctl: Choosers) {
   fireTriggers(s, uid, 'whenKOd', ctl);
   for (const u of fieldOf(s, owner)) {
     if (s.stage === 'over') break;
     fireTriggers(s, u, 'whenAllyKOd', ctl, uid);
   }
-  return true;
 }
 
 /** Can an effect from `by` take this card out of the Battle Area? (A replacement effect may step in instead.) */
@@ -363,7 +376,8 @@ export function canPayCosts(s: GameState, uid: number, costs: Cost[], excludeFro
       case 'restEnergy': energyNeeded += Math.max(0, c.n - skillDiscountOf(s, uid)); break;
       case 'lifeToHand': if (!c.all && me.life.length < c.n) return false; break;
       case 'lifeToDrop': if (me.life.length < c.n) return false; break;
-      case 'takeDamage': if (me.life.length < c.n) return false; break;
+      // Q305: while "negate the next damage" is up, damage can't be taken to pay a cost.
+      case 'takeDamage': if (me.life.length < c.n || (me.mods ?? []).some((m) => m.kind === 'shield' && m.until >= s.turn)) return false; break;
       case 'removeMarker': if (me.markers < c.n) return false; break;
       case 'energyToHand': if (me.energy.filter((u) => matchesFilter(s, u, c.filter, uid)).length < c.n) return false; break;
       case 'energyToDeckBottom': if (me.energy.length < c.n) return false; break;
@@ -667,6 +681,7 @@ export function fireRemovals(s: GameState, ctl: Choosers) {
       continue;
     }
     const r = s.removals!.shift()!;
+    if (r.kind === 'ko') { firedKO(s, r.uid, r.owner, ctl); continue; }
     if (r.kind === 'energyDrop') {
       const outer = s.causeSrc;
       s.causeSrc = r.bySrc;
@@ -1018,7 +1033,7 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'cantBlock': if (s.battle) s.battle.cantBlock = true; return;
     case 'damageLeader': dealDamage(s, other(owner), e.n, false, ctl); return;
     case 'flipLeader': {
-      if (!me.awakened) { me.awakened = true; log(s, () => `P${owner} awakens ${nameOf(s, me.leader)}`); }
+      if (!me.awakened) { awakenLeader(s, owner); log(s, () => `P${owner} awakens ${nameOf(s, me.leader)}`); }
       return;
     }
     case 'ki': {

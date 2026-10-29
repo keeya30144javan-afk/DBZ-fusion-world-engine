@@ -177,7 +177,7 @@ export interface GameState {
   /** Bumped whenever cards in play or their active abilities change (cache key for auras). */
   zoneRev?: number;
   /** Battle Cards that left a Battle Area during the current skill, for removal triggers. */
-  removals?: { uid: number; owner: Side; by: Side; to?: Zone; kind?: 'battle' | 'energyDrop'; bySrc?: number }[];
+  removals?: { uid: number; owner: Side; by: Side; to?: Zone; kind?: 'battle' | 'energyDrop' | 'ko'; bySrc?: number }[];
   /** The card whose skill is resolving right now. */
   skillSrc?: number;
   /** The card whose skill caused the trigger now firing (for "by your Leader's skill"). */

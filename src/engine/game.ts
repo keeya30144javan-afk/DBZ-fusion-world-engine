@@ -9,7 +9,7 @@ import {
 } from './core';
 import {
   Choosers, afterPlayed, isFreeRepeatable, canPayCosts, checkZeroPower, dealDamage, drawCards, fireAll, fireRemovals, placeField, fireTriggers, koCard, onceKey,
-  payCosts, playCard, resolveAbility, setWinner, spendSkillDiscount, takeLife,
+  payCosts, playCard, resolveAbility, setWinner, spendSkillDiscount, takeLife, awakenLeader,
 } from './effects';
 
 export type Action =
@@ -767,7 +767,7 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
       const abs = abilitiesOf(s, me.leader);
       const i = abs.findIndex((x) => x.timing === 'awaken');
       if (i >= 0) resolveAbility(s, me.leader, abs[i], i, ctl);
-      me.awakened = true;
+      if (!me.awakened) awakenLeader(s, side);
       return;
     }
     case 'attack': return declareAttack(s, a.uid, a.target, ctl);

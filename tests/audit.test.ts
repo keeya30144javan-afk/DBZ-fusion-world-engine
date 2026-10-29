@@ -200,3 +200,56 @@ test("Ultimate Sparking's can't-attack shows its source, and a freshly played ca
   resolveAbility(s, us, compileCard(cards['FB05-115']).abilities[0], 1, [pick, pick], { costsPaid: true });
   assert.deepEqual(statusTags(s, z), ["can't attack (Ultimate Sparking)"]);
 });
+
+// ---- Official Q&A rulings (dbs-cardgame.com) ----
+
+test("Q591: Loyal Shield finishes resolving before the KO'd Zangya's [When KO'd]", () => {
+  const s = fresh();
+  s.log = [];
+  s.inst[s.p[0].leader] = { ...s.inst[s.p[0].leader], id: 'FB10-073', ki: 1 };
+  const zangya = spawn(s, 0, 'FB10-078', 'battle');
+  const theirs = spawn(s, 1, 'FS01-02', 'battle');
+  s.inst[theirs].rested = true;
+  const shield = spawn(s, 0, 'FB10-095', 'hand');
+  let zangyaFirst: boolean | null = null;
+  const spy: any = { choose: (st: GameState, req: any) => {
+    if (req.options.includes(theirs)) zangyaFirst = st.log!.some((l) => /Zangya: \[When KO'd\]/.test(l));
+    return defaultChooser.choose(st, req);
+  } };
+  resolveAbility(s, shield, compileCard(cards['FB10-095']).abilities[0], 0, [spy, spy]);
+  assert.ok(s.p[0].drop.includes(zangya), 'Zangya was KO\'d for the cost');
+  assert.equal(zangyaFirst, false, "Loyal Shield's own effect resolved before Zangya's [When KO'd]");
+  assert.ok(s.log!.some((l) => /Zangya: \[When KO'd\]/.test(l)), "Zangya's [When KO'd] still resolves afterwards");
+});
+
+test("Q305: while 'negate the next damage' is up, a 'take 1 damage' cost can't be paid", async () => {
+  const { canPayCosts } = await import('../src/engine/effects');
+  const s = fresh();
+  const jiren = spawn(s, 0, 'FB03-009', 'battle');
+  const cost = compileCard(cards['FB03-009']).abilities.find((a) => a.cost.length)!.cost;
+  assert.equal(canPayCosts(s, jiren, cost), true);
+  s.p[0].mods = [...(s.p[0].mods ?? []), { kind: 'shield', filter: {}, until: s.turn + 1 } as any];
+  assert.equal(canPayCosts(s, jiren, cost), false);
+});
+
+test('Q635: an awakening Leader keeps its Ki and power changes but loses granted [Critical]', () => {
+  const s = fresh();
+  const L = s.p[0].leader;
+  s.inst[L] = { ...s.inst[L], id: 'FB10-073', ki: 2, mods: [{ amount: 5000, until: s.turn }], grants: [{ kw: 'critical' as any, until: s.turn, src: 'Bido' }] };
+  step(s, { k: 'awaken' }, ctl);
+  assert.equal(s.p[0].awakened, true);
+  assert.equal(s.inst[L].ki, 2);
+  assert.equal(s.inst[L].mods.length, 1);
+  assert.equal(s.inst[L].grants.length, 0);
+});
+
+test("Q232: a card reduced to 0 power goes to the Drop without its [When KO'd]", async () => {
+  const { checkZeroPower } = await import('../src/engine/effects');
+  const s = fresh();
+  s.log = [];
+  const cui = spawn(s, 0, 'FS04-02', 'battle');
+  s.inst[cui].mods.push({ amount: -100000, until: s.turn });
+  checkZeroPower(s, ctl);
+  assert.ok(s.p[0].drop.includes(cui));
+  assert.ok(!s.log!.some((l) => /\[When KO'd\]/.test(l)));
+});
