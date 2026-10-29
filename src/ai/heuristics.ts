@@ -1,12 +1,12 @@
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
 import { Cond, Effect } from '../effects/types';
-import { Resource, rolesOf } from './synergy';
+import { Resource, clearSynergyCache, rolesOf } from './synergy';
 import { ValueNet, netLogit } from './valuenet';
 
 const isSuperComboCard = (c: Card) => compileCard(c).keywords.has('superCombo');
 import {
-  GameState, Side, abilitiesOf, activeEnergy, condsHold, matchesFilter, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
+  GameState, Side, abilitiesOf, activeEnergy, matchesFilter, nameHas, cardOf, comboPowerOf, costInHand, hasKeyword, isLeader, other, powerOf, rand,
 } from '../engine/core';
 import { ChoiceReq, Chooser } from '../engine/effects';
 import { Action, battleTotals, legalActions, playCostPlan } from '../engine/game';
@@ -118,18 +118,17 @@ export function cardValue(card: Card, leader?: Card): number {
   return v;
 }
 
+/** Forget per-card values worked out from card scripts (call when the scripts change). */
 export function clearValueCache() {
   valueByLeader.clear();
+  awakeMemo.clear();
+  clearSynergyCache();
 }
 
-/** Value of an in-play card right now. */
 /** A card's static value for the Leader its owner is playing. */
 export const valueIn = (s: GameState, u: number) => cardValue(cardOf(s, u), cardOf(s, s.p[s.inst[u].owner].leader));
 
 const boardValue = (s: GameState, u: number) => powerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
-/** A body that can't attack and can't block: it only matters for its combo power and its effects. */
-export const isInert = (s: GameState, u: number) => hasKeyword(s, u, 'cantAttack') && (!hasKeyword(s, u, 'blocker') || hasKeyword(s, u, 'cantBlock'));
-const inertValue = (s: GameState, u: number, share: number) => (1 - share) * powerOf(s, u) / 10000 + share * comboPowerOf(s, u) / 10000 + valueIn(s, u) * 0.3;
 
 /**
  * The opponent's removal: the target filter of every skill that KOs, bounces, bottoms or
@@ -248,9 +247,7 @@ export function keepValue(s: GameState, u: number): number {
  * synergy map of every card it owns. Cached per game: the deck never changes.
  */
 const needsMemo = new WeakMap<object, [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>]>();
-let frozenNeeds: ReturnType<typeof deckNeeds> | null = null;
-function deckNeeds(s: GameState, legacy = false): [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] {
-  if (legacy) return frozenNeeds ??= deckNeeds({ ...s, deckKey: 'frozen:' + s.deckKey });
+function deckNeeds(s: GameState): [Partial<Record<Resource, number>>, Partial<Record<Resource, number>>] {
   const hit = needsMemo.get(s.cards);
   const key = s.deckKey ?? s.p[0].leader + '|' + s.p[1].leader + '|' + s.inst.length;
   if (hit && (hit as any).key === key) return hit;
@@ -300,54 +297,15 @@ export interface EvalWeights {
   awaken: number;
   /** Extra worth of each card in hand when its owner is at 3 life or less (it's their defence). */
   handLow?: number;
-  /**
-   * Risk of leaving your own Battle Cards rested on the opponent's turn (they can be attacked
-   * and KO'd): this share of each rested card's board worth is discounted. Only counted at the
-   * end of your own turn, when nothing will untap them before the opponent attacks.
-   */
-  restedRisk?: number;
-  /**
-   * Learned weights per Leader id for sideFeatures(): when a side's Leader has an entry, its
-   * half of the evaluation is the weighted sum of its own features (its deck's own judgement).
-   */
-  perLeader?: Record<string, Partial<Record<SideFeature, number>>>;
   /** Discount a body by how much of the opponent's removal can reach it (0 = off). */
   reach?: number;
   /** A learned evaluation, blended with the hand-set one by `netBlend` (0..1). */
   net?: ValueNet;
   netBlend?: number;
-  /** Testing only: reproduce the old cache bug (every game reused the first game's deck needs). */
-  legacyNeeds?: boolean;
   /** Cost of sitting at 1 life while the opponent still has an "opponent at 1 life: you win" card (0 = off). */
   altWin?: number;
-  /**
-   * Share of a body's power that doesn't count when it can neither attack nor block (a Piccolo
-   * that "can't attack" with no Blocker): it threatens nothing, only its combo power and effects
-   * are worth anything, so it isn't worth spending removal or a combo on (0 = off).
-   */
-  inert?: number;
 }
 
-/** What one side has, feature by feature: the ingredients of a per-Leader evaluation. */
-export const SIDE_FEATURES = ['life', 'hand', 'bodies', 'board', 'energy', 'awaken', 'ki', 'drop', 'marker', 'restEnemy'] as const;
-export type SideFeature = (typeof SIDE_FEATURES)[number];
-
-export function sideFeatures(s: GameState, p: Side): Record<SideFeature, number> & { deck: number } {
-  const pl = s.p[p];
-  return {
-    life: pl.life.length <= 0 ? -3 : Math.log(1 + pl.life.length),
-    hand: pl.hand.length,
-    bodies: pl.battle.length,
-    board: pl.battle.reduce((t, u) => t + boardValue(s, u), 0),
-    energy: Math.min(pl.energy.length, 8),
-    awaken: pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0,
-    ki: [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0),
-    drop: Math.min(pl.drop.length, 20) / 20,
-    marker: Math.min(pl.markers, 2),
-    restEnemy: s.p[other(p)].battle.filter((u) => s.inst[u].rested).length,
-    deck: pl.deck.length < 6 ? -(6 - pl.deck.length) * 0.5 : 0,
-  };
-}
 /**
  * Tuned by self-play (Oct 2026), in two steps:
  *  1. Weights fitted to 90k fast-AI positions' outcomes, blended 42% from the original
@@ -375,24 +333,16 @@ export function evaluate(s: GameState, me: Side, W: EvalWeights = DEFAULT_EVAL):
 function handEvaluate(s: GameState, me: Side, W: EvalWeights): number {
   const side = (p: Side) => {
     const pl = s.p[p];
-    const lw = W.perLeader?.[s.inst[pl.leader].id];
-    if (lw) {
-      const f = sideFeatures(s, p);
-      let v = f.deck;
-      for (const k of SIDE_FEATURES) v += (lw[k] ?? 0) * f[k];
-      return v;
-    }
     let v = pl.life.length <= 0 ? -6 : W.life * Math.log(1 + pl.life.length);
     v += pl.hand.length * (W.hand + (pl.life.length <= 3 ? W.handLow ?? 0 : 0));
-    const exposed = W.restedRisk && s.active === p && s.stage !== 'over';
-    for (const u of pl.battle) v += W.boardBase + (W.inert && isInert(s, u) ? inertValue(s, u, W.inert) : boardValue(s, u)) * W.board * (exposed && s.inst[u].rested ? 1 - W.restedRisk! : 1) * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
+    for (const u of pl.battle) v += W.boardBase + boardValue(s, u) * W.board * (W.reach ? 1 - W.reach * exposure(s, u) : 1);
     v += Math.min(pl.energy.length, 8) * W.energy;
     if (W.altWin && pl.life.length === 1 && altWinLive(s, other(p))) v -= W.altWin * (pl.battle.length ? 0.6 : 1);
     // A stronger back side makes awakening worth more, to you and to delay for your opponent.
     v += pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) * (W.awaken ?? 1) : 0;
     if (pl.deck.length < 6) v -= (6 - pl.deck.length) * 0.5;
     // Resources this deck's engine runs on.
-    const need = deckNeeds(s, W.legacyNeeds)[p];
+    const need = deckNeeds(s)[p];
     let r = 0;
     if (need.ki) r += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
     if (need.drop) r += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
@@ -401,34 +351,6 @@ function handEvaluate(s: GameState, me: Side, W: EvalWeights): number {
     return v + r * W.resources;
   };
   return side(me) - side(other(me));
-}
-
-/**
- * The evaluation's ingredients, as (my side - their side) differences, so its weights can
- * be fitted to game outcomes: evaluate() = sum of weight x feature (plus the fixed deck-out term).
- */
-export function evalFeatures(s: GameState, me: Side): Record<'life' | 'hand' | 'boardBase' | 'board' | 'energy' | 'awaken' | 'resources' | 'deck', number> {
-  const side = (p: Side) => {
-    const pl = s.p[p];
-    const need = deckNeeds(s)[p];
-    let r = 0;
-    if (need.ki) r += need.ki * 0.3 * [pl.leader, ...pl.battle].reduce((t, u) => t + Math.min(s.inst[u].ki, 6), 0);
-    if (need.drop) r += need.drop * 1.6 * Math.min(pl.drop.length, 20) / 20;
-    if (need.marker) r += need.marker * 0.5 * Math.min(pl.markers, 2);
-    if (need.restEnemy) r += need.restEnemy * 0.3 * s.p[other(p)].battle.filter((u) => s.inst[u].rested).length;
-    return {
-      life: pl.life.length <= 0 ? -3 : Math.log(1 + pl.life.length),
-      hand: pl.hand.length,
-      boardBase: pl.battle.length,
-      board: pl.battle.reduce((t, u) => t + boardValue(s, u), 0),
-      energy: Math.min(pl.energy.length, 8),
-      awaken: pl.awakened ? awakenedWorth(cardOf(s, pl.leader)) : 0,
-      resources: r,
-      deck: pl.deck.length < 6 ? -(6 - pl.deck.length) * 0.5 : 0,
-    };
-  };
-  const a = side(me), b = side(other(me));
-  return Object.fromEntries(Object.keys(a).map((k) => [k, (a as any)[k] - (b as any)[k]])) as any;
 }
 
 /** Squash an evaluation into a win probability for `me`. */
@@ -558,14 +480,13 @@ export type Habits = FastPolicy['habits'];
 
 export class FastPolicy implements Policy {
   /**
-   * Play habits from experienced players' videos; each can be switched on or off to measure it.
-   * Tested against the previous fast AI over 900 games across all meta decks (Oct 2026):
-   * awakenHit (take the hit that awakens you) won 53.6%; charge (charge what you won't play
-   * soon) and leaderFirst (swing with the Leader before playing) were neutral; delayAwaken
-   * (don't push the opponent into awaken range) lost badly as a blanket rule (38%), as the
-   * video itself says it depends on the matchup. Only awakenHit is on by default.
+   * Play habits that won their A/B tests (each can still be switched off to measure it):
+   * awakenHit (take the hit that awakens you) won 53.6% over 900 games; noFutileCombo (don't
+   * throw combo cards at a battle they can't win) came from the user's games. Habits that
+   * tested neutral or worse (charge spares, Leader first, delay the opponent's awaken, smart
+   * mulligan/blocks, hold removal) were removed in the Oct 2026 cleanup.
    */
-  public habits = { charge: false, leaderFirst: false, delayAwaken: false, awakenHit: true, smartMulligan: false, smartBlock: false, holdRemoval: false, delayStrongAwaken: false, noFutileCombo: true };
+  public habits = { awakenHit: true, noFutileCombo: true };
   constructor(public noise = 0.1) {
     const env = (globalThis as any).process?.env;
     if (env?.HABITS_OFF) for (const k of String(env.HABITS_OFF).split(',')) (this.habits as any)[k] = false;
@@ -589,15 +510,6 @@ export class FastPolicy implements Policy {
   private mulligan(s: GameState): Action {
     const me = s.p[s.toAct];
     const early = me.hand.filter((u) => { const c = cardOf(s, u); return c.type === 'BATTLE' && c.cost <= 2; }).length;
-    if (this.habits.smartMulligan) {
-      // Keep hands that start the engine: two cheap plays, or one cheap searcher/cantrip plus
-      // another cheap play. Throw back hands stuck with three or more 5+ cost non-combo cards.
-      const cards = me.hand.map((u) => cardOf(s, u));
-      const starter = cards.some((c) => c.type === 'BATTLE' && c.cost <= 2 && compileCard(c).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.some((e) => e.t === 'search' || e.t === 'draw' || e.t === 'dropToHand')));
-      const heavy = cards.filter((c) => c.cost >= 5 && !isSuperComboCard(c)).length;
-      if (heavy >= 3) return { k: 'mulligan' };
-      return early >= 2 || (starter && early >= 1 && cards.some((c) => c.cost <= 2 && c.type === 'EXTRA')) ? { k: 'keep' } : { k: 'mulligan' };
-    }
     return early >= 2 ? { k: 'keep' } : { k: 'mulligan' };
   }
 
@@ -605,24 +517,18 @@ export class FastPolicy implements Policy {
     const me = s.p[s.toAct];
     const charges = actions.filter((a) => a.k === 'charge') as { k: 'charge'; uid: number }[];
     if (!charges.length) return { k: 'noCharge' };
-    // Only charge up to what the cards you mean to play need: Super Combos are combo walls,
-    // not plays, so their cost doesn't count. Once the plan is covered, keep cards in hand.
-    const playable = me.hand.map((u) => cardOf(s, u)).filter((c) => !this.habits.charge || !isSuperComboCard(c));
-    const maxCost = Math.max(0, ...playable.map((c) => c.cost));
+    // Only charge up to what the cards in hand need; once that's covered, keep cards in hand.
+    const maxCost = Math.max(0, ...me.hand.map((u) => cardOf(s, u).cost));
     const want = me.energy.length < Math.min(7, Math.max(4, maxCost)) || me.energy.length < 3;
     if (!want || me.hand.length <= 2) return { k: 'noCharge' };
-    // Charge the card you're least likely to play soon: spare copies and cards far above your
-    // energy go first; cheap cards you'll play next turn and Super Combos (defence) stay.
-    const ids = me.hand.map((u) => s.inst[u].id);
+    // Charge the card you're least likely to play soon: cards far above your energy, and cards
+    // that do something in energy, go first. A Super Combo is defence, never a play: it is
+    // charged only if nothing else can be.
     const score = (u: number) => {
       const c = cardOf(s, u);
-      const copies = ids.filter((x) => x === c.id).length;
-      const soon = c.cost <= me.energy.length + 1 ? 0.5 : 0;
       const tooExpensive = c.cost > me.energy.length + 3 ? -0.6 : 0;
       const forEnergy = usefulInEnergy(s, u) ? -1 : 0;
-      // A Super Combo is defence, never a play: it is charged only if nothing else can be.
-      if (!this.habits.charge) return keepValue(s, u) + tooExpensive + forEnergy + (isSuperComboCard(c) ? 100 : 0) + rand(s) * this.noise;
-      return keepValue(s, u) + soon + tooExpensive - (copies > 1 ? 0.4 : 0) + (isSuperComboCard(c) ? 2 : 0) + rand(s) * this.noise;
+      return keepValue(s, u) + tooExpensive + forEnergy + (isSuperComboCard(c) ? 100 : 0) + rand(s) * this.noise;
     };
     charges.sort((a, b) => score(a.uid) - score(b.uid));
     return charges[0];
@@ -642,9 +548,6 @@ export class FastPolicy implements Policy {
       const hits = ab?.effects.some((e) => (e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce') && s.p[opp].battle.length > 0);
       if (hits && rand(s) > this.noise) return a;
     }
-    // Swing with the Leader first: its draw shows more options before you commit cards.
-    const leaderFace = actions.find((a) => a.k === 'attack' && a.uid === me.leader && isLeader(s, a.target)) as { k: 'attack'; uid: number; target: number } | undefined;
-    if (this.habits.leaderFirst && leaderFace && !this.awakensThem(s, leaderFace.uid) && !s.p[opp].battle.some((u) => s.inst[u].rested && powerOf(s, u) <= powerOf(s, me.leader) && boardValue(s, u) >= 2.2)) return leaderFace;
     // Play the best card we can afford. When new cards can't attack this turn (a rules
     // option), only cards that hit the opponent's board go before the attacks; the rest
     // wait, keeping the hand as combo cover meanwhile.
@@ -654,13 +557,7 @@ export class FastPolicy implements Policy {
       e.t === 'ko' || e.t === 'bottom' || e.t === 'bounce' || e.t === 'toDrop' || e.t === 'toEnergy' || e.t === 'rest' || (e.t === 'power' && e.amount < 0)));
     if (plays.length) {
       const score = (u: number) => valueIn(s, u) + costInHand(s, u) * 0.6 + rand(s) * this.noise * 2;
-      let now = attacksLeft && !s.rules.attackOnPlayTurn ? plays.filter((p) => removal(p.uid)) : plays;
-      // Hold removal that has nothing to hit: its value comes later, against a real target.
-      if (this.habits.holdRemoval) {
-        const pointless = (u: number) => s.p[opp].battle.length === 0 && compileCard(cardOf(s, u)).abilities.some((ab) => ab.timing === 'onPlay' && ab.effects.length > 0 && ab.effects.every((e) => ['ko', 'bottom', 'bounce', 'toDrop', 'rest', 'lockActive', 'power'].includes(e.t) && (!('target' in e) || (e as any).target?.side !== 'self')));
-        const kept = now.filter((p) => !pointless(p.uid));
-        if (kept.length) now = kept; else if (now.length) now = [];
-      }
+      const now = attacksLeft && !s.rules.attackOnPlayTurn ? plays.filter((p) => removal(p.uid)) : plays;
       now.sort((a, b) => score(b.uid) - score(a.uid));
       const best = now[0];
       // Keep at least one combo card in hand when life is low.
@@ -685,27 +582,12 @@ export class FastPolicy implements Policy {
         }
         const face = opts.find((o) => isLeader(s, o.target));
         if (!face) continue;
-        // Don't knock the opponent into their awaken range unless the game is close to over.
-        if (this.habits.delayAwaken && this.awakensThem(s, att)) continue;
-        // Matchup-aware version: only hold back when their awakened side is clearly the bigger threat.
-        if (this.habits.delayStrongAwaken && this.awakensThem(s, att) && awakenedWorth(cardOf(s, s.p[opp].leader)) >= 1.8) continue;
         const lp = powerOf(s, face.target);
         if (isLeader(s, att) || ap >= lp || rand(s) < this.noise) return face;
       }
     }
     // A card that must attack whenever possible removes the option to end the turn.
     return actions.some((a) => a.k === 'end') ? { k: 'end' } : attacks[0] ?? actions[0];
-  }
-
-  /** Would a hit from `attacker` push the opponent down to the life where their Leader awakens? */
-  private awakensThem(s: GameState, attacker: number): boolean {
-    const opp = other(s.toAct);
-    const o = s.p[opp];
-    if (o.awakened) return false;
-    const at = awakenLife(s, opp);
-    if (at === null) return false;
-    const dmg = hasKeyword(s, attacker, 'tripleStrike') ? 3 : hasKeyword(s, attacker, 'doubleStrike') ? 2 : 1;
-    return o.life.length > at && o.life.length - dmg <= at && o.life.length - dmg > 2;
   }
 
   private abOf(s: GameState, uid: number, i: number) {
@@ -725,15 +607,6 @@ export class FastPolicy implements Policy {
     const blocks = actions.filter((a) => a.k === 'block') as { k: 'block'; uid: number }[];
     if (!blocks.length) return { k: 'noBlock' };
     blocks.sort((a, b2) => boardValue(s, a.uid) - boardValue(s, b2.uid));
-    if (this.habits.smartBlock) {
-      // Block when the hit is dangerous, or when a cheap blocker survives the fight for free.
-      const crit = hasKeyword(s, b.attacker, 'critical');
-      const ap = powerOf(s, b.attacker);
-      const survives = blocks.find((x) => powerOf(s, x.uid) >= ap && boardValue(s, x.uid) < 3);
-      if (me.life.length <= 3 || ((strike || crit) && me.life.length <= 5)) return blocks[0];
-      if (survives) return survives;
-      return { k: 'noBlock' };
-    }
     if (me.life.length <= 2 || (strike && me.life.length <= 5) || rand(s) < 0.15) return blocks[0];
     return { k: 'noBlock' };
   }
@@ -844,25 +717,6 @@ export function comboCanWin(s: GameState, actions: Action[]): boolean {
 }
 
 export const defaultChooser = new HeuristicChooser();
-
-/**
- * An Extra or skill used for its minor part while its main, conditional part can't happen
- * yet (Warrior Who Defeats the Evil Demon with no Evolve card in play: just "draw 1").
- * Holding it keeps the strong part for later.
- */
-export function wastesMainEffect(s: GameState, a: Action): boolean {
-  if (a.k !== 'activate') return false;
-  const me = s.p[s.toAct];
-  if (!me.hand.includes(a.uid)) return false;
-  const ab = compileCard(cardOf(s, a.uid)).abilities[a.ab];
-  if (!ab) return false;
-  let live = 0, dead = 0;
-  for (const e of ab.effects) {
-    const v = Math.max(0, effectValue(e));
-    if (e.cond?.length && !condsHold(s, s.toAct, a.uid, e.cond)) dead += v; else live += v;
-  }
-  return dead > 0 && dead > live;
-}
 
 /** Is `p` a legal answer to `req`? */
 export const legalPick = (req: ChoiceReq, p: number[]) => p.length >= req.min && p.length <= req.max && p.every((u) => req.options.includes(u)) && new Set(p).size === p.length;

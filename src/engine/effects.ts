@@ -510,7 +510,7 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
         break;
       }
       case 'anyOf': {
-        const ok = c.options.map((o, i) => i).filter((i) => canPayCosts(s, uid, c.options[i]));
+        const ok = c.options.map((_, i) => i).filter((i) => canPayCosts(s, uid, c.options[i]));
         const i = ok.length > 1 ? ctl[owner].choose(s, { kind: 'mode', player: owner, src: uid, options: ok, min: 1, max: 1, intent: 'lose', labels: c.options.map((o) => o.map(describeCost).join(', ')) })[0] ?? ok[0] : ok[0];
         if (i !== undefined) { const r = payCosts(s, uid, c.options[i], ctl); kiRemoved += r.kiRemoved; paid.push(...r.paid); }
         break;

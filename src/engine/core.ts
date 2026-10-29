@@ -461,7 +461,6 @@ export function withCtx<T>(ctx: EvalCtx | null, f: () => T): T {
   curCtx = ctx;
   try { return f(); } finally { curCtx = outer; }
 }
-export const currentCtx = () => curCtx;
 
 /** The card a "the card chosen by this skill" refers to: the previous choice, else what the cost picked. */
 function chosenCard(ctx: EvalCtx | null): number | undefined {

@@ -1,5 +1,5 @@
 import { Card } from '../data/types';
-import { Ability, Cond, Cost, Effect, Filter, Keyword, Target, Timing } from './types';
+import { Ability, Cond, Cost, Effect, Filter, Keyword, Timing } from './types';
 
 /**
  * Translations ("scripts"): a card's skills written directly in the skill
@@ -371,5 +371,4 @@ export function normalizeAbility(a: Partial<Ability>): Ability {
   };
 }
 
-export const ALL_TARGET = (t: Partial<Target>): Target => ({ side: 'opp', zones: ['battle'], count: 1, upTo: true, filter: {}, ...t });
 export type { Filter };

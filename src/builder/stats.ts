@@ -12,7 +12,6 @@ export function wilson(wins: number, games: number, z = 1.96): { mean: number; l
 export const Z: Record<string, number> = { '0.8': 1.2816, '0.9': 1.6449, '0.95': 1.96, '0.99': 2.5758 };
 
 /** Games needed so the interval half-width is about `margin` at p ~ 0.5. */
-export const gamesForMargin = (margin: number, z = 1.96) => Math.ceil((z * z * 0.25) / (margin * margin));
 
 /** One-sided test: is a's rate above b's? Returns a z-score (independent samples). */
 export function diffZ(winsA: number, nA: number, winsB: number, nB: number): number {

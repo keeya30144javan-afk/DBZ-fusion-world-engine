@@ -2,7 +2,7 @@ import { GameState, Side, cloneState } from '../engine/core';
 import { Chooser } from '../engine/effects';
 import { Action, legalActions, step } from '../engine/game';
 import { determinize } from './belief';
-import { EvalWeights, FastPolicy, ForcedChooser, Habits, RecordingChooser, defaultChooser, evaluate, wastesMainEffect, winProb } from './heuristics';
+import { EvalWeights, FastPolicy, ForcedChooser, Habits, RecordingChooser, defaultChooser, evaluate, winProb } from './heuristics';
 
 /**
  * Turn planning: search whole lines of play for the current turn ("play Bulma,
@@ -40,8 +40,6 @@ export interface PlanOpts {
    * as separate lines, not just the default pick.
    */
   choices?: number;
-  /** Don't branch on Extras/skills used only for their minor part (see wastesMainEffect). */
-  skipWeakExtras?: boolean;
 }
 
 export const PLAN_DEFAULT: PlanOpts = { beam: 6, depth: 14, finalists: 6, worlds: 4 };
@@ -83,11 +81,10 @@ function reply(w: GameState, me: Side, pol: FastPolicy, startTurn: number, deep 
 }
 
 /** Mains actions worth branching on: drop duplicates and obviously pointless ones. */
-function candidates(w: GameState, skipWeak = false): Action[] {
+function candidates(w: GameState): Action[] {
   const seen = new Set<string>();
   const out: Action[] = [];
   for (const a of legalActions(w)) {
-    if (skipWeak && wastesMainEffect(w, a)) continue;
     const k = key(a);
     if (seen.has(k)) continue;
     seen.add(k);
@@ -122,7 +119,7 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
     for (const node of frontier) {
       const w0 = node.w;
       if (w0.stage === 'over' || w0.turn !== turn || w0.active !== me || w0.stage !== 'main' || w0.toAct !== me) { finish(node); continue; }
-      for (const a of candidates(w0, opts.skipWeakExtras)) {
+      for (const a of candidates(w0)) {
         // The default way to play this action, recording the first choice its skill asks of us.
         const rec = new RecordingChooser(me);
         const variants: { w: GameState; pick?: number[] }[] = [];

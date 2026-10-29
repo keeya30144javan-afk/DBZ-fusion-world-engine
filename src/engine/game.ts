@@ -808,5 +808,4 @@ export function step(s: GameState, a: Action, ctl: Choosers): void {
   }
 }
 
-export const isOver = (s: GameState) => s.stage === 'over';
 export { takeLife };
