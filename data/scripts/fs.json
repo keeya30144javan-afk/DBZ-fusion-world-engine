@@ -1750,7 +1750,7 @@
       "target": {
        "ref": "this"
       },
-      "amount": 500,
+      "amount": 5000,
       "dur": "static"
      }
     ]
@@ -1789,7 +1789,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FS10-10": {

@@ -3741,5 +3741,43 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "FB07-062": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "cond": [
+     {
+      "t": "energyGE",
+      "n": 6
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "side": "self",
+       "zones": [
+        "leader",
+        "battle"
+       ],
+       "count": 1,
+       "upTo": true,
+       "filter": {
+        "names": [
+         "Piccolo: SH"
+        ]
+       }
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
+  }
  }
 }

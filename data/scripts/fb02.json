@@ -1032,14 +1032,14 @@
         "Korin Tower"
        ]
       },
-      "amount": -1
+      "amount": -2
      }
     ]
    }
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FB02-077": {

@@ -5,7 +5,7 @@ import { Cost } from '../effects/types';
 import {
   GameState, Inst, PlayerState, Side, abilitiesOf, activeEnergy, activeMods, cardOf, compiledOf, comboPowerOf, condsHold, costInHand, consumeDiscount, playBanned,
   emit, hasKeyword, isLeader, log, matchesFilter, moveTo, resetInst, nameOf, other, payPlan, planPayment, powerOf, shuffle, specFor, spendHandCostMods,
-  staticRules, turnMatches, valOf,
+  staticRules, turnMatches, valOf, costOf,
 } from './core';
 import {
   Choosers, afterPlayed, isFreeRepeatable, canPayCosts, checkZeroPower, dealDamage, drawCards, fireAll, fireRemovals, placeField, fireTriggers, koCard, onceKey,
@@ -291,7 +291,9 @@ export function evolveOptions(s: GameState, uid: number): Action[] {
       for (const b of me.battle) {
         if (b === a || !modeOk(b) || !fits(b, 1)) continue;
         const pa = powerOf(s, a), pb = powerOf(s, b);
-        if (pa !== pb || (ev.equalPowerGE !== undefined && pa < ev.equalPowerGE)) continue;
+        if ((ev.equal ?? 'power') === 'power' && pa !== pb) continue;
+        if (ev.equal === 'cost' && costOf(s, a) !== costOf(s, b)) continue;
+        if (ev.equalPowerGE !== undefined && (pa !== pb || pa < ev.equalPowerGE)) continue;
         out.push({ k: 'evolve', uid, bases: [a, b] });
       }
     }

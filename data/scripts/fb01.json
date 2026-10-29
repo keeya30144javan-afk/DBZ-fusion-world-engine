@@ -1751,5 +1751,46 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "FB01-102": {
+  "field": true,
+  "abilities": [
+   {
+    "timing": "activateMain",
+    "cost": [
+     {
+      "t": "restEnergy",
+      "n": 1
+     },
+     {
+      "t": "restSelf"
+     }
+    ],
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Android 17"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "energyFromDrop",
+      "filter": {
+       "traits": [
+        "Android"
+       ]
+      },
+      "n": 1,
+      "rested": false
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
+  }
  }
 }

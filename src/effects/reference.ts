@@ -14,7 +14,7 @@ Keyword: "blocker" | "critical" | "doubleStrike" | "tripleStrike" | "superCombo"
 Unconditional keywords go in "keywords". Conditional ones ("If X, this card gains [Blocker]") are a permanent ability with a grant effect on {"ref":"this"}.
 AURAS (grant, power and costMod): a [Permanent] that affects OTHER cards ("Your Battle Cards with a cost of 3 can't be removed...", "All your <X> get +5000 power") is a permanent ability whose grant/power target has "all": true, e.g. {"t":"grant","target":{"all":true,"side":"self","filter":{"costEQ":3}},"kw":"removeImmune","dur":"static"}.
 
-Evolve = { "from": [Filter] (Evolve) or [Filter, Filter] (Fusion Evolve), "cost": number of energy, "equalPowerGE"?: number, "orFrom"?: Filter[] (alternative bases), "baseMode"?: "rested" }
+Evolve = { "from": [Filter] (Evolve) or [Filter, Filter] (Fusion Evolve), "cost": number of energy, "equalPowerGE"?: number, "equal"?: "power" | "cost" | "none" (what the two must share; default power), "orFrom"?: Filter[] (alternative bases), "baseMode"?: "rested" }
 
 Ability = { "timing": Timing, "turn"?: "your"|"opp", "once"?: true ([Once per turn]), "cost"?: Cost[] (what comes before the colon), "cond"?: Cond[] (leading "If ..."), "effects": Effect[], "trigger"?: Filter (for whenAllyPlayed), "unparsed"?: string[] }
 Timing: "onPlay" | "whenAttacking" | "whenBlocking" | "whenKOd" | "activateMain" | "activateBattle" | "permanent" | "endOfYourTurn" | "awaken" (Leader; the effects end with {"t":"flipLeader"})

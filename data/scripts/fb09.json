@@ -348,7 +348,8 @@
      ]
     }
    ],
-   "cost": 0
+   "cost": 0,
+   "equal": "none"
   },
   "abilities": [
    {
@@ -382,7 +383,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FB09-017": {
@@ -399,7 +400,8 @@
      ]
     }
    ],
-   "cost": 0
+   "cost": 0,
+   "equal": "none"
   },
   "abilities": [
    {
@@ -417,7 +419,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FB09-020": {

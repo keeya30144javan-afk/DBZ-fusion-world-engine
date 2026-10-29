@@ -524,6 +524,8 @@ export interface EvolveSpec {
   cost: number;
   /** Fusion Evolve: both cards have equal power of at least this much. */
   equalPowerGE?: number;
+  /** Fusion Evolve: what the two cards must have equal (default 'power'; 'none' when the card asks nothing). */
+  equal?: 'power' | 'cost' | 'none';
   /** Evolve: other cards it may also be played on ("<A> with a cost of 3, or <B> with a <Potara> under them"). */
   orFrom?: Filter[];
   /** Fusion Evolve: the two cards must be in Rest Mode / Active Mode. */

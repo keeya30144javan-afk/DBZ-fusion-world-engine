@@ -450,7 +450,7 @@ export function describeAbility(a: Ability): string {
 export function describeEvolve(ev: EvolveSpec): string {
   const bases = ev.from.map((f) => describeFilter(f));
   const pay = `pay ${ev.cost} energy${ev.extraCost?.length ? `, ${ev.extraCost.map(describeCost).join(', ')}` : ''}`;
-  if (ev.from.length === 2) return `[Fusion Evolve] ${pay}: ${bases.join(' and ')}${ev.baseMode === 'rested' ? ' in Rest Mode' : ''} with equal power${ev.equalPowerGE ? ` of ${ev.equalPowerGE} or more` : ''}.`;
+  if (ev.from.length === 2) return `[Fusion Evolve] ${pay}: ${bases.join(' and ')}${ev.baseMode === 'rested' ? ' in Rest Mode' : ''} ${ev.equal === 'none' ? '' : ev.equal === 'cost' ? ' with equal cost' : ` with equal power${ev.equalPowerGE ? ` of ${ev.equalPowerGE} or more` : ''}`}.`;
   return `[Evolve] ${pay}: ${list([bases[0], ...(ev.orFrom ?? []).map((f) => describeFilter(f))])}.`;
 }
 

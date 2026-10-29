@@ -323,6 +323,7 @@ export function validateScript(v: unknown): string[] {
       ev.from.forEach((f, i) => checkObj(f, FILTER, `evolve.from[${i}]`, errs));
       if (ev.orFrom !== undefined) checkField(ev.orFrom, 'F[]', 'evolve.orFrom', errs);
       if (ev.equalPowerGE !== undefined && typeof ev.equalPowerGE !== 'number') errs.push('evolve.equalPowerGE: number');
+      if (ev.equal !== undefined && !['power', 'cost', 'none'].includes(ev.equal)) errs.push("evolve.equal: 'power' | 'cost' | 'none'");
       if (ev.baseMode !== undefined && ev.baseMode !== 'rested' && ev.baseMode !== 'active') errs.push('evolve.baseMode: rested|active');
       if (ev.extraCost !== undefined) checkField(ev.extraCost, 'Co[]', 'evolve.extraCost', errs);
     }

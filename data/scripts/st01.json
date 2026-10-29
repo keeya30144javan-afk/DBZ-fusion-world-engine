@@ -1316,7 +1316,7 @@
      "costEQ": 2
     }
    ],
-   "cost": 2
+   "cost": 1
   },
   "abilities": [
    {
@@ -1333,7 +1333,7 @@
       },
       "onto": {
        "names": [
-        "Demonic Gaze"
+        "Demonic Maze"
        ]
       }
      }
@@ -1353,7 +1353,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "ST01-036": {

@@ -3009,7 +3009,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FB11-103": {
@@ -3477,7 +3477,8 @@
     }
    ],
    "cost": 2,
-   "baseMode": "rested"
+   "baseMode": "rested",
+   "equal": "cost"
   },
   "abilities": [
    {
@@ -3530,7 +3531,7 @@
   ],
   "check": {
    "ok": true,
-   "note": "Passed the automatic checker and a second read by Claude."
+   "note": "Corrected against the official card database (dbs-cardgame.com)."
   }
  },
  "FB11-123": {

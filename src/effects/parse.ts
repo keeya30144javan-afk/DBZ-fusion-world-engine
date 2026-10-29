@@ -411,10 +411,12 @@ export function parseEvolve(line: string): EvolveSpec | null {
     return f;
   };
   if (m[1]) {
-    const fm = body.match(/^(<[^>]+>) and (<[^>]+>)(?: (in rest mode))?(?: and)? with equal power(?: of (\d+) or more)?$/i);
+    const fm = body.match(/^(<[^>]+>) and (<[^>]+>)(?: (in rest mode))?(?:(?: and)? with equal (power|cost)(?: of (\d+) or more)?)?\.?$/i);
     if (!fm) return null;
     const spec: EvolveSpec = { from: [{ names: [fm[1].slice(1, -1)] }, { names: [fm[2].slice(1, -1)] }], cost: +m[2] };
-    if (fm[4]) spec.equalPowerGE = +fm[4];
+    if (!fm[4]) spec.equal = 'none';
+    else if (fm[4].toLowerCase() === 'cost') spec.equal = 'cost';
+    if (fm[5]) spec.equalPowerGE = +fm[5];
     if (fm[3]) spec.baseMode = 'rested';
     return spec;
   }
