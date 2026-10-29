@@ -185,8 +185,11 @@ export class PlayHost {
     if (by === 1) {
       this.aiMoves = [...this.aiMoves, `T${this.real.turn}: ${label}`].slice(-6);
       const before = this.real.log?.length ?? 0;
-      const lines = (work.log ?? []).slice(before).map((l) => l.replace(/^T\d+ /, '').replace(/\bP0\b/g, 'You').replace(/\bP1\b/g, 'AI'))
+      const lines = (work.log ?? []).slice(before).map((l) => l.replace(/^T\d+ /, '').replace(/\bP0\b/g, 'You').replace(/\bP1\b/g, 'AI').replace(/\bYou (goes|[a-z]+s)\b/g, (_m, v: string) => `You ${v === 'goes' ? 'go' : v.endsWith('es') && /(ch|sh|x|ss)es$/.test(v) ? v.slice(0, -2) : v.slice(0, -1)}`))
         .filter((l) => !/^AI (attacks|plays|charges|uses|evolves|awakens)\b/.test(l) && !/skill resolves$/.test(l));
+      // Say what a skill the AI used does, so its effects (a board wipe...) don't come out of nowhere.
+      const skill = actionDetail(this.real, a);
+      if (skill) lines.unshift(`Skill: ${skill}`);
       // A new turn of the AI's (or a move during your turn, like a combo) starts a new recap.
       if (this.aiTurn.turn !== this.real.turn) this.aiTurn = { turn: this.real.turn, moves: [] };
       if (!/stops adding combo cards|charges nothing|does not (block|counter)/.test(label) || lines.length) this.aiTurn.moves.push({ label, lines });
