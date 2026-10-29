@@ -187,3 +187,16 @@ test('Evolve (rule 14-5-2): Ki and power changes carry over to the evolved card;
   }
   assert.fail('no evolve pair found');
 });
+
+test("Ultimate Sparking's can't-attack shows its source, and a freshly played card has no summoning-sickness tag", async () => {
+  const { statusTags } = await import('../src/builder/replay');
+  const s = fresh();
+  const z = spawn(s, 0, 'FB10-078', 'battle');
+  s.inst[z].playedTurn = s.turn;
+  assert.deepEqual(statusTags(s, z), [], 'Battle Cards can attack the turn they are played');
+  const us = spawn(s, 1, 'FB05-115', 'hand');
+  s.inst[us].markerPaid = true;
+  const pick: any = { choose: (st: GameState, req: any) => (req.options.includes(z) ? [z] : defaultChooser.choose(st, req)) };
+  resolveAbility(s, us, compileCard(cards['FB05-115']).abilities[0], 1, [pick, pick], { costsPaid: true });
+  assert.deepEqual(statusTags(s, z), ["can't attack (Ultimate Sparking)"]);
+});

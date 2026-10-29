@@ -90,14 +90,24 @@ export interface Replay {
   frames: Frame[];
 }
 
-const cardSnap = (s: GameState, u: number): CardSnap => {
+/** What's in effect on a card, naming the card whose skill caused it ("can't attack (Ultimate Sparking)"). */
+export function statusTags(s: GameState, u: number): string[] {
   const i = s.inst[u];
   const tags: string[] = [];
-  if (!isLeader(s, u)) {
-    for (const [kw, label] of TAG) if (hasKeyword(s, u, kw)) tags.push(label);
-    if (i.lockedUntil > s.turn) tags.push("stays rested next turn");
-    if (i.playedTurn === s.turn) tags.push('played this turn');
+  if (isLeader(s, u)) return tags;
+  for (const [kw, label] of TAG) {
+    if (!hasKeyword(s, u, kw)) continue;
+    const from = i.grants.find((g) => g.kw === kw && g.src)?.src;
+    tags.push(from ? `${label} (${from})` : label);
   }
+  if (i.lockedUntil > s.turn) tags.push('stays rested next turn');
+  if (!s.rules.attackOnPlayTurn && i.playedTurn === s.turn) tags.push('played this turn');
+  return tags;
+}
+
+const cardSnap = (s: GameState, u: number): CardSnap => {
+  const i = s.inst[u];
+  const tags = statusTags(s, u);
   return { id: i.id, name: nameOf(s, u), power: powerOf(s, u), rested: i.rested, ...(i.ki ? { ki: i.ki } : {}), ...(i.under?.length ? { under: i.under.length } : {}), ...(tags.length ? { tags } : {}) };
 };
 

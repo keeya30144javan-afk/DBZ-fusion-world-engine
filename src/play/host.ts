@@ -7,7 +7,7 @@ import { compileCard } from '../effects/parse';
 import { describeAbility, describeEffect } from '../effects/describe';
 import { Policy, defaultChooser } from '../ai/heuristics';
 import { SEARCH_LEVELS, SearchPolicy } from '../ai/search';
-import { Snap, describeAction, snapshot } from '../builder/replay';
+import { Snap, describeAction, snapshot, statusTags } from '../builder/replay';
 
 /**
  * A game between a person and the AI. The person is always side 0.
@@ -360,7 +360,7 @@ function describePosition(s: GameState, legal: Action[], question: string | null
   const card = (u: number) => {
     const i = s.inst[u];
     seen.add(i.id);
-    return `${nameOf(s, u)} [${i.id}] ${powerOf(s, u)} power${i.rested ? ', rested' : ''}${i.ki ? `, ${i.ki} Ki` : ''}${i.under?.length ? `, ${i.under.length} under it` : ''}`;
+    return `${nameOf(s, u)} [${i.id}] ${powerOf(s, u)} power${i.rested ? ', rested' : ''}${i.ki ? `, ${i.ki} Ki` : ''}${i.under?.length ? `, ${i.under.length} under it` : ''}${statusTags(s, u).map((t) => `, ${t}`).join('')}`;
   };
   const handCard = (u: number) => { const c = cardOf(s, u); seen.add(c.id); return `${c.name} [${c.id}] cost ${c.cost}, ${c.power} power, combo +${c.comboPower}`; };
   const side = (p: Side) => {
@@ -378,7 +378,7 @@ function describePosition(s: GameState, legal: Action[], question: string | null
   const battle = b ? (() => { const t = battleTotals(s); return `Current battle: ${b.atkSide === 0 ? 'your' : "the AI's"} ${nameOf(s, b.attacker)} attacks ${nameOf(s, b.target)}: attack ${t.atk} vs defence ${t.def} (ties go to the attacker).`; })() : '';
   const texts = [...seen].map((id) => { const c = s.cards[id]; return `${c.name} [${id}]: ${c.text || '(no skill)'}${c.back ? ` || Awakened: ${c.back.text}` : ''}`; });
   return [
-    `Turn ${s.turn}, ${s.active === 0 ? 'your' : "the AI's"} turn, stage: ${s.stage}. You went ${s.first === 0 ? 'first' : 'second'}.`,
+    `Turn ${s.turn}, ${s.active === 0 ? 'your' : "the AI's"} turn, stage: ${s.stage}. You went ${s.first === 0 ? 'first' : 'second'}.${s.rules.attackOnPlayTurn ? ' Battle Cards can attack the turn they are played.' : ''}`,
     side(0), side(1), battle,
     question ? `You are being asked: ${question}` : `Your legal moves now: ${legal.map((a) => describeAction(s, a)).join(' | ')}`,
     `Recent log:\n${(s.log ?? []).slice(-16).map((l) => l.replace(/\bP0\b/g, 'You').replace(/\bP1\b/g, 'AI')).join('\n')}`,

@@ -858,7 +858,8 @@ function runEffect(s: GameState, src: number, owner: Side, e: Effect, ctx: Ctx, 
     case 'lockActive': { const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts; for (const u of ts) s.inst[u].lockedUntil = s.turn + 1; return; }
     case 'grant': {
       const ts = chooseTargets(s, src, owner, e, ctx, ctl); ctx.prev = ts;
-      for (const u of ts) s.inst[u].grants.push({ kw: e.kw, until: e.dur === 'static' ? s.turn : untilOf(s, e.dur) });
+      for (const u of ts) s.inst[u].grants.push({ kw: e.kw, until: e.dur === 'static' ? s.turn : untilOf(s, e.dur), src: nameOf(s, src) });
+      if (ts.length && e.dur !== 'static') log(s, () => `${ts.map((u) => nameOf(s, u)).join(', ')} gains ${e.kw} from ${nameOf(s, src)}`);
       return;
     }
     case 'costMod': {

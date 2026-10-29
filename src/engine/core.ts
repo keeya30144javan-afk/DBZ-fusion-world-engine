@@ -19,7 +19,8 @@ export interface Inst {
   /** Can't switch to Active during turns <= this number. */
   lockedUntil: number;
   mods: Mod[];
-  grants: { kw: Keyword; until: 'battle' | number }[];
+  /** Keywords given by effects; `src` names the card whose skill gave it (for the UI). */
+  grants: { kw: Keyword; until: 'battle' | number; src?: string }[];
   comboBonus: number;
   playedTurn: number;
   /** Ki under this card (manual p.12). Lost when a Battle Card leaves the Battle Area; kept on a Leader. */
