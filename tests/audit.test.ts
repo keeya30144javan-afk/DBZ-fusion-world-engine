@@ -276,3 +276,25 @@ test("Q200: dropping at 0 power mid-skill isn't 'removed by a skill'", async () 
   assert.equal(s.removals?.length ?? 0, r, 'no removal queued');
   assert.ok(s.p[0].drop.includes(cui));
 });
+
+test('Q526: "if you only have cards with X in your Battle Area" is false when it is empty', () => {
+  const s = fresh();
+  s.p[0].battle = [];
+  s.p[0].field = null;
+  const cond: any = [{ t: 'battleTotalCost', n: 0, only: { traits: ['Planet Namek'] } }];
+  assert.equal(condsHold(s, 0, s.p[0].leader, cond), false);
+});
+
+test("Q386: KOs that happen together resolve the turn player's [When KO'd] first", async () => {
+  const { fireRemovals } = await import('../src/engine/effects');
+  const s = fresh();
+  s.log = [];
+  const theirs = spawn(s, 1, 'FS04-04', 'drop');
+  const mine = spawn(s, 0, 'FB10-078', 'drop');
+  s.removals = [{ uid: theirs, owner: 1, by: 0, kind: 'ko' }, { uid: mine, owner: 0, by: 0, kind: 'ko' }];
+  fireRemovals(s, ctl);
+  const a = s.log!.findIndex((l) => /Zangya: \[When KO'd\]/.test(l));
+  const b = s.log!.findIndex((l) => /King Cold: \[When KO'd\]/.test(l));
+  assert.ok(a >= 0 && b >= 0, s.log!.join(' / '));
+  assert.ok(a < b);
+});

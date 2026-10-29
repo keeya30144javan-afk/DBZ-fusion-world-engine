@@ -683,7 +683,9 @@ export function fireRemovals(s: GameState, ctl: Choosers) {
       try { fireAll(s, d.owner, 'whenDiscardBySkill', ctl, d.src); } finally { s.trigN = outer; }
       continue;
     }
-    const r = s.removals!.shift()!;
+    // KOs that happened together: the turn player's [When KO'd] skills go first (official Q386, Q626).
+    const ki = s.removals![0].kind === 'ko' ? s.removals!.findIndex((x) => x.kind === 'ko' && x.owner === s.active) : -1;
+    const r = ki > 0 ? s.removals!.splice(ki, 1)[0] : s.removals!.shift()!;
     if (r.kind === 'ko') { firedKO(s, r.uid, r.owner, ctl); continue; }
     if (r.kind === 'energyDrop') {
       const outer = s.causeSrc;

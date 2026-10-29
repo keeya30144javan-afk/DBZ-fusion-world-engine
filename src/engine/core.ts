@@ -606,7 +606,8 @@ export function condHolds(s: GameState, owner: Side, src: number, c: Cond, prev:
     case 'playedBySkill': return !!s.inst[src].playedBySkill && s.inst[src].playedTurn === s.turn;
     case 'battleTotalCost': {
       const list = me.field !== null ? [...me.battle, me.field] : me.battle;
-      if (c.only && !list.every((u) => matchesFilter(s, u, c.only!, src))) return false;
+      // "If you only have cards with X" is false with an empty Battle Area (official Q526).
+      if (c.only && (!list.length || !list.every((u) => matchesFilter(s, u, c.only!, src)))) return false;
       return list.reduce((a, u) => a + costOf(s, u), 0) >= c.n;
     }
     case 'attackedThisTurn': return (s.inst[src].attackedTurn === s.turn) === c.yes;
