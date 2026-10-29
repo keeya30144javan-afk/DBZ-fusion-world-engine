@@ -227,6 +227,18 @@
     "Sequencing (Joey's run-through): the Mai searcher puts cards on the bottom of the deck, burying the 2-drop that Time Machine and Bulma want to find there, so play it before setting up the loop. With FB07-039 as your first Future card, prefer a cantrip or searcher as the 1-drop it plays: Giran's removal is better after the -2 cost cut.",
     "Tech options: Son Gohan: Future FB11-032 (3x), Trunks: Future promo FP-098 (40000 swings by removing Ki, draws on own removals), Kefla double striker for a closing push."
    ]
+  },
+  "ST01-053": {
+   "name": "Vegeta (Majin Vegeta, Black, ST01)",
+   "plan": "Glass-cannon aggro that wins with one huge turn. The Leader starts with the Field Wicked Soul Discovered in play (pay 1, rest it: Leader +1 Ki, draw 2, discard 2) and awakens at 3 Ki; it can't play Battle Cards costing 5 or more. The core chain costs 3 energy: Vegeta ST01-064 recurs a 1-cost Saiyan (often the Extra Prince of Destruction, pitched early to the Field), Prince of Destruction cycles a 2-cost Vegeta to dig 2 and play a 4-cost Wicked Soul Vegeta from hand. Early that is ST01-065: remove 2 Ki from the Leader (refunded the turn it is played), stand back up, and swing 35000 twice (45000 with Trunks: Youth ST01-057). The finisher is ST01-071: remove all Ki and add all your life to hand, +10000 per Ki, and put one of the opponent's life into the Drop. Kill range is 3 life (2 against a deck that gains life). It must kill that turn: it empties your own life.",
+   "engines": [
+    "Awakened Leader: [Activate:Battle] +10000 for each Ki removed from it by a Wicked Soul card's skill during THIS battle. Use it in the same battle as ST01-065 or ST01-071 removes the Ki, or the bonus is lost.",
+    "Getting to 3 Ki: the Field (1 energy each), Krillin tech for a free Ki so the chain can start on turn 3, Vegeta ST01-065 refunding its 2 Ki the turn it is played.",
+    "Card flow: Trunks: Youth/Son Goten ST01-058 is the key searcher (look at 3, take a cost 4-or-less card; swings 20000 for 1 energy at 3+ Ki), Bulma ST01-062 cycles, the Field cycles 2 every turn.",
+    "Floodgate: Vegeta ST01-064 attacking stops the opponent using Extras of cost 1 or less that turn (Results of Training and similar).",
+    "Tech: Kaio-Ken X20 as a single copy (pitch it to the Field early, recur it with ST01-064 when needed), the 2-cost Namek Goku as a big Drop-scaling swing, a promo 4-drop that removes a 4-drop on play.",
+    "Weaknesses: almost no defence (Super Combos only) and little early removal; most combo power comes from the hand, so it bleeds cards. Don't leave the Leader rested going into a Yellow Broly's turn 5 (it can lock it down). Against SS3 Goku, its SR keeps it at 3 life and out of kill range, so you need it at 2 before the finisher turn. In the mirror, whoever gets Krillin and the chain out first usually wins."
+   ]
   }
  }
 }

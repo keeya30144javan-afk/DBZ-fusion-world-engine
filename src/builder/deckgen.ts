@@ -27,6 +27,19 @@ export function poolFor(cards: Record<string, Card>, leaderId: string, rules: Ru
   return Object.values(cards).filter((c) => c.type !== 'LEADER' && cardFitsLeader(c, leader, rules) && copyLimit(rules, c.id) > 0);
 }
 
+/**
+ * Cards the Leader's own start-of-game skill fetches from the deck ("When this card is placed
+ * in your Leader Area, play up to 1 <Wicked Soul Discovered> from your deck"): without one in
+ * the deck that skill, often the deck's whole engine, does nothing. Every built deck runs one.
+ */
+export function requiredFor(cards: Record<string, Card>, leaderId: string, rules: RulesConfig = DEFAULT_RULES): string[] {
+  const leader = cards[leaderId];
+  if (!leader) return [];
+  const names = compileCard(leader).abilities.filter((ab) => ab.timing === 'gameStart')
+    .flatMap((ab) => ab.effects.flatMap((e) => (e.t === 'playFrom' && e.from === 'deck' ? e.filter.names ?? [] : [])));
+  return poolFor(cards, leaderId, rules).filter((c) => names.includes(c.name)).map((c) => c.id);
+}
+
 /** Copies in the deck after a change must respect copy and [Super Combo] limits. */
 export function legalCount(deck: Decklist, cards: Record<string, Card>, id: string, n: number, rules: RulesConfig = DEFAULT_RULES): boolean {
   if (n > copyLimit(rules, id)) return false;
@@ -134,6 +147,7 @@ function synergyValue(pool: Card[], leader: Card, chosen: Card[]) {
 export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng, rules: RulesConfig = DEFAULT_RULES, jitter = 0): Decklist {
   const pool = poolFor(cards, leaderId, rules);
   const leader = cards[leaderId];
+  const required = requiredFor(cards, leaderId, rules);
   const noise = new Map(pool.map((c) => [c.id, jitter ? (rng() - 0.5) * jitter : 0]));
   let deck = build((c) => cardValue(c, leader));
   // Two more passes: score each card's synergy with the list so far (named searches,
@@ -158,6 +172,7 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
       }
       return added;
     };
+    for (const id of required) add(cards[id], 1);
     // The combo wall first: the best Super Combo card for this Leader, 4 copies.
     const supers = pool.filter((c) => c.type === 'BATTLE' && isSuperCombo(c)).sort((a, b) => b.comboPower - a.comboPower || val(b) - val(a));
     let scLeft = Math.min(SUPER_COMBOS, rules.superComboMax);
@@ -210,9 +225,11 @@ export function mutate(deck: Decklist, cards: Record<string, Card>, rng: Rng, k:
   const d = cloneDeck(deck);
   const pool = poolFor(cards, d.leader, rules);
   if (!pool.length) return d;
+  const required = requiredFor(cards, d.leader, rules);
   for (let i = 0; i < k; i++) {
-    // The 4 Super Combo cards are fixed: every strong list runs exactly 4.
-    const ids = Object.keys(d.main).filter((x) => d.main[x] > 0 && !isSuperCombo(cards[x]));
+    // The 4 Super Combo cards are fixed: every strong list runs exactly 4. The last copy of a
+    // card the Leader's start-of-game skill needs stays too.
+    const ids = Object.keys(d.main).filter((x) => d.main[x] > 0 && !isSuperCombo(cards[x]) && !(d.main[x] === 1 && required.includes(x)));
     // Remove: weighted toward weak cards.
     const removeW = ids.map((id) => Math.max(0.05, 1 + weak(id) * 2 - cardValue(cards[id], cards[d.leader]) * 0.1));
     const out = ids[weightedPick(removeW, rng)];
@@ -244,6 +261,7 @@ export function crossover(a: Decklist, b: Decklist, cards: Record<string, Card>,
     const n = rng() < 0.5 ? a.main[id] ?? 0 : b.main[id] ?? 0;
     if (n > 0 && legalCount(d, cards, id, n, rules)) d.main[id] = n;
   }
+  for (const id of requiredFor(cards, d.leader, rules)) if (!d.main[id]) d.main[id] = 1;
   const pool = poolFor(cards, d.leader, rules).sort((x, y) => cardValue(y, cards[d.leader]) - cardValue(x, cards[d.leader]));
   for (const c of pool) {
     if (deckSize(d) >= rules.deckMin) break;
