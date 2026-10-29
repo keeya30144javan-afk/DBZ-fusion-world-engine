@@ -422,6 +422,18 @@ export class HeuristicChooser implements Chooser {
           if (s.p[me].hand.includes(u)) return [1];
           return [c.type === 'BATTLE' && c.cost <= s.p[me].energy.length + 1 ? 0 : 1];
         }
+        if (req.kiChoice) {
+          // How many Ki to remove: when the skill plays a card costing "Ki removed + N", remove
+          // exactly enough for the best such card in hand; otherwise remove them all.
+          const ab = abilitiesOf(s, req.src).find((x) => x.cost.some((c) => c.t === 'reduceKi' && c.choose));
+          const play = ab?.effects.find((e) => e.t === 'playFrom' && (e.filter as any)?.costEQv?.of === 'kiRemoved') as any;
+          if (play) {
+            const plus = play.filter.costEQv.plus ?? 0;
+            const fits = req.options.filter((k) => s.p[me].hand.some((u) => u !== req.src && cardOf(s, u).type === 'BATTLE' && cardOf(s, u).cost === k + plus && matchesFilter(s, u, { ...play.filter, costEQv: undefined }, req.src)));
+            if (fits.length) return [Math.max(...fits)];
+          }
+          return [Math.max(...req.options)];
+        }
         if (req.labels) {
           // Paying one of several ways: keep cards (deck top) over discarding them.
           const i = req.options.find((o) => !/discard/i.test(req.labels![o] ?? ''));

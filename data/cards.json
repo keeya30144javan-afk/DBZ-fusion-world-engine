@@ -7027,7 +7027,8 @@
         "t": "reduceKi",
         "n": 1,
         "scope": "battle",
-        "max": 99
+        "max": 99,
+        "choose": true
        }
       ],
       "cond": [],
@@ -7072,7 +7073,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "Removes all the Ki it can, where the card lets you choose 1 or more."
+     "note": "remove a total of 1 or more Ki: you choose how many"
     },
     "keywords": [],
     "source": "claude",
@@ -11363,7 +11364,8 @@
         "t": "reduceKi",
         "n": 2,
         "scope": "this",
-        "max": 99
+        "max": 99,
+        "choose": true
        },
        {
         "t": "selfToDeckBottom"
@@ -11404,7 +11406,7 @@
     ],
     "check": {
      "ok": true,
-     "note": "Passed the automatic checker and a second read by Claude."
+     "note": "remove 2 or more Ki: you choose how many, which sets the cost of the Trunks it plays (Joey, FB11 Trunks run-through)"
     },
     "keywords": [],
     "source": "claude",
@@ -42091,7 +42093,70 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card with <Future> in its card name in your Battle Area and it gets +2 Ki.\n[Auto] [Once Per Turn] If your Leader is <Trunks: Future>, when your Battle Card is removed from the Battle Area by one of your skills, draw 1 card.",
    "set": "FB11",
-   "rarity": "R"
+   "rarity": "R",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Future"
+          ]
+         }
+        },
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAllyRemovedBySelf",
+      "trigger": {
+       "type": "BATTLE"
+      },
+      "effects": [
+       {
+        "t": "draw",
+        "n": 1
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "the draw triggers when your Battle Card is removed from the Battle Area by one of your skills (the parser had dropped the trigger)"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "867e49bc"
+   }
   },
   "FS05-16": {
    "id": "FS05-16",
@@ -61180,7 +61245,82 @@
    ],
    "text": "[On Play] Choose up to 1 Battle Card with <Future> in its card name in your Battle Area other than this card and it gets +2 Ki.\n[Auto] [Once Per Turn] If your Leader is <Trunks: Future>, when your Battle Card is removed from the Battle Area by one of your skills, this card gets +10000 power for the turn.",
    "set": "PROMOTION CARDS",
-   "rarity": "PR"
+   "rarity": "PR",
+   "script": {
+    "abilities": [
+     {
+      "once": false,
+      "cost": [],
+      "cond": [],
+      "text": "",
+      "unparsed": [],
+      "timing": "onPlay",
+      "effects": [
+       {
+        "t": "ki",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": true,
+         "filter": {
+          "names": [
+           "Future"
+          ],
+          "other": true
+         }
+        },
+        "n": 2
+       }
+      ]
+     },
+     {
+      "once": true,
+      "cost": [],
+      "cond": [
+       {
+        "t": "leaderIs",
+        "names": [
+         "Trunks: Future"
+        ]
+       }
+      ],
+      "text": "",
+      "unparsed": [],
+      "timing": "whenAllyRemovedBySelf",
+      "trigger": {
+       "type": "BATTLE"
+      },
+      "effects": [
+       {
+        "t": "power",
+        "target": {
+         "side": "self",
+         "zones": [
+          "battle"
+         ],
+         "count": 1,
+         "upTo": false,
+         "filter": {},
+         "ref": "this"
+        },
+        "amount": 10000,
+        "dur": "turn"
+       }
+      ]
+     }
+    ],
+    "check": {
+     "ok": true,
+     "note": "+10000 triggers when your Battle Card is removed from the Battle Area by one of your skills (the parser had dropped the trigger)"
+    },
+    "keywords": [],
+    "source": "claude",
+    "unparsed": [],
+    "textHash": "4123c87f"
+   }
   },
   "FB09-096": {
    "id": "FB09-096",

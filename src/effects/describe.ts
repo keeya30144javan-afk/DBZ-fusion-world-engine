@@ -368,7 +368,8 @@ export function describeCost(c: Cost): string {
     case 'lifeToHand': return c.all ? 'add all of your life to your hand' : `add ${plural(c.n, 'card')} from your life to your hand`;
     case 'lifeToDrop': return `place ${plural(c.n, 'card')} from your life into your Drop`;
     case 'takeDamage': return `you take ${c.n} damage`;
-    case 'reduceKi': if (c.max) return `remove ${c.max >= 99 ? `all ${c.n > 1 ? `${c.n} or more ` : ''}` : `${c.n} or more (up to ${c.max}) `}Ki from ${c.scope === 'this' ? 'this card' : c.scope === 'leader' ? 'your Leader' : c.scope === 'battle' ? 'your Battle Area' : 'your cards'}`;
+    case 'reduceKi': if (c.max && c.choose) return `remove ${c.n} or more Ki from ${c.scope === 'this' ? 'this card' : c.scope === 'leader' ? 'your Leader' : c.scope === 'battle' ? 'your Battle Area' : 'your cards'} (you choose how many)`;
+      if (c.max) return `remove ${c.max >= 99 ? `all ${c.n > 1 ? `${c.n} or more ` : ''}` : `${c.n} or more (up to ${c.max}) `}Ki from ${c.scope === 'this' ? 'this card' : c.scope === 'leader' ? 'your Leader' : c.scope === 'battle' ? 'your Battle Area' : 'your cards'}`;
       return `reduce ${c.scope === 'this' ? "this card's" : c.scope === 'leader' ? "your Leader's" : c.scope === 'battle' ? 'the' : 'your'} Ki${c.scope === 'battle' ? ' of your Battle Area' : ''} by ${c.n}`;
     case 'koOwn': return `KO ${c.n} ${describeFilter(c.filter, 'Battle Card')} in your Battle Area`;
     case 'restOwn': return `switch ${c.orLeader ? 'your Leader or ' : ''}${c.n} ${describeFilter(c.filter, 'card')} in your Battle Area to Rest Mode`;

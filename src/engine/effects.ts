@@ -21,6 +21,8 @@ export interface ChoiceReq {
   labels?: string[];
   /** The card a 'mode' question is about (where to put it). */
   about?: number;
+  /** Choosing how many Ki to remove (options are the amounts). */
+  kiChoice?: boolean;
   /** Resting cards to pay an attack tax ("can't attack unless they switch 1 Active card to Rest Mode"). */
   tax?: boolean;
 }
@@ -467,6 +469,11 @@ export function payCosts(s: GameState, uid: number, costs: Cost[], ctl: Choosers
         const pool = kiPool(s, uid, c.scope).sort((a, b) => (isLeader(s, a) ? 1 : 0) - (isLeader(s, b) ? 1 : 0));
         const have = pool.reduce((a, u) => a + s.inst[u].ki, 0);
         let left = c.max ? Math.min(have, c.max) : c.n;
+        if (c.choose && left > c.n) {
+          // "Remove 2 or more Ki": how many is the player's call (it can decide which card a skill plays).
+          const amounts = Array.from({ length: left - c.n + 1 }, (_, i) => c.n + i);
+          left = ctl[owner].choose(s, { kind: 'mode', player: owner, src: uid, options: amounts, min: 1, max: 1, intent: 'gain', labels: Object.fromEntries(amounts.map((k) => [k, `Remove ${k} Ki`])) as any, kiChoice: true })[0] ?? left;
+        }
         const want = left;
         for (const u of pool) {
           const k = Math.min(left, s.inst[u].ki);

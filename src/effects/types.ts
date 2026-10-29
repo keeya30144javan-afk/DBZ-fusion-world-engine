@@ -369,7 +369,7 @@ export type Cost =
   | { t: 'takeDamage'; n: number }
   /** Remove N Ki. 'your' = leader and Battle Cards, 'battle' = Battle Cards only (manual p.12). */
   /** `max`: "remove N or more" / "remove all" — removes up to max (99 = all); the amount is countable as kiRemoved. */
-  | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle'; max?: number }
+  | { t: 'reduceKi'; n: number; scope: 'this' | 'leader' | 'your' | 'battle'; max?: number; /** "Remove N or more": the player chooses how many (up to max). */ choose?: boolean }
   /** KO / rest / drop / bounce N of your own cards in play matching filter. */
   | { t: 'koOwn'; n: number; filter: Filter }
   /** orLeader: your Leader may be the card rested ("your Leader or 1 card in your Battle Area"). */

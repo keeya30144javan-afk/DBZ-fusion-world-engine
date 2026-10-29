@@ -136,7 +136,7 @@ const COSTS: Record<Cost['t'], Spec> = {
   lifeToHand: { n: 'n', all: 'b?' },
   lifeToDrop: { n: 'n' },
   takeDamage: { n: 'n' },
-  reduceKi: { n: 'n', scope: 'Z:this|leader|your|battle', max: 'n?' },
+  reduceKi: { n: 'n', scope: 'Z:this|leader|your|battle', max: 'n?', choose: 'b?' },
   koOwn: { n: 'n', filter: 'F' },
   restOwn: { n: 'n', filter: 'F', orLeader: 'b?' },
   dropOwn: { n: 'n', filter: 'F' },

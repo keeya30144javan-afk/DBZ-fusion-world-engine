@@ -111,3 +111,16 @@ test("Broly's awakened tax (FB08-073): a Leader's attack is free; a Battle Card'
   assert.equal(asked.length, 1, 'the attacker is asked what to rest');
   assert.equal(s.inst[s.p[0].leader].rested, false, 'the AI chooser rests a Battle Card before the Leader');
 });
+
+test('Trunks: Future (FB11-035): "remove 2 or more Ki" lets the AI remove just enough for the Trunks it holds', () => {
+  const s = fresh();
+  s.inst[s.p[0].leader] = { ...s.inst[s.p[0].leader], id: 'FB11-025' };
+  const t2 = spawn(s, 0, 'FB11-035', 'battle');
+  s.inst[t2].ki = 3;
+  s.p[0].hand = [];
+  const t3 = spawn(s, 0, 'FB07-039', 'hand');
+  const ab = compileCard(cards['FB11-035']).abilities[1];
+  resolveAbility(s, t2, ab, 1, ctl);
+  assert.ok(s.p[0].battle.includes(t3), 'the 3-cost Trunks was played (2 Ki removed)');
+  assert.equal(s.p[0].deck[0], t2, 'the 2-drop went to the bottom of the deck');
+});

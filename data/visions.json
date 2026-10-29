@@ -1,220 +1,232 @@
 {
-  "about": "Game plans of strong players' decks (lists shared by the user, Oct 2026), worked out from the card texts. Each 'engine' names the cards that work together and how.",
-  "principles": [
-    "Exactly 4 Super Combo cards (the 7-cost combo walls) in every deck.",
-    "A big base of 1-costs (9 to 20, usually about 15): cantrips, searchers, evolve bases and cheap removal that find and set up the deck's real plan.",
-    "Few 3-costs. Decks jump from cheap set-up cards to their 4-6 cost payoffs, often by Evolve or by playing them off a cheaper card's skill.",
-    "15 to 23 cards with 10000 combo power, so the hand is always a wall on the opponent's turn.",
-    "13 to 20 different cards, mostly as 4-ofs: consistency over variety.",
-    "Evolve decks run 13 to 18 Evolve cards and enough bases (often searchable 1-costs) to always have something to evolve from.",
-    "Life is a resource: many decks add life to hand early on purpose, to awaken the Leader sooner or to fuel skills, then rely on Leader shields, blockers and combo walls to survive at low life.",
-    "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\").",
-    "Cards that replace themselves (draw, search, life to hand) keep the hand full for combos; a card that goes hand-negative needs a real payoff.",
-    "A wide board can beat one big card: more bodies means more swings to answer and more targets the opponent has to remove.",
-    "Hand reading: count the Super Combos and big combo cards the opponent has used (check their Drop); assume the rest are still in hand. Go all-in only when your swings beat their best possible wall; an opponent dropping their own life low may be baiting an all-in.",
-    "Life is a resource, not a score: at 5+ life (and for decks that awaken at 4 or less, even 4) let most single hits through. Defend the swings that really hurt: Double/Triple Strike, a hit that drops you to 2, or one that lets a big hand combo you out next turn.",
-    "Charge the right card: a 4-of finisher you only want late can go to energy early; you will see another copy.",
-    "Pick bodies the opponent cannot answer on their turn: a 7-cost or 30000+ body dodges \"cost 5 or less\" bounce, while a 4-cost just goes back to hand.",
-    "Pair partial removal: a power-down (split across targets if the card allows) plus a KO-up-to-power removes bodies neither card handles alone.",
-    "Poke before the kill: when the opponent has a big hand, swing smaller attacks first to make them defend and spend cards, then go for lethal once their hand is too small to wall it.",
-    "Count hand plus and minus: a play that draws back what it costs keeps you alive next turn; if your opponent spent two cards to defend, they may not survive your counterattack.",
-    "Pieces that find pieces: early searchers and draw cards that later serve as Evolve or Fusion material make a combo deck consistent. Keep those bases alive; the opponent should spend its turn killing them.",
-    "30000 is the magic attack number: against a 20000 body or Leader it forces two combo cards or a Super Combo out of hand. Prefer a 30000 swing over 25000, and don't Super Combo off a 5000 gap.",
-    "Spend Ki from Battle Cards first: they will probably be removed, so their Ki is free. Keep the Leader's Ki as a late-game combo reserve (each Ki is close to a card).",
-    "Thread the needle: knocking the opponent to low life hands them cards. Push the last points only when you can finish, or when their extra cards cannot save them.",
-    "Late game, a card in hand beats more energy if your deck has no big plays left to cast: skip the charge.",
-    "Don't combo away a card you still need to attack with this turn; count your remaining swings first.",
-    "Going to 1 life on purpose is a declaration: it hands you cards but invites an all-in. Only do it if your hand (Super Combos, draw-on-defence Extras) can wall their biggest possible push; tournament games are lost by being 20000 short.",
-    "Control when your opponent awakens: if their Leader awakens on a life count, don't hand them the hit that flips it early unless the damage wins you more than their awakening gains.",
-    "Removing an opponent's Evolve base forces them to spend a card replaying one, but it costs you a pressure turn. Do it when it is cheap or when their Evolve turn would be decisive.",
-    "Open decklists: list the techs your opponent could have and avoid lines a single tech ruins (an alternate win can be turned off by a [Barrier] body; a big attacker can be locked by a rest effect).",
-    "Damage that lands before an awaken trigger hits harder: if the opponent loses life when they awaken, the extra damage at the threshold pushes them deep.",
-    "Don't defend a card that will die to its owner's own effect anyway; let it go and keep the cards.",
-    "Swing with the free attacker first (Leader, or a body that needs no combo cards) to see their response, then commit cards.",
-    "When the opponent is low, each extra hit hands them a card for their counterattack: only push it if it sets up the win, or their counterattack can't kill you anyway.",
-    "Use an Extra early when it gets full value now; holding it for a perfect moment that may never come wastes it and adds decision load.",
-    "Ties go to the attacker: an attack exactly equal to the defence wins, so the defender needs to beat it by at least 1 (5000 in practice).",
-    "Against a Leader whose awakened side is much stronger, pressure their Battle Cards (rest them, attack them) instead of their life, so you don't awaken them for free.",
-    "Blockers are worth using while you can: a yellow opponent will rest them on their next attack anyway. A deck that untaps its Battle Cards at end of turn (awakened Frieza) can attack with its blockers freely.",
-    "Defending early has value too: a 20000 swing now is cheaper to stop than a 40000 swing later, but only if the game lasts long enough for that to matter.",
-    "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack.",
-    "Know your outs before charging: don't charge a finisher you need two of (a double 6-cost turn) until you have seen enough copies; charge a card you will never play again instead.",
-    "An opponent who over-combos on offence to force your Super Combos is spending their own hand too. Track the hand-size gap, not just life.",
-    "Win-or-bust turns: when you can't survive their next turn (you can't remove or rest their board again), commit everything to lethal, even lines that need a draw to hit.",
-    "Don't defend every early swing: an opponent who blocks everything early ends up with a 2-4 card hand and can't kill you later. Taking hits down to about 5 life with 6-7 cards is usually stronger.",
-    "Keep the energy marker for a turn where it creates real pressure or reaches a key energy count, not just because turn 1 allows a play.",
-    "Against a 2-card hand, check for lethal every turn: comboing up to 30000 may finish them. When you can't win this turn, pivot to building resources (Ki, cards) so their best swing can't kill you.",
-    "Sequence the card that shuts off their defence (\"opponent can't combo\" or \"can't use Extras\") before the swings it should protect."
-  ],
-  "decks": {
-    "FS11-01": {
-      "name": "Son Goku SSJ3 (Yellow)",
-      "plan": "Cheap ≪Another World≫ Son Gokus rest the opponent's board (FB09-080) and dig for more pieces (FB09-079), then evolve: Son Goku FP-077 / FS11-07 / ST01-044, Vegeta FS11-14 / FB10-090, Son Gohan FS11-09 / ST01-046. Once the Leader awakens, each Evolve onto a 20000-30000 card untaps 2 energy, so several Evolves fit in one turn, and Leader draws plus life-to-hand Evolves keep the hand full. Rested enemy cards are KO'd, locked or sent to the Drop, and Kamehameha closes with a [Double Strike] evolved attacker.",
-      "engines": [
-        "Leader (awakened) + Evolve cards: with 3+ rested energy, playing a 20000-30000 [Evolve] card untaps 2 energy, chaining Evolves in one turn.",
-        "Rest, then punish: FB09-080 rests 2, FP-077 rests 1; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon (with an Evolve card in play) drops a rested cost 4-or-less card or locks a bigger one, Vegeta FB09-092 KOs a rested 1-cost.",
-        "Card flow: Son Goku FB09-079 searches ≪Another World≫, Vegeta FB10-090 searches a ≪Saiyan≫ cost 5 or less, Son Gohan FS11-09 and ST01-046 add life to hand (ST01-046 also untaps itself to attack), Son Goku FS11-07 draws and untaps.",
-        "Defence: Videl FB02-125 is a 1-cost [Blocker]; Son Goku ST01-044 can pull an attack from a cost 3-or-less attacker onto itself (30000); Vegeta FB10-089 has [Barrier]; Results of Training (+15000, draws) and Paikuhan as Super Combos.",
-        "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game.",
-        "Tournament play: the front Leader takes a life every end of turn, so it awakens on schedule (about turn 3). After that each turn is worth +2 energy, so charge to 4 and then mostly stop charging: cards in hand are worth more.",
-        "Bread and butter: a 1-cost Son Goku, then a 20000-30000 [Evolve] card (Son Gohan: Adolescence FS11-09 counts without evolving: it is played, not evolved) untaps 2 energy, then evolve again or swing 30000s and untap with Son Goku FS11-07.",
-        "Mirror and aggro matchups: hit for 30000 two or three times by turn 3; at the end, count the opponent's possible defence (hand size, Results of Training draws, Super Combos seen) against your all-in total including Kamehameha (+25000, Double Strike) and Blue Power Awakening.",
-        "Tech: Babidi FB03-083 ([Barrier]) can't be chosen, so it survives Gogeta: BR's -25000 and Leader KO and stops its 1-life alternate win.",
-        "Vs Gogeta: BR: the Leader's own life loss means 3 life is the real floor; play Babidi FB03-083 mid-to-late, once they have committed to the FB09-121 plan, not on turn 2. Gotenks FS11-03 locks a rested Gogeta so it can't attack next turn.",
-        "Results of Training draws only if a rested cost 3+ Battle Card is in play; charging it cost a tournament game (the +15000 and draw would have survived). Keep combo Extras for the final defence unless energy is truly short."
-      ]
-    },
-    "FB03-001": {
-      "name": "Jiren (Red)",
-      "plan": "Spend life on purpose (Caulifla, Son Goku (Mini): DA, Jiren FB04-006's self-damage) to awaken at 3 life. Awakened Jiren takes at most 1 damage per battle while you have a 30000+ Battle Card, and draws a card every time you take damage. Jiren FB03-009 turns that into a card engine, and It's Over! / Sphere of Destruction clear the board.",
-      "engines": [
-        "Leader (awakened) + Jiren FB03-009: on the opponent's turn, if Jiren is rested (it attacked), pay 'take 1 damage': the life card goes to hand, the Leader draws 1, then the top of the deck goes to life. +2 cards, no life lost, once each opponent turn.",
-        "Leader (awakened) shield: any 30000+ Battle Card (Jiren FB03-009, Rumsshi, Jiren FB04-006, Son Goku FB04-129, Son Goku (Mini): DA once awakened) caps damage at 1 per battle, so [Double Strike] and [Critical] can't finish you.",
-        "It's Over!: with a 30000+ card in play, KO every enemy Battle Card with 25000 power or less. Fuwa (-15000) and Whis (-5000) shrink targets into range.",
-        "Son Goku FB04-129: negates the next damage you take, and gives the whole enemy board -20000 when it attacks.",
-        "Marcarita and Son Goku (Mini): DA get bigger once the Leader is awakened."
-      ]
-    },
-    "FS02-01": {
-      "name": "Vegeta (Blue)",
-      "plan": "Keep 7 or fewer cards in hand and grind with cost-based bottom-decking. Cost reducers (Vegito FB02-061, Mai: Future) shrink enemy cards so cheap removal (Zamasu, Vegito, Son Gohan FB03-039, Sinister Sickle, Vegeta FS02-13) can bottom-deck them; Pilaf and Videl recycle the 1-cost Earthlings.",
-      "engines": [
-        "Vegito FB02-061 (your turn, hand 7 or fewer: enemy cards cost 1 less) + Mai: Future (-1 more) turn 'cost 1 or less' and 'cost 3 or less' removal into answers for real threats.",
-        "Bottom-deck suite: Zamasu and Vegito (cost 1 or less), Son Gohan: Adolescence FB03-039 (2 cards cost 3 or less), Sinister Sickle and Vegeta FS02-13 (cost 4 or less), Zen-Oh (everything).",
-        "Pilaf and Videl FB03-042 recover 1-cost Earthlings (Mai, Bulma, Pilaf) from the Drop to keep the removal going.",
-        "Vegito FB02-139 bounces cost 5 or less and untaps itself; the awakened Leader gets +15000 with hand 7 or fewer.",
-        "Exhibition lessons: awaken quickly (Trunks: Future/Vegeta take life to hand) because an awakened 20000 Leader outclasses a 15000 one; reach 7 or fewer cards by comboing when it buys real value, not by throwing cards away. Galick Gun on defence is +15000 and a draw at 7 or fewer."
-      ]
-    },
-    "FB02-105": {
-      "name": "Vegeta (Yellow)",
-      "plan": "Rest-and-lock control. Rest enemy cards (Vegeta FS11-13, Energy Absorption), keep them locked (Son Goku FB02-119, Broly FB08-122, Fierce Hyper Beam), then KO the rested ones (Vegeta FS11-14, Blue Power Awakening). The awakened Leader untaps 2 energy at end of turn to hold up defensive Extras on the opponent's turn.",
-      "engines": [
-        "Lock pieces: Energy Absorption rests and locks, Son Goku FB02-119 locks on play and on attack, Broly FB08-122 locks every rested enemy card and stops a rested Leader attacking.",
-        "Vegeta FS11-14 evolves from FS11-13 / ST01-052 Vegeta, then KOs itself to draw and KO a rested card cost 5 or less; Babidi untaps a ≪Wicked Soul≫ or ≪Majin≫ card (FS11-14, Majin Buu, Yamu) and gives it [Blocker].",
-        "Majin Buu FB03-093 comes back from the Drop rested when KO'd (discard 1).",
-        "Leader (awakened): untap 2 energy at end of your turn, to pay for Time Rewound / And Don't Dream of Resurrecting Again! / Results of Training during the opponent's attacks. Whis recovers a yellow Extra cost 3 or less."
-      ]
-    },
-    "FB08-073": {
-      "name": "Broly (Yellow)",
-      "plan": "Dig for Broly pieces with Kakarot and Broly ST01-048, power through turn 3-4 into Broly ST01-051 / ST01-050 / FB08-122, protect the big Broly with Paragus, and lock the opponent out. The awakened Leader taxes every enemy attack while a 5+ cost ≪Saiyan≫ is in play.",
-      "engines": [
-        "Search: Kakarot finds <Paragus> or a <Broly>; Broly ST01-048 adds life to hand and finds <Kakarot> or a <Broly>.",
-        "Broly ST01-051 (cost 5): rests an enemy card, and can pay 1 + send itself to the Drop to play a 6-cost Broly (ST01-050 or FB08-122) from hand.",
-        "Broly ST01-050 evolves from a Broly costing 2+ and KOs one of your own cards (Paragus ST01-047 draws when KO'd) to untap and attack again.",
-        "Paragus FB08-084 makes a Broly unremovable by skills until the end of the opponent's next turn; King Vegeta costs 2 less with a 5+ ≪Saiyan≫ in play.",
-        "Leader (awakened): opponent must rest an active card for each Battle Card attack; untaps 1 energy with a 4+ cost Broly in play.",
-        "Hawk profile (14 of 15 wins): mid-range aggro. Draw and search hard early (Kakarot FB08-076, Broly ST01-048, Vegeta cantrips, Hercule), so the 3-life awaken is safe; up to 15 cards in hand on awakening.",
-        "Core turn: evolve a 2-cost Broly into the 6-cost ST01-050 for 4 energy, then the awakened Leader untaps an energy, then play Paragus ST01-047: swing 40k, Paragus stuns a rested card, KO Paragus with ST01-050 (draw 1, untap the 40k), swing 40k again (\"KO your dad\").",
-        "When their board gets wide, play FB08-122 Broly (6): its On Play locks every rested enemy card. Broly ST01-051 (5-cost) rests a card and can replace itself with a 6-cost Broly from hand for 1 energy: a turn-early SCR or a stun to dodge a staller.",
-        "If the opponent stalls your awaken by sitting at 4 life with a big body, Broly ST01-049 takes a life (self-awaken) and rests that body. After awakening, avoid more self-awaken life taking unless going for game (Double Strike range at 2).",
-        "The awakened Leader taxes every enemy attack (they must rest an active card) while a 5+ cost Saiyan is out. Weakness: no real removal; win by turn 5 before their board gets too big."
-      ]
-    },
-    "ST01-001": {
-      "name": "Son Goten (Red)",
-      "plan": "Ki on the Leader. The Leader starts Fate Transcending Generations from the deck, and Son Goku, Son Gohans and Trunks pile Ki on the Leader to awaken at 3. Fate lets you pay for Kamehameha Extras by resting it, and Family Kamehameha cashes 5+ Ki into a huge attack that deals 2 extra damage on a KO.",
-      "engines": [
-        "Fate Transcending Generations (Field, played at game start): pay a Kamehameha Extra costing up to the Leader's Ki by resting Fate instead of energy; the awakened Leader untaps Fate after a Kamehameha.",
-        "Ki builders: Son Goku ST01-004 (+1), Son Gohan ST01-009 / ST01-010 with Fate (+1), Son Gohan ST01-011 (+1), Trunks ST01-013 rest with Fate (+1).",
-        "Son Goten/Son Gohan ST01-008 rests a 2-cost Son Goku to draw and attack Active cards; that fires Son Goku ST01-004's 'rested by your skill: -25000'.",
-        "Family Kamehameha: remove 5+ Ki for +10000 per Ki, then the next KO in battle deals 2 damage. Kamehameha ST01-016 (+20000 and a search) and Son Gohan ST01-011 (untaps after a Kamehameha) extend the turn."
-      ]
-    },
-    "FB09-001": {
-      "name": "Gogeta: BR (Red)",
-      "plan": "Get a Son Goku: BR and a Vegeta: BR with equal power of 20000+ into play and Fusion Evolve them into Gogeta: BR for 0-2 energy. The awakened Leader then KOs any enemy cards adding up to 15000 power or less the turn a Fusion Evolve card is played, after Gogeta's -5000 / -25000 has shrunk them. Gogeta: BR FB09-121 can win outright at end of turn.",
-      "engines": [
-        "Fusion pairs at 20000: Son Goku: BR FB09-010 / FB10-012 and Vegeta: BR FB09-020 / FB10-017 (15000 +5000 on your turn). Vegeta: BR FB09-020 also pumps itself and a Son Goku: BR by +5000 (revealing a Fusion Evolve card) to match powers.",
-        "Gogeta: BR forms: FB09-006 (0 energy: draw, all enemies -5000), FP-070 (0: -15000 on attack), FB09-007 (1: untaps once on attack), FB09-121 (2: all enemies -25000; at end of turn, if the opponent is at 1 life with no Battle Cards, you win).",
-        "Leader (awakens at 5 life): once per turn after a Fusion Evolve this turn, KO any number of enemy Battle Cards totalling 15000 power or less; after -25000 that's usually the whole board.",
-        "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop.",
-        "Win route (tournament play): pressure to 2 life, then on the last turn go to 1 life yourself if needed for cards, Fusion Evolve into FB09-121, wipe the board with -25000 plus the Leader KO, deal one damage, and win at end of turn. Against Gogeta: BR, sitting at 1 life is a death sentence; keep the board clear of Goku/Vegeta: BR bases so they must rebuild instead of fusing.",
-        "Vs SS3 Goku (awakens at 4 and takes a life when it does): Sphere of Destruction FB03-026 at exactly 4 life deals 1 damage, so they awaken down at 2, inside the alternate-win range.",
-        "Cheelai: BR FB09-012 plus two 2-cost Goku/Vegeta bases enables an early Fusion Evolve; Vegeta: BR's Activate KOs itself plus an enemy, so a Super Combo spent protecting it is wasted."
-      ]
-    },
-    "FB09-097": {
-      "name": "Gogeta: GT (Black)",
-      "plan": "Build Ki on GT Battle Cards and keep an energy marker. Awaken at 2 total Ki, then cash Ki in: Son Goku: GT KOs everything costing up to the Ki removed, Big Bang Kamehameha is paid with Ki, and Gogeta: GT FB09-123 can spend 4 Ki for an extra turn.",
-      "engines": [
-        "Ki: Son Gohan: GT (+2), Son Goku: GT (+1 on play and attack), Vegeta: GT (+1), Pan: GT (+1), Trunks: GT (+1 to a card with Ki), and the awakened Leader (+2 to a GT card when attacking).",
-        "Energy markers: Pan: GT, Vegeta: GT FB09-117 and Gogeta: GT place them; Hercule: GT, Para Para Brothers and Ultimate Sparking get better with one.",
-        "Vegeta: GT FB09-117's cost and power grow with its Ki, so Big Bang Kamehameha (KO a card costing up to the chosen GT card's cost, payable by removing 2 Ki) hits harder.",
-        "Gogeta: GT FB09-123: remove 4 Ki and shuffle your other Battle Cards and 6 energy away to take an extra turn."
-      ]
-    },
-    "FB09-073": {
-      "name": "Son Goku/Vegeta (Yellow)",
-      "plan": "≪Another World≫ evolve deck. 1-cost Son Gokus rest and search, Son Goku/Vegeta FB09-082 is the base, Veku and Gogeta FB09-122 evolve on it. Gogeta rests the whole enemy board on attack and survives lethal by going into your life. The awakened Leader untaps an ≪Another World≫ attacker for a second swing.",
-      "engines": [
-        "Bases: Son Goku/Vegeta FB09-082 (cost 2, adds life to hand, can untap itself) is what Veku (0 energy) and Gogeta FB09-122 (3 energy) evolve from.",
-        "Veku: send to Drop to replay a Son Goku and a Vegeta with ≪Another World≫ (combined cost 3 or less) from the Drop, rested, as fresh bases.",
-        "Gogeta FB09-122: rests all enemy cards when attacking and untaps 1 energy; goes to your life instead of letting you lose at 0 life or being KO'd by a skill.",
-        "Rest and lock: Son Goku FB09-080 rests 2, North Kai locks a rested card, FP-077 rests one; Son Goku FS11-07 (evolve) draws and untaps.",
-        "Hamza's god-rank build (52): 10-12 cantrips (Saike Demon, North Kai, Son Goku searchers, the 1-cost Vegeta cantrip ST01-052) so every early play replaces itself; the Vegeta cantrip is what made the deck viable again.",
-        "Awakened Leader: rest one Another World card to untap another, usually Gogeta FB09-122 (a 6-drop that rests the whole enemy board and untaps an energy each swing) or the 5-cost Son Goku, for three 30k swings or two 40k swings.",
-        "Kill turn: hold the Leader attack; 20 Goku/Vegeta, 40 and 40 with Gogeta, 30 with the promo Vegeta FP-073 untapped under Majin Vegeta, then end with the Leader swing for its draw.",
-        "Vs SS3 on 4 energy: Vegeta cantrip, Majin Vegeta FS11-14 swing 30k, then two Warriors Who Defeat the Evil Demon to clear three bodies without going minus in hand.",
-        "Gogeta FB09-122 is the crutch: it returns to life instead of being KO'd, so only blue (bottom of the deck/bounce) or a direct-to-Drop 6-cost answers it. Blue Power Awakening (1 copy) kills an early 6-cost Vegito to buy a turn against blue.",
-        "Weakness: combo-piece reliant. Going first vs Majin Vegeta or Beast Gohan, the 2-cost Son Goku/Vegeta must come down on curve or the game is lost; a hand of only 1-drops loses."
-      ]
-    },
-    "FB09-049": {
-      "name": "Son Gohan: SH (Green)",
-      "plan": "Pile Ki on the Leader (Gotenks: SH, Son Gohan: Adolescence/Piccolo, Special Beam Cannon, Piccolo: SH), awaken at 2, and at 3 Ki cheat out the 8-cost 50000 Son Gohan: SH with [Double Strike] by sending a 5-cost Son Gohan: SH to the Drop.",
-      "engines": [
-        "Son Gohan: SH FB09-059 / FP-072 (cost 5): with the SH Leader at 3+ Ki, send it to the Drop to play the 8-cost Son Gohan: SH from hand.",
-        "Son Gohan: SH FB09-060 (8 cost, [Double Strike]): spend 1 Leader Ki and 1 energy to KO any card, recover an Extra and refund energy. FB07-121 bins 5 energy to send any card to the Drop and recovers 5 energy.",
-        "Piccolo FB10-070 (bin 1 energy): play a Son Gohan costing 5 or less from hand; Gamma 2: SH KOs cost 3 or less at 3 Ki.",
-        "Special Beam Cannon: draw + Ki on main; in battle, remove all Leader Ki for +10000 each, and at 4+ untap a Son Gohan: SH."
-      ]
-    },
-    "FB05-025": {
-      "name": "Vegito (Blue)",
-      "plan": "Fill the Drop to 20+ (Son Goku ST01-023, Gotenks ST01-021, Son Goku/Vegeta ST01-024, the Leader's awaken mills 10). Then the Leader gets +20000, Savior of the World pumps, and Super Vegito gives 40000 Vegitos [Double Strike]. Separately, set up a Potara under Son Goku or Vegeta and evolve into Vegito FB10-121 / ST01-025 / ST01-070.",
-      "engines": [
-        "Potara set-up: Son Goku FB10-031 mills a Vegeta and a Potara, Vegeta FB10-038 / FP-087 mill a Son Goku and a Potara; then pay 1 to put that pair under the card, which lets the Vegitos evolve onto it.",
-        "Vegito FB10-121 (draw 3, mills the opponent 15 at 2 or less life), ST01-025 (Leader +5000 through their turn), ST01-070 (bottom-decks a card costing up to your Drop size).",
-        "Drop count: 20+ turns on the awakened Leader (+20000), Savior of the World (+15000), Vegito FB05-041 (recover a Son Goku and a Vegeta), and I Call This Version...Super Vegito! ([Double Strike]).",
-        "Son Goku FB10-032 evolves on a 1-cost Son Goku, untaps, and bottom-decks enemy cards totalling cost 2 or less; Trunks: Future costs 3 less with an evolved Vegito.",
-        "Deck profile (Bombu build, 60 cards): turn 1 Pan (draw 2, discard 2), turn 2 Gotenks into Gotenks: about 10 cards in the Drop by turn 3. A 60-card list eases charge decisions (spare zero-combo copies can be charged).",
-        "Don't rush awakening: it awakens at 4, so take your time, pressure with 40000 bodies, and once at 4 stay there. SS3 and BR combo up to push you from 3 to 2 (Double Strike range).",
-        "Late game the deck is thinned to 5-8 cards, and recursion keeps pulling back Super Combos, Saviors and the Son Goku/Vegeta duo, so the deck draws mostly defence.",
-        "Before starting a chain, check that every piece is in the Drop (keep one duo there). Losses come from a missing Drop piece. With 2+ life, activate the duo's Son Goku first: taking a life card may hand you the piece and free the Vegeta's Drop pick for combo power.",
-        "Win line at 3 life: Vegito swing; if they drop to 2, push with the 4-cost into the 25k-to-30k chain and a Double Strike 55k+; if they fall to 1, the 50k Leader finishes. Use the bounce Vegito to remove blockers and Gogeta: BR's secret rare (bottom of the deck beats its protection).",
-        "Vs Majin Vegeta: Gotenks on turn 4 bounces their 4-cost and stops attacks, keeping Savior of the World live."
-      ]
-    },
-    "FB09-025": {
-      "name": "Son Goku (Blue, Tournament of Power)",
-      "plan": "Discard and mill to put 7+ ≪Universe≫ cards in the Drop and awaken at 6 or less life. Then every discard paid to an [Evolve] or ≪Tournament of Power≫ card's skill draws a card back, so discard costs (Divine Domain, Vegeta FB09-045, Frieza) become free. Evolve Son Goku up to the 40000 FB09-037.",
-      "engines": [
-        "Awaken: Great Priest (mill 3), Zen-Oh (dig 2, rest to Drop), and the discard + mill costs on Son Goku FB09-033, Vegeta FB09-043, Son Goku/Vegeta FP-075 fill the Drop with ≪Universe≫ cards.",
-        "Leader (awakened): draw 1 for each card discarded by an [Evolve] or ≪Tournament of Power≫ card's skill.",
-        "Evolve chain: Son Goku (ToP) → FB09-036 (1 energy) → FB09-037 (2 energy, 40000, can swap itself into a battle). Son Goku FB09-035 can be paid by discarding a ToP card and 2 energy.",
-        "Removal: Vegeta FB09-045 (discard 2: bottom-deck 2 cards cost 4 or less, draw 1), Frieza FP-071 (discard 2: bottom-deck cost 2 or less), Zen-Oh (pay 12 Drop cards: bottom-deck the card it attacks, cost 6 or less)."
-      ]
-    },
-    "FB11-073": {
-      "name": "Shallot/Giblet (Yellow)",
-      "plan": "Cheap Shallots and Giblets that replace themselves (draw, search, life to hand) build a wide board and self-awaken the Leader at 5 life. Awakened, with a Shallot and a Giblet in play, the Leader untaps 2 energy, which pays for Fusion Evolving the rested pair into Shallet, or Evolving into the 5-cost Shallot / Giblet. Shallet untaps itself on attack, and the turn it is played it untaps your Leader or another attacker too. Rest the opponent's cards with Giblet FB11-081, Shallot FB11-087 / FB11-088, then lock or remove them with Giblet FB11-084 and Warrior Who Defeats the Evil Demon.",
-      "engines": [
-        "Hand-neutral set-up: Shallot FB11-086 (life to hand + search a ≪Saiyan≫-only 2-6 cost), Shallot FB11-087 (life to hand + rest), Bulma (search), Giblet FB11-082 (draw 2, discard 2), Cabba (draw). Every play replaces itself, so the hand stays full for combos.",
-        "Giblets cost 1 less while you have a Shallot but no Giblet in play: Shallot turn 2, Giblet for 1 next to it.",
-        "Leader (awakens at 5 life): with a Shallot and a Giblet in play, untap 2 energy (then no cost 4-or-less Battle Cards that turn). That energy pays for Shallet (Fusion Evolve, 2 energy, rested Shallot + Giblet of equal power) or the 5-cost Evolves.",
-        "Shallet: +5000 on your turn; when attacking, pay 1 to untap it, and if it was played this turn also untap your Leader or another attacker: extra swings.",
-        "Rest, then remove: Giblet FB11-081 rests 2 (cost 4 or less), Shallot FB11-087 and FB11-088 rest one (FB11-088 can rest an energy instead); Giblet FB11-084 locks a rested card; Warrior Who Defeats the Evil Demon (with an Evolve card in play) sends a rested cost 4-or-less card to the Drop or locks a bigger one.",
-        "From the player: don't tunnel into Shallet every turn. Two Shallot/Giblet bodies plus the untapped energy can be better than one big card, because the opponent has to deal with more on board.",
-        "Deck profile (Hawk Dragon Ball Nest): build like SS3 and Gogeta: BR combined. Every Shallot replaces itself (hand neutral), and the deck Fusion Evolves into Shallet every turn. Run about 10 Shallots and 10 Giblets so both halves are always in hand.",
-        "Sequencing: the awakened Leader's untap 2 energy stops Battle Cards with original cost 4 or less for the rest of the turn. Play the 2-cost Shallots/Giblets and cantrips first, then activate the Leader, then Evolve, Fusion Evolve and use Extras.",
-        "Card roles: never charge or combo Shallot FB11-086 (searches and goes plus in hand); Shallot FB11-085 (gets a Giblet back from the Drop) is the first to combo or charge. Giblets go minus in hand: Giblet FB11-083 (Leader +5000) pairs with Shallot FB11-087 (draw).",
-        "Searchers (Bulma FB11-094, Shallot FB11-086) only find Saiyan-only Battle Cards cost 2-6: they miss Extras and Super Combos, so Warrior Who Defeats the Evil Demon, Blue Power Awakening and Results of Training must be drawn naturally. Cycling (Giblet FB11-082 draw 2 discard 2) helps.",
-        "Attacks: swing with the Leader before Shallet; Shallet's untap can then go to the Leader (another draw), or to a 5-cost Shallot FB11-088 (another draw plus rest a card or an energy, which stops an SS3 opponent's Results of Training), or skip the draw for a second 40000 swing when going for game.",
-        "Fusion needs Shallot and Giblet rested with equal power: attacking 10000 bodies to rest them risks a power-down (Goten's -5000) breaking the pair, so rest them with Giblet FB11-083 / Shallot FB11-087 skills when you can.",
-        "Mulligan: keep only hands with a turn-1 play (Bulma or a cantrip); aim for 8 turn-1 plays in the list. Blue Power Awakening (2 copies) is the answer to 6-cost threats."
-      ]
-    }
+ "about": "Game plans of strong players' decks (lists shared by the user, Oct 2026), worked out from the card texts. Each 'engine' names the cards that work together and how.",
+ "principles": [
+  "Exactly 4 Super Combo cards (the 7-cost combo walls) in every deck.",
+  "A big base of 1-costs (9 to 20, usually about 15): cantrips, searchers, evolve bases and cheap removal that find and set up the deck's real plan.",
+  "Few 3-costs. Decks jump from cheap set-up cards to their 4-6 cost payoffs, often by Evolve or by playing them off a cheaper card's skill.",
+  "15 to 23 cards with 10000 combo power, so the hand is always a wall on the opponent's turn.",
+  "13 to 20 different cards, mostly as 4-ofs: consistency over variety.",
+  "Evolve decks run 13 to 18 Evolve cards and enough bases (often searchable 1-costs) to always have something to evolve from.",
+  "Life is a resource: many decks add life to hand early on purpose, to awaken the Leader sooner or to fuel skills, then rely on Leader shields, blockers and combo walls to survive at low life.",
+  "Removal often comes in two steps: one card rests or shrinks the target, another KOs, locks or bottom-decks it (\"rest then KO\", \"reduce cost then bottom\").",
+  "Cards that replace themselves (draw, search, life to hand) keep the hand full for combos; a card that goes hand-negative needs a real payoff.",
+  "A wide board can beat one big card: more bodies means more swings to answer and more targets the opponent has to remove.",
+  "Hand reading: count the Super Combos and big combo cards the opponent has used (check their Drop); assume the rest are still in hand. Go all-in only when your swings beat their best possible wall; an opponent dropping their own life low may be baiting an all-in.",
+  "Life is a resource, not a score: at 5+ life (and for decks that awaken at 4 or less, even 4) let most single hits through. Defend the swings that really hurt: Double/Triple Strike, a hit that drops you to 2, or one that lets a big hand combo you out next turn.",
+  "Charge the right card: a 4-of finisher you only want late can go to energy early; you will see another copy.",
+  "Pick bodies the opponent cannot answer on their turn: a 7-cost or 30000+ body dodges \"cost 5 or less\" bounce, while a 4-cost just goes back to hand.",
+  "Pair partial removal: a power-down (split across targets if the card allows) plus a KO-up-to-power removes bodies neither card handles alone.",
+  "Poke before the kill: when the opponent has a big hand, swing smaller attacks first to make them defend and spend cards, then go for lethal once their hand is too small to wall it.",
+  "Count hand plus and minus: a play that draws back what it costs keeps you alive next turn; if your opponent spent two cards to defend, they may not survive your counterattack.",
+  "Pieces that find pieces: early searchers and draw cards that later serve as Evolve or Fusion material make a combo deck consistent. Keep those bases alive; the opponent should spend its turn killing them.",
+  "30000 is the magic attack number: against a 20000 body or Leader it forces two combo cards or a Super Combo out of hand. Prefer a 30000 swing over 25000, and don't Super Combo off a 5000 gap.",
+  "Spend Ki from Battle Cards first: they will probably be removed, so their Ki is free. Keep the Leader's Ki as a late-game combo reserve (each Ki is close to a card).",
+  "Thread the needle: knocking the opponent to low life hands them cards. Push the last points only when you can finish, or when their extra cards cannot save them.",
+  "Late game, a card in hand beats more energy if your deck has no big plays left to cast: skip the charge.",
+  "Don't combo away a card you still need to attack with this turn; count your remaining swings first.",
+  "Going to 1 life on purpose is a declaration: it hands you cards but invites an all-in. Only do it if your hand (Super Combos, draw-on-defence Extras) can wall their biggest possible push; tournament games are lost by being 20000 short.",
+  "Control when your opponent awakens: if their Leader awakens on a life count, don't hand them the hit that flips it early unless the damage wins you more than their awakening gains.",
+  "Removing an opponent's Evolve base forces them to spend a card replaying one, but it costs you a pressure turn. Do it when it is cheap or when their Evolve turn would be decisive.",
+  "Open decklists: list the techs your opponent could have and avoid lines a single tech ruins (an alternate win can be turned off by a [Barrier] body; a big attacker can be locked by a rest effect).",
+  "Damage that lands before an awaken trigger hits harder: if the opponent loses life when they awaken, the extra damage at the threshold pushes them deep.",
+  "Don't defend a card that will die to its owner's own effect anyway; let it go and keep the cards.",
+  "Swing with the free attacker first (Leader, or a body that needs no combo cards) to see their response, then commit cards.",
+  "When the opponent is low, each extra hit hands them a card for their counterattack: only push it if it sets up the win, or their counterattack can't kill you anyway.",
+  "Use an Extra early when it gets full value now; holding it for a perfect moment that may never come wastes it and adds decision load.",
+  "Ties go to the attacker: an attack exactly equal to the defence wins, so the defender needs to beat it by at least 1 (5000 in practice).",
+  "Against a Leader whose awakened side is much stronger, pressure their Battle Cards (rest them, attack them) instead of their life, so you don't awaken them for free.",
+  "Blockers are worth using while you can: a yellow opponent will rest them on their next attack anyway. A deck that untaps its Battle Cards at end of turn (awakened Frieza) can attack with its blockers freely.",
+  "Defending early has value too: a 20000 swing now is cheaper to stop than a 40000 swing later, but only if the game lasts long enough for that to matter.",
+  "Pepper with attacks: every swing either deals damage or forces a card out of hand; with nothing better to do, attack.",
+  "Know your outs before charging: don't charge a finisher you need two of (a double 6-cost turn) until you have seen enough copies; charge a card you will never play again instead.",
+  "An opponent who over-combos on offence to force your Super Combos is spending their own hand too. Track the hand-size gap, not just life.",
+  "Win-or-bust turns: when you can't survive their next turn (you can't remove or rest their board again), commit everything to lethal, even lines that need a draw to hit.",
+  "Don't defend every early swing: an opponent who blocks everything early ends up with a 2-4 card hand and can't kill you later. Taking hits down to about 5 life with 6-7 cards is usually stronger.",
+  "Keep the energy marker for a turn where it creates real pressure or reaches a key energy count, not just because turn 1 allows a play.",
+  "Against a 2-card hand, check for lethal every turn: comboing up to 30000 may finish them. When you can't win this turn, pivot to building resources (Ki, cards) so their best swing can't kill you.",
+  "Sequence the card that shuts off their defence (\"opponent can't combo\" or \"can't use Extras\") before the swings it should protect."
+ ],
+ "decks": {
+  "FS11-01": {
+   "name": "Son Goku SSJ3 (Yellow)",
+   "plan": "Cheap ≪Another World≫ Son Gokus rest the opponent's board (FB09-080) and dig for more pieces (FB09-079), then evolve: Son Goku FP-077 / FS11-07 / ST01-044, Vegeta FS11-14 / FB10-090, Son Gohan FS11-09 / ST01-046. Once the Leader awakens, each Evolve onto a 20000-30000 card untaps 2 energy, so several Evolves fit in one turn, and Leader draws plus life-to-hand Evolves keep the hand full. Rested enemy cards are KO'd, locked or sent to the Drop, and Kamehameha closes with a [Double Strike] evolved attacker.",
+   "engines": [
+    "Leader (awakened) + Evolve cards: with 3+ rested energy, playing a 20000-30000 [Evolve] card untaps 2 energy, chaining Evolves in one turn.",
+    "Rest, then punish: FB09-080 rests 2, FP-077 rests 1; Vegeta FS11-14 KOs a rested card cost 5 or less, Blue Power Awakening KOs rested cost 6+, Warrior Who Defeats the Evil Demon (with an Evolve card in play) drops a rested cost 4-or-less card or locks a bigger one, Vegeta FB09-092 KOs a rested 1-cost.",
+    "Card flow: Son Goku FB09-079 searches ≪Another World≫, Vegeta FB10-090 searches a ≪Saiyan≫ cost 5 or less, Son Gohan FS11-09 and ST01-046 add life to hand (ST01-046 also untaps itself to attack), Son Goku FS11-07 draws and untaps.",
+    "Defence: Videl FB02-125 is a 1-cost [Blocker]; Son Goku ST01-044 can pull an attack from a cost 3-or-less attacker onto itself (30000); Vegeta FB10-089 has [Barrier]; Results of Training (+15000, draws) and Paikuhan as Super Combos.",
+    "Kamehameha FS11-17: an evolved attacker gains [Double Strike] and +25000 to close the game.",
+    "Tournament play: the front Leader takes a life every end of turn, so it awakens on schedule (about turn 3). After that each turn is worth +2 energy, so charge to 4 and then mostly stop charging: cards in hand are worth more.",
+    "Bread and butter: a 1-cost Son Goku, then a 20000-30000 [Evolve] card (Son Gohan: Adolescence FS11-09 counts without evolving: it is played, not evolved) untaps 2 energy, then evolve again or swing 30000s and untap with Son Goku FS11-07.",
+    "Mirror and aggro matchups: hit for 30000 two or three times by turn 3; at the end, count the opponent's possible defence (hand size, Results of Training draws, Super Combos seen) against your all-in total including Kamehameha (+25000, Double Strike) and Blue Power Awakening.",
+    "Tech: Babidi FB03-083 ([Barrier]) can't be chosen, so it survives Gogeta: BR's -25000 and Leader KO and stops its 1-life alternate win.",
+    "Vs Gogeta: BR: the Leader's own life loss means 3 life is the real floor; play Babidi FB03-083 mid-to-late, once they have committed to the FB09-121 plan, not on turn 2. Gotenks FS11-03 locks a rested Gogeta so it can't attack next turn.",
+    "Results of Training draws only if a rested cost 3+ Battle Card is in play; charging it cost a tournament game (the +15000 and draw would have survived). Keep combo Extras for the final defence unless energy is truly short."
+   ]
+  },
+  "FB03-001": {
+   "name": "Jiren (Red)",
+   "plan": "Spend life on purpose (Caulifla, Son Goku (Mini): DA, Jiren FB04-006's self-damage) to awaken at 3 life. Awakened Jiren takes at most 1 damage per battle while you have a 30000+ Battle Card, and draws a card every time you take damage. Jiren FB03-009 turns that into a card engine, and It's Over! / Sphere of Destruction clear the board.",
+   "engines": [
+    "Leader (awakened) + Jiren FB03-009: on the opponent's turn, if Jiren is rested (it attacked), pay 'take 1 damage': the life card goes to hand, the Leader draws 1, then the top of the deck goes to life. +2 cards, no life lost, once each opponent turn.",
+    "Leader (awakened) shield: any 30000+ Battle Card (Jiren FB03-009, Rumsshi, Jiren FB04-006, Son Goku FB04-129, Son Goku (Mini): DA once awakened) caps damage at 1 per battle, so [Double Strike] and [Critical] can't finish you.",
+    "It's Over!: with a 30000+ card in play, KO every enemy Battle Card with 25000 power or less. Fuwa (-15000) and Whis (-5000) shrink targets into range.",
+    "Son Goku FB04-129: negates the next damage you take, and gives the whole enemy board -20000 when it attacks.",
+    "Marcarita and Son Goku (Mini): DA get bigger once the Leader is awakened."
+   ]
+  },
+  "FS02-01": {
+   "name": "Vegeta (Blue)",
+   "plan": "Keep 7 or fewer cards in hand and grind with cost-based bottom-decking. Cost reducers (Vegito FB02-061, Mai: Future) shrink enemy cards so cheap removal (Zamasu, Vegito, Son Gohan FB03-039, Sinister Sickle, Vegeta FS02-13) can bottom-deck them; Pilaf and Videl recycle the 1-cost Earthlings.",
+   "engines": [
+    "Vegito FB02-061 (your turn, hand 7 or fewer: enemy cards cost 1 less) + Mai: Future (-1 more) turn 'cost 1 or less' and 'cost 3 or less' removal into answers for real threats.",
+    "Bottom-deck suite: Zamasu and Vegito (cost 1 or less), Son Gohan: Adolescence FB03-039 (2 cards cost 3 or less), Sinister Sickle and Vegeta FS02-13 (cost 4 or less), Zen-Oh (everything).",
+    "Pilaf and Videl FB03-042 recover 1-cost Earthlings (Mai, Bulma, Pilaf) from the Drop to keep the removal going.",
+    "Vegito FB02-139 bounces cost 5 or less and untaps itself; the awakened Leader gets +15000 with hand 7 or fewer.",
+    "Exhibition lessons: awaken quickly (Trunks: Future/Vegeta take life to hand) because an awakened 20000 Leader outclasses a 15000 one; reach 7 or fewer cards by comboing when it buys real value, not by throwing cards away. Galick Gun on defence is +15000 and a draw at 7 or fewer."
+   ]
+  },
+  "FB02-105": {
+   "name": "Vegeta (Yellow)",
+   "plan": "Rest-and-lock control. Rest enemy cards (Vegeta FS11-13, Energy Absorption), keep them locked (Son Goku FB02-119, Broly FB08-122, Fierce Hyper Beam), then KO the rested ones (Vegeta FS11-14, Blue Power Awakening). The awakened Leader untaps 2 energy at end of turn to hold up defensive Extras on the opponent's turn.",
+   "engines": [
+    "Lock pieces: Energy Absorption rests and locks, Son Goku FB02-119 locks on play and on attack, Broly FB08-122 locks every rested enemy card and stops a rested Leader attacking.",
+    "Vegeta FS11-14 evolves from FS11-13 / ST01-052 Vegeta, then KOs itself to draw and KO a rested card cost 5 or less; Babidi untaps a ≪Wicked Soul≫ or ≪Majin≫ card (FS11-14, Majin Buu, Yamu) and gives it [Blocker].",
+    "Majin Buu FB03-093 comes back from the Drop rested when KO'd (discard 1).",
+    "Leader (awakened): untap 2 energy at end of your turn, to pay for Time Rewound / And Don't Dream of Resurrecting Again! / Results of Training during the opponent's attacks. Whis recovers a yellow Extra cost 3 or less."
+   ]
+  },
+  "FB08-073": {
+   "name": "Broly (Yellow)",
+   "plan": "Dig for Broly pieces with Kakarot and Broly ST01-048, power through turn 3-4 into Broly ST01-051 / ST01-050 / FB08-122, protect the big Broly with Paragus, and lock the opponent out. The awakened Leader taxes every enemy attack while a 5+ cost ≪Saiyan≫ is in play.",
+   "engines": [
+    "Search: Kakarot finds <Paragus> or a <Broly>; Broly ST01-048 adds life to hand and finds <Kakarot> or a <Broly>.",
+    "Broly ST01-051 (cost 5): rests an enemy card, and can pay 1 + send itself to the Drop to play a 6-cost Broly (ST01-050 or FB08-122) from hand.",
+    "Broly ST01-050 evolves from a Broly costing 2+ and KOs one of your own cards (Paragus ST01-047 draws when KO'd) to untap and attack again.",
+    "Paragus FB08-084 makes a Broly unremovable by skills until the end of the opponent's next turn; King Vegeta costs 2 less with a 5+ ≪Saiyan≫ in play.",
+    "Leader (awakened): opponent must rest an active card for each Battle Card attack; untaps 1 energy with a 4+ cost Broly in play.",
+    "Hawk profile (14 of 15 wins): mid-range aggro. Draw and search hard early (Kakarot FB08-076, Broly ST01-048, Vegeta cantrips, Hercule), so the 3-life awaken is safe; up to 15 cards in hand on awakening.",
+    "Core turn: evolve a 2-cost Broly into the 6-cost ST01-050 for 4 energy, then the awakened Leader untaps an energy, then play Paragus ST01-047: swing 40k, Paragus stuns a rested card, KO Paragus with ST01-050 (draw 1, untap the 40k), swing 40k again (\"KO your dad\").",
+    "When their board gets wide, play FB08-122 Broly (6): its On Play locks every rested enemy card. Broly ST01-051 (5-cost) rests a card and can replace itself with a 6-cost Broly from hand for 1 energy: a turn-early SCR or a stun to dodge a staller.",
+    "If the opponent stalls your awaken by sitting at 4 life with a big body, Broly ST01-049 takes a life (self-awaken) and rests that body. After awakening, avoid more self-awaken life taking unless going for game (Double Strike range at 2).",
+    "The awakened Leader taxes every enemy attack (they must rest an active card) while a 5+ cost Saiyan is out. Weakness: no real removal; win by turn 5 before their board gets too big."
+   ]
+  },
+  "ST01-001": {
+   "name": "Son Goten (Red)",
+   "plan": "Ki on the Leader. The Leader starts Fate Transcending Generations from the deck, and Son Goku, Son Gohans and Trunks pile Ki on the Leader to awaken at 3. Fate lets you pay for Kamehameha Extras by resting it, and Family Kamehameha cashes 5+ Ki into a huge attack that deals 2 extra damage on a KO.",
+   "engines": [
+    "Fate Transcending Generations (Field, played at game start): pay a Kamehameha Extra costing up to the Leader's Ki by resting Fate instead of energy; the awakened Leader untaps Fate after a Kamehameha.",
+    "Ki builders: Son Goku ST01-004 (+1), Son Gohan ST01-009 / ST01-010 with Fate (+1), Son Gohan ST01-011 (+1), Trunks ST01-013 rest with Fate (+1).",
+    "Son Goten/Son Gohan ST01-008 rests a 2-cost Son Goku to draw and attack Active cards; that fires Son Goku ST01-004's 'rested by your skill: -25000'.",
+    "Family Kamehameha: remove 5+ Ki for +10000 per Ki, then the next KO in battle deals 2 damage. Kamehameha ST01-016 (+20000 and a search) and Son Gohan ST01-011 (untaps after a Kamehameha) extend the turn."
+   ]
+  },
+  "FB09-001": {
+   "name": "Gogeta: BR (Red)",
+   "plan": "Get a Son Goku: BR and a Vegeta: BR with equal power of 20000+ into play and Fusion Evolve them into Gogeta: BR for 0-2 energy. The awakened Leader then KOs any enemy cards adding up to 15000 power or less the turn a Fusion Evolve card is played, after Gogeta's -5000 / -25000 has shrunk them. Gogeta: BR FB09-121 can win outright at end of turn.",
+   "engines": [
+    "Fusion pairs at 20000: Son Goku: BR FB09-010 / FB10-012 and Vegeta: BR FB09-020 / FB10-017 (15000 +5000 on your turn). Vegeta: BR FB09-020 also pumps itself and a Son Goku: BR by +5000 (revealing a Fusion Evolve card) to match powers.",
+    "Gogeta: BR forms: FB09-006 (0 energy: draw, all enemies -5000), FP-070 (0: -15000 on attack), FB09-007 (1: untaps once on attack), FB09-121 (2: all enemies -25000; at end of turn, if the opponent is at 1 life with no Battle Cards, you win).",
+    "Leader (awakens at 5 life): once per turn after a Fusion Evolve this turn, KO any number of enemy Battle Cards totalling 15000 power or less; after -25000 that's usually the whole board.",
+    "Search and set-up: Piccolo: BR and Son Goku: BR/Vegeta: BR find BR cards; Cheelai (awakened) draws and plays a cost 2 or less card from hand; Veku recovers both BR bases from the Drop.",
+    "Win route (tournament play): pressure to 2 life, then on the last turn go to 1 life yourself if needed for cards, Fusion Evolve into FB09-121, wipe the board with -25000 plus the Leader KO, deal one damage, and win at end of turn. Against Gogeta: BR, sitting at 1 life is a death sentence; keep the board clear of Goku/Vegeta: BR bases so they must rebuild instead of fusing.",
+    "Vs SS3 Goku (awakens at 4 and takes a life when it does): Sphere of Destruction FB03-026 at exactly 4 life deals 1 damage, so they awaken down at 2, inside the alternate-win range.",
+    "Cheelai: BR FB09-012 plus two 2-cost Goku/Vegeta bases enables an early Fusion Evolve; Vegeta: BR's Activate KOs itself plus an enemy, so a Super Combo spent protecting it is wasted."
+   ]
+  },
+  "FB09-097": {
+   "name": "Gogeta: GT (Black)",
+   "plan": "Build Ki on GT Battle Cards and keep an energy marker. Awaken at 2 total Ki, then cash Ki in: Son Goku: GT KOs everything costing up to the Ki removed, Big Bang Kamehameha is paid with Ki, and Gogeta: GT FB09-123 can spend 4 Ki for an extra turn.",
+   "engines": [
+    "Ki: Son Gohan: GT (+2), Son Goku: GT (+1 on play and attack), Vegeta: GT (+1), Pan: GT (+1), Trunks: GT (+1 to a card with Ki), and the awakened Leader (+2 to a GT card when attacking).",
+    "Energy markers: Pan: GT, Vegeta: GT FB09-117 and Gogeta: GT place them; Hercule: GT, Para Para Brothers and Ultimate Sparking get better with one.",
+    "Vegeta: GT FB09-117's cost and power grow with its Ki, so Big Bang Kamehameha (KO a card costing up to the chosen GT card's cost, payable by removing 2 Ki) hits harder.",
+    "Gogeta: GT FB09-123: remove 4 Ki and shuffle your other Battle Cards and 6 energy away to take an extra turn."
+   ]
+  },
+  "FB09-073": {
+   "name": "Son Goku/Vegeta (Yellow)",
+   "plan": "≪Another World≫ evolve deck. 1-cost Son Gokus rest and search, Son Goku/Vegeta FB09-082 is the base, Veku and Gogeta FB09-122 evolve on it. Gogeta rests the whole enemy board on attack and survives lethal by going into your life. The awakened Leader untaps an ≪Another World≫ attacker for a second swing.",
+   "engines": [
+    "Bases: Son Goku/Vegeta FB09-082 (cost 2, adds life to hand, can untap itself) is what Veku (0 energy) and Gogeta FB09-122 (3 energy) evolve from.",
+    "Veku: send to Drop to replay a Son Goku and a Vegeta with ≪Another World≫ (combined cost 3 or less) from the Drop, rested, as fresh bases.",
+    "Gogeta FB09-122: rests all enemy cards when attacking and untaps 1 energy; goes to your life instead of letting you lose at 0 life or being KO'd by a skill.",
+    "Rest and lock: Son Goku FB09-080 rests 2, North Kai locks a rested card, FP-077 rests one; Son Goku FS11-07 (evolve) draws and untaps.",
+    "Hamza's god-rank build (52): 10-12 cantrips (Saike Demon, North Kai, Son Goku searchers, the 1-cost Vegeta cantrip ST01-052) so every early play replaces itself; the Vegeta cantrip is what made the deck viable again.",
+    "Awakened Leader: rest one Another World card to untap another, usually Gogeta FB09-122 (a 6-drop that rests the whole enemy board and untaps an energy each swing) or the 5-cost Son Goku, for three 30k swings or two 40k swings.",
+    "Kill turn: hold the Leader attack; 20 Goku/Vegeta, 40 and 40 with Gogeta, 30 with the promo Vegeta FP-073 untapped under Majin Vegeta, then end with the Leader swing for its draw.",
+    "Vs SS3 on 4 energy: Vegeta cantrip, Majin Vegeta FS11-14 swing 30k, then two Warriors Who Defeat the Evil Demon to clear three bodies without going minus in hand.",
+    "Gogeta FB09-122 is the crutch: it returns to life instead of being KO'd, so only blue (bottom of the deck/bounce) or a direct-to-Drop 6-cost answers it. Blue Power Awakening (1 copy) kills an early 6-cost Vegito to buy a turn against blue.",
+    "Weakness: combo-piece reliant. Going first vs Majin Vegeta or Beast Gohan, the 2-cost Son Goku/Vegeta must come down on curve or the game is lost; a hand of only 1-drops loses."
+   ]
+  },
+  "FB09-049": {
+   "name": "Son Gohan: SH (Green)",
+   "plan": "Pile Ki on the Leader (Gotenks: SH, Son Gohan: Adolescence/Piccolo, Special Beam Cannon, Piccolo: SH), awaken at 2, and at 3 Ki cheat out the 8-cost 50000 Son Gohan: SH with [Double Strike] by sending a 5-cost Son Gohan: SH to the Drop.",
+   "engines": [
+    "Son Gohan: SH FB09-059 / FP-072 (cost 5): with the SH Leader at 3+ Ki, send it to the Drop to play the 8-cost Son Gohan: SH from hand.",
+    "Son Gohan: SH FB09-060 (8 cost, [Double Strike]): spend 1 Leader Ki and 1 energy to KO any card, recover an Extra and refund energy. FB07-121 bins 5 energy to send any card to the Drop and recovers 5 energy.",
+    "Piccolo FB10-070 (bin 1 energy): play a Son Gohan costing 5 or less from hand; Gamma 2: SH KOs cost 3 or less at 3 Ki.",
+    "Special Beam Cannon: draw + Ki on main; in battle, remove all Leader Ki for +10000 each, and at 4+ untap a Son Gohan: SH."
+   ]
+  },
+  "FB05-025": {
+   "name": "Vegito (Blue)",
+   "plan": "Fill the Drop to 20+ (Son Goku ST01-023, Gotenks ST01-021, Son Goku/Vegeta ST01-024, the Leader's awaken mills 10). Then the Leader gets +20000, Savior of the World pumps, and Super Vegito gives 40000 Vegitos [Double Strike]. Separately, set up a Potara under Son Goku or Vegeta and evolve into Vegito FB10-121 / ST01-025 / ST01-070.",
+   "engines": [
+    "Potara set-up: Son Goku FB10-031 mills a Vegeta and a Potara, Vegeta FB10-038 / FP-087 mill a Son Goku and a Potara; then pay 1 to put that pair under the card, which lets the Vegitos evolve onto it.",
+    "Vegito FB10-121 (draw 3, mills the opponent 15 at 2 or less life), ST01-025 (Leader +5000 through their turn), ST01-070 (bottom-decks a card costing up to your Drop size).",
+    "Drop count: 20+ turns on the awakened Leader (+20000), Savior of the World (+15000), Vegito FB05-041 (recover a Son Goku and a Vegeta), and I Call This Version...Super Vegito! ([Double Strike]).",
+    "Son Goku FB10-032 evolves on a 1-cost Son Goku, untaps, and bottom-decks enemy cards totalling cost 2 or less; Trunks: Future costs 3 less with an evolved Vegito.",
+    "Deck profile (Bombu build, 60 cards): turn 1 Pan (draw 2, discard 2), turn 2 Gotenks into Gotenks: about 10 cards in the Drop by turn 3. A 60-card list eases charge decisions (spare zero-combo copies can be charged).",
+    "Don't rush awakening: it awakens at 4, so take your time, pressure with 40000 bodies, and once at 4 stay there. SS3 and BR combo up to push you from 3 to 2 (Double Strike range).",
+    "Late game the deck is thinned to 5-8 cards, and recursion keeps pulling back Super Combos, Saviors and the Son Goku/Vegeta duo, so the deck draws mostly defence.",
+    "Before starting a chain, check that every piece is in the Drop (keep one duo there). Losses come from a missing Drop piece. With 2+ life, activate the duo's Son Goku first: taking a life card may hand you the piece and free the Vegeta's Drop pick for combo power.",
+    "Win line at 3 life: Vegito swing; if they drop to 2, push with the 4-cost into the 25k-to-30k chain and a Double Strike 55k+; if they fall to 1, the 50k Leader finishes. Use the bounce Vegito to remove blockers and Gogeta: BR's secret rare (bottom of the deck beats its protection).",
+    "Vs Majin Vegeta: Gotenks on turn 4 bounces their 4-cost and stops attacks, keeping Savior of the World live."
+   ]
+  },
+  "FB09-025": {
+   "name": "Son Goku (Blue, Tournament of Power)",
+   "plan": "Discard and mill to put 7+ ≪Universe≫ cards in the Drop and awaken at 6 or less life. Then every discard paid to an [Evolve] or ≪Tournament of Power≫ card's skill draws a card back, so discard costs (Divine Domain, Vegeta FB09-045, Frieza) become free. Evolve Son Goku up to the 40000 FB09-037.",
+   "engines": [
+    "Awaken: Great Priest (mill 3), Zen-Oh (dig 2, rest to Drop), and the discard + mill costs on Son Goku FB09-033, Vegeta FB09-043, Son Goku/Vegeta FP-075 fill the Drop with ≪Universe≫ cards.",
+    "Leader (awakened): draw 1 for each card discarded by an [Evolve] or ≪Tournament of Power≫ card's skill.",
+    "Evolve chain: Son Goku (ToP) → FB09-036 (1 energy) → FB09-037 (2 energy, 40000, can swap itself into a battle). Son Goku FB09-035 can be paid by discarding a ToP card and 2 energy.",
+    "Removal: Vegeta FB09-045 (discard 2: bottom-deck 2 cards cost 4 or less, draw 1), Frieza FP-071 (discard 2: bottom-deck cost 2 or less), Zen-Oh (pay 12 Drop cards: bottom-deck the card it attacks, cost 6 or less)."
+   ]
+  },
+  "FB11-073": {
+   "name": "Shallot/Giblet (Yellow)",
+   "plan": "Cheap Shallots and Giblets that replace themselves (draw, search, life to hand) build a wide board and self-awaken the Leader at 5 life. Awakened, with a Shallot and a Giblet in play, the Leader untaps 2 energy, which pays for Fusion Evolving the rested pair into Shallet, or Evolving into the 5-cost Shallot / Giblet. Shallet untaps itself on attack, and the turn it is played it untaps your Leader or another attacker too. Rest the opponent's cards with Giblet FB11-081, Shallot FB11-087 / FB11-088, then lock or remove them with Giblet FB11-084 and Warrior Who Defeats the Evil Demon.",
+   "engines": [
+    "Hand-neutral set-up: Shallot FB11-086 (life to hand + search a ≪Saiyan≫-only 2-6 cost), Shallot FB11-087 (life to hand + rest), Bulma (search), Giblet FB11-082 (draw 2, discard 2), Cabba (draw). Every play replaces itself, so the hand stays full for combos.",
+    "Giblets cost 1 less while you have a Shallot but no Giblet in play: Shallot turn 2, Giblet for 1 next to it.",
+    "Leader (awakens at 5 life): with a Shallot and a Giblet in play, untap 2 energy (then no cost 4-or-less Battle Cards that turn). That energy pays for Shallet (Fusion Evolve, 2 energy, rested Shallot + Giblet of equal power) or the 5-cost Evolves.",
+    "Shallet: +5000 on your turn; when attacking, pay 1 to untap it, and if it was played this turn also untap your Leader or another attacker: extra swings.",
+    "Rest, then remove: Giblet FB11-081 rests 2 (cost 4 or less), Shallot FB11-087 and FB11-088 rest one (FB11-088 can rest an energy instead); Giblet FB11-084 locks a rested card; Warrior Who Defeats the Evil Demon (with an Evolve card in play) sends a rested cost 4-or-less card to the Drop or locks a bigger one.",
+    "From the player: don't tunnel into Shallet every turn. Two Shallot/Giblet bodies plus the untapped energy can be better than one big card, because the opponent has to deal with more on board.",
+    "Deck profile (Hawk Dragon Ball Nest): build like SS3 and Gogeta: BR combined. Every Shallot replaces itself (hand neutral), and the deck Fusion Evolves into Shallet every turn. Run about 10 Shallots and 10 Giblets so both halves are always in hand.",
+    "Sequencing: the awakened Leader's untap 2 energy stops Battle Cards with original cost 4 or less for the rest of the turn. Play the 2-cost Shallots/Giblets and cantrips first, then activate the Leader, then Evolve, Fusion Evolve and use Extras.",
+    "Card roles: never charge or combo Shallot FB11-086 (searches and goes plus in hand); Shallot FB11-085 (gets a Giblet back from the Drop) is the first to combo or charge. Giblets go minus in hand: Giblet FB11-083 (Leader +5000) pairs with Shallot FB11-087 (draw).",
+    "Searchers (Bulma FB11-094, Shallot FB11-086) only find Saiyan-only Battle Cards cost 2-6: they miss Extras and Super Combos, so Warrior Who Defeats the Evil Demon, Blue Power Awakening and Results of Training must be drawn naturally. Cycling (Giblet FB11-082 draw 2 discard 2) helps.",
+    "Attacks: swing with the Leader before Shallet; Shallet's untap can then go to the Leader (another draw), or to a 5-cost Shallot FB11-088 (another draw plus rest a card or an energy, which stops an SS3 opponent's Results of Training), or skip the draw for a second 40000 swing when going for game.",
+    "Fusion needs Shallot and Giblet rested with equal power: attacking 10000 bodies to rest them risks a power-down (Goten's -5000) breaking the pair, so rest them with Giblet FB11-083 / Shallot FB11-087 skills when you can.",
+    "Mulligan: keep only hands with a turn-1 play (Bulma or a cantrip); aim for 8 turn-1 plays in the list. Blue Power Awakening (2 copies) is the answer to 6-cost threats."
+   ]
+  },
+  "FB11-025": {
+   "name": "Trunks: Future (Blue, FB11)",
+   "plan": "Go wide and swing many 20000s, aiming to win on turn 5. Turns 1-2: a dense curve of 1-drops (Haru/Maki, Mai: Future searcher, Bulma: Future, Giran) builds the hand and finds the combo pieces. Turn 3+: Son Gohan: Future FB11-033 cheats out the 2-drop Trunks FB11-035 and gives it Ki; the 2-drop then spends its Ki to put itself on the bottom of the deck, draw, and play a Trunks: Future costing (Ki removed + 1): FB07-039 (3) for value, FB11-036 (4) for removal against tall boards. With spare mana, Time Machine replays the 2-drop from the bottom of the deck and Bulma: Future FB11-040 tops it up with +2 Ki, so it can go again. Finish with Trunks: Future FB11-037 (5): its On Play gives every other Saiyan/Earthling +1 Ki, then it attacks twice, +5000 per Ki removed. Keep the hand big: most cards keep their 10000 combo power after being bounced back.",
+   "engines": [
+    "The 2-drop loop: Trunks FB11-035 (+1 Ki on play) removes 2 or more Ki (you choose: it sets the cost of the Trunks it plays) and goes to the bottom of the deck; Time Machine FB01-065 plays it again from the bottom; Bulma: Future FB11-041 adds it back to hand when one of your cards left play by your own skill.",
+    "Ki sources: Son Gohan: Future FB11-033 (+1 Ki when it cheats a 2-drop), Bulma: Future FB11-040 (rest: draw/discard, +2 Ki on a Future card with 1+ Ki), the awakened Leader (+1 Ki on a Future card, then bounce a cost 3-or-less Future card to replay its On Play), FB11-037 (+1 Ki to every Saiyan/Earthling).",
+    "Removal: FB11-036 (4) bounces two cost 3-or-less cards and can cut a card's cost by 3 first (use against tall boards like Gogeta BR or SS4); FB07-039 (3) cuts all their costs by 2 then bounces a cost 1-or-less card (also one of your own 1-drops, to replay its On Play); Giran bottom-decks a cost 1-or-less card (an Earthling, so FB11-037 gives it Ki too); Son Gohan FB11-033's attack cuts a cost by 1 more.",
+    "Card advantage: 1-drops are played for their On Play, then bounced back to hand where they still count as 10000 combo cards. Son Gohan: Future FB11-032 draws when one of your cards is removed by your own skill.",
+    "Sequencing (Joey's run-through): the Mai searcher puts cards on the bottom of the deck, burying the 2-drop that Time Machine and Bulma want to find there, so play it before setting up the loop. With FB07-039 as your first Future card, prefer a cantrip or searcher as the 1-drop it plays: Giran's removal is better after the -2 cost cut.",
+    "Tech options: Son Gohan: Future FB11-032 (3x), Trunks: Future promo FP-098 (40000 swings by removing Ki, draws on own removals), Kefla double striker for a closing push."
+   ]
   }
+ }
 }

@@ -118,7 +118,7 @@ class HumanChooser implements Chooser {
       : req.options.map((u) => ({ v: u, label: n(u), id: s.inst[u].id, where: zoneOf(s, u) }));
     const src = s.inst[req.src];
     const what = req.effect ? describeEffect(req.effect as any) : '';
-    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${req.tax ? `Rest ${req.max} of your Active cards to attack` : req.about !== undefined ? `Where does ${nameOf(s, req.about)} go?` : req.labels ? 'Choose how to pay' : PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
+    const prompt = `${src ? nameOf(s, req.src) + ': ' : ''}${req.tax ? `Rest ${req.max} of your Active cards to attack` : req.kiChoice ? 'How many Ki to remove?' : req.about !== undefined ? `Where does ${nameOf(s, req.about)} go?` : req.labels ? 'Choose how to pay' : PROMPT[req.kind]}${req.kind === 'yesno' || req.kind === 'mode' ? '' : req.min === req.max ? ` ${req.max}` : ` ${req.min}–${req.max}`}`;
     throw new NeedChoice(req, options, snapshot(s), prompt, what);
   }
 }

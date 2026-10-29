@@ -3126,5 +3126,61 @@
    "ok": true,
    "note": "Passed the automatic checker and a second read by Claude."
   }
+ },
+ "FP-102": {
+  "abilities": [
+   {
+    "timing": "onPlay",
+    "effects": [
+     {
+      "t": "ki",
+      "target": {
+       "side": "self",
+       "zones": [
+        "battle"
+       ],
+       "count": 1,
+       "upTo": true,
+       "filter": {
+        "names": [
+         "Future"
+        ],
+        "other": true
+       }
+      },
+      "n": 2
+     }
+    ]
+   },
+   {
+    "timing": "whenAllyRemovedBySelf",
+    "trigger": {
+     "type": "BATTLE"
+    },
+    "once": true,
+    "cond": [
+     {
+      "t": "leaderIs",
+      "names": [
+       "Trunks: Future"
+      ]
+     }
+    ],
+    "effects": [
+     {
+      "t": "power",
+      "target": {
+       "ref": "this"
+      },
+      "amount": 10000,
+      "dur": "turn"
+     }
+    ]
+   }
+  ],
+  "check": {
+   "ok": true,
+   "note": "+10000 triggers when your Battle Card is removed from the Battle Area by one of your skills (the parser had dropped the trigger)"
+  }
  }
 }
