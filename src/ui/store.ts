@@ -244,6 +244,12 @@ export class Store {
     return ref.id ?? id;
   }
 
+  /** Self-play training positions from this computer ("Help train the AI"). Rows travel as a JSON string. */
+  async saveSelfplay(batch: { rows: number[][]; games: number; inputs: number }, cores: number): Promise<void> {
+    if (!this.db) throw new Error('Saving training games needs the shared database, which is not available in this view.');
+    await this.db.collection('selfplay').doc().set({ rows: JSON.stringify(batch.rows), games: batch.games, inputs: batch.inputs, v: 2, cores, ...(this.userId ? { player: this.userId } : {}), at: new Date().toISOString() });
+  }
+
   /** "This card's text or engine reading is wrong", from the Play tab. */
   async reportCard(cardId: string, note: string, textHashValue: string): Promise<void> {
     if (!this.db) throw new Error('Reporting needs the shared database, which is not available in this view.');

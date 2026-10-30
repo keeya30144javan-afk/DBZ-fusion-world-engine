@@ -5,6 +5,7 @@ import { clearCompileCache } from '../effects/parse';
 import { clearValueCache } from '../ai/heuristics';
 import { findReplay } from '../builder/replay';
 import { PlayHost } from '../play/host';
+import { selfplay } from '../ai/selfplay';
 
 let cards: Record<string, Card> = {};
 let play: PlayHost | null = null;
@@ -15,6 +16,14 @@ self.onmessage = (ev: MessageEvent) => {
     cards = msg.cards;
     clearCompileCache();
     clearValueCache();
+    return;
+  }
+  if (msg.type === 'selfplay') {
+    try {
+      (self as any).postMessage({ type: 'selfplay', id: msg.id, batch: selfplay(cards, msg.decks, msg.seed, msg.games) });
+    } catch (e: any) {
+      (self as any).postMessage({ type: 'error', id: msg.id, error: String(e?.stack ?? e) });
+    }
     return;
   }
   if (msg.type === 'replay') {

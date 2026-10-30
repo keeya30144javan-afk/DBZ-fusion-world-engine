@@ -5,6 +5,7 @@ import { Level, MatchJob, MatchResult, emptyResult, mergeResults, score } from '
 import { wilson } from '../../builder/stats';
 import { WatchGame } from './replay';
 import { store } from '../store';
+import { SelfplayRunner } from '../../workers/pool';
 import { CIBar, ColorTag, DeckSelect, Meter, Seg, getPool, leaderLabel, pct, safeStorage, useStore } from '../components';
 
 const [loadPastes, savePastes] = safeStorage<{ a: string; b: string }>('shenron.matchupPastes', { a: '', b: '' });
@@ -106,6 +107,7 @@ export function MatchupView() {
           {running && <button class="btn" onClick={stop}>Stop and show results so far</button>}
           {level !== 'fast' && <p class="note">Search AI takes about a second per move decision. 100 games can take a few minutes.</p>}
         </div>
+        <TrainPanel />
       </div>
       <div class="stack">
         {prog && <MatchProgress {...prog} />}
@@ -145,4 +147,65 @@ function fmtLeft(sec: number): string {
   if (sec < 90) return `${Math.max(5, Math.round(sec / 5) * 5)} s`;
   if (sec < 5400) return `${Math.round(sec / 60)} min`;
   return `${(sec / 3600).toFixed(1)} h`;
+}
+
+/**
+ * "Help train the AI": this computer plays searching-AI games against itself on every spare core and
+ * saves each turn's position with who went on to win, for Claude to train the AI's judgement on.
+ */
+function TrainPanel() {
+  const st = useStore();
+  const runner = useRef<SelfplayRunner | null>(null);
+  const buffer = useRef<{ rows: number[][]; games: number; inputs: number }>({ rows: [], games: 0, inputs: 0 });
+  const [state, setState] = useState({ running: false, games: 0, positions: 0, saved: 0, cores: 0, started: 0, error: '' });
+  const flush = async () => {
+    const b = buffer.current;
+    if (!b.games) return;
+    buffer.current = { rows: [], games: 0, inputs: b.inputs };
+    try {
+      await store.saveSelfplay(b, runner.current?.size ?? 0);
+      setState((s) => ({ ...s, saved: s.saved + b.games }));
+    } catch (e: any) {
+      setState((s) => ({ ...s, error: String(e?.message ?? e) }));
+    }
+  };
+  const start = () => {
+    const decks = st.meta.filter((d) => !d.name.startsWith('Starter') && !validateDeck(d, st.cards, st.rules).length).map((d) => ({ name: d.name, leader: d.leader, main: d.main }));
+    const r = new SelfplayRunner(st.cards, decks, (b) => {
+      const buf = buffer.current;
+      buf.rows.push(...b.rows); buf.games += b.games; buf.inputs = b.inputs;
+      setState((s) => ({ ...s, games: s.games + b.games, positions: s.positions + b.rows.length }));
+      if (buf.games >= 10) void flush();
+    }, (e) => setState((s) => ({ ...s, error: e.slice(0, 300) })));
+    runner.current = r;
+    r.start();
+    setState((s) => ({ ...s, running: true, cores: r.size, started: Date.now(), error: '' }));
+  };
+  const stop = () => {
+    runner.current?.stop();
+    void flush();
+    setState((s) => ({ ...s, running: false }));
+  };
+  const mins = state.started ? (Date.now() - state.started) / 60000 : 0;
+  return (
+    <div class="panel stack">
+      <h2>Help train the AI</h2>
+      <p class="note">Your computer plays the searching AI against itself with the meta decks, on every core but one, and saves each turn's position and who went on to win. Claude trains the AI's judgement on these. Keep this tab open and the computer awake; stop any time (games in progress are dropped, everything finished is saved).</p>
+      {!store.writable && <p class="note">Saving needs the shared database, which isn't available in this view.</p>}
+      <div class="row">
+        {!state.running
+          ? <button class="btn primary" onClick={start} disabled={!store.writable}>Start training games</button>
+          : <button class="btn" onClick={stop}>Stop</button>}
+      </div>
+      {(state.running || state.games > 0) && (
+        <table><tbody>
+          <tr><td>Cores working</td><td class="num">{state.cores}</td></tr>
+          <tr><td>Games finished</td><td class="num">{state.games}{state.running && mins > 1 ? ` (${(state.games / mins * 60).toFixed(0)}/hour)` : ''}</td></tr>
+          <tr><td>Positions</td><td class="num">{state.positions.toLocaleString()}</td></tr>
+          <tr><td>Saved for Claude</td><td class="num">{state.saved} games</td></tr>
+        </tbody></table>
+      )}
+      {state.error && <div class="err">{state.error}</div>}
+    </div>
+  );
 }

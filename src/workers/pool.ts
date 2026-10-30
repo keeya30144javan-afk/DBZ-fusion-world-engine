@@ -174,3 +174,47 @@ export class PlayClient {
   record(): Promise<GameRecord> { return this.send({ type: 'playRecord' }, (h) => h.record()); }
   close() { this.w?.terminate(); this.w = null; for (const p of this.waiting.values()) p.reject(new Error('closed')); this.waiting.clear(); }
 }
+
+/**
+ * Self-play on every spare core: each worker plays a couple of games at a time, over and over, and
+ * hands back training rows until stopped.
+ */
+export class SelfplayRunner {
+  private workers: Worker[] = [];
+  private stopped = false;
+  private nextSeed: number;
+  readonly size: number;
+
+  constructor(private cards: Record<string, Card>, private decks: unknown[], private onBatch: (b: { rows: number[][]; games: number; inputs: number }) => void, private onError: (e: string) => void, size?: number) {
+    const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
+    this.size = Math.max(1, Math.min(size ?? cores - 1, 32));
+    this.nextSeed = Math.floor(Math.random() * 1e6) * 100;
+  }
+
+  start() {
+    const url = getWorkerUrl();
+    for (let i = 0; i < this.size; i++) {
+      const w = new Worker(url);
+      w.onmessage = (ev) => {
+        if (this.stopped) return;
+        if (ev.data.type === 'selfplay') this.onBatch(ev.data.batch);
+        else if (ev.data.type === 'error') this.onError(ev.data.error);
+        this.send(w);
+      };
+      w.onerror = (ev) => this.onError(ev.message);
+      w.postMessage({ type: 'init', cards: this.cards });
+      this.workers.push(w);
+      this.send(w);
+    }
+  }
+
+  private send(w: Worker) {
+    if (!this.stopped) w.postMessage({ type: 'selfplay', id: 0, decks: this.decks, seed: this.nextSeed++, games: 2 });
+  }
+
+  stop() {
+    this.stopped = true;
+    for (const w of this.workers) w.terminate();
+    this.workers = [];
+  }
+}
