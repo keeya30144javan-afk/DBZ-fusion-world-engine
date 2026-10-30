@@ -41,9 +41,9 @@ export interface SearchOpts {
  * the time over 96 games (starters and player lists), at about the same speed.
  */
 export const SEARCH_LEVELS: Record<string, SearchOpts> = {
-  quick: { iterations: 48, horizon: 2, c: 0.7, prune: { chargeBig: 7 }, plan: { beam: 6, depth: 14, finalists: 6, worlds: 8, deep: true } },
-  strong: { iterations: 160, horizon: 3, c: 0.7, prune: { chargeBig: 7 }, plan: { beam: 8, depth: 16, finalists: 8, worlds: 12, deep: true } },
-  deep: { iterations: 500, horizon: 4, c: 0.6, prune: { chargeBig: 7 }, plan: { beam: 10, depth: 18, finalists: 10, worlds: 20, deep: true } },
+  quick: { iterations: 48, horizon: 2, c: 0.7, prune: { chargeBig: 7, guardLife: 5 }, plan: { beam: 6, depth: 14, finalists: 6, worlds: 8, deep: true } },
+  strong: { iterations: 160, horizon: 3, c: 0.7, prune: { chargeBig: 7, guardLife: 5 }, plan: { beam: 8, depth: 16, finalists: 8, worlds: 12, deep: true } },
+  deep: { iterations: 500, horizon: 4, c: 0.6, prune: { chargeBig: 7, guardLife: 5 }, plan: { beam: 10, depth: 18, finalists: 10, worlds: 20, deep: true } },
 };
 
 const ctl: [Chooser, Chooser] = [defaultChooser, defaultChooser];
