@@ -111,6 +111,47 @@ function fits(card: Card, f: { names?: string[]; traits?: string[]; costEQ?: num
   return true;
 }
 
+/**
+ * Evolve packages: an Evolve card is only as good as the cheap card it goes on, and those bases
+ * score low alone (a 1-cost 5000), so without a nudge neither makes the list (the SS3 Goku Leader's
+ * seeds shared 2 of 50 cards with real winning lists). Evolve cards get a bonus, more when the Leader's
+ * own text is about [Evolve]; each base gets a share for every Evolve card that can go on it.
+ */
+export function evolveAffinity(pool: Card[], leader: Card): Map<string, number> {
+  const leaderText = `${leader.text ?? ''} ${leader.back?.text ?? ''}`;
+  const leaderEvolve = /\[(Fusion )?Evolve\]|evolve/i.test(leaderText);
+  const out = new Map<string, number>();
+  const evos = pool.filter((c) => c.type === 'BATTLE' && compileCard(c).evolve);
+  for (const e of evos) {
+    out.set(e.id, (out.get(e.id) ?? 0) + (leaderEvolve ? 2.5 : 0.8));
+    const ev = compileCard(e).evolve!;
+    for (const f of [...ev.from, ...(ev.orFrom ?? [])]) {
+      for (const b of pool) if (b.id !== e.id && b.type === 'BATTLE' && fits(b, f)) out.set(b.id, Math.min(3, (out.get(b.id) ?? 0) + (leaderEvolve ? 0.9 : 0.35)));
+    }
+  }
+  return out;
+}
+
+/**
+ * Archetype cards: a skill that checks for this Leader ("If your Leader has ≪Boujack Brigade≫ in its
+ * special traits", "If your Leader is <Cell>") and this Leader passes. Those cards are built for it.
+ */
+export function leaderKeyed(card: Card, leader: Card): boolean {
+  let hit = false;
+  const leaderNames = [leader.name, leader.back?.name ?? '', ...(leader.characters ?? [])].filter(Boolean);
+  const walk = (x: unknown): void => {
+    if (hit || !x || typeof x !== 'object') return;
+    if (Array.isArray(x)) { x.forEach(walk); return; }
+    const o = x as Record<string, any>;
+    if (o.t === 'leaderIs' && Array.isArray(o.names) && o.names.some((n: string) => nameHas(leader, n) || leaderNames.some((l) => l.toLowerCase().includes(n.toLowerCase())))) { hit = true; return; }
+    if (o.t === 'leaderTrait' && Array.isArray(o.traits) && o.traits.some((t: string) => leader.traits.some((lt) => lt.toLowerCase() === t.toLowerCase()))) { hit = true; return; }
+    for (const v of Object.values(o)) walk(v);
+  };
+  const cc = compileCard(card);
+  walk([cc.abilities, cc.backAbilities]);
+  return hit;
+}
+
 /** Evolve cards need something in the deck to evolve from. */
 export function evolveBacked(card: Card, deck: Decklist, cards: Record<string, Card>): boolean {
   const ev = compileCard(card).evolve;
@@ -157,8 +198,9 @@ export function seedDeck(cards: Record<string, Card>, leaderId: string, rng: Rng
   const leader = cards[leaderId];
   const required = requiredFor(cards, leaderId, rules);
   const noise = new Map(pool.map((c) => [c.id, jitter ? (rng() - 0.5) * jitter : 0]));
-  // Cards of the Leader's own archetype (same name tag) start ahead.
-  const tagged = (c: Card) => (sharesTag(c, leader) ? 1.5 : 0);
+  // Cards of the Leader's own archetype (same name tag) start ahead, and so do Evolve packages.
+  const evo = evolveAffinity(pool, leader);
+  const tagged = (c: Card) => (sharesTag(c, leader) ? 1.5 : 0) + (evo.get(c.id) ?? 0) + (leaderKeyed(c, leader) ? 1.5 : 0);
   let deck = build((c) => cardValue(c, leader) + tagged(c));
   // Two more passes: score each card's synergy with the list so far (named searches,
   // and resource links: rest -> KO rested, Ki makers -> Ki spenders, Drop fillers ->

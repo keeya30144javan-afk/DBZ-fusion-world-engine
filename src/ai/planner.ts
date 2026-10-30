@@ -156,7 +156,9 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
           if (a.k === 'attack' && !opts.keepFutile && futile(w0, w, a.uid)) continue;
           const line = [...node.line, a];
           const picks = [...node.picks, pick];
-          const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, opts.eval);
+          // Half-finished turns are ranked with the hand-set evaluation: a learned one rewards
+          // things like unspent energy that only look good mid-turn. It judges finished lines below.
+          const h = w.stage === 'over' ? (w.winner === me ? 1000 : -1000) : evaluate(w, me, beamEval(opts.eval));
           const child = { w, line, picks, h };
           if (a.k === 'end' || w.stage === 'over' || w.turn !== turn) { finish(child); continue; }
           // Different orders that reach the same position are one node.
@@ -199,6 +201,8 @@ export function planTurn(s: GameState, me: Side, opts: PlanOpts = PLAN_DEFAULT):
   scored.sort((x, y) => y.value - x.value);
   return scored;
 }
+
+const beamEval = (W?: EvalWeights) => (W?.net ? { ...W, net: undefined, netBlend: 0, netResidual: false } : W);
 
 /** Everything an attack could change, except the attacker going to Rest Mode. */
 function attackSig(w: GameState, attacker: number): string {
