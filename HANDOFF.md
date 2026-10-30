@@ -31,9 +31,9 @@ Where things stand, so the next session can pick up immediately.
   are ranked with the hand-set evaluation (`beamEval`); only turn-start positions are trained on.
 
 ## Pending at handoff
-- SHIPPED: `prune.guardLife: 5` won its A/B 211/360 (58.6%). A cutoff-4 run may also be in `ab-history.txt`.
-  on-damage triggers left to the search; damage counted so a Double Strike at 6 is plain at cutoff 5). Results land in
-  `ab-results.txt` / the history; ship the better cutoff by adding it to SEARCH_LEVELS' `prune` if it wins.
+- SHIPPED: `prune.guardLife: 5` (don't spend cards guarding the Leader against a plain hit at high life; Critical and
+  on-damage triggers left to the search; damage counted so a Double Strike at 6 is plain) won its A/B 211/360 (58.6%).
+  A cutoff-4 run may also be in `ab-history.txt`; switch only if it clearly beats 5.
 - Counter Lab: seeding now adds Evolve packages and Leader-keyed archetype cards (seed overlap with real lists 94 → 132 of 500).
   Verify with `npx tsx cli/counter.ts --target "Jiren (Red)" --blind --effort quick --seed 202` (old: best 61%, known SS3 93%).
 - Fresh Counter Lab sweep of all targets on the current data (the old retest mixed card-data versions).
