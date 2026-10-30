@@ -157,16 +157,50 @@ function TrainPanel() {
   const st = useStore();
   const runner = useRef<SelfplayRunner | null>(null);
   const buffer = useRef<{ rows: number[][]; games: number; inputs: number }>({ rows: [], games: 0, inputs: 0 });
-  const [state, setState] = useState({ running: false, games: 0, positions: 0, saved: 0, cores: 0, started: 0, error: '' });
+  // File mode: everything stays in memory until the viewer downloads it (no database, or it's full).
+  const kept = useRef<{ rows: number[][]; games: number; inputs: number }>({ rows: [], games: 0, inputs: 0 });
+  const [toFile, setToFile] = useState(!store.writable);
+  const fileMode = useRef(toFile);
+  fileMode.current = toFile;
+  const [state, setState] = useState({ running: false, games: 0, positions: 0, saved: 0, cores: 0, started: 0, error: '', unsaved: 0 });
+  const keep = (b: { rows: number[][]; games: number; inputs: number }) => {
+    kept.current.rows.push(...b.rows); kept.current.games += b.games; kept.current.inputs = b.inputs;
+    setState((s) => ({ ...s, unsaved: kept.current.games }));
+  };
   const flush = async () => {
     const b = buffer.current;
     if (!b.games) return;
     buffer.current = { rows: [], games: 0, inputs: b.inputs };
+    if (fileMode.current) { keep(b); return; }
     try {
       await store.saveSelfplay(b, runner.current?.size ?? 0);
       setState((s) => ({ ...s, saved: s.saved + b.games }));
     } catch (e: any) {
-      setState((s) => ({ ...s, error: String(e?.message ?? e) }));
+      // Database missing or full: keep going and hold the games for a download instead.
+      keep(b);
+      setToFile(true);
+      setState((s) => ({ ...s, error: `Couldn't save to the app database (${String(e?.code ?? e?.message ?? e)}), so games are now kept for a file download.` }));
+    }
+  };
+  const download = async () => {
+    await flush();
+    const k = kept.current;
+    if (!k.games) return;
+    const name = `shenron-training-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}-${k.games}games.json`;
+    const data = JSON.stringify({ v: 2, inputs: k.inputs, games: k.games, rows: k.rows });
+    try {
+      const dl = await (window as any).claude?.use?.('downloads');
+      if (dl) await dl.save({ filename: name, data });
+      else {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+        a.download = name;
+        a.click();
+      }
+      kept.current = { rows: [], games: 0, inputs: k.inputs };
+      setState((s) => ({ ...s, unsaved: 0 }));
+    } catch (e: any) {
+      setState((s) => ({ ...s, error: `Download didn't happen (${String(e?.code ?? e?.message ?? e)}). The games are still here; try again.` }));
     }
   };
   const start = () => {
@@ -191,18 +225,21 @@ function TrainPanel() {
     <div class="panel stack">
       <h2>Help train the AI</h2>
       <p class="note">Your computer plays the searching AI against itself with the meta decks, on every core but one, and saves each turn's position and who went on to win. Claude trains the AI's judgement on these. Keep this tab open and the computer awake; stop any time (games in progress are dropped, everything finished is saved).</p>
-      {!store.writable && <p class="note">Saving needs the shared database, which isn't available in this view.</p>}
+      <label class="field">Save games to<Seg label="Save games to" options={[['db', 'App database'], ['file', 'A file on this PC']]} value={toFile ? 'file' : 'db'} onChange={(v) => setToFile(v === 'file' || !store.writable)} /></label>
+      {toFile && <p class="note">Games are kept in this tab until you press <b>Download</b> (do it before closing the tab). Send the file to Claude next time.</p>}
       <div class="row">
         {!state.running
-          ? <button class="btn primary" onClick={start} disabled={!store.writable}>Start training games</button>
+          ? <button class="btn primary" onClick={start}>Start training games</button>
           : <button class="btn" onClick={stop}>Stop</button>}
+        {state.unsaved > 0 && <button class="btn" onClick={download}>Download {state.unsaved} games</button>}
       </div>
       {(state.running || state.games > 0) && (
         <table><tbody>
           <tr><td>Cores working</td><td class="num">{state.cores}</td></tr>
           <tr><td>Games finished</td><td class="num">{state.games}{state.running && mins > 1 ? ` (${(state.games / mins * 60).toFixed(0)}/hour)` : ''}</td></tr>
           <tr><td>Positions</td><td class="num">{state.positions.toLocaleString()}</td></tr>
-          <tr><td>Saved for Claude</td><td class="num">{state.saved} games</td></tr>
+          <tr><td>Saved to the app database</td><td class="num">{state.saved} games</td></tr>
+          {toFile && <tr><td>Waiting to download</td><td class="num">{state.unsaved} games</td></tr>}
         </tbody></table>
       )}
       {state.error && <div class="err">{state.error}</div>}

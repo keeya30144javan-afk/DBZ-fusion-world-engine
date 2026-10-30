@@ -5,7 +5,7 @@ import { determinize } from './belief';
 import { EvalWeights, FastPolicy, Habits, Policy, defaultChooser, comboCanWin, keepValue, usefulInEnergy, winProb } from './heuristics';
 import { Card } from '../data/types';
 import { compileCard } from '../effects/parse';
-import { cardOf, isLeader } from '../engine/core';
+import { abilitiesOf, cardOf, hasKeyword, isLeader } from '../engine/core';
 import { PlanOpts, PlannedLine, planTurn } from './planner';
 
 export interface SearchOpts {
@@ -26,7 +26,12 @@ export interface SearchOpts {
   /** When the chosen line swings with the Leader later, swing with it first (its draw may change the plan). */
   leaderFirst?: boolean;
   /** Don't consider wasteful moves: see prune(). */
-  prune?: { chargeBig?: number };
+  prune?: {
+    chargeBig?: number;
+    /** Don't spend cards guarding your Leader while your life is at least this, if the hit is a plain one
+     * (in Fusion World the life card goes to your hand, so a guard pays a card to stop gaining one). */
+    guardLife?: number;
+  };
 }
 
 /**
@@ -146,6 +151,7 @@ export class SearchPolicy implements Policy {
     const P = this.opts.prune ?? {};
     // Never throw combo cards at a battle they can't win (ties go to the attacker).
     if ((s.stage === 'offCombo' || s.stage === 'defCombo') && (this.opts.habits?.noFutileCombo ?? true) && !comboCanWin(s, actions)) return [{ k: 'comboDone' }];
+    if (s.stage === 'defCombo' && P.guardLife && plainHit(s, s.toAct as Side, P.guardLife)) return [{ k: 'comboDone' }];
     if (s.stage === 'offCombo' && s.battle) {
       const { atk, def } = battleTotals(s);
       if (atk >= def) return [{ k: 'comboDone' }];
@@ -190,4 +196,24 @@ export function planMulligan(s: GameState): boolean {
   const heavy = cards.filter((c) => c.cost >= 5 && !sc(c)).length;
   const score = Math.min(cheap.length, 3) + (starter ? 1 : 0) + (mid ? 0.5 : 0) - Math.max(0, heavy - 1) * 0.8;
   return score >= 2.5;
+}
+
+/**
+ * A hit on my Leader that only moves life cards to my hand: life stays at minLife - 1 or more after all of
+ * it, no [Critical] (that sends it to the Drop), and nothing of theirs that fires on dealing damage.
+ */
+export function plainHit(s: GameState, me: Side, minLife: number): boolean {
+  const b = s.battle;
+  if (!b || b.target !== s.p[me].leader) return false;
+  const a = b.attacker;
+  // [Critical] is a gamble (a life card lost vs a hand card spent): the search judges it case by case.
+  if (hasKeyword(s, a, 'critical')) return false;
+  // Count every point of damage: a Double Strike at 6 that leaves 4 is still a plain hit (two cards, maybe an awaken).
+  const n = hasKeyword(s, a, 'tripleStrike') ? 3 : hasKeyword(s, a, 'doubleStrike') ? 2 : 1;
+  if (s.p[me].life.length - n < minLife - 1) return false;
+  const opp = b.atkSide;
+  const field = [s.p[opp].leader, ...s.p[opp].battle];
+  if (field.some((u) => abilitiesOf(s, u).some((ab) => ab.timing === 'whenDealsDamage'))) return false;
+  if ((s.p[opp].mods ?? []).some((m) => m.kind === 'delayed' && m.until >= s.turn)) return false;
+  return true;
 }
