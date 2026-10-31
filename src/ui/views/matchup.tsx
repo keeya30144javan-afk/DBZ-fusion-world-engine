@@ -214,6 +214,34 @@ function TrainPanel() {
       setClearing(`Stopped (${String(e?.code ?? e?.message ?? e)}). Nothing unsaved was deleted; you can run it again.`);
     }
   };
+  // A training file too big to attach (over 30 MB): read it here and save it again as parts under 25 MB.
+  const splitFile = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      setClearing(`Reading ${file.name}…`);
+      const j = JSON.parse(await file.text());
+      const rows: number[][] = j.rows ?? [];
+      if (!rows.length) { setClearing(`${file.name} has no training rows.`); return; }
+      const size = JSON.stringify(rows).length;
+      const parts = Math.max(1, Math.ceil(size / 24e6));
+      // Split on game boundaries: a game's rows share its seed (column inputs + 2).
+      const seedCol = (j.inputs ?? rows[0].length - 4) + 2;
+      const per = Math.ceil(rows.length / parts);
+      let start = 0;
+      for (let p = 1; start < rows.length; p++) {
+        let end = Math.min(rows.length, start + per);
+        while (end < rows.length && rows[end][seedCol] === rows[end - 1][seedCol]) end++;
+        const chunk = rows.slice(start, end);
+        const games = new Set(chunk.map((r) => r[seedCol])).size;
+        setClearing(`Part ${p} of ${parts}: ${games} games. Accept the download.`);
+        await saveFile(`${file.name.replace(/\.json$/i, '')}-part${p}of${parts}.json`, JSON.stringify({ v: j.v ?? 2, inputs: j.inputs, games, rows: chunk }));
+        start = end;
+      }
+      setClearing(`Done: ${file.name} saved as ${parts} parts you can attach.`);
+    } catch (e: any) {
+      setClearing(`Couldn't split it (${String(e?.code ?? e?.message ?? e)}).`);
+    }
+  };
   const download = async () => {
     await flush();
     const k = kept.current;
@@ -270,6 +298,9 @@ function TrainPanel() {
           <button class="btn" onClick={exportDb} disabled={!!clearing && !/^(Done|Stopped|No training)/.test(clearing)}>Download & clear games saved in the app</button>
         </div>
       )}
+      <label class="field">Split a large training file (over 30 MB) into parts you can attach
+        <input type="file" accept=".json,application/json" onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; void splitFile(f); (e.target as HTMLInputElement).value = ''; }} />
+      </label>
       {clearing && <p class="note">{clearing}</p>}
       {(state.running || state.games > 0) && (
         <table><tbody>
