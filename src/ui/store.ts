@@ -250,6 +250,18 @@ export class Store {
     await this.db.collection('selfplay').doc().set({ rows: JSON.stringify(batch.rows), games: batch.games, inputs: batch.inputs, v: 2, cores, ...(this.userId ? { player: this.userId } : {}), at: new Date().toISOString() });
   }
 
+  /** Up to n saved training batches (oldest ids first), for "Download & clear". */
+  async readSelfplay(n: number): Promise<{ id: string; rows: number[][]; games: number; inputs: number }[]> {
+    if (!this.db) return [];
+    const snap = await this.db.collection('selfplay').limit(n).get();
+    return snap.docs.map((d: any) => { const b = d.data() ?? {}; let rows: number[][] = []; try { rows = JSON.parse(b.rows ?? '[]'); } catch { /* skip a broken batch */ } return { id: d.id, rows, games: b.games ?? 0, inputs: b.inputs ?? 0 }; });
+  }
+
+  async deleteSelfplay(ids: string[]): Promise<void> {
+    if (!this.db) return;
+    for (const id of ids) await this.db.collection('selfplay').doc(id).delete();
+  }
+
   /** "This card's text or engine reading is wrong", from the Play tab. */
   async reportCard(cardId: string, note: string, textHashValue: string): Promise<void> {
     if (!this.db) throw new Error('Reporting needs the shared database, which is not available in this view.');

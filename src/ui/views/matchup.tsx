@@ -182,6 +182,38 @@ function TrainPanel() {
       setState((s) => ({ ...s, error: `Couldn't save to the app database (${String(e?.code ?? e?.message ?? e)}), so games are now kept for a file download.` }));
     }
   };
+  // Move training games out of the app database into files (under 25 MB each, to fit a chat attachment):
+  // each part is deleted only after its download was accepted.
+  const [clearing, setClearing] = useState('');
+  const saveFile = async (name: string, data: string) => {
+    const dl = await (window as any).claude?.use?.('downloads');
+    if (dl) { await dl.save({ filename: name, data }); return; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+    a.download = name;
+    a.click();
+  };
+  const exportDb = async () => {
+    let part = 1, total = 0;
+    try {
+      for (;;) {
+        // ~400 batches of 10 games is ~22 MB: one file under the 30 MB attachment limit.
+        const batch = await store.readSelfplay(400);
+        if (!batch.length) break;
+        const rows: number[][] = [];
+        let games = 0, inputs = 0;
+        for (const x of batch) { rows.push(...x.rows); games += x.games; inputs = x.inputs || inputs; }
+        setClearing(`Part ${part}: ${games} games ready. Accept the download to clear them from the app.`);
+        await saveFile(`shenron-training-db-part${part}-${games}games.json`, JSON.stringify({ v: 2, inputs, games, rows }));
+        await store.deleteSelfplay(batch.map((x) => x.id));
+        total += games; part++;
+        setClearing(`Saved and cleared ${total} games so far…`);
+      }
+      setClearing(total ? `Done: ${total} games saved to ${part - 1} file(s) and cleared from the app database.` : 'No training games in the app database.');
+    } catch (e: any) {
+      setClearing(`Stopped (${String(e?.code ?? e?.message ?? e)}). Nothing unsaved was deleted; you can run it again.`);
+    }
+  };
   const download = async () => {
     await flush();
     const k = kept.current;
@@ -233,6 +265,12 @@ function TrainPanel() {
           : <button class="btn" onClick={stop}>Stop</button>}
         {state.unsaved > 0 && <button class="btn" onClick={download}>Download {state.unsaved} games</button>}
       </div>
+      {store.writable && !state.running && (
+        <div class="row">
+          <button class="btn" onClick={exportDb} disabled={!!clearing && !/^(Done|Stopped|No training)/.test(clearing)}>Download & clear games saved in the app</button>
+        </div>
+      )}
+      {clearing && <p class="note">{clearing}</p>}
       {(state.running || state.games > 0) && (
         <table><tbody>
           <tr><td>Cores working</td><td class="num">{state.cores}</td></tr>
