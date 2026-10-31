@@ -228,16 +228,25 @@ function TrainPanel() {
       const seedCol = (j.inputs ?? rows[0].length - 4) + 2;
       const per = Math.ceil(rows.length / parts);
       let start = 0;
+      const saved: number[] = [], skipped: number[] = [];
       for (let p = 1; start < rows.length; p++) {
         let end = Math.min(rows.length, start + per);
         while (end < rows.length && rows[end][seedCol] === rows[end - 1][seedCol]) end++;
         const chunk = rows.slice(start, end);
         const games = new Set(chunk.map((r) => r[seedCol])).size;
-        setClearing(`Part ${p} of ${parts}: ${games} games. Accept the download.`);
-        await saveFile(`${file.name.replace(/\.json$/i, '')}-part${p}of${parts}.json`, JSON.stringify({ v: j.v ?? 2, inputs: j.inputs, games, rows: chunk }));
+        setClearing(`Part ${p} of ${parts}: ${games} games. Accept the download (or decline to skip it).`);
+        const name = `${file.name.replace(/\.json$/i, '')}-part${p}of${parts}.json`;
+        const data = JSON.stringify({ v: j.v ?? 2, inputs: j.inputs, games, rows: chunk });
+        // One part's refusal doesn't stop the rest: a declined part is skipped, a busy prompt is retried.
+        for (let tries = 0; ; tries++) {
+          try { await saveFile(name, data); saved.push(p); break; } catch (e: any) {
+            if (e?.code === 'rate_limited' && tries < 5) { await new Promise((r) => setTimeout(r, 3000)); continue; }
+            skipped.push(p); break;
+          }
+        }
         start = end;
       }
-      setClearing(`Done: ${file.name} saved as ${parts} parts you can attach.`);
+      setClearing(`Done with ${file.name}: saved part${saved.length === 1 ? '' : 's'} ${saved.join(', ') || 'none'}${skipped.length ? `; skipped ${skipped.join(', ')} (choose the file again to retry those)` : ''}.`);
     } catch (e: any) {
       setClearing(`Couldn't split it (${String(e?.code ?? e?.message ?? e)}).`);
     }
