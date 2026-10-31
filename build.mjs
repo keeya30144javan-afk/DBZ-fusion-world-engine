@@ -27,15 +27,20 @@ const app = await build({
 const css = readFileSync('src/ui/styles.css', 'utf8');
 const js = app.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 
-const html = `<meta charset="utf-8">
+const html = `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shenron Deck Lab</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Saira+Condensed:wght@600;700;800&display=swap">
 <style>${css}</style>
+</head><body>
 <div id="app"></div>
 <script>${js}</script>
+</body></html>
 `;
 mkdirSync('dist', { recursive: true });
 writeFileSync('dist/shenron.html', html);
