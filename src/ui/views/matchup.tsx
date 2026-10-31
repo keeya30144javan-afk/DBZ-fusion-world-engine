@@ -150,177 +150,136 @@ function fmtLeft(sec: number): string {
 }
 
 /**
- * "Help train the AI": this computer plays searching-AI games against itself on every spare core and
- * saves each turn's position with who went on to win, for Claude to train the AI's judgement on.
+ * "Help train the AI": this computer plays searching-AI games against itself on every spare core. Every
+ * ~4,000 games (about 20 MB, small enough to attach in chat) it offers them as a file for Claude to train on.
  */
+const PART_GAMES = 4000;
+type Batch = { rows: number[][]; games: number; inputs: number };
+
+async function saveFile(name: string, data: string) {
+  const dl = await (window as any).claude?.use?.('downloads');
+  if (dl) { await dl.save({ filename: name, data }); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+  a.download = name;
+  a.click();
+}
+
+const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+
 function TrainPanel() {
   const st = useStore();
   const runner = useRef<SelfplayRunner | null>(null);
-  const buffer = useRef<{ rows: number[][]; games: number; inputs: number }>({ rows: [], games: 0, inputs: 0 });
-  // File mode: everything stays in memory until the viewer downloads it (no database, or it's full).
-  const kept = useRef<{ rows: number[][]; games: number; inputs: number }>({ rows: [], games: 0, inputs: 0 });
-  const [toFile, setToFile] = useState(!store.writable);
-  const fileMode = useRef(toFile);
-  fileMode.current = toFile;
-  const [state, setState] = useState({ running: false, games: 0, positions: 0, saved: 0, cores: 0, started: 0, error: '', unsaved: 0 });
-  const keep = (b: { rows: number[][]; games: number; inputs: number }) => {
-    kept.current.rows.push(...b.rows); kept.current.games += b.games; kept.current.inputs = b.inputs;
-    setState((s) => ({ ...s, unsaved: kept.current.games }));
-  };
-  const flush = async () => {
-    const b = buffer.current;
-    if (!b.games) return;
-    buffer.current = { rows: [], games: 0, inputs: b.inputs };
-    if (fileMode.current) { keep(b); return; }
-    try {
-      await store.saveSelfplay(b, runner.current?.size ?? 0);
-      setState((s) => ({ ...s, saved: s.saved + b.games }));
-    } catch (e: any) {
-      // Database missing or full: keep going and hold the games for a download instead.
-      keep(b);
-      setToFile(true);
-      setState((s) => ({ ...s, error: `Couldn't save to the app database (${String(e?.code ?? e?.message ?? e)}), so games are now kept for a file download.` }));
-    }
-  };
-  // Move training games out of the app database into files (under 25 MB each, to fit a chat attachment):
-  // each part is deleted only after its download was accepted.
-  const [clearing, setClearing] = useState('');
-  const saveFile = async (name: string, data: string) => {
-    const dl = await (window as any).claude?.use?.('downloads');
-    if (dl) { await dl.save({ filename: name, data }); return; }
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
-    a.download = name;
-    a.click();
-  };
-  const exportDb = async () => {
-    let part = 1, total = 0;
-    try {
-      for (;;) {
-        // ~400 batches of 10 games is ~22 MB: one file under the 30 MB attachment limit.
-        const batch = await store.readSelfplay(400);
-        if (!batch.length) break;
-        const rows: number[][] = [];
-        let games = 0, inputs = 0;
-        for (const x of batch) { rows.push(...x.rows); games += x.games; inputs = x.inputs || inputs; }
-        setClearing(`Part ${part}: ${games} games ready. Accept the download to clear them from the app.`);
-        await saveFile(`shenron-training-db-part${part}-${games}games.json`, JSON.stringify({ v: 2, inputs, games, rows }));
-        await store.deleteSelfplay(batch.map((x) => x.id));
-        total += games; part++;
-        setClearing(`Saved and cleared ${total} games so far…`);
-      }
-      setClearing(total ? `Done: ${total} games saved to ${part - 1} file(s) and cleared from the app database.` : 'No training games in the app database.');
-    } catch (e: any) {
-      setClearing(`Stopped (${String(e?.code ?? e?.message ?? e)}). Nothing unsaved was deleted; you can run it again.`);
-    }
-  };
-  // A training file too big to attach (over 30 MB): read it here and save it again as parts under 25 MB.
-  const splitFile = async (file: File | undefined) => {
-    if (!file) return;
-    try {
-      setClearing(`Reading ${file.name}…`);
-      const j = JSON.parse(await file.text());
-      const rows: number[][] = j.rows ?? [];
-      if (!rows.length) { setClearing(`${file.name} has no training rows.`); return; }
-      const size = JSON.stringify(rows).length;
-      const parts = Math.max(1, Math.ceil(size / 24e6));
-      // Split on game boundaries: a game's rows share its seed (column inputs + 2).
-      const seedCol = (j.inputs ?? rows[0].length - 4) + 2;
-      const per = Math.ceil(rows.length / parts);
-      let start = 0;
-      const saved: number[] = [], skipped: number[] = [];
-      for (let p = 1; start < rows.length; p++) {
-        let end = Math.min(rows.length, start + per);
-        while (end < rows.length && rows[end][seedCol] === rows[end - 1][seedCol]) end++;
-        const chunk = rows.slice(start, end);
-        const games = new Set(chunk.map((r) => r[seedCol])).size;
-        setClearing(`Part ${p} of ${parts}: ${games} games. Accept the download (or decline to skip it).`);
-        const name = `${file.name.replace(/\.json$/i, '')}-part${p}of${parts}.json`;
-        const data = JSON.stringify({ v: j.v ?? 2, inputs: j.inputs, games, rows: chunk });
-        // One part's refusal doesn't stop the rest: a declined part is skipped, a busy prompt is retried.
-        for (let tries = 0; ; tries++) {
-          try { await saveFile(name, data); saved.push(p); break; } catch (e: any) {
-            if (e?.code === 'rate_limited' && tries < 5) { await new Promise((r) => setTimeout(r, 3000)); continue; }
-            skipped.push(p); break;
-          }
-        }
-        start = end;
-      }
-      setClearing(`Done with ${file.name}: saved part${saved.length === 1 ? '' : 's'} ${saved.join(', ') || 'none'}${skipped.length ? `; skipped ${skipped.join(', ')} (choose the file again to retry those)` : ''}.`);
-    } catch (e: any) {
-      setClearing(`Couldn't split it (${String(e?.code ?? e?.message ?? e)}).`);
-    }
-  };
-  const download = async () => {
-    await flush();
+  const kept = useRef<Batch>({ rows: [], games: 0, inputs: 0 });
+  const offering = useRef(false);
+  const [s, setS] = useState({ running: false, games: 0, cores: 0, started: 0, waiting: 0, files: 0, msg: '' });
+  const bump = (patch: Partial<typeof s>) => setS((x) => ({ ...x, ...patch }));
+
+  // Offer what has built up as one file; on a decline the games stay here for "Download now".
+  const offer = async () => {
+    if (offering.current || !kept.current.games) return;
+    offering.current = true;
     const k = kept.current;
-    if (!k.games) return;
-    const name = `shenron-training-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}-${k.games}games.json`;
-    const data = JSON.stringify({ v: 2, inputs: k.inputs, games: k.games, rows: k.rows });
+    kept.current = { rows: [], games: 0, inputs: k.inputs };
     try {
-      const dl = await (window as any).claude?.use?.('downloads');
-      if (dl) await dl.save({ filename: name, data });
-      else {
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
-        a.download = name;
-        a.click();
-      }
-      kept.current = { rows: [], games: 0, inputs: k.inputs };
-      setState((s) => ({ ...s, unsaved: 0 }));
+      await saveFile(`shenron-training-${stamp()}-${k.games}games.json`, JSON.stringify({ v: 2, inputs: k.inputs, games: k.games, rows: k.rows }));
+      setS((x) => ({ ...x, files: x.files + 1, waiting: kept.current.games, msg: '' }));
     } catch (e: any) {
-      setState((s) => ({ ...s, error: `Download didn't happen (${String(e?.code ?? e?.message ?? e)}). The games are still here; try again.` }));
+      kept.current = { rows: [...k.rows, ...kept.current.rows], games: k.games + kept.current.games, inputs: k.inputs };
+      bump({ waiting: kept.current.games, msg: 'Download not saved. The games are kept: press "Download now" when ready.' });
+    } finally {
+      offering.current = false;
     }
   };
+
   const start = () => {
     const decks = st.meta.filter((d) => !d.name.startsWith('Starter') && !validateDeck(d, st.cards, st.rules).length).map((d) => ({ name: d.name, leader: d.leader, main: d.main }));
     const r = new SelfplayRunner(st.cards, decks, (b) => {
-      const buf = buffer.current;
-      buf.rows.push(...b.rows); buf.games += b.games; buf.inputs = b.inputs;
-      setState((s) => ({ ...s, games: s.games + b.games, positions: s.positions + b.rows.length }));
-      if (buf.games >= 10) void flush();
-    }, (e) => setState((s) => ({ ...s, error: e.slice(0, 300) })));
+      const k = kept.current;
+      k.rows.push(...b.rows); k.games += b.games; k.inputs = b.inputs;
+      setS((x) => ({ ...x, games: x.games + b.games, waiting: k.games }));
+      if (k.games >= PART_GAMES) void offer();
+    }, (e) => bump({ msg: e.slice(0, 300) }));
     runner.current = r;
     r.start();
-    setState((s) => ({ ...s, running: true, cores: r.size, started: Date.now(), error: '' }));
+    bump({ running: true, cores: r.size, started: Date.now(), msg: '' });
   };
-  const stop = () => {
-    runner.current?.stop();
-    void flush();
-    setState((s) => ({ ...s, running: false }));
-  };
-  const mins = state.started ? (Date.now() - state.started) / 60000 : 0;
+  const stop = () => { runner.current?.stop(); bump({ running: false }); };
+
+  const hours = s.started ? (Date.now() - s.started) / 3600000 : 0;
   return (
     <div class="panel stack">
       <h2>Help train the AI</h2>
-      <p class="note">Your computer plays the searching AI against itself with the meta decks, on every core but one, and saves each turn's position and who went on to win. Claude trains the AI's judgement on these. Keep this tab open and the computer awake; stop any time (games in progress are dropped, everything finished is saved).</p>
-      <label class="field">Save games to<Seg label="Save games to" options={[['db', 'App database'], ['file', 'A file on this PC']]} value={toFile ? 'file' : 'db'} onChange={(v) => setToFile(v === 'file' || !store.writable)} /></label>
-      {toFile && <p class="note">Games are kept in this tab until you press <b>Download</b> (do it before closing the tab). Send the file to Claude next time.</p>}
+      <p class="note">Your computer plays the AI against itself with the meta decks, on every core but one. Every {PART_GAMES.toLocaleString()} games it offers a file (about 20 MB): accept it, then attach the files to Claude. Keep this tab open and the computer awake.</p>
       <div class="row">
-        {!state.running
-          ? <button class="btn primary" onClick={start}>Start training games</button>
-          : <button class="btn" onClick={stop}>Stop</button>}
-        {state.unsaved > 0 && <button class="btn" onClick={download}>Download {state.unsaved} games</button>}
+        {!s.running ? <button class="btn primary" onClick={start}>Start training games</button> : <button class="btn" onClick={stop}>Stop</button>}
+        {s.waiting > 0 && <button class="btn" onClick={() => void offer()}>Download now ({s.waiting.toLocaleString()} games)</button>}
       </div>
-      {store.writable && !state.running && (
-        <div class="row">
-          <button class="btn" onClick={exportDb} disabled={!!clearing && !/^(Done|Stopped|No training)/.test(clearing)}>Download & clear games saved in the app</button>
-        </div>
-      )}
-      <label class="field">Split a large training file (over 30 MB) into parts you can attach
-        <input type="file" accept=".json,application/json" onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; void splitFile(f); (e.target as HTMLInputElement).value = ''; }} />
-      </label>
-      {clearing && <p class="note">{clearing}</p>}
-      {(state.running || state.games > 0) && (
+      {(s.running || s.games > 0) && (
         <table><tbody>
-          <tr><td>Cores working</td><td class="num">{state.cores}</td></tr>
-          <tr><td>Games finished</td><td class="num">{state.games}{state.running && mins > 1 ? ` (${(state.games / mins * 60).toFixed(0)}/hour)` : ''}</td></tr>
-          <tr><td>Positions</td><td class="num">{state.positions.toLocaleString()}</td></tr>
-          <tr><td>Saved to the app database</td><td class="num">{state.saved} games</td></tr>
-          {toFile && <tr><td>Waiting to download</td><td class="num">{state.unsaved} games</td></tr>}
+          <tr><td>Cores working</td><td class="num">{s.cores}</td></tr>
+          <tr><td>Games played</td><td class="num">{s.games.toLocaleString()}{s.running && hours > 0.02 ? ` (${Math.round(s.games / hours).toLocaleString()}/hour)` : ''}</td></tr>
+          <tr><td>Files saved</td><td class="num">{s.files}</td></tr>
+          <tr><td>Waiting for the next file</td><td class="num">{s.waiting.toLocaleString()} games</td></tr>
         </tbody></table>
       )}
-      {state.error && <div class="err">{state.error}</div>}
+      {s.waiting > 0 && !s.running && <p class="note">Download these before closing the tab, or they're lost.</p>}
+      {s.msg && <div class="err">{s.msg}</div>}
+      <OlderTraining />
     </div>
+  );
+}
+
+/** Tools for training data from before the file workflow: games still in the app database, and files too big to attach. */
+function OlderTraining() {
+  const [msg, setMsg] = useState('');
+  const [busy, setBusy] = useState(false);
+  const run = async (job: () => Promise<string>) => {
+    setBusy(true);
+    try { setMsg(await job()); } catch (e: any) { setMsg(`Stopped (${String(e?.code ?? e?.message ?? e)}). Run it again to continue.`); } finally { setBusy(false); }
+  };
+  // Database: ~400 batches per file; a batch is deleted only after its file was saved. A declined part ends the run.
+  const clearDb = () => run(async () => {
+    let part = 1, total = 0;
+    for (;;) {
+      const batch = await store.readSelfplay(400);
+      if (!batch.length) break;
+      const rows = batch.flatMap((x) => x.rows), games = batch.reduce((a, x) => a + x.games, 0);
+      setMsg(`Part ${part}: ${games.toLocaleString()} games. Accept the download to clear them from the app.`);
+      await saveFile(`shenron-training-db-${stamp()}-part${part}-${games}games.json`, JSON.stringify({ v: 2, inputs: batch[0].inputs, games, rows }));
+      await store.deleteSelfplay(batch.map((x) => x.id));
+      total += games; part++;
+    }
+    return total ? `Done: ${total.toLocaleString()} games saved and cleared from the app.` : 'No training games left in the app database.';
+  });
+  // Big file: split on game boundaries (a game's rows share its seed) into parts under 25 MB; declined parts are skipped.
+  const split = (file: File) => run(async () => {
+    const j = JSON.parse(await file.text());
+    const rows: number[][] = j.rows ?? [];
+    if (!rows.length) return `${file.name} has no training rows.`;
+    const parts = Math.max(1, Math.ceil(JSON.stringify(rows).length / 24e6));
+    const seedCol = (j.inputs ?? rows[0].length - 4) + 2, per = Math.ceil(rows.length / parts);
+    const saved: number[] = [], skipped: number[] = [];
+    for (let p = 1, start = 0; start < rows.length; p++) {
+      let end = Math.min(rows.length, start + per);
+      while (end < rows.length && rows[end][seedCol] === rows[end - 1][seedCol]) end++;
+      const chunk = rows.slice(start, end), games = new Set(chunk.map((r) => r[seedCol])).size;
+      setMsg(`Part ${p} of ${parts}: ${games.toLocaleString()} games. Accept (or decline to skip).`);
+      try { await saveFile(`${file.name.replace(/\.json$/i, '')}-part${p}of${parts}.json`, JSON.stringify({ v: j.v ?? 2, inputs: j.inputs, games, rows: chunk })); saved.push(p); } catch { skipped.push(p); }
+      start = end;
+    }
+    return `Saved part${saved.length === 1 ? '' : 's'} ${saved.join(', ') || 'none'}${skipped.length ? `; skipped ${skipped.join(', ')}` : ''}.`;
+  });
+  return (
+    <details class="note">
+      <summary>Older training data</summary>
+      <div class="stack" style={{ marginTop: '8px' }}>
+        {store.writable && <div class="row"><button class="btn small" disabled={busy} onClick={clearDb}>Download & clear games saved in the app database</button></div>}
+        <label class="field">Split a training file over 30 MB into parts you can attach
+          <input type="file" accept=".json,application/json" disabled={busy} onChange={(e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) void split(f); (e.target as HTMLInputElement).value = ''; }} />
+        </label>
+        {msg && <p>{msg}</p>}
+      </div>
+    </details>
   );
 }
